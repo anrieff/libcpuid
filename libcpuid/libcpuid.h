@@ -33,22 +33,20 @@
  *
  *  0.1.0 (2008-10-15): initial adaptation from wxfractgui sources
  */
-/** @defgroup libcpuid
- *  @{
- */
 
+/** @defgroup libcpuid @{ */
 #ifndef __LIBCPUID_H__
 #define __LIBCPUID_H__
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /* Include some integer type specifications: */
 #include "libcpuid_types.h"
 
 /* Some limits and other constants */
 #include "libcpuid_constants.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @brief CPU vendor, as guessed from the Vendor String.
@@ -80,10 +78,15 @@ typedef enum _cpu_vendor_t cpu_vendor_t;
  */
 struct cpu_raw_data_t {
 	/** contains results of CPUID for eax = 0, 1, ...*/
-	uint32_t basic_cpuid[32][4];
+	uint32_t basic_cpuid[MAX_CPUID_LEVEL][4];
 
 	/** contains results of CPUID for eax = 0x80000000, 0x80000001, ...*/
-	uint32_t ext_cpuid[32][4];
+	uint32_t ext_cpuid[MAX_EXT_CPUID_LEVEL][4];
+	
+	/** when the CPU is intel and it supports deterministic cache
+	    information: this contains the results of CPUID for eax = 4
+	    and ecx = 0, 1, ... */
+	uint32_t intel_fn4[MAX_INTELFN4_LEVEL][4];
 };
 
 /**
@@ -332,6 +335,8 @@ int cpu_clock_measure(int millis, int triple_check);
 int cpu_clock(void);
 
 const char* cpuid_lib_version(void);
+
+void set_warn_function(void (*fun) (const char * msg));
 
 #ifdef __cplusplus
 }; // extern "C"

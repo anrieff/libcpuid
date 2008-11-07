@@ -10,7 +10,8 @@ libcpuid_la_SOURCES =		\
 	cpuid_main.c		\
 	recog_intel.c		\
 	recog_amd.c		\
-	rdtsc.c
+	rdtsc.c			\
+	asm-bits.c
 
 libcpuid_la_DEPENDENCIES = \
 	$(srcdir)/libcpuid.sym

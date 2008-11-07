@@ -25,11 +25,6 @@
  */
 #include "libcpuid.h"
 
-void cpu_rdtsc(uint64_t* result)
-{
-	*result = 0;
-}
-
 void cpu_tsc_mark(struct cpu_mark_t* mark)
 {
 }

@@ -26,26 +26,23 @@
 #include "libcpuid.h"
 #include "recog_intel.h"
 #include "recog_amd.h"
+#include "asm-bits.h"
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <stdio.h>
+#include <string.h>
 
 /* Implementation: */
 
 static int _libcpiud_errno = ERR_OK;
 
-static int cpuid_exists_by_eeflags(void)
+static void default_warn(const char *msg)
 {
-#ifdef __x86_64__
-	return 1; // CPUID is always present on the x86_64
-#else
-	
-#endif
+	printf("%s", msg);
 }
 
-static void exec_cpiud(uint32_t *regs)
-{
-}
+static void (*_warn) (const char* msg) = default_warn;
 
 static int set_error(cpuid_error_t err)
 {
@@ -58,11 +55,39 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	return ERR_OK;
 }
 
+static void initialize_defaults(struct cpu_raw_data_t* raw)
+{
+	memset(raw, 0, sizeof(struct cpu_raw_data_t));
+}
+
+static int parse_token(const char* expected_token, const char *token, 
+                        const char *value, uint32_t array[][4], int limit, int *recognized)
+{
+	char format[32];
+	int veax, vebx, vecx, vedx;
+	int index;
+
+	if (*recognized) return 1; // already recognized
+	if (strncmp(token, expected_token, strlen(expected_token))) return 1; // not what we search for
+	sprintf(format, "%s[%%d]", expected_token);
+	*recognized = 1;
+	if (1 == sscanf(token, format, &index) && index >=0 && index < limit) {
+		if (4 == sscanf(value, "%x%x%x%x", &veax, &vebx, &vecx, &vedx)) {
+			array[index][0] = veax;
+			array[index][1] = vebx;
+			array[index][2] = vecx;
+			array[index][3] = vedx;
+			return 1;
+		}
+	}
+	return 0;
+}
+
 /* Interface: */
 
 int cpuid_present(void)
 {
-	return cpuid_exists_by_eeflags();
+	return cpuid_exists_by_eflags();
 }
 
 void cpu_exec_cpuid(uint32_t eax, uint32_t* regs)
@@ -86,17 +111,96 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 		cpu_exec_cpuid(i, data->basic_cpuid[i]);
 	for (i = 0; i < 32; i++)
 		cpu_exec_cpuid(0x8000000 + i, data->ext_cpuid[i]);
+	for (i = 0; i < 4; i++) {
+		memset(data->intel_fn4[i], 0, sizeof(data->intel_fn4[i]));
+		data->intel_fn4[i][0] = 4;
+		data->intel_fn4[i][2] = i;
+		cpu_exec_cpuid_ext(data->intel_fn4[i]);
+	}
 	return set_error(ERR_OK);
 }
 
 int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 {
-	return set_error(ERR_NOT_IMP);
+	int i;
+	FILE *f;
+	
+	f = fopen(filename, "wt");
+	if (!f) return set_error(ERR_OPEN);
+	
+	fprintf(f, "version = %s\n", VERSION);
+	for (i = 0; i < MAX_CPUID_LEVEL; i++)
+		fprintf(f, "basic_cpuid[%d] = %08x %08x %08x %08x", i,
+			data->basic_cpuid[i][0], data->basic_cpuid[i][1],
+			data->basic_cpuid[i][2], data->basic_cpuid[i][3]);
+	for (i = 0; i < MAX_EXT_CPUID_LEVEL; i++)
+		fprintf(f, "ext_cpuid[%d] = %08x %08x %08x %08x", i,
+			data->ext_cpuid[i][0], data->ext_cpuid[i][1],
+			data->ext_cpuid[i][2], data->ext_cpuid[i][3]);
+	for (i = 0; i < MAX_INTELFN4_LEVEL; i++)
+		fprintf(f, "intel_fn4[%d] = %08x %08x %08x %08x", i,
+			data->intel_fn4[i][0], data->intel_fn4[i][1],
+			data->intel_fn4[i][2], data->intel_fn4[i][3]);
+	
+	fclose(f);
+	return set_error(ERR_OK);
 }
 
 int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 {
-	return set_error(ERR_NOT_IMP);
+	int i, len;
+	char temp[100];
+	char line[100];
+	char token[100];
+	char *value;
+	int syntax;
+	int cur_line = 0;
+	int recognized;
+	FILE *f;
+	
+	initialize_defaults(data);
+	
+	f = fopen(filename, "rt");
+	if (!f) return set_error(ERR_OPEN);
+	while (fgets(line, sizeof(line), f)) {
+		++cur_line;
+		len = strlen(line);
+		if (len < 2) continue;
+		if (line[len - 1] == '\n')
+			line[--len] = '\0';
+		for (i = 0; i < len && line[i] != '='; i++)
+		if (i >= len && i < 2 && len - i - 2 <= 0) {
+			fclose(f);
+			return set_error(ERR_BADFMT);
+		}
+		strncpy(token, line, i - 1);
+		token[i - 1] = '\0';
+		value = &line[i + 2];
+		// try to recognize the line
+		recognized = 0;
+		if (!strcmp(token, "version")) {
+			recognized = 1;
+		}
+		syntax = 1;
+		syntax = syntax && parse_token("basic_cpuid", token, value, data->basic_cpuid, 32, &recognized);
+		syntax = syntax && parse_token("ext_cpuid", token, value, data->ext_cpuid, 32, &recognized);
+		syntax = syntax && parse_token("intel_fn4", token, value, data->intel_fn4,  4, &recognized);
+		if (!syntax) {
+			sprintf(temp, "Error: %s:%d: Syntax error\n",
+				filename, cur_line);
+			_warn(temp);
+			fclose(f);
+			return set_error(ERR_BADFMT);
+		}
+		if (!recognized) {
+			sprintf(temp, "Warning: %s:%d not understood!\n",
+			        filename, cur_line);
+			_warn(temp);
+		}
+	}
+	
+	fclose(f);
+	return set_error(ERR_OK);
 }
 
 int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
