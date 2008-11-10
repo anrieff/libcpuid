@@ -23,3 +23,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include "libcpuid.h"
+#include "recog_intel.h"
+
+int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+{
+	return 0;
+}

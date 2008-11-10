@@ -41,6 +41,7 @@ AC_CONFIG_FILES([
   Makefile
   libcpuid.pc
   libcpuid/Makefile
+  cpuid_tool/Makefile
 ])
 AC_OUTPUT
 

@@ -55,8 +55,7 @@ enum _cpu_vendor_t {
 	INTEL = 0,
 	AMD,
 	CYRIX,
-	VIA,
-	NEXTGEN,
+	NEXGEN,
 	TRANSMETA,
 	UMC,
 	CENTAUR,
@@ -67,6 +66,7 @@ enum _cpu_vendor_t {
 	NUM_VENDORS,
 	UNKNOWN = -1,
 };
+#define NUM_VENDORS NUM_VENDORS
 typedef enum _cpu_vendor_t cpu_vendor_t;
 
 /**
@@ -217,7 +217,6 @@ enum _cpu_feature_t {
 	CPU_FEATURE_MCE,	/*!< Machine check exception */
 	CPU_FEATURE_CX8,	/*!< CMPXCHG8B instruction supported */
 	CPU_FEATURE_APIC,	/*!< APIC support */
-	CPU_FEATURE_SEP,	/*!< SYSCALL / SYSEXIT supported */
 	CPU_FEATURE_MTRR,	/*!< Memory type range registers */
 	CPU_FEATURE_PGE,	/*!< Page global enable */
 	CPU_FEATURE_MCA,	/*!< Machine check architecture */
@@ -276,6 +275,9 @@ enum _cpu_feature_t {
 	CPU_FEATURE_SSE51,	/*!< SSE 5.1 instructions supported */
 	CPU_FEATURE_SKINIT,	/*!< SKINIT / STGI supported */
 	CPU_FEATURE_WDT,	/*!< Watchdog timer support */
+	CPU_FEATURE_CONST_TSC,	/*!< Constant TSC */
+	// termination:
+	CPU_FEATURE_END,
 };
 typedef enum _cpu_feature_t cpu_feature_t;
 
@@ -289,7 +291,8 @@ enum _cpuid_error_t {
 	ERR_NO_MEM   = -3,	/*!< "Memory allocation failed" */
 	ERR_OPEN     = -4,	/*!< "File open operation failed" */
 	ERR_BADFMT   = -5,	/*!< "Bad file format" */
-	ERR_NOT_IMP  = -6, 	/*!< "Not implemented" */
+	ERR_NOT_IMP  = -6,	/*!< "Not implemented" */
+	ERR_CPU_UNKN = -7,	/*!< "Unsupported processor" */
 };
 typedef enum _cpuid_error_t cpuid_error_t;
 
@@ -336,7 +339,7 @@ int cpu_clock(void);
 
 const char* cpuid_lib_version(void);
 
-void set_warn_function(void (*fun) (const char * msg));
+void set_warn_function(void (*warn_fun) (const char* msg));
 
 #ifdef __cplusplus
 }; // extern "C"

@@ -23,10 +23,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef __ASM_BITS_H__
+#define __ASM_BITS_H__
 #include "libcpuid.h"
-#include "recog_amd.h"
 
-int cpuid_identify_amd(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
-{
-	return 0;
-}
+int cpuid_exists_by_eflags(void);
+void exec_cpiud(uint32_t *regs);
+
+#endif // __ASM_BITS_H__

@@ -1,4 +1,4 @@
-SUBDIRS = libcpuid
+SUBDIRS = libcpuid cpuid_tool
 
 pkgconfigdir = $(libdir)/pkgconfig
 
