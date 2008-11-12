@@ -93,18 +93,18 @@ struct cpu_raw_data_t {
  * @brief This contains the recognized CPU features/info
  */
 struct cpu_id_t {
-	/** contains the vendor string, as in cpu_raw_data_t */
+	/** contains the CPU vendor string, e.g. "GenuineIntel" */
 	char vendor_str[VENDOR_STR_MAX];
 	
-	/** contains the brand string, as in cpu_raw_data_t */
+	/** contains the brand string, e.g. "Intel(R) Xeon(TM) CPU 2.40GHz" */
 	char brand_str[BRAND_STR_MAX];
 	
-	/** contains the recognized CPU vendor, as in cpu_raw_data_t */
+	/** contains the recognized CPU vendor */
 	cpu_vendor_t vendor;
 	
 	/**
-	 * contain CPU flags. Used to test for features. See 
-	 * the CPU_FEATURE_* macros below.
+	 * contain CPU flags. Used to test for features. See
+	 * the CPU_FEATURE_* macros below. @see Features
 	 */
 	uint8_t flags[CPU_FLAGS_MAX];
 	
@@ -117,10 +117,10 @@ struct cpu_id_t {
 	/** CPU stepping */
 	int32_t stepping;
 	
-	/** CPU extended family (mainly on Intel CPUs) */
+	/** CPU extended family */
 	int32_t ext_family;
 	
-	/** CPU extended model (mainly on Intel CPUs) */
+	/** CPU extended model */
 	int32_t ext_model;
 	
 	/** Number of CPU cores on the current processor */
@@ -128,8 +128,8 @@ struct cpu_id_t {
 	
 	/**
 	 * Number of logical processors on the current processor.
-	 * Could be more than the actual number of physical cores, e.g.
-	 * if the processor has Hyperthreading.
+	 * Could be more than the number of physical cores,
+	 * e.g. when the processor has HyperThreading.
 	 */
 	int32_t num_logical_cpus;
 	
@@ -153,7 +153,7 @@ struct cpu_id_t {
 	 * L1 instruction cache size in KB. Could be zero, if the CPU lacks
 	 * cache. If the size cannot be determined, it will be -1.
 	 * @note On some Intel CPUs, whose instruction cache is in fact
-	 * a trace cache, the size will be expressed in K uOps 
+	 * a trace cache, the size will be expressed in K uOps.
 	 */
 	int32_t l1_instruction_cache;
 	
@@ -198,18 +198,24 @@ struct cpu_id_t {
  * Usage:
  * @code
  * ...
- * cpu_id_t id;
- * ...
- * if (id.flags[CPU_FEATURE_SSE2]) {
- *     // The CPU has SSE2...
- *     ...
+ * struct cpu_raw_data_t raw;
+ * struct cpu_id_t id;
+ * if (cpuid_get_raw_data(&raw) == 0 && cpu_identify(&raw, &id)) {
+ *     if (id.flags[CPU_FEATURE_SSE2]) {
+ *         // The CPU has SSE2...
+ *         ...
+ *     } else {
+ *         // no SSE2
+ *     }
+ * } else {
+ *   // processor cannot be determined.
  * }
  * @endcode
  */
 enum _cpu_feature_t {
 	CPU_FEATURE_FPU = 0,	/*!< Floating point unit */
 	CPU_FEATURE_VME,	/*!< Virtual mode extension */
-	CPU_FEATURE_DEBUG,	/*!< Debugging extension */
+	CPU_FEATURE_DE,		/*!< Debugging extension */
 	CPU_FEATURE_PSE,	/*!< Page size extension */
 	CPU_FEATURE_TSC,	/*!< Time-stamp counter */
 	CPU_FEATURE_MSR,	/*!< Model-specific regsisters, RDMSR/WRMSR supported */
@@ -218,12 +224,13 @@ enum _cpu_feature_t {
 	CPU_FEATURE_CX8,	/*!< CMPXCHG8B instruction supported */
 	CPU_FEATURE_APIC,	/*!< APIC support */
 	CPU_FEATURE_MTRR,	/*!< Memory type range registers */
+	CPU_FEATURE_SEP,	/*!< SYSENTER / SYSEXIT instructions supported */
 	CPU_FEATURE_PGE,	/*!< Page global enable */
 	CPU_FEATURE_MCA,	/*!< Machine check architecture */
 	CPU_FEATURE_CMOV,	/*!< CMOVxx instructions supported */
 	CPU_FEATURE_PAT,	/*!< Page attribute table */
 	CPU_FEATURE_PSE36,	/*!< 36-bit page address extension */
-	CPU_FEATURE_PSN,	/*!< Processor serial # implemented (Intel P3 only) */
+	CPU_FEATURE_PN,		/*!< Processor serial # implemented (Intel P3 only) */
 	CPU_FEATURE_CLFLUSH,	/*!< CLFLUSH instruction supported */
 	CPU_FEATURE_DTS,	/*!< Debug store supported */
 	CPU_FEATURE_ACPI,	/*!< ACPI support (power states) */
@@ -236,11 +243,11 @@ enum _cpu_feature_t {
 	CPU_FEATURE_TM,		/*!< Thermal monitor */
 	CPU_FEATURE_IA64,	/*!< IA64 supported (Itanium only) */
 	CPU_FEATURE_PBE,	/*!< Pending-break enable */
-	CPU_FEATURE_SSE3,	/*!< SSE3 instructions supported */
+	CPU_FEATURE_PNI,	/*!< PNI (SSE3) instructions supported */
 	CPU_FEATURE_PCLMUL,	/*!< PCLMULQDQ instruction supported */
 	CPU_FEATURE_DTS64,	/*!< 64-bit Debug store supported */
-	CPU_FEATURE_MON,	/*!< MONITOR / MWAIT supported */
-	CPU_FEATURE_DSCPL,	/*!< CPL Qualified Debug Store */
+	CPU_FEATURE_MONITOR,	/*!< MONITOR / MWAIT supported */
+	CPU_FEATURE_DS_CPL,	/*!< CPL Qualified Debug Store */
 	CPU_FEATURE_VMX,	/*!< Virtualization technology supported */
 	CPU_FEATURE_SMX,	/*!< Safer mode exceptions */
 	CPU_FEATURE_EST,	/*!< Enhanced SpeedStep */
@@ -248,11 +255,11 @@ enum _cpu_feature_t {
 	CPU_FEATURE_SSSE3,	/*!< SSSE3 instructionss supported (this is different from SSE3!) */
 	CPU_FEATURE_CID,	/*!< Context ID supported */
 	CPU_FEATURE_CX16,	/*!< CMPXCHG16B instruction supported */
-	CPU_FEATURE_ETPRD,	/*!< Send Task Priority Messages disable */
+	CPU_FEATURE_XTPR,	/*!< Send Task Priority Messages disable */
 	CPU_FEATURE_PDCM,	/*!< Performance capabilities MSR supported */
 	CPU_FEATURE_DCA,	/*!< Direct cache access supported */
-	CPU_FEATURE_SSE41,	/*!< SSE 4.1 instructions supported */
-	CPU_FEATURE_SSE42,	/*!< SSE 4.2 instructions supported */
+	CPU_FEATURE_SSE4_1,	/*!< SSE 4.1 instructions supported */
+	CPU_FEATURE_SSE4_2,	/*!< SSE 4.2 instructions supported */
 	CPU_FEATURE_MOVBE,	/*!< MOVBE instruction supported */
 	CPU_FEATURE_POPCNT,	/*!< POPCNT instruction supported */
 	CPU_FEATURE_AES,	/*!< AES* instructions supported */
@@ -265,19 +272,21 @@ enum _cpu_feature_t {
 	CPU_FEATURE_3DNOWEXT,	/*!< AMD 3DNow! extended instructions supported */
 	CPU_FEATURE_NX,		/*!< No-execute bit supported */
 	CPU_FEATURE_RDTSCP,	/*!< RDTSCP instruction supported (AMD-only) */
-	CPU_FEATURE_LM,		/*!< Long mode supported */
-	CPU_FEATURE_LAHFSAHF,	/*!< LAHF/SAHF supported in 64-bit mode */
+	CPU_FEATURE_LM,		/*!< Long mode (x86_64/EM64T) supported */
+	CPU_FEATURE_LAHF_LM,	/*!< LAHF/SAHF supported in 64-bit mode */
 	CPU_FEATURE_SVM,	/*!< AMD Secure virtual machine */
-	CPU_FEATURE_LZCNT,	/*!< LZCNT instruction support */
+	CPU_FEATURE_SSE4A,	/*!< SSE 4a from AMD */
+	CPU_FEATURE_MISALIGNSSE,/*!< Misaligned SSE supported */
+	CPU_FEATURE_ABM,	/*!< LZCNT instruction support */
 	CPU_FEATURE_3DNOWPREFETCH,	/*!< PREFETCH/PREFETCHW support */
 	CPU_FEATURE_OSVW,	/*!< OS Visible Workaround (AMD) */
 	CPU_FEATURE_IBS,	/*!< Instruction-based sampling */
-	CPU_FEATURE_SSE51,	/*!< SSE 5.1 instructions supported */
+	CPU_FEATURE_SSE5,	/*!< SSE 5 instructions supported */
 	CPU_FEATURE_SKINIT,	/*!< SKINIT / STGI supported */
 	CPU_FEATURE_WDT,	/*!< Watchdog timer support */
-	CPU_FEATURE_CONST_TSC,	/*!< Constant TSC */
+	CPU_FEATURE_CONSTANT_TSC,	/*!< TSC ticks at constant rate */
 	// termination:
-	CPU_FEATURE_END,
+	CPU_NUM_FEATURES,
 };
 typedef enum _cpu_feature_t cpu_feature_t;
 
@@ -301,45 +310,292 @@ typedef enum _cpuid_error_t cpuid_error_t;
  *        cpu_clock_by_mark
  */
 struct cpu_mark_t {
-	uint64_t tsc;
-	uint64_t sys_clock;
+	uint64_t tsc;		/*!< Time-stamp from RDTSC */
+	uint64_t sys_clock;	/*!< In microsecond resolution */
 };
 
+/**
+ * @brief Checks if the CPUID instruction is supported
+ * @retval 1 if CPUID is present
+ * @retval 0 the CPU doesn't have CPUID.
+ */
 int cpuid_present(void);
 
+/**
+ * @brief Executes the CPUID instruction
+ * @param eax - the value of the EAX register when executing CPUID
+ * @param regs - the results will be stored here. regs[0] = EAX, regs[1] = EBX, ...
+ * @note CPUID will be executed with EAX set to the given value and EBX, ECX,
+ *       EDX set to zero.
+ */
 void cpu_exec_cpuid(uint32_t eax, uint32_t* regs);
 
+/**
+ * @brief Executes the CPUID instruction with the given input registers
+ * @note This is just a bit more generic version of cpu_exec_cpuid - it allows
+ *       you to control all the registers.
+ * @param regs - Input/output. Prior to executing CPUID, EAX, EBX, ECX and
+ *               EDX will be set to regs[0], regs[1], regs[2] and regs[3].
+ *               After CPUID, this array will contain the results.
+ */
 void cpu_exec_cpuid_ext(uint32_t* regs);
 
+/**
+ * @brief Obtains the raw CPUID data
+ * @param data - a pointer to cpu_raw_data_t structure
+ * @returns zero if successful, and some negative number on error (@see cpuid_error_t)
+ *          The error message can be obtained by calling cpuid_error
+ */
 int cpuid_get_raw_data(struct cpu_raw_data_t* data);
 
+/**
+ * @brief Writes the raw CPUID data to a text file
+ * @param data - a pointer to cpu_raw_data_t structure
+ * @param filename - the path of the file, where the serialized data should be
+ *                   written
+ * @note This is intended primarily for debugging. On some processor, which is
+ *       not currently supported or not completely recognized by cpu_identify,
+ *       one can still successfully get the raw data and write it to a file.
+ *       libcpuid developers can later import this file and debug the detection
+ *       code as if running on the actual hardware.
+ *       The file is simple text format of "something=value" pairs. Version info
+ *       is also written, but the format is not intended to be neither backward-
+ *       nor forward compatible.
+ * @returns zero if successful, and some negative number on error (@see cpuid_error_t)
+ *          The error message can be obtained by calling cpuid_error
+ */
 int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename);
 
+/**
+ * @brief Reads raw CPUID data from file
+ * @param data - a pointer to cpu_raw_data_t structure. The deserialized data will
+ *               be written here.
+ * @param filename - the path of the file, containing the serialized raw data.
+ * @note This function may fail, if the file is created by different version of
+ *       the library. Also, see the notes on cpuid_serialize_raw_data.
+ * @returns zero if successful, and some negative number on error (@see cpuid_error_t)
+ *          The error message can be obtained by calling cpuid_error
+*/
 int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename);
 
+/**
+ * @brief Identifies the CPU
+ * @param raw - Input - a pointer to the raw CPUID data, which is obtained
+ *              either by cpuid_get_raw_data or cpuid_deserialize_raw_data.
+ *              Can also be NULL, in which case the functions calls
+ *              cpuid_get_raw_data itself.
+ * @param data - Output - the decoded CPU features/info is written here.
+ * @note The function will not fail, even if some of the information
+ *       cannot be obtained. Even when the CPU is new and thus unknown to
+ *       libcpuid, some generic info, such as "AMD K9 family CPU" will be
+ *       written to data.cpu_codename, and most other things, such as the
+ *       CPU flags, cache sizes, etc. should be detected correctly anyway.
+ *       However, the function CAN fail, if the CPU is completely alien to
+ *       libcpuid.
+ * @note While cpu_identify() and cpuid_get_raw_data() are fast for most
+ *       purposes, running them several thousand times per second can hamper
+ *       performance significantly. Specifically, avoid writing "cpu feature
+ *       checker" wrapping function, which calls cpu_identify and returns the
+ *       value of some flag, if that function is going to be called frequently.
+ * @returns zero if successful, and some negative number on error (@see cpuid_error_t)
+ *          The error message can be obtained by calling cpuid_error
+ */
 int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data);
 
+/**
+ * @brief Returns the short textual representation of a CPU flag
+ * @param feature - the feature, whose textual representation is wanted.
+ * @returns a constant string like "fpu", "tsc", "sse2", etc.
+ * @note the names of the returned flags are compatible with those from
+ *       /proc/cpuinfo in Linux.
+ */
 const char* cpu_feature_str(cpu_feature_t feature);
 
+/**
+ * @brief Returns textual description of the last error
+ *
+ * libcpuid stores an `errno'-style error status, whose description
+ * can be obtained with this function.
+ * @note This function is not thread-safe
+ */
 const char* cpuid_error(void);
 
+/**
+ * @brief Executes RDTSC
+ *
+ * The RDTSC (ReaD Time Stamp Counter) instruction gives access to an
+ * internal 64-bit counter, which usually increments at each clock cycle.
+ * This can be used for various timing routines, and as a very precise
+ * clock source. It is set to zero on system startup. Beware that may not
+ * increment at the same frequency as the CPU. Consecutive calls of RDTSC
+ * are, however, guaranteed to return monotonically-increasing values.
+ *
+ * @param result - a pointer to a 64-bit unsigned integer, where the TSC value
+ *                 will be stored
+ *
+ * @note  If 100% compatibility is a concern, you must first check if the
+ * RDTSC instruction is present (if it is not, your program will crash
+ * with "invalid opcode" exception). Only some very old processors (i486,
+ * early AMD K5 and some Cyrix CPUs) lack that instruction - they should
+ * have become exceedingly rare these days. To verify RDTSC presence,
+ * run cpu_identify() and check flags[CPU_FEATURE_TSC].
+ *
+ * @note The monotonically increasing nature of the TSC may be violated
+ * on SMP systems, if their TSC clocks run at different rate. If the OS
+ * doesn't account for that, the TSC drift may become arbitrary large.
+ */
 void cpu_rdtsc(uint64_t* result);
 
+/**
+ * @brief Store TSC and timing info
+ *
+ * This function stores the current TSC value (@see cpu_rdtsc) and current
+ * time info from a precise OS-specific clock source in the cpu_mark_t
+ * structure. The sys_clock field contains time with microsecond resolution.
+ * The values can later be used to measure time intervals, number of clocks,
+ * FPU frequency, etc.
+ *
+ * @param mark [out] - a pointer to a cpu_mark_t structure
+ */
 void cpu_tsc_mark(struct cpu_mark_t* mark);
 
+/**
+ * @brief Calculate TSC and timing difference
+ *
+ * @param mark - input/output: a pointer to a cpu_mark_t sturcture, which has
+ *               already been initialized by cpu_tsc_mark. The difference in
+ *               TSC and time will be written here.
+ *
+ * This function calculates the TSC and time difference, by obtaining the
+ * current TSC and timing values and subtracting the contents of the `mark'
+ * structure from them. Results are written in the same structure.
+ *
+ * Example:
+ * @code
+ * ...
+ * struct cpu_mark_t mark;
+ * cpu_tsc_mark(&mark);
+ * foo();
+ * cpu_tsc_unmark(&mark);
+ * printf("Foo finished. Executed in %llu cycles and %llu usecs\n",
+ *        mark.tsc, mark.sys_clock);
+ * ...
+ * @endcode
+ */
 void cpu_tsc_unmark(struct cpu_mark_t* mark);
 
+/**
+ * @brief Calculates the CPU clock
+ *
+ * @param mark - pointer to a cpu_mark_t structure, which has been initialized
+ *   with cpu_tsc_mark and later `stopped' with cpu_tsc_unmark.
+ *
+ * @note For reliable results, the marked time interval should be at least about
+ * 10 ms.
+ *
+ * @returns the CPU clock frequency, in MHz. Due to measurement error, it will
+ * differ from the true value in a few least-significant bits. Accuracy depends
+ * on the timing interval - the more, the better. If the timing interval is
+ * insufficient, the result is -1. Also, see the comment on cpu_clock_measure
+ * for additional issues and pitfalls in using RDTSC for CPU frequency
+ * measurements.
+ */
 int cpu_clock_by_mark(struct cpu_mark_t* mark);
 
+/**
+ * @brief Returns the CPU clock, as reported by the OS
+ *
+ * This function uses OS-specific functions to obtain the CPU clock. It may
+ * differ from the true clock for several reasons:
+ *
+ * i) The CPU might be in some power saving state, while the OS reports its
+ *    full-power frequency, or vice-versa.
+ * ii) In some cases you can raise or lower the CPU frequency with overclocking
+ *     utilities and the OS will not notice.
+ *
+ * @returns the CPU clock frequency in MHz. If the OS is not (yet) supported
+ * or lacks the necessary reporting machinery, the return value is -1
+ */
 int cpu_clock_by_os(void);
 
-int cpu_clock_measure(int millis, int triple_check);
+/**
+ * @brief Measure the CPU clock frequency
+ *
+ * @param millis - How much time to waste in the busy-wait cycle. In millisecs.
+ *                 Useful values 10 - 1000
+ * @param quad_check - Do a more thorough measurement if nonzero
+ *                     (see the explanation).
+ *
+ * The function performs a busy-wait cycle for the given time and calculates
+ * the CPU frequency by the difference of the TSC values. The accuracy of the
+ * calculation depends on the length of the busy-wait cycle: more is better,
+ * but 100ms should be enough for most purposes.
+ *
+ * While this will calculate the CPU frequency correctly in most cases, there are
+ * several reasons why it might be incorrect:
+ *
+ * i) RDTSC doesn't guarantee it will run at the same clock as the CPU.
+ *    Apparently there aren't CPUs at the moment, but still, there's no
+ *    guarantee.
+ * ii) The CPU might be in a low-frequency power saving mode, and the CPU
+ *     might be switched to higher frequency at any time. If this happens
+ *     during the measurement, the result can be anywhere between the
+ *     low and high frequencies. Also, if you're interested in the
+ *     high frequency value only, this function might return the low one
+ *     instead.
+ * iii) On SMP systems exhibiting TSC drift (@see cpu_rdtsc)
+ *
+ * the quad_check option will run four consecutive measurements and
+ * then return the average of the two most-consistent results. The total
+ * runtime of the function will still be `millis' - consider using
+ * a bit more time for the timing interval.
+ *
+ * Finally, for benchmarking / CPU intensive applications, the best strategy is
+ * to use the cpu_tsc_mark() / cpu_tsc_unmark() / cpu_clock_by_mark() method.
+ * Begin by mark()-ing about one second after application startup (allowing the
+ * power-saving manager to kick in and rise the frequency during that time),
+ * then unmark() just before application finishing. The result will most
+ * acurately represent at what frequency your app was running.
+ *
+ * @returns the CPU clock frequency in MHz (within some measurement error
+ * margin). If RDTSC is not supported, the result is -1.
+ */
+int cpu_clock_measure(int millis, int quad_check);
 
+/**
+ * @brief Get the CPU clock frequency (all-in-one method)
+ *
+ * This is an all-in-one method for getting the CPU clock frequency.
+ * It tries to use the OS for that. If the OS doesn't have this info, it
+ * uses cpu_clock_measure with 200ms time interval and quadruple checking.
+ *
+ * @returns the CPU clock frequency in MHz. If every possible method fails,
+ * the result is -1.
+ */
 int cpu_clock(void);
 
+/**
+ * @brief Returns the libcpuid version
+ *
+ * @returns the string representation of the libcpuid version, like "0.1.0"
+ */
 const char* cpuid_lib_version(void);
 
-void set_warn_function(void (*warn_fun) (const char* msg));
+typedef void (*libcpuid_warn_fn_t) (const char *msg);
+/**
+ * @brief Sets the warning print function
+ *
+ * In some cases, the internal libcpuid machinery would like to emit useful
+ * debug warnings. By default, these warnings are written to stdout. However,
+ * you can set a custom function that will receive those warnings.
+ *
+ * @param warn_fun - the warning function you want to set. If NULL, warnings
+ *                   are disabled. The function takes const char* argument.
+ *
+ * @returns the current warning function. You can use the return value to
+ * keep the previous warning function and restore it at your discretion.
+ */
+libcpuid_warn_fn_t set_warn_function(libcpuid_warn_fn_t warn_fun);
 
 #ifdef __cplusplus
 }; // extern "C"

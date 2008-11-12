@@ -36,7 +36,7 @@ int main(void)
 	printf("  code name  : `%s'\n", data.cpu_codename);
 	printf("  features   :");
 	int i;
-	for (i = 0; i < CPU_FEATURE_END; i++)
+	for (i = 0; i < CPU_NUM_FEATURES; i++)
 		if (data.flags[i])
 			printf(" %s", cpu_feature_str(i));
 	printf("\n");

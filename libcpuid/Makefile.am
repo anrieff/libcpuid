@@ -23,3 +23,4 @@ libcpuidinclude_HEADERS = 	\
 	libcpuid_types.h
 
 EXTRA_DIST += libcpuid.sym
+

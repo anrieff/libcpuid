@@ -44,7 +44,7 @@ static void default_warn(const char *msg)
 	printf("%s", msg);
 }
 
-static void (*_warn) (const char* msg) = default_warn;
+static libcpuid_warn_fn_t _warn = default_warn;
 
 static int set_error(cpuid_error_t err)
 {
@@ -105,7 +105,7 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 	const struct feature_map_t matchtable_edx1[] = {
 		{  0, CPU_FEATURE_FPU },
 		{  1, CPU_FEATURE_VME },
-		{  2, CPU_FEATURE_DEBUG },
+		{  2, CPU_FEATURE_DE },
 		{  3, CPU_FEATURE_PSE },
 		{  4, CPU_FEATURE_TSC },
 		{  5, CPU_FEATURE_MSR },
@@ -127,17 +127,17 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 		{ 28, CPU_FEATURE_HT },
 	};
 	const struct feature_map_t matchtable_ecx1[] = {
-		{  0, CPU_FEATURE_SSE3 },
-		{  3, CPU_FEATURE_MON },
+		{  0, CPU_FEATURE_PNI },
+		{  3, CPU_FEATURE_MONITOR },
 		{  9, CPU_FEATURE_SSSE3 },
 		{ 13, CPU_FEATURE_CX16 },
-		{ 19, CPU_FEATURE_SSE41 },
+		{ 19, CPU_FEATURE_SSE4_1 },
 	};
 	const struct feature_map_t matchtable_edx81[] = {
 		{ 29, CPU_FEATURE_LM },
 	};
 	const struct feature_map_t matchtable_ecx81[] = {
-		{ 0, CPU_FEATURE_LAHFSAHF },
+		{ 0, CPU_FEATURE_LAHF_LM },
 	};
 	if (raw->basic_cpuid[0][0] >= 1) {
 		match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][3], data);
@@ -333,7 +333,8 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	int r;
 	struct cpu_raw_data_t myraw;
 	if (!raw) {
-		cpuid_get_raw_data(&myraw);
+		if ((r = cpuid_get_raw_data(&myraw)) < 0)
+			return set_error(r);
 		raw = &myraw;
 	}
 	cpu_id_t_constructor(data);
@@ -358,7 +359,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 	matchtable[] = {
 		{ CPU_FEATURE_FPU, "fpu" },
 		{ CPU_FEATURE_VME, "vme" },
-		{ CPU_FEATURE_DEBUG, "debug" },
+		{ CPU_FEATURE_DE, "de" },
 		{ CPU_FEATURE_PSE, "pse" },
 		{ CPU_FEATURE_TSC, "tsc" },
 		{ CPU_FEATURE_MSR, "msr" },
@@ -372,7 +373,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_CMOV, "cmov" },
 		{ CPU_FEATURE_PAT, "pat" },
 		{ CPU_FEATURE_PSE36, "pse36" },
-		{ CPU_FEATURE_PSN, "psn" },
+		{ CPU_FEATURE_PN, "pn" },
 		{ CPU_FEATURE_CLFLUSH, "clflush" },
 		{ CPU_FEATURE_DTS, "dts" },
 		{ CPU_FEATURE_ACPI, "acpi" },
@@ -385,11 +386,11 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_TM, "tm" },
 		{ CPU_FEATURE_IA64, "ia64" },
 		{ CPU_FEATURE_PBE, "pbe" },
-		{ CPU_FEATURE_SSE3, "sse3" },
+		{ CPU_FEATURE_PNI, "pni" },
 		{ CPU_FEATURE_PCLMUL, "pclmul" },
 		{ CPU_FEATURE_DTS64, "dts64" },
-		{ CPU_FEATURE_MON, "mon" },
-		{ CPU_FEATURE_DSCPL, "dscpl" },
+		{ CPU_FEATURE_MONITOR, "monitor" },
+		{ CPU_FEATURE_DS_CPL, "ds_cpl" },
 		{ CPU_FEATURE_VMX, "vmx" },
 		{ CPU_FEATURE_SMX, "smx" },
 		{ CPU_FEATURE_EST, "est" },
@@ -397,11 +398,11 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SSSE3, "ssse3" },
 		{ CPU_FEATURE_CID, "cid" },
 		{ CPU_FEATURE_CX16, "cx16" },
-		{ CPU_FEATURE_ETPRD, "etprd" },
+		{ CPU_FEATURE_XTPR, "xtpr" },
 		{ CPU_FEATURE_PDCM, "pdcm" },
 		{ CPU_FEATURE_DCA, "dca" },
-		{ CPU_FEATURE_SSE41, "sse41" },
-		{ CPU_FEATURE_SSE42, "sse42" },
+		{ CPU_FEATURE_SSE4_1, "sse4_1" },
+		{ CPU_FEATURE_SSE4_2, "sse4_2" },
 		{ CPU_FEATURE_MOVBE, "movbe" },
 		{ CPU_FEATURE_POPCNT, "popcnt" },
 		{ CPU_FEATURE_AES, "aes" },
@@ -414,16 +415,16 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_NX, "nx" },
 		{ CPU_FEATURE_RDTSCP, "rdtscp" },
 		{ CPU_FEATURE_LM, "lm" },
-		{ CPU_FEATURE_LAHFSAHF, "lahfsahf" },
+		{ CPU_FEATURE_LAHF_LM, "lahf_lm" },
 		{ CPU_FEATURE_SVM, "svm" },
-		{ CPU_FEATURE_LZCNT, "lzcnt" },
+		{ CPU_FEATURE_ABM, "abm" },
 		{ CPU_FEATURE_3DNOWPREFETCH, "3dnowprefetch" },
 		{ CPU_FEATURE_OSVW, "osvw" },
 		{ CPU_FEATURE_IBS, "ibs" },
-		{ CPU_FEATURE_SSE51, "sse51" },
+		{ CPU_FEATURE_SSE5, "sse5" },
 		{ CPU_FEATURE_SKINIT, "skinit" },
 		{ CPU_FEATURE_WDT, "wdt" },
-		{ CPU_FEATURE_CONST_TSC, "const_tsc" },
+		{ CPU_FEATURE_CONSTANT_TSC, "constant_tsc" },
 	};
 	unsigned i;
 	for (i = 0; i < COUNT_OF(matchtable); i++)
@@ -458,8 +459,10 @@ const char* cpuid_lib_version(void)
 	return VERSION;
 }
 
-void set_warn_function(void (*warn_fun) (const char* msg))
+libcpuid_warn_fn_t set_warn_function(libcpuid_warn_fn_t new_fn)
 {
-	_warn = warn_fun;
+	libcpuid_warn_fn_t ret = _warn;
+	_warn = new_fn;
+	return ret;
 }
 
