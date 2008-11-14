@@ -46,3 +46,27 @@ f.close()
 for feature in allf:
 	if not feature in impf:
 		print "cpu_feature_str(): don't have entry for %s" % feature
+
+# Check whether all features have detection code:
+
+files_code = {}
+
+rexp = re.compile('.*{ *[0-9]+, (CPU_FEATURE_[^ }]+).*')
+
+for fn in glob.glob("%s/*.c" % sys.argv[1]):
+	f = open(fn, "rt")
+	files_code[fn] = []
+	for s in f.readlines():
+		if rexp.match(s):
+			entry = rexp.findall(s)[0]
+			files_code[fn].append(entry)
+
+for feature in allf:
+	matching_files = []
+	for fn in files_code:
+		if feature in files_code[fn]:
+			matching_files.append(fn)
+	if len(matching_files) == 0:
+		print "No detection code for %s" % feature
+	if len(matching_files) > 1:
+		print "Conflicting detection code for %s in files %s" % (feature, " and ".join(matching_files))

@@ -286,9 +286,9 @@ enum _cpu_feature_t {
 	CPU_FEATURE_LM,		/*!< Long mode (x86_64/EM64T) supported */
 	CPU_FEATURE_LAHF_LM,	/*!< LAHF/SAHF supported in 64-bit mode */
 	CPU_FEATURE_SVM,	/*!< AMD Secure virtual machine */
-	CPU_FEATURE_SSE4A,	/*!< SSE 4a from AMD */
-	CPU_FEATURE_MISALIGNSSE,/*!< Misaligned SSE supported */
 	CPU_FEATURE_ABM,	/*!< LZCNT instruction support */
+	CPU_FEATURE_MISALIGNSSE,/*!< Misaligned SSE supported */
+	CPU_FEATURE_SSE4A,	/*!< SSE 4a from AMD */
 	CPU_FEATURE_3DNOWPREFETCH,	/*!< PREFETCH/PREFETCHW support */
 	CPU_FEATURE_OSVW,	/*!< OS Visible Workaround (AMD) */
 	CPU_FEATURE_IBS,	/*!< Instruction-based sampling */

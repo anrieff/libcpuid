@@ -150,6 +150,7 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 		{  7, CPU_FEATURE_MCE },
 		{  8, CPU_FEATURE_CX8 },
 		{  9, CPU_FEATURE_APIC },
+		{ 11, CPU_FEATURE_SEP },
 		{ 12, CPU_FEATURE_MTRR },
 		{ 13, CPU_FEATURE_PGE },
 		{ 14, CPU_FEATURE_MCA },
@@ -169,12 +170,17 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 		{  9, CPU_FEATURE_SSSE3 },
 		{ 13, CPU_FEATURE_CX16 },
 		{ 19, CPU_FEATURE_SSE4_1 },
+		{ 23, CPU_FEATURE_POPCNT },
 	};
 	const struct feature_map_t matchtable_edx81[] = {
+		{ 11, CPU_FEATURE_SYSCALL },
 		{ 29, CPU_FEATURE_LM },
 	};
 	const struct feature_map_t matchtable_ecx81[] = {
-		{ 0, CPU_FEATURE_LAHF_LM },
+		{  0, CPU_FEATURE_LAHF_LM },
+	};
+	const struct feature_map_t matchtable_edx87[] = {
+		{  8, CPU_FEATURE_CONSTANT_TSC },
 	};
 	if (raw->basic_cpuid[0][0] >= 1) {
 		match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][3], data);
@@ -184,6 +190,8 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][3], data);
 		match_features(matchtable_ecx81, COUNT_OF(matchtable_ecx81), raw->ext_cpuid[1][2], data);
 	}
+	if (raw->ext_cpuid[0][0] >= 7)
+		match_features(matchtable_edx87, COUNT_OF(matchtable_edx87), raw->ext_cpuid[7][3], data);
 }
 
 static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)

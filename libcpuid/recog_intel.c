@@ -183,7 +183,6 @@ const struct match_entry_t cpudb_intel[] = {
 static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
 	const struct feature_map_t matchtable_edx1[] = {
-		{ 11, CPU_FEATURE_SEP },
 		{ 18, CPU_FEATURE_PN },
 		{ 21, CPU_FEATURE_DTS },
 		{ 22, CPU_FEATURE_ACPI },
@@ -194,7 +193,7 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	};
 	const struct feature_map_t matchtable_ecx1[] = {
 		{  1, CPU_FEATURE_PCLMUL },
-		{  2, CPU_FEATURE_SVM },
+		{  2, CPU_FEATURE_DTS64 },
 		{  4, CPU_FEATURE_DS_CPL },
 		{  5, CPU_FEATURE_VMX },
 		{  6, CPU_FEATURE_SMX },
@@ -205,14 +204,22 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		{ 15, CPU_FEATURE_PDCM },
 		{ 18, CPU_FEATURE_DCA },
 		{ 20, CPU_FEATURE_SSE4_2 },
+		{ 22, CPU_FEATURE_MOVBE },
+		{ 25, CPU_FEATURE_AES },
+		{ 26, CPU_FEATURE_XSAVE },
+		{ 27, CPU_FEATURE_OSXSAVE },
+		{ 28, CPU_FEATURE_AVX },
 	};
 	const struct feature_map_t matchtable_edx81[] = {
-		{ 11, CPU_FEATURE_SYSCALL },
 		{ 20, CPU_FEATURE_XD },
 	};
-	match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][3], data);
-	match_features(matchtable_ecx1, COUNT_OF(matchtable_ecx1), raw->basic_cpuid[1][2], data);
-	match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][3], data);
+	if (raw->basic_cpuid[0][0] >= 1) {
+		match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][3], data);
+		match_features(matchtable_ecx1, COUNT_OF(matchtable_ecx1), raw->basic_cpuid[1][2], data);
+	}
+	if (raw->ext_cpuid[0][0] >= 1) {
+		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][3], data);
+	}
 }
 
 enum _cache_type_t {
