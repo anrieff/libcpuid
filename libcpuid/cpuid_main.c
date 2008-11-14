@@ -27,24 +27,16 @@
 #include "recog_intel.h"
 #include "recog_amd.h"
 #include "asm-bits.h"
+#include "libcpuid_util.h"
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 #include <stdio.h>
 #include <string.h>
 
-#define COUNT_OF(array) (sizeof(array) / sizeof(array[0]))
-
 /* Implementation: */
 
 static int _libcpiud_errno = ERR_OK;
-
-static void default_warn(const char *msg)
-{
-	printf("%s", msg);
-}
-
-static libcpuid_warn_fn_t _warn = default_warn;
 
 static int set_error(cpuid_error_t err)
 {
@@ -62,6 +54,7 @@ static void cpu_id_t_constructor(struct cpu_id_t* id)
 	memset(id, 0, sizeof(struct cpu_id_t));
 	id->l1_data_cache = id->l1_instruction_cache = id->l2_cache = id->l3_cache = -1;
 	id->l1_assoc = id->l2_assoc = id->l3_assoc = -1;
+	id->l1_cacheline = id->l2_cacheline = id->l3_cacheline = -1;
 }
 
 static int parse_token(const char* expected_token, const char *token,
@@ -87,18 +80,62 @@ static int parse_token(const char* expected_token, const char *token,
 	return 0;
 }
 
-struct feature_map_t {
-	unsigned bit;
-	cpu_feature_t feature;
-};
- 
-static void match_features(const struct feature_map_t* matchtable, int count, uint32_t reg, struct cpu_id_t* data)
+/* get_total_cpus() system specific code: uses OS routines to determine total number of CPUs */
+#ifdef __APPLE__
+#include <unistd.h>
+#include <mach/clock_types.h>
+#include <mach/clock.h>
+#include <mach/mach.h>
+static int get_total_cpus(void)
 {
-	int i;
-	for (i = 0; i < count; i++)
-		if (reg & (1 << matchtable[i].bit))
-			data->flags[matchtable[i].feature] = 1;
+	kern_return_t kr;
+	host_basic_info_data_t basic_info;
+	host_info_t info = (host_info_t)&basic_info;
+	host_flavor_t flavor = HOST_BASIC_INFO;
+	mach_msg_type_number_t count = HOST_BASIC_INFO_COUNT;
+	kr = host_info(mach_host_self(), flavor, info, &count);
+	if (kr != KERN_SUCCESS) return 1;
+	return basic_info.avail_cpus;
 }
+#define GET_TOTAL_CPUS_DEFINED
+#endif
+
+#ifdef _WIN32
+#include <windows.h>
+static int get_total_cpus(void)
+{
+	SYSTEM_INFO system_info;
+	GetSystemInfo(&system_info);
+	return system_info.dwNumberOfProcessors;
+}
+#define GET_TOTAL_CPUS_DEFINED
+#endif
+
+#if defined linux || defined __linux__
+#include <sys/sysinfo.h>
+#include <unistd.h>
+ 
+static int get_total_cpus(void)
+{
+	return sysconf(_SC_NPROCESSORS_ONLN);
+}
+#define GET_TOTAL_CPUS_DEFINED
+#endif
+
+#ifndef GET_TOTAL_CPUS_DEFINED
+static int get_total_cpus(void)
+{
+	static int warning_printed = 0;
+	if (!warning_printed) {
+		warning_printed = 1;
+		warnf("Your system is not supported by libcpuid -- don't know how to detect the\n");
+		warnf("total number of CPUs on your system. It will be reported as 1.\n");
+		printf("Please use cpu_id_t.logical_cpus field instead.\n");
+	}
+	return 1;
+}
+#endif // GET_TOTAL_CPUS_DEFINED
+
 
 static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
@@ -204,6 +241,7 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		data->brand_str[48] = 0;
 	}
 	load_features_common(raw, data);
+	data->total_cpus = get_total_cpus();
 	return set_error(ERR_OK);
 }
 
@@ -274,7 +312,6 @@ int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 {
 	int i, len;
-	char temp[100];
 	char line[100];
 	char token[100];
 	char *value;
@@ -311,16 +348,12 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
 		syntax = syntax && parse_token("ext_cpuid", token, value, data->ext_cpuid, 32, &recognized);
 		syntax = syntax && parse_token("intel_fn4", token, value, data->intel_fn4,  4, &recognized);
 		if (!syntax) {
-			sprintf(temp, "Error: %s:%d: Syntax error\n",
-				filename, cur_line);
-			_warn(temp);
+			warnf("Error: %s:%d: Syntax error\n", filename, cur_line);
 			fclose(f);
 			return set_error(ERR_BADFMT);
 		}
 		if (!recognized) {
-			sprintf(temp, "Warning: %s:%d not understood!\n",
-			        filename, cur_line);
-			_warn(temp);
+			warnf("Warning: %s:%d not understood!\n", filename, cur_line);
 		}
 	}
 	
@@ -368,6 +401,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_CX8, "cx8" },
 		{ CPU_FEATURE_APIC, "apic" },
 		{ CPU_FEATURE_MTRR, "mtrr" },
+		{ CPU_FEATURE_SEP, "sep" },
 		{ CPU_FEATURE_PGE, "pge" },
 		{ CPU_FEATURE_MCA, "mca" },
 		{ CPU_FEATURE_CMOV, "cmov" },
@@ -403,6 +437,8 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_DCA, "dca" },
 		{ CPU_FEATURE_SSE4_1, "sse4_1" },
 		{ CPU_FEATURE_SSE4_2, "sse4_2" },
+		{ CPU_FEATURE_SYSCALL, "syscall" },
+		{ CPU_FEATURE_XD, "xd" },
 		{ CPU_FEATURE_MOVBE, "movbe" },
 		{ CPU_FEATURE_POPCNT, "popcnt" },
 		{ CPU_FEATURE_AES, "aes" },
@@ -417,6 +453,8 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_LM, "lm" },
 		{ CPU_FEATURE_LAHF_LM, "lahf_lm" },
 		{ CPU_FEATURE_SVM, "svm" },
+		{ CPU_FEATURE_SSE4A, "sse4a" },
+		{ CPU_FEATURE_MISALIGNSSE, "misalignsse" },
 		{ CPU_FEATURE_ABM, "abm" },
 		{ CPU_FEATURE_3DNOWPREFETCH, "3dnowprefetch" },
 		{ CPU_FEATURE_OSVW, "osvw" },
@@ -426,8 +464,11 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_WDT, "wdt" },
 		{ CPU_FEATURE_CONSTANT_TSC, "constant_tsc" },
 	};
-	unsigned i;
-	for (i = 0; i < COUNT_OF(matchtable); i++)
+	unsigned i, n = COUNT_OF(matchtable);
+	if (n != CPU_NUM_FEATURES) {
+		warnf("Warning: incomplete library, feature matchtable size differs from the actual number of features.\n");
+	}
+	for (i = 0; i < n; i++)
 		if (matchtable[i].feature == feature)
 			return matchtable[i].name;
 	return "";
@@ -461,8 +502,8 @@ const char* cpuid_lib_version(void)
 
 libcpuid_warn_fn_t set_warn_function(libcpuid_warn_fn_t new_fn)
 {
-	libcpuid_warn_fn_t ret = _warn;
-	_warn = new_fn;
+	libcpuid_warn_fn_t ret = _warn_fun;
+	_warn_fun = new_fn;
 	return ret;
 }
 

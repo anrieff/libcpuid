@@ -11,7 +11,8 @@ libcpuid_la_SOURCES =		\
 	recog_intel.c		\
 	recog_amd.c		\
 	rdtsc.c			\
-	asm-bits.c
+	asm-bits.c		\
+	libcpuid_util.c
 
 libcpuid_la_DEPENDENCIES = \
 	$(srcdir)/libcpuid.sym
@@ -22,5 +23,10 @@ libcpuidinclude_HEADERS = 	\
 	libcpuid_constants.h	\
 	libcpuid_types.h
 
-EXTRA_DIST += libcpuid.sym
+noinst_HEADERS = 		\
+	asm-bits.h		\
+	libcpuid_util.h		\
+	recog_intel.h		\
+	recog_amd.h
 
+EXTRA_DIST += libcpuid.sym

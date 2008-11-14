@@ -175,6 +175,15 @@ struct cpu_id_t {
 	/** Cache associativity for the L3 cache. -1 if undetermined */
 	int32_t l3_assoc;
 	
+	/** Cache-line size for L1 data cache. -1 if undetermined */
+	int32_t l1_cacheline;
+	
+	/** Cache-line size for L2 cache. -1 if undetermined */
+	int32_t l2_cacheline;
+	
+	/** Cache-line size for L3 cache. -1 if undetermined */
+	int32_t l3_cacheline;
+	
 	/**
 	 * The brief and human-friendly CPU codename, which was recognized.<br>
 	 * Examples:
@@ -260,6 +269,8 @@ enum _cpu_feature_t {
 	CPU_FEATURE_DCA,	/*!< Direct cache access supported */
 	CPU_FEATURE_SSE4_1,	/*!< SSE 4.1 instructions supported */
 	CPU_FEATURE_SSE4_2,	/*!< SSE 4.2 instructions supported */
+	CPU_FEATURE_SYSCALL,	/*!< SYSCALL / SYSRET instructions supported */
+	CPU_FEATURE_XD,		/*!< Execute disable bit supported */
 	CPU_FEATURE_MOVBE,	/*!< MOVBE instruction supported */
 	CPU_FEATURE_POPCNT,	/*!< POPCNT instruction supported */
 	CPU_FEATURE_AES,	/*!< AES* instructions supported */
