@@ -399,7 +399,7 @@ static void decode_intel_number_of_cores(struct cpu_raw_data_t* raw,
 	if (data->flags[CPU_FEATURE_HT]) {
 		if (num_cores > 1) {
 			data->num_cores = num_cores;
-			data->num_logical_cpus = logical_cpus / num_cores;
+			data->num_logical_cpus = logical_cpus;
 		} else {
 			data->num_cores = 1;
 			data->num_logical_cpus = (logical_cpus >= 2 ? logical_cpus : 2);
