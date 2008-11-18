@@ -52,21 +52,21 @@ extern "C" {
  * @brief CPU vendor, as guessed from the Vendor String.
  */
 enum _cpu_vendor_t {
-	INTEL = 0,
-	AMD,
-	CYRIX,
-	NEXGEN,
-	TRANSMETA,
-	UMC,
-	CENTAUR,
-	RISE,
-	SIS,
-	NSC,
+	VENDOR_INTEL = 0,
+	VENDOR_AMD,
+	VENDOR_CYRIX,
+	VENDOR_NEXGEN,
+	VENDOR_TRANSMETA,
+	VENDOR_UMC,
+	VENDOR_CENTAUR,
+	VENDOR_RISE,
+	VENDOR_SIS,
+	VENDOR_NSC,
 	
-	NUM_VENDORS,
-	UNKNOWN = -1,
+	NUM_CPU_VENDORS,
+	VENDOR_UNKNOWN = -1,
 };
-#define NUM_VENDORS NUM_VENDORS
+#define NUM_CPU_VENDORS NUM_CPU_VENDORS
 typedef enum _cpu_vendor_t cpu_vendor_t;
 
 /**
@@ -277,7 +277,6 @@ enum _cpu_feature_t {
 	CPU_FEATURE_XSAVE,	/*!< XSAVE/XRSTOR/etc instructions supported */
 	CPU_FEATURE_OSXSAVE,	/*!< non-privileged copy of OSXSAVE supported */
 	CPU_FEATURE_AVX,	/*!< Advanced vector extensions supported */
-	// AMD specific:
 	CPU_FEATURE_MMXEXT,	/*!< AMD MMX-extended instructions supported */
 	CPU_FEATURE_3DNOW,	/*!< AMD 3DNow! instructions supported */
 	CPU_FEATURE_3DNOWEXT,	/*!< AMD 3DNow! extended instructions supported */
@@ -297,7 +296,7 @@ enum _cpu_feature_t {
 	CPU_FEATURE_WDT,	/*!< Watchdog timer support */
 	CPU_FEATURE_CONSTANT_TSC,	/*!< TSC ticks at constant rate */
 	// termination:
-	CPU_NUM_FEATURES,
+	NUM_CPU_FEATURES,
 };
 typedef enum _cpu_feature_t cpu_feature_t;
 

@@ -24,12 +24,135 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
+#include <string.h>
 #include "libcpuid.h"
 #include "recog_amd.h"
 #include "libcpuid_util.h"
 
-/*
-*/
+enum _amd_code_t {
+	NA,
+	NO_CODE,
+	OPTERON_GENERIC,
+	OPTERON_800,
+	ATHLON_XP,
+	ATHLON_XP_BARTON,
+	ATHLON_XP_M,
+	ATHLON_XP_M_LV,
+	ATHLON_64,
+	ATHLON_64_MANCHESTER,
+	ATHLON_MP,
+	MOBILE_ATHLON64,
+	ATHLON_FX,
+	DURON,
+	DURON_MP,
+	MOBILE_DURON,
+	SEMPRON,
+	MOBILE_SEMPRON,
+	OPTERON_SINGLECORE,
+	OPTERON_DUALCORE,
+	OPTERON_800_DUALCORE,
+	MOBILE_TURION,
+	ATHLON_64_512K,
+	ATHLON_64_1024K,
+	ATHLON_64_X2_512K,
+	ATHLON_64_X2_1024K,
+	ATHLON_64_FX,
+	TURION_64_512K,
+	TURION_64_1024K,
+	TURION_X2_512K,
+	TURION_X2_1024K,
+	SEMPRON_64_128K,
+	SEMPRON_64_256K,
+};
+typedef enum _amd_code_t amd_code_t;
+
+const struct match_entry_t cpudb_amd[] = {
+	{ -1, -1, -1, -1, -1, NO_CODE,            "Unknown AMD CPU" },
+	
+	/* 486 and the likes */
+	{  4, -1, -1, -1, -1, NO_CODE,            "Unknown AMD 486" },
+	{  4,  3, -1, -1, -1, NO_CODE,            "AMD 486DX2" },
+	{  4,  7, -1, -1, -1, NO_CODE,            "AMD 486DX2WB" },
+	{  4,  8, -1, -1, -1, NO_CODE,            "AMD 486DX4" },
+	{  4,  9, -1, -1, -1, NO_CODE,            "AMD 486DX4WB" },
+	
+	/* Pentia clones */
+	{  5, -1, -1, -1, -1, NO_CODE,            "Unknown AMD 586" },
+	{  5,  0, -1, -1, -1, NO_CODE,            "K5" },
+	{  5,  1, -1, -1, -1, NO_CODE,            "K5" },
+	{  5,  2, -1, -1, -1, NO_CODE,            "K5" },
+	{  5,  3, -1, -1, -1, NO_CODE,            "K5" },
+	
+	/* The K6 */
+	{  5,  6, -1, -1, -1, NO_CODE,            "K6" },
+	{  5,  7, -1, -1, -1, NO_CODE,            "K6" },
+	
+	{  5,  8, -1, -1, -1, NO_CODE,            "K6-2" },
+	{  5,  9, -1, -1, -1, NO_CODE,            "K6-III" },
+	{  5, 10, -1, -1, -1, NO_CODE,            "Unknown K6" },
+	{  5, 11, -1, -1, -1, NO_CODE,            "Unknown K6" },
+	{  5, 12, -1, -1, -1, NO_CODE,            "Unknown K6" },
+	{  5, 13, -1, -1, -1, NO_CODE,            "K6-2+" },
+	
+	/* Athlon et al. */
+	{  6,  1, -1, -1, -1, NO_CODE,            "Athlon (Slot-A)" },
+	{  6,  2, -1, -1, -1, NO_CODE,            "Athlon (Slot-A)" },
+	{  6,  3, -1, -1, -1, NO_CODE,            "Duron (Spitfire)" },
+	{  6,  4, -1, -1, -1, NO_CODE,            "Athlon (ThunderBird)" },
+	
+	{  6,  6, -1, -1, -1, NO_CODE,            "Unknown Athlon" },
+	{  6,  6, -1, -1, -1, ATHLON_64,          "Athlon (Palomino)" },
+	{  6,  6, -1, -1, -1, ATHLON_MP,          "Athlon MP (Palomino)" },
+	{  6,  6, -1, -1, -1, DURON,              "Duron (Palomino)" },
+	{  6,  6, -1, -1, -1, ATHLON_XP,          "Athlon XP" },
+	
+	{  6,  7, -1, -1, -1, NO_CODE,            "Unknown Athlon XP" },
+	{  6,  7, -1, -1, -1, DURON,              "Duron (Morgan)" },
+	
+	{  6,  8, -1, -1, -1, NO_CODE,            "Athlon XP" },
+	{  6,  8, -1, -1, -1, ATHLON_64,          "Athlon XP" },
+	{  6,  8, -1, -1, -1, ATHLON_XP,          "Athlon XP" },
+	{  6,  8, -1, -1, -1, DURON,              "Duron (Applebred)" },
+	{  6,  8, -1, -1, -1, SEMPRON,            "Sempron (Thoroughbred)" },
+	{  6,  8, -1, -1, -1, SEMPRON_64_128K,    "Sempron (Thoroughbred)" },
+	{  6,  8, -1, -1, -1, SEMPRON_64_256K,    "Sempron (Thoroughbred)" },
+	{  6,  8, -1, -1, -1, ATHLON_MP,          "Athlon MP (Thoroughbred)" },
+	{  6,  8, -1, -1, -1, ATHLON_XP_M,        "Mobile Athlon (Thoroughbred)" },
+	{  6,  8, -1, -1, -1, ATHLON_XP_M_LV,     "Mobile Athlon (Thoroughbred)" },
+	
+	{  6, 10, -1, -1, -1, NO_CODE,            "Athlon XP (Barton)" },
+	{  6, 10, -1, -1, -1, ATHLON_64,          "Athlon XP (Barton)" },
+	{  6, 10, -1, -1, -1, ATHLON_XP_BARTON,   "Athlon XP (Barton)" },
+	{  6, 10, -1, -1, -1, SEMPRON,            "Sempron (Barton)" },
+	{  6, 10, -1, -1, -1, SEMPRON_64_256K,    "Sempron (Barton)" },
+	{  6, 10, -1, -1, -1, ATHLON_XP,          "Athlon XP" },
+	/* ^^ Actually, Thorton, but it's equivallent to Thoroughbred */
+	{  6, 10, -1, -1, -1, ATHLON_MP,          "Athlon MP (Barton)" },
+	{  6, 10, -1, -1, -1, ATHLON_XP_M,        "Mobile Athlon (Barton)" },
+	{  6, 10, -1, -1, -1, ATHLON_XP_M_LV,     "Mobile Athlon (Barton)" },
+	
+	/* K8 Architecture */
+	{ 15, -1, -1,  0, -1, NO_CODE,            "Unknown K8" },
+	{ 15, -1, -1,  1, -1, NO_CODE,            "Unknown K9" },
+	
+	{ 15, -1, -1,  0,  0, NO_CODE,            "Unknown A64" },
+	{ 15, -1, -1,  0,  0, OPTERON_SINGLECORE, "Opteron" },
+	{ 15, -1, -1,  0,  0, OPTERON_DUALCORE,   "Opteron (Dual Core)" },
+	{ 15, -1, -1,  0,  0, ATHLON_64_512K,     "Athlon 64 (512K)" },
+	{ 15, -1, -1,  0,  0, ATHLON_64_1024K,    "Athlon 64 (1024K)" },
+	{ 15, -1, -1,  0,  0, ATHLON_64_X2_512K,  "Athlon 64 X2 (512K)" },
+	{ 15, -1, -1,  0,  0, ATHLON_64_X2_1024K, "Athlon 64 X2 (1024K)" },
+	{ 15, -1, -1,  0,  0, ATHLON_FX,          "Athlon FX" },
+	{ 15, -1, -1,  0,  0, ATHLON_64_FX,       "Athlon 64 FX" },
+	{ 15, -1, -1,  0,  0, TURION_64_512K,     "Turion 64 (512K)" },
+	{ 15, -1, -1,  0,  0, TURION_64_1024K,    "Turion 64 (1024K)" },
+	{ 15, -1, -1,  0,  0, TURION_X2_512K,     "Turion 64 X2 (512K)" },
+	{ 15, -1, -1,  0,  0, TURION_X2_1024K,    "Turion 64 X2 (1024K)" },
+	{ 15, -1, -1,  0,  0, SEMPRON_64_128K,    "A64 Sempron (128K)" },
+	{ 15, -1, -1,  0,  0, SEMPRON_64_256K,    "A64 Sempron (256K)" },
+};
+
 
 static void load_amd_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
@@ -113,10 +236,67 @@ static void decode_amd_number_of_cores(struct cpu_raw_data_t* raw, struct cpu_id
 	}
 }
 
+static amd_code_t decode_amd_codename_part1(const char *bs)
+{
+	if (strstr(bs, "Opteron")) {
+		if (strstr(bs, "Dual Core")) return OPTERON_DUALCORE;
+		return OPTERON_SINGLECORE;
+	}
+	if (strstr(bs, "Athlon(tm) 64 FX")) return ATHLON_64_FX;
+	if (strstr(bs, "Athlon(tm) FX")) return ATHLON_FX;
+	if (strstr(bs, "Athlon(tm) 64")) {
+		if (strstr(bs, "Dual Core")) return ATHLON_64_X2_512K;
+		return ATHLON_64_512K;
+	}
+	if (strstr(bs, "Turion(tm)")) {
+		if (strstr(bs, "X2"))
+			return TURION_X2_512K;
+		else
+			return TURION_64_512K;
+	}
+	if (strstr(bs, "Sempron(tm)")) return SEMPRON_64_128K;
+	
+	if (strstr(bs, "mobile") || strstr(bs, "Mobile")) {
+		if (strstr(bs, "Athlon(tm) XP-M (LV)")) return ATHLON_XP_M_LV;
+		if (strstr(bs, "Athlon(tm) XP")) return ATHLON_XP_M;
+		if (strstr(bs, "Athlon")) return MOBILE_ATHLON64;
+		if (strstr(bs, "Duron")) return MOBILE_DURON;
+	} else {
+		if (strstr(bs, "Athlon(tm) XP")) return ATHLON_XP;
+		if (strstr(bs, "Athlon(tm) MP")) return ATHLON_MP;
+		if (strstr(bs, "Duron")) return DURON;
+		if (strstr(bs, "Athlon")) return ATHLON_64;
+	}
+	
+	return NO_CODE;
+}
+
+static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+{
+	amd_code_t code = decode_amd_codename_part1(data->brand_str);
+	
+	if (code == ATHLON_64 && data->l2_cache == 512)
+		code = ATHLON_64_MANCHESTER;
+	if (code == ATHLON_XP && data->l2_cache == 512)
+		code = ATHLON_XP_BARTON;
+	if (code == ATHLON_64_512K && data->l2_cache > 512)
+		code = ATHLON_64_1024K;
+	if (code == SEMPRON_64_128K && data->l2_cache > 128)
+		code = SEMPRON_64_256K;
+	if (code == TURION_64_512K && data->l2_cache > 512)
+		code = TURION_64_1024K;
+	if (code == TURION_X2_512K && data->l2_cache > 512)
+		code = TURION_X2_1024K;
+	if (code == ATHLON_64_X2_512K && data->l2_cache > 512)
+		code = ATHLON_64_X2_1024K;
+	match_cpu_codename(cpudb_amd, COUNT_OF(cpudb_amd), data, code);
+}
+
 int cpuid_identify_amd(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
 	load_amd_features(raw, data);
 	decode_amd_cache_info(raw, data);
 	decode_amd_number_of_cores(raw, data);
+	decode_amd_codename(raw, data);
 	return 0;
 }

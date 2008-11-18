@@ -52,131 +52,131 @@ enum _intel_code_t {
 typedef enum _intel_code_t intel_code_t;
 
 const struct match_entry_t cpudb_intel[] = {
-	{ -1, -1, -1, -1, -1, NO_CODE, "Unknown Intel CPU" },
+	{ -1, -1, -1, -1, -1, NO_CODE           , "Unknown Intel CPU"       },
 	
-	// i486
-	{ 4, -1, -1, -1, -1, NO_CODE, "Unknown i486" },
-	{ 4,  0, -1, -1, -1, NO_CODE, "i486 DX-25/33" },
-	{ 4,  1, -1, -1, -1, NO_CODE, "i486 DX-50" },
-	{ 4,  2, -1, -1, -1, NO_CODE, "i486 SX" },
-	{ 4,  3, -1, -1, -1, NO_CODE, "i486 DX2" },
-	{ 4,  4, -1, -1, -1, NO_CODE, "i486 SL" },
-	{ 4,  5, -1, -1, -1, NO_CODE, "i486 SX2" },
-	{ 4,  7, -1, -1, -1, NO_CODE, "i486 DX2 WriteBack" },
-	{ 4,  8, -1, -1, -1, NO_CODE, "i486 DX4" },
-	{ 4,  9, -1, -1, -1, NO_CODE, "i486 DX4 WriteBack" },
+	/* i486 */
+	{  4, -1, -1, -1, -1, NO_CODE           , "Unknown i486"            },
+	{  4,  0, -1, -1, -1, NO_CODE           , "i486 DX-25/33"           },
+	{  4,  1, -1, -1, -1, NO_CODE           , "i486 DX-50"              },
+	{  4,  2, -1, -1, -1, NO_CODE           , "i486 SX"                 },
+	{  4,  3, -1, -1, -1, NO_CODE           , "i486 DX2"                },
+	{  4,  4, -1, -1, -1, NO_CODE           , "i486 SL"                 },
+	{  4,  5, -1, -1, -1, NO_CODE           , "i486 SX2"                },
+	{  4,  7, -1, -1, -1, NO_CODE           , "i486 DX2 WriteBack"      },
+	{  4,  8, -1, -1, -1, NO_CODE           , "i486 DX4"                },
+	{  4,  9, -1, -1, -1, NO_CODE           , "i486 DX4 WriteBack"      },
 	
-	/* All Pentia: */
-	// Pentium 1
-	{ 5, -1, -1, -1, -1, NO_CODE, "Unknown Pentium" },
-	{ 5,  0, -1, -1, -1, NO_CODE, "Pentium A-Step" },
-	{ 5,  1, -1, -1, -1, NO_CODE, "Pentium 1 (0.8u)" },
-	{ 5,  2, -1, -1, -1, NO_CODE, "Pentium 1 (0.35u)" },
-	{ 5,  3, -1, -1, -1, NO_CODE, "Pentium OverDrive" },
-	{ 5,  4, -1, -1, -1, NO_CODE, "Pentium 1 (0.35u)" },
-	{ 5,  7, -1, -1, -1, NO_CODE, "Pentium 1 (0.35u)" },
-	{ 5,  8, -1, -1, -1, NO_CODE, "Pentium MMX (0.25u)" },
+	/* All Pentia:
+	   Pentium 1 */
+	{  5, -1, -1, -1, -1, NO_CODE           , "Unknown Pentium"         },
+	{  5,  0, -1, -1, -1, NO_CODE           , "Pentium A-Step"          },
+	{  5,  1, -1, -1, -1, NO_CODE           , "Pentium 1 (0.8u)"        },
+	{  5,  2, -1, -1, -1, NO_CODE           , "Pentium 1 (0.35u)"       },
+	{  5,  3, -1, -1, -1, NO_CODE           , "Pentium OverDrive"       },
+	{  5,  4, -1, -1, -1, NO_CODE           , "Pentium 1 (0.35u)"       },
+	{  5,  7, -1, -1, -1, NO_CODE           , "Pentium 1 (0.35u)"       },
+	{  5,  8, -1, -1, -1, NO_CODE           , "Pentium MMX (0.25u)"     },
 	
-	// Pentium 2 / 3 / M / Conroe / whatsnext - all P6 based.
-	{ 6, -1, -1, -1, -1, NO_CODE, "Unknown P6" },
-	{ 6,  0, -1, -1, -1, NO_CODE, "Pentium Pro" },
-	{ 6,  1, -1, -1, -1, NO_CODE, "Pentium Pro" },
-	{ 6,  3, -1, -1, -1, NO_CODE, "Pentium II (Klamath)" },
-	{ 6,  5, -1, -1, -1, NO_CODE, "Pentium II (Deschutes)" },
-	{ 6,  6, -1, -1, -1, NO_CODE, "Pentium II (Dixon)" },
+	/* Pentium 2 / 3 / M / Conroe / whatsnext - all P6 based. */
+	{  6, -1, -1, -1, -1, NO_CODE           , "Unknown P6"              },
+	{  6,  0, -1, -1, -1, NO_CODE           , "Pentium Pro"             },
+	{  6,  1, -1, -1, -1, NO_CODE           , "Pentium Pro"             },
+	{  6,  3, -1, -1, -1, NO_CODE           , "Pentium II (Klamath)"    },
+	{  6,  5, -1, -1, -1, NO_CODE           , "Pentium II (Deschutes)"  },
+	{  6,  6, -1, -1, -1, NO_CODE           , "Pentium II (Dixon)"      },
 	
-	{ 6,  3, -1, -1, -1, XEON, "P-II Xeon" },
-	{ 6,  5, -1, -1, -1, XEON, "P-II Xeon" },
-	{ 6,  6, -1, -1, -1, XEON, "P-II Xeon" },
+	{  6,  3, -1, -1, -1, XEON              , "P-II Xeon"               },
+	{  6,  5, -1, -1, -1, XEON              , "P-II Xeon"               },
+	{  6,  6, -1, -1, -1, XEON              , "P-II Xeon"               },
 		
-	{ 6,  5, -1, -1, -1, CELERON, "P-II Celeron (no L2)" },
-	{ 6,  6, -1, -1, -1, CELERON, "P-II Celeron (128K)" },
+	{  6,  5, -1, -1, -1, CELERON           , "P-II Celeron (no L2)"    },
+	{  6,  6, -1, -1, -1, CELERON           , "P-II Celeron (128K)"     },
 	
-	// ////////////////////////////////////////////////// //
+	/* ////////////////////////////////////////////////// */
 	
-	{ 6,  7, -1, -1, -1, NO_CODE, "Pentium III (Katmai)" },
-	{ 6,  8, -1, -1, -1, NO_CODE, "Pentium III (Coppermine)" },
-	{ 6, 10, -1, -1, -1, NO_CODE, "Pentium III (Coppermine)" },
-	{ 6, 11, -1, -1, -1, NO_CODE, "Pentium III (Tualatin)" },
+	{  6,  7, -1, -1, -1, NO_CODE           , "Pentium III (Katmai)"    },
+	{  6,  8, -1, -1, -1, NO_CODE           , "Pentium III (Coppermine)"},
+	{  6, 10, -1, -1, -1, NO_CODE           , "Pentium III (Coppermine)"},
+	{  6, 11, -1, -1, -1, NO_CODE           , "Pentium III (Tualatin)"  },
 	
-	{ 6,  7, -1, -1, -1, XEON, "P-III Xeon" },
-	{ 6,  8, -1, -1, -1, XEON, "P-III Xeon" },
-	{ 6, 10, -1, -1, -1, XEON, "P-III Xeon" },
-	{ 6, 11, -1, -1, -1, XEON, "P-III Xeon" },
+	{  6,  7, -1, -1, -1, XEON              , "P-III Xeon"              },
+	{  6,  8, -1, -1, -1, XEON              , "P-III Xeon"              },
+	{  6, 10, -1, -1, -1, XEON              , "P-III Xeon"              },
+	{  6, 11, -1, -1, -1, XEON              , "P-III Xeon"              },
 	
-	{ 6,  7, -1, -1, -1, CELERON, "P-III Celeron" },
-	{ 6,  8, -1, -1, -1, CELERON, "P-III Celeron" },
-	{ 6, 10, -1, -1, -1, CELERON, "P-III Celeron" },
-	{ 6, 11, -1, -1, -1, CELERON, "P-III Celeron" },
+	{  6,  7, -1, -1, -1, CELERON           , "P-III Celeron"           },
+	{  6,  8, -1, -1, -1, CELERON           , "P-III Celeron"           },
+	{  6, 10, -1, -1, -1, CELERON           , "P-III Celeron"           },
+	{  6, 11, -1, -1, -1, CELERON           , "P-III Celeron"           },
 	
-	// ////////////////////////////////////////////////// //
+	/* ////////////////////////////////////////////////// */
 	
-	{ 6,  9, -1, -1, -1, NO_CODE, "Unknown Pentium M" },
-	{ 6,  9, -1, -1, -1, MOBILE_PENTIUM_M, "Unknown Pentium M" },
-	{ 6,  9, -1, -1, -1, PENTIUM, "Pentium M (Banias)" },
-	{ 6,  9, -1, -1, -1, CELERON, "Celeron M" },
-	{ 6, 13, -1, -1, -1, PENTIUM, "Pentium M (Dothan)" },
-	{ 6, 13, -1, -1, -1, CELERON, "Celeron M" },
+	{  6,  9, -1, -1, -1, NO_CODE           , "Unknown Pentium M"       },
+	{  6,  9, -1, -1, -1, MOBILE_PENTIUM_M  , "Unknown Pentium M"       },
+	{  6,  9, -1, -1, -1, PENTIUM           , "Pentium M (Banias)"      },
+	{  6,  9, -1, -1, -1, CELERON           , "Celeron M"               },
+	{  6, 13, -1, -1, -1, PENTIUM           , "Pentium M (Dothan)"      },
+	{  6, 13, -1, -1, -1, CELERON           , "Celeron M"               },
 	
-	// ////////////////////////////////////////////////// //
+	/* ////////////////////////////////////////////////// */
 	
-	{ 6, 14, -1, -1, -1, NO_CODE, "Unknown Yonah" },
-	{ 6, 14, -1, -1, -1, CORE_SOLO, "Yonah (Core Solo)" },
-	{ 6, 14, -1, -1, -1, CORE_DUO, "Yonah (Core Duo)" },
-	{ 6, 14, -1, -1, -1, XEON, "Xeon LV" },
-	{ 6, 14, -1, -1, -1, CORE_SOLO, "Yonah (Core Solo)" },
+	{  6, 14, -1, -1, -1, NO_CODE           , "Unknown Yonah"           },
+	{  6, 14, -1, -1, -1, CORE_SOLO         , "Yonah (Core Solo)"       },
+	{  6, 14, -1, -1, -1, CORE_DUO          , "Yonah (Core Duo)"        },
+	{  6, 14, -1, -1, -1, XEON              , "Xeon LV"                 },
+	{  6, 14, -1, -1, -1, CORE_SOLO         , "Yonah (Core Solo)"       },
 	
-	{ 6, 15, -1, -1, -1, NO_CODE, "Unknown Core 2" },
-	{ 6, 15, -1, -1, -1, CORE_DUO, "Conroe (Core 2 Duo)" },
-	{ 6, 15, -1, -1, -1, KENTSFIELD, "Kentsfield" },
-	{ 6, 15, -1, -1, -1, MORE_THAN_QUADCORE, "More than quad-core" },
-	{ 6, 15, -1, -1, -1, ALLENDALE, "Allendale (Core 2 Duo)" },
+	{  6, 15, -1, -1, -1, NO_CODE           , "Unknown Core 2"          },
+	{  6, 15, -1, -1, -1, CORE_DUO          , "Conroe (Core 2 Duo)"     },
+	{  6, 15, -1, -1, -1, KENTSFIELD        , "Kentsfield"              },
+	{  6, 15, -1, -1, -1, MORE_THAN_QUADCORE, "More than quad-core"     },
+	{  6, 15, -1, -1, -1, ALLENDALE         , "Allendale (Core 2 Duo)"  },
 	
-	{ 6, 16, -1, -1, -1, NO_CODE, "Unknown Core ?" }, // future ones
-	{ 6, 17, -1, -1, -1, NO_CODE, "Unknown Core ?" }, // future ones
-	{ 6, 16, -1, -1, -1, MORE_THAN_QUADCORE, "More than quad-core" }, // future ones
-	{ 6, 17, -1, -1, -1, MORE_THAN_QUADCORE, "More than quad-core" }, // future ones
+	{  6, 16, -1, -1, -1, NO_CODE           , "Unknown Core ?"          }, // future ones
+	{  6, 17, -1, -1, -1, NO_CODE           , "Unknown Core ?"          }, // future ones
+	{  6, 16, -1, -1, -1, MORE_THAN_QUADCORE, "More than quad-core"     }, // future ones
+	{  6, 17, -1, -1, -1, MORE_THAN_QUADCORE, "More than quad-core"     }, // future ones
 	
-	// Itaniums
-	{  7, -1, -1, -1, -1, NO_CODE, "Itanium" },
-	{ 15, -1, -1,  1, -1, NO_CODE, "Itanium 2" },
+	/* Itaniums */
+	{  7, -1, -1, -1, -1, NO_CODE           , "Itanium"                 },
+	{ 15, -1, -1,  1, -1, NO_CODE           , "Itanium 2"               },
 	
-	// Netburst based (Pentium 4 and later)
-	// classic P4s
-	{ 15, -1, -1, 0, -1, NO_CODE, "Unknown Pentium 4" },
-	{ 15, -1, -1, 0, -1, CELERON, "Unknown P-4 Celeron" },
-	{ 15, -1, -1, 0, -1, XEON, "Unknown Xeon" },
+	/* Netburst based (Pentium 4 and later)
+	   classic P4s */
+	{ 15, -1, -1,  0, -1, NO_CODE           , "Unknown Pentium 4"       },
+	{ 15, -1, -1,  0, -1, CELERON           , "Unknown P-4 Celeron"     },
+	{ 15, -1, -1,  0, -1, XEON              , "Unknown Xeon"            },
 	
-	{ 15,  0, -1, 0, -1, NO_CODE, "Pentium 4 (Willamette)" },
-	{ 15,  1, -1, 0, -1, NO_CODE, "Pentium 4 (Willamette)" },
-	{ 15,  2, -1, 0, -1, NO_CODE, "Pentium 4 (Northwood)" },
-	{ 15,  3, -1, 0, -1, NO_CODE, "Pentium 4 (Prescott)" },
-	{ 15,  4, -1, 0, -1, NO_CODE, "Pentium 4 (Prescott)" },
+	{ 15,  0, -1,  0, -1, NO_CODE           , "Pentium 4 (Willamette)"  },
+	{ 15,  1, -1,  0, -1, NO_CODE           , "Pentium 4 (Willamette)"  },
+	{ 15,  2, -1,  0, -1, NO_CODE           , "Pentium 4 (Northwood)"   },
+	{ 15,  3, -1,  0, -1, NO_CODE           , "Pentium 4 (Prescott)"    },
+	{ 15,  4, -1,  0, -1, NO_CODE           , "Pentium 4 (Prescott)"    },
 	
-	// server CPUs
-	{ 15,  0, -1, 0, -1, XEON, "Xeon (Foster)" },
-	{ 15,  1, -1, 0, -1, XEON, "Xeon (Foster)" },
-	{ 15,  2, -1, 0, -1, XEON, "Xeon (Prestonia)" },
-	{ 15,  2, -1, 0, -1, XEONMP, "Xeon (Gallatin)" },
-	{ 15,  3, -1, 0, -1, XEON, "Xeon (Nocona)" },
-	{ 15,  4, -1, 0, -1, XEON, "Xeon (Nocona)" },
-	{ 15,  4, -1, 0, -1, XEON_IRWIN, "Xeon (Irwindale)" },
-	{ 15,  4, -1, 0, -1, XEONMP, "Xeon (Cranford)" },
-	{ 15,  4, -1, 0, -1, XEON_POTOMAC, "Xeon (Potomac)" },
-	{ 15,  6, -1, 0, -1, XEON, "Xeon 5000" },
+	/* server CPUs */
+	{ 15,  0, -1,  0, -1, XEON              , "Xeon (Foster)"           },
+	{ 15,  1, -1,  0, -1, XEON              , "Xeon (Foster)"           },
+	{ 15,  2, -1,  0, -1, XEON              , "Xeon (Prestonia)"        },
+	{ 15,  2, -1,  0, -1, XEONMP            , "Xeon (Gallatin)"         },
+	{ 15,  3, -1,  0, -1, XEON              , "Xeon (Nocona)"           },
+	{ 15,  4, -1,  0, -1, XEON              , "Xeon (Nocona)"           },
+	{ 15,  4, -1,  0, -1, XEON_IRWIN        , "Xeon (Irwindale)"        },
+	{ 15,  4, -1,  0, -1, XEONMP            , "Xeon (Cranford)"         },
+	{ 15,  4, -1,  0, -1, XEON_POTOMAC      , "Xeon (Potomac)"          },
+	{ 15,  6, -1,  0, -1, XEON              , "Xeon 5000"               },
 	
-	// Pentium Ds
-	{ 15,  4,  4, 0, -1, NO_CODE, "Pentium D" },
-	{ 15,  4, -1, 0, -1, PENTIUM_D, "Pentium D" },
-	{ 15,  4,  7, 0, -1, NO_CODE, "Pentium D" },
-	{ 15,  6, -1, 0, -1, PENTIUM_D, "Pentium D" },
+	/* Pentium Ds */
+	{ 15,  4,  4,  0, -1, NO_CODE           , "Pentium D"               },
+	{ 15,  4, -1,  0, -1, PENTIUM_D         , "Pentium D"               },
+	{ 15,  4,  7,  0, -1, NO_CODE           , "Pentium D"               },
+	{ 15,  6, -1,  0, -1, PENTIUM_D         , "Pentium D"               },
 
-	// Celeron and Celeron Ds
-	{ 15,  1, -1, 0, -1, CELERON, "P-4 Celeron (128K)" }, 
-	{ 15,  2, -1, 0, -1, CELERON, "P-4 Celeron (128K)" },
-	{ 15,  3, -1, 0, -1, CELERON, "Celeron D" },
-	{ 15,  4, -1, 0, -1, CELERON, "Celeron D" },
-	{ 15,  6, -1, 0, -1, CELERON, "Celeron D" },
+	/* Celeron and Celeron Ds */
+	{ 15,  1, -1,  0, -1, CELERON           , "P-4 Celeron (128K)"      }, 
+	{ 15,  2, -1,  0, -1, CELERON           , "P-4 Celeron (128K)"      },
+	{ 15,  3, -1,  0, -1, CELERON           , "Celeron D"               },
+	{ 15,  4, -1,  0, -1, CELERON           , "Celeron D"               },
+	{ 15,  6, -1,  0, -1, CELERON           , "Celeron D"               },
 };
 
 
@@ -409,7 +409,7 @@ static void decode_intel_number_of_cores(struct cpu_raw_data_t* raw,
 	}
 }
 
-static void decode_cpu_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
 	intel_code_t code = NO_CODE;
 	int i;
@@ -467,6 +467,6 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		decode_intel_oldstyle_cache_info(raw, data);
 	}
 	decode_intel_number_of_cores(raw, data);
-	decode_cpu_codename(raw, data);
+	decode_intel_codename(raw, data);
 	return 0;
 }
