@@ -175,10 +175,23 @@ static void load_amd_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		{ 12, CPU_FEATURE_SKINIT },
 		{ 13, CPU_FEATURE_WDT },
 	};
+	const struct feature_map_t matchtable_edx87[] = {
+		{  0, CPU_FEATURE_TS },
+		{  1, CPU_FEATURE_FID },
+		{  2, CPU_FEATURE_VID },
+		{  3, CPU_FEATURE_TTP },
+		{  4, CPU_FEATURE_TM_AMD },
+		{  5, CPU_FEATURE_STC },
+		{  6, CPU_FEATURE_100MHZSTEPS },
+		{  7, CPU_FEATURE_HWPSTATE },
+		{  8, CPU_FEATURE_CONSTANT_TSC },
+	};
 	if (raw->ext_cpuid[0][0] >= 1) {
 		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][3], data);
 		match_features(matchtable_ecx81, COUNT_OF(matchtable_ecx81), raw->ext_cpuid[1][2], data);
 	}
+	if (raw->ext_cpuid[0][0] >= 7)
+		match_features(matchtable_edx87, COUNT_OF(matchtable_edx87), raw->ext_cpuid[7][3], data);
 }
 
 static void decode_amd_cache_info(struct cpu_raw_data_t* raw, struct cpu_id_t* data)

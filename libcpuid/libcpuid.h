@@ -294,6 +294,14 @@ enum _cpu_feature_t {
 	CPU_FEATURE_SSE5,	/*!< SSE 5 instructions supported */
 	CPU_FEATURE_SKINIT,	/*!< SKINIT / STGI supported */
 	CPU_FEATURE_WDT,	/*!< Watchdog timer support */
+	CPU_FEATURE_TS,		/*!< Temperature sensor */
+	CPU_FEATURE_FID,	/*!< Frequency ID control */
+	CPU_FEATURE_VID,	/*!< Voltage ID control */
+	CPU_FEATURE_TTP,	/*!< THERMTRIP */
+	CPU_FEATURE_TM_AMD,	/*!< AMD-specified hardware thermal control */
+	CPU_FEATURE_STC,	/*!< Software thermal control */
+	CPU_FEATURE_100MHZSTEPS,/*!< 100 MHz multiplier control */
+	CPU_FEATURE_HWPSTATE,	/*!< Hardware P-state control */
 	CPU_FEATURE_CONSTANT_TSC,	/*!< TSC ticks at constant rate */
 	// termination:
 	NUM_CPU_FEATURES,
@@ -417,7 +425,7 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data);
  * @param feature - the feature, whose textual representation is wanted.
  * @returns a constant string like "fpu", "tsc", "sse2", etc.
  * @note the names of the returned flags are compatible with those from
- *       /proc/cpuinfo in Linux.
+ *       /proc/cpuinfo in Linux, with the exception of `tm_amd'
  */
 const char* cpu_feature_str(cpu_feature_t feature);
 

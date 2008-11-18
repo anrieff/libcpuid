@@ -179,9 +179,6 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 	const struct feature_map_t matchtable_ecx81[] = {
 		{  0, CPU_FEATURE_LAHF_LM },
 	};
-	const struct feature_map_t matchtable_edx87[] = {
-		{  8, CPU_FEATURE_CONSTANT_TSC },
-	};
 	if (raw->basic_cpuid[0][0] >= 1) {
 		match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][3], data);
 		match_features(matchtable_ecx1, COUNT_OF(matchtable_ecx1), raw->basic_cpuid[1][2], data);
@@ -190,8 +187,6 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][3], data);
 		match_features(matchtable_ecx81, COUNT_OF(matchtable_ecx81), raw->ext_cpuid[1][2], data);
 	}
-	if (raw->ext_cpuid[0][0] >= 7)
-		match_features(matchtable_edx87, COUNT_OF(matchtable_edx87), raw->ext_cpuid[7][3], data);
 }
 
 static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
@@ -470,6 +465,14 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SSE5, "sse5" },
 		{ CPU_FEATURE_SKINIT, "skinit" },
 		{ CPU_FEATURE_WDT, "wdt" },
+		{ CPU_FEATURE_TS, "ts" },
+		{ CPU_FEATURE_FID, "fid" },
+		{ CPU_FEATURE_VID, "vid" },
+		{ CPU_FEATURE_TTP, "ttp" },
+		{ CPU_FEATURE_TM_AMD, "tm_amd" },
+		{ CPU_FEATURE_STC, "stc" },
+		{ CPU_FEATURE_100MHZSTEPS, "100mhzsteps" },
+		{ CPU_FEATURE_HWPSTATE, "hwpstate" },
 		{ CPU_FEATURE_CONSTANT_TSC, "constant_tsc" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
