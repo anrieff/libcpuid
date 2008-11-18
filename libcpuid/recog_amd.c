@@ -164,6 +164,7 @@ static void load_amd_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		{ 31, CPU_FEATURE_3DNOW },
 	};
 	const struct feature_map_t matchtable_ecx81[] = {
+		{  1, CPU_FEATURE_CMP_LEGACY },
 		{  2, CPU_FEATURE_SVM },
 		{  5, CPU_FEATURE_ABM },
 		{  6, CPU_FEATURE_SSE4A },

@@ -284,6 +284,7 @@ enum _cpu_feature_t {
 	CPU_FEATURE_RDTSCP,	/*!< RDTSCP instruction supported (AMD-only) */
 	CPU_FEATURE_LM,		/*!< Long mode (x86_64/EM64T) supported */
 	CPU_FEATURE_LAHF_LM,	/*!< LAHF/SAHF supported in 64-bit mode */
+	CPU_FEATURE_CMP_LEGACY,	/*!< core multi-processing legacy mode */
 	CPU_FEATURE_SVM,	/*!< AMD Secure virtual machine */
 	CPU_FEATURE_ABM,	/*!< LZCNT instruction support */
 	CPU_FEATURE_MISALIGNSSE,/*!< Misaligned SSE supported */

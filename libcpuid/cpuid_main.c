@@ -455,6 +455,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_RDTSCP, "rdtscp" },
 		{ CPU_FEATURE_LM, "lm" },
 		{ CPU_FEATURE_LAHF_LM, "lahf_lm" },
+		{ CPU_FEATURE_CMP_LEGACY, "cmp_legacy" },
 		{ CPU_FEATURE_SVM, "svm" },
 		{ CPU_FEATURE_SSE4A, "sse4a" },
 		{ CPU_FEATURE_MISALIGNSSE, "misalignsse" },
