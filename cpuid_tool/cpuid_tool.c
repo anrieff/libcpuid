@@ -33,13 +33,13 @@ int main(void)
 	printf("  L1D assoc. : %d-way\n", data.l1_assoc);
 	printf("  L2 assoc.  : %d-way\n", data.l2_assoc);
 	printf("  L3 assoc.  : %d-way\n", data.l3_assoc);
-	printf("  L1D line sz: %d-way\n", data.l1_cacheline);
-	printf("  L2 line sz : %d-way\n", data.l2_cacheline);
-	printf("  L3 line sz : %d-way\n", data.l3_cacheline);
+	printf("  L1D line sz: %d bytes\n", data.l1_cacheline);
+	printf("  L2 line sz : %d bytes\n", data.l2_cacheline);
+	printf("  L3 line sz : %d bytes\n", data.l3_cacheline);
 	printf("  code name  : `%s'\n", data.cpu_codename);
 	printf("  features   :");
 	int i;
-	for (i = 0; i < CPU_NUM_FEATURES; i++)
+	for (i = 0; i < NUM_CPU_FEATURES; i++)
 		if (data.flags[i])
 			printf(" %s", cpu_feature_str(i));
 	printf("\n");
