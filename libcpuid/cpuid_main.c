@@ -452,6 +452,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_3DNOW, "3dnow" },
 		{ CPU_FEATURE_3DNOWEXT, "3dnowext" },
 		{ CPU_FEATURE_NX, "nx" },
+		{ CPU_FEATURE_FXSR_OPT, "fxsr_opt" },
 		{ CPU_FEATURE_RDTSCP, "rdtscp" },
 		{ CPU_FEATURE_LM, "lm" },
 		{ CPU_FEATURE_LAHF_LM, "lahf_lm" },

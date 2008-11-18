@@ -281,6 +281,7 @@ enum _cpu_feature_t {
 	CPU_FEATURE_3DNOW,	/*!< AMD 3DNow! instructions supported */
 	CPU_FEATURE_3DNOWEXT,	/*!< AMD 3DNow! extended instructions supported */
 	CPU_FEATURE_NX,		/*!< No-execute bit supported */
+	CPU_FEATURE_FXSR_OPT,	/*!< FFXSR: FXSAVE and FXRSTOR optimizations */
 	CPU_FEATURE_RDTSCP,	/*!< RDTSCP instruction supported (AMD-only) */
 	CPU_FEATURE_LM,		/*!< Long mode (x86_64/EM64T) supported */
 	CPU_FEATURE_LAHF_LM,	/*!< LAHF/SAHF supported in 64-bit mode */
