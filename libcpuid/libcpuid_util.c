@@ -48,6 +48,7 @@ libcpuid_warn_fn_t _warn_fun = default_warn;
 
 void warnf(const char* format, ...)
 {
+	if (!_warn_fun) return;
 	char buff[1024];
 	va_list va;
 	va_start(va, format);
