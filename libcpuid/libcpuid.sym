@@ -15,3 +15,4 @@ cpu_clock_by_os
 cpu_clock_measure
 cpu_clock
 cpuid_lib_version
+cpuid_set_warn_function

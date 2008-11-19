@@ -39,8 +39,7 @@ enum _amd_code_t {
 	ATHLON_XP_BARTON,
 	ATHLON_XP_M,
 	ATHLON_XP_M_LV,
-	ATHLON_64,
-	ATHLON_64_MANCHESTER,
+	ATHLON,
 	ATHLON_MP,
 	MOBILE_ATHLON64,
 	ATHLON_FX,
@@ -102,7 +101,7 @@ const struct match_entry_t cpudb_amd[] = {
 	{  6,  4, -1, -1, -1, NO_CODE,            "Athlon (ThunderBird)" },
 	
 	{  6,  6, -1, -1, -1, NO_CODE,            "Unknown Athlon" },
-	{  6,  6, -1, -1, -1, ATHLON_64,          "Athlon (Palomino)" },
+	{  6,  6, -1, -1, -1, ATHLON,             "Athlon (Palomino)" },
 	{  6,  6, -1, -1, -1, ATHLON_MP,          "Athlon MP (Palomino)" },
 	{  6,  6, -1, -1, -1, DURON,              "Duron (Palomino)" },
 	{  6,  6, -1, -1, -1, ATHLON_XP,          "Athlon XP" },
@@ -111,7 +110,7 @@ const struct match_entry_t cpudb_amd[] = {
 	{  6,  7, -1, -1, -1, DURON,              "Duron (Morgan)" },
 	
 	{  6,  8, -1, -1, -1, NO_CODE,            "Athlon XP" },
-	{  6,  8, -1, -1, -1, ATHLON_64,          "Athlon XP" },
+	{  6,  8, -1, -1, -1, ATHLON,             "Athlon XP" },
 	{  6,  8, -1, -1, -1, ATHLON_XP,          "Athlon XP" },
 	{  6,  8, -1, -1, -1, DURON,              "Duron (Applebred)" },
 	{  6,  8, -1, -1, -1, SEMPRON,            "Sempron (Thoroughbred)" },
@@ -122,7 +121,7 @@ const struct match_entry_t cpudb_amd[] = {
 	{  6,  8, -1, -1, -1, ATHLON_XP_M_LV,     "Mobile Athlon (Thoroughbred)" },
 	
 	{  6, 10, -1, -1, -1, NO_CODE,            "Athlon XP (Barton)" },
-	{  6, 10, -1, -1, -1, ATHLON_64,          "Athlon XP (Barton)" },
+	{  6, 10, -1, -1, -1, ATHLON,             "Athlon XP (Barton)" },
 	{  6, 10, -1, -1, -1, ATHLON_XP_BARTON,   "Athlon XP (Barton)" },
 	{  6, 10, -1, -1, -1, SEMPRON,            "Sempron (Barton)" },
 	{  6, 10, -1, -1, -1, SEMPRON_64_256K,    "Sempron (Barton)" },
@@ -280,7 +279,7 @@ static amd_code_t decode_amd_codename_part1(const char *bs)
 		if (strstr(bs, "Athlon(tm) XP")) return ATHLON_XP;
 		if (strstr(bs, "Athlon(tm) MP")) return ATHLON_MP;
 		if (strstr(bs, "Duron")) return DURON;
-		if (strstr(bs, "Athlon")) return ATHLON_64;
+		if (strstr(bs, "Athlon")) return ATHLON;
 	}
 	
 	return NO_CODE;
@@ -290,8 +289,6 @@ static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 {
 	amd_code_t code = decode_amd_codename_part1(data->brand_str);
 	
-	if (code == ATHLON_64 && data->l2_cache == 512)
-		code = ATHLON_64_MANCHESTER;
 	if (code == ATHLON_XP && data->l2_cache == 512)
 		code = ATHLON_XP_BARTON;
 	if (code == ATHLON_64_512K && data->l2_cache > 512)

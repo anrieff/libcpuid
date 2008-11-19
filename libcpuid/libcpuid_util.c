@@ -41,7 +41,7 @@ void match_features(const struct feature_map_t* matchtable, int count, uint32_t 
 
 static void default_warn(const char *msg)
 {
-	printf("%s", msg);
+	fprintf(stderr, "%s", msg);
 }
 
 libcpuid_warn_fn_t _warn_fun = default_warn;

@@ -38,7 +38,7 @@
 
 static int _libcpiud_errno = ERR_OK;
 
-static int set_error(cpuid_error_t err)
+static int set_error(cpu_error_t err)
 {
 	_libcpiud_errno = (int) err;
 	return (int) err;
@@ -291,7 +291,10 @@ int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 	int i;
 	FILE *f;
 	
-	f = fopen(filename, "wt");
+	if (!strcmp(filename, ""))
+		f = stdout;
+	else
+		f = fopen(filename, "wt");
 	if (!f) return set_error(ERR_OPEN);
 	
 	fprintf(f, "version=%s\n", VERSION);
@@ -308,7 +311,8 @@ int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 			data->intel_fn4[i][0], data->intel_fn4[i][1],
 			data->intel_fn4[i][2], data->intel_fn4[i][3]);
 	
-	fclose(f);
+	if (strcmp(filename, ""))
+		fclose(f);
 	return set_error(ERR_OK);
 }
 
@@ -325,7 +329,10 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
 	
 	raw_data_t_constructor(data);
 	
-	f = fopen(filename, "rt");
+	if (!strcmp(filename, ""))
+		f = stdin;
+	else
+		f = fopen(filename, "rt");
 	if (!f) return set_error(ERR_OPEN);
 	while (fgets(line, sizeof(line), f)) {
 		++cur_line;
@@ -360,7 +367,8 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
 		}
 	}
 	
-	fclose(f);
+	if (strcmp(filename, ""))
+		fclose(f);
 	return set_error(ERR_OK);
 }
 
@@ -489,7 +497,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 
 const char* cpuid_error(void)
 {
-	const struct { cpuid_error_t error; const char *description; }
+	const struct { cpu_error_t error; const char *description; }
 	matchtable[] = {
 		{ ERR_OK       , "No error"},
 		{ ERR_NO_CPUID , "CPUID instruction is not supported"},
@@ -513,7 +521,7 @@ const char* cpuid_lib_version(void)
 	return VERSION;
 }
 
-libcpuid_warn_fn_t set_warn_function(libcpuid_warn_fn_t new_fn)
+libcpuid_warn_fn_t cpuid_set_warn_function(libcpuid_warn_fn_t new_fn)
 {
 	libcpuid_warn_fn_t ret = _warn_fun;
 	_warn_fun = new_fn;

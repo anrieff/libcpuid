@@ -23,6 +23,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef __LIBCPUID_H__
+#define __LIBCPUID_H__
 /**
  * @File     libcpuid.h
  * @Author   Veselin Georgiev
@@ -34,9 +36,21 @@
  *  0.1.0 (2008-10-15): initial adaptation from wxfractgui sources
  */
 
-/** @defgroup libcpuid @{ */
-#ifndef __LIBCPUID_H__
-#define __LIBCPUID_H__
+/** @mainpage A simple libcpuid introduction
+ *
+ * LibCPUID provides CPU identification and access to the CPUID and RDTSC
+ * instructions on the x86.
+ * <p>
+ * To execute CPUID, use \ref cpu_exec_cpuid <br>
+ * To execute RDTSC, use \ref cpu_rdtsc <br>
+ * To fetch the CPUID info needed for CPU identification, use
+ *   \ref cpuid_get_raw_data <br>
+ * To make sense of that data (decode, extract features), use \ref cpu_identify <br>
+ * </p>
+ */
+
+/** @defgroup libcpuid LibCPUID
+ @{ */
 
 /* Include some integer type specifications: */
 #include "libcpuid_types.h"
@@ -51,23 +65,22 @@ extern "C" {
 /**
  * @brief CPU vendor, as guessed from the Vendor String.
  */
-enum _cpu_vendor_t {
-	VENDOR_INTEL = 0,
-	VENDOR_AMD,
-	VENDOR_CYRIX,
-	VENDOR_NEXGEN,
-	VENDOR_TRANSMETA,
-	VENDOR_UMC,
-	VENDOR_CENTAUR,
-	VENDOR_RISE,
-	VENDOR_SIS,
-	VENDOR_NSC,
+typedef enum {
+	VENDOR_INTEL = 0,  /*!< Intel CPU */
+	VENDOR_AMD,        /*!< AMD CPU */
+	VENDOR_CYRIX,      /*!< Cyrix CPU */
+	VENDOR_NEXGEN,     /*!< NexGen CPU */
+	VENDOR_TRANSMETA,  /*!< Transmeta CPU */
+	VENDOR_UMC,        /*!< x86 CPU by UMC */
+	VENDOR_CENTAUR,    /*!< x86 CPU by IDT */
+	VENDOR_RISE,       /*!< x86 CPU by Rise Technology */
+	VENDOR_SIS,        /*!< x86 CPU by SiS */
+	VENDOR_NSC,        /*!< x86 CPU by National Semiconductor */
 	
-	NUM_CPU_VENDORS,
+	NUM_CPU_VENDORS,   /*!< Valid CPU vendor ids: 0..NUM_CPU_VENDORS - 1 */
 	VENDOR_UNKNOWN = -1,
-};
+} cpu_vendor_t;
 #define NUM_CPU_VENDORS NUM_CPU_VENDORS
-typedef enum _cpu_vendor_t cpu_vendor_t;
 
 /**
  * @brief Contains just the raw CPUID data.
@@ -209,7 +222,7 @@ struct cpu_id_t {
  * ...
  * struct cpu_raw_data_t raw;
  * struct cpu_id_t id;
- * if (cpuid_get_raw_data(&raw) == 0 && cpu_identify(&raw, &id)) {
+ * if (cpuid_get_raw_data(&raw) == 0 && cpu_identify(&raw, &id) == 0) {
  *     if (id.flags[CPU_FEATURE_SSE2]) {
  *         // The CPU has SSE2...
  *         ...
@@ -221,7 +234,7 @@ struct cpu_id_t {
  * }
  * @endcode
  */
-enum _cpu_feature_t {
+typedef enum {
 	CPU_FEATURE_FPU = 0,	/*!< Floating point unit */
 	CPU_FEATURE_VME,	/*!< Virtual mode extension */
 	CPU_FEATURE_DE,		/*!< Debugging extension */
@@ -307,13 +320,12 @@ enum _cpu_feature_t {
 	CPU_FEATURE_CONSTANT_TSC,	/*!< TSC ticks at constant rate */
 	// termination:
 	NUM_CPU_FEATURES,
-};
-typedef enum _cpu_feature_t cpu_feature_t;
+} cpu_feature_t;
 
 /**
  * @brief Describes common library error codes
  */
-enum _cpuid_error_t {
+typedef enum {
 	ERR_OK       =  0,	/*!< "No error" */
 	ERR_NO_CPUID = -1,	/*!< "CPUID instruction is not supported" */
 	ERR_NO_RDTSC = -2,	/*!< "RDTSC instruction is not supported" */
@@ -322,8 +334,7 @@ enum _cpuid_error_t {
 	ERR_BADFMT   = -5,	/*!< "Bad file format" */
 	ERR_NOT_IMP  = -6,	/*!< "Not implemented" */
 	ERR_CPU_UNKN = -7,	/*!< "Unsupported processor" */
-};
-typedef enum _cpuid_error_t cpuid_error_t;
+} cpu_error_t;
 
 /**
  * @brief Internal structure, used in cpu_tsc_mark, cpu_tsc_unmark and
@@ -363,8 +374,9 @@ void cpu_exec_cpuid_ext(uint32_t* regs);
 /**
  * @brief Obtains the raw CPUID data
  * @param data - a pointer to cpu_raw_data_t structure
- * @returns zero if successful, and some negative number on error (@see cpuid_error_t)
- *          The error message can be obtained by calling cpuid_error
+ * @returns zero if successful, and some negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
  */
 int cpuid_get_raw_data(struct cpu_raw_data_t* data);
 
@@ -372,7 +384,7 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data);
  * @brief Writes the raw CPUID data to a text file
  * @param data - a pointer to cpu_raw_data_t structure
  * @param filename - the path of the file, where the serialized data should be
- *                   written
+ *                   written. If empty, stdout will be used.
  * @note This is intended primarily for debugging. On some processor, which is
  *       not currently supported or not completely recognized by cpu_identify,
  *       one can still successfully get the raw data and write it to a file.
@@ -381,8 +393,9 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data);
  *       The file is simple text format of "something=value" pairs. Version info
  *       is also written, but the format is not intended to be neither backward-
  *       nor forward compatible.
- * @returns zero if successful, and some negative number on error (@see cpuid_error_t)
- *          The error message can be obtained by calling cpuid_error
+ * @returns zero if successful, and some negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
  */
 int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename);
 
@@ -391,10 +404,12 @@ int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename);
  * @param data - a pointer to cpu_raw_data_t structure. The deserialized data will
  *               be written here.
  * @param filename - the path of the file, containing the serialized raw data.
+ *                   If empty, stdin will be used.
  * @note This function may fail, if the file is created by different version of
  *       the library. Also, see the notes on cpuid_serialize_raw_data.
- * @returns zero if successful, and some negative number on error (@see cpuid_error_t)
- *          The error message can be obtained by calling cpuid_error
+ * @returns zero if successful, and some negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
 */
 int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename);
 
@@ -417,8 +432,9 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
  *       performance significantly. Specifically, avoid writing "cpu feature
  *       checker" wrapping function, which calls cpu_identify and returns the
  *       value of some flag, if that function is going to be called frequently.
- * @returns zero if successful, and some negative number on error (@see cpuid_error_t)
- *          The error message can be obtained by calling cpuid_error
+ * @returns zero if successful, and some negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
  */
 int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data);
 
@@ -437,6 +453,7 @@ const char* cpu_feature_str(cpu_feature_t feature);
  * libcpuid stores an `errno'-style error status, whose description
  * can be obtained with this function.
  * @note This function is not thread-safe
+ * @see cpu_error_t
  */
 const char* cpuid_error(void);
 
@@ -469,11 +486,12 @@ void cpu_rdtsc(uint64_t* result);
 /**
  * @brief Store TSC and timing info
  *
- * This function stores the current TSC value (@see cpu_rdtsc) and current
+ * This function stores the current TSC value and current
  * time info from a precise OS-specific clock source in the cpu_mark_t
  * structure. The sys_clock field contains time with microsecond resolution.
  * The values can later be used to measure time intervals, number of clocks,
  * FPU frequency, etc.
+ * @see cpu_rdtsc
  *
  * @param mark [out] - a pointer to a cpu_mark_t structure
  */
@@ -526,10 +544,10 @@ int cpu_clock_by_mark(struct cpu_mark_t* mark);
  * @brief Returns the CPU clock, as reported by the OS
  *
  * This function uses OS-specific functions to obtain the CPU clock. It may
- * differ from the true clock for several reasons:
+ * differ from the true clock for several reasons:<br><br>
  *
  * i) The CPU might be in some power saving state, while the OS reports its
- *    full-power frequency, or vice-versa.
+ *    full-power frequency, or vice-versa.<br>
  * ii) In some cases you can raise or lower the CPU frequency with overclocking
  *     utilities and the OS will not notice.
  *
@@ -552,18 +570,18 @@ int cpu_clock_by_os(void);
  * but 100ms should be enough for most purposes.
  *
  * While this will calculate the CPU frequency correctly in most cases, there are
- * several reasons why it might be incorrect:
+ * several reasons why it might be incorrect:<br>
  *
  * i) RDTSC doesn't guarantee it will run at the same clock as the CPU.
  *    Apparently there aren't CPUs at the moment, but still, there's no
- *    guarantee.
+ *    guarantee.<br>
  * ii) The CPU might be in a low-frequency power saving mode, and the CPU
  *     might be switched to higher frequency at any time. If this happens
  *     during the measurement, the result can be anywhere between the
  *     low and high frequencies. Also, if you're interested in the
  *     high frequency value only, this function might return the low one
- *     instead.
- * iii) On SMP systems exhibiting TSC drift (@see cpu_rdtsc)
+ *     instead.<br>
+ * iii) On SMP systems exhibiting TSC drift (see \ref cpu_rdtsc)
  *
  * the quad_check option will run four consecutive measurements and
  * then return the average of the two most-consistent results. The total
@@ -606,7 +624,7 @@ typedef void (*libcpuid_warn_fn_t) (const char *msg);
  * @brief Sets the warning print function
  *
  * In some cases, the internal libcpuid machinery would like to emit useful
- * debug warnings. By default, these warnings are written to stdout. However,
+ * debug warnings. By default, these warnings are written to stderr. However,
  * you can set a custom function that will receive those warnings.
  *
  * @param warn_fun - the warning function you want to set. If NULL, warnings
@@ -615,7 +633,7 @@ typedef void (*libcpuid_warn_fn_t) (const char *msg);
  * @returns the current warning function. You can use the return value to
  * keep the previous warning function and restore it at your discretion.
  */
-libcpuid_warn_fn_t set_warn_function(libcpuid_warn_fn_t warn_fun);
+libcpuid_warn_fn_t cpuid_set_warn_function(libcpuid_warn_fn_t warn_fun);
 
 #ifdef __cplusplus
 }; // extern "C"
