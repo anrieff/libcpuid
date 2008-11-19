@@ -48,6 +48,9 @@ enum _intel_code_t {
 	KENTSFIELD,
 	MORE_THAN_QUADCORE,
 	PENTIUM_D,
+	ATOM_DIAMONDVILLE,
+	ATOM_DUALCORE,
+	ATOM_SILVERTHORNE,
 };
 typedef enum _intel_code_t intel_code_t;
 
@@ -117,6 +120,11 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  9, -1, -1, -1, CELERON           , "Celeron M"               },
 	{  6, 13, -1, -1, -1, PENTIUM           , "Pentium M (Dothan)"      },
 	{  6, 13, -1, -1, -1, CELERON           , "Celeron M"               },
+	
+	{  6, 12, -1, -1, -1, NO_CODE           , "Unknown Atom"            },
+	{  6, 12, -1, -1, -1, ATOM_DIAMONDVILLE , "Atom (Diamondville)"     },
+	{  6, 12, -1, -1, -1, ATOM_DUALCORE     , "Atom (Dual Core)"        },
+	{  6, 12, -1, -1, -1, ATOM_SILVERTHORNE , "Atom (Silverthorne)"     },
 	
 	/* ////////////////////////////////////////////////// */
 	
@@ -380,7 +388,7 @@ static void decode_intel_deterministic_cache_info(struct cpu_raw_data_t* raw,
 		partitions = ((raw->intel_fn4[ecx][1] >> 12) & 0x3ff) + 1;
 		linesize = (raw->intel_fn4[ecx][1] & 0xfff) + 1;
 		sets = raw->intel_fn4[ecx][2] + 1;
-		size = ways * partitions * linesize * sets;
+		size = ways * partitions * linesize * sets / 1024;
 		check_case(1, type, size, ways, linesize, data);
 	}
 }
@@ -431,6 +439,10 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 			{ PENTIUM, "Pentium" },
 			{ CORE_SOLO, "Genuine Intel(R) CPU" },
 			{ CORE_SOLO, "Intel(R) Core(TM)2" },
+			{ ATOM_DIAMONDVILLE, "Atom(TM) CPU 2" },
+			{ ATOM_DIAMONDVILLE, "Atom(TM) CPU N" },
+			{ ATOM_DUALCORE, "Atom(TM) CPU 3" },
+			{ ATOM_SILVERTHORNE, "Atom(TM) CPU Z" },
 		};
 		for (i = 0; i < COUNT_OF(matchtable); i++)
 			if (strstr(bs, matchtable[i].search)) {
