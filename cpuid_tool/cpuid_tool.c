@@ -547,7 +547,8 @@ int main(int argc, char** argv)
 		}
 	/* OK, process all queries. */
 	if ((!need_report || !only_clock_queries) && num_requests > 0) {
-		if (cpu_identify(&raw, &data) < 0) {
+		/* Identify the CPU. Make it do cpuid_get_raw_data() itself */
+		if (check_need_raw_data() && cpu_identify(NULL, &data) < 0) {
 			if (!need_quiet)
 				fprintf(stderr,
 				        "Error identifying the CPU: %s\n",
