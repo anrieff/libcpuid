@@ -44,8 +44,14 @@ enum _intel_code_t {
 	NOT_CELERON,
 	CORE_SOLO,
 	CORE_DUO,
+	CORE_DUO_512K,
+	CORE_DUO_1024K,
 	ALLENDALE,
-	KENTSFIELD,
+	WOLFDALE,
+	PENRYN,
+	QUAD_CORE,
+	DUAL_CORE_HT,
+	QUAD_CORE_HT,
 	MORE_THAN_QUADCORE,
 	PENTIUM_D,
 	ATOM_DIAMONDVILLE,
@@ -128,63 +134,78 @@ const struct match_entry_t cpudb_intel[] = {
 	
 	/* ////////////////////////////////////////////////// */
 	
-	{  6, 14, -1, -1, -1, NO_CODE           , "Unknown Yonah"           },
-	{  6, 14, -1, -1, -1, CORE_SOLO         , "Yonah (Core Solo)"       },
-	{  6, 14, -1, -1, -1, CORE_DUO          , "Yonah (Core Duo)"        },
-	{  6, 14, -1, -1, -1, XEON              , "Xeon LV"                 },
-	{  6, 14, -1, -1, -1, CORE_SOLO         , "Yonah (Core Solo)"       },
+	{  6, 14, -1, -1, -1, NO_CODE           , "Unknown Yonah"             },
+	{  6, 14, -1, -1, -1, CORE_SOLO         , "Yonah (Core Solo)"         },
+	{  6, 14, -1, -1, -1, CORE_DUO          , "Yonah (Core Duo)"          },
+	{  6, 14, -1, -1, -1, XEON              , "Xeon LV"                   },
+	{  6, 14, -1, -1, -1, CORE_SOLO         , "Yonah (Core Solo)"         },
 	
-	{  6, 15, -1, -1, -1, NO_CODE           , "Unknown Core 2"          },
-	{  6, 15, -1, -1, -1, CORE_DUO          , "Conroe (Core 2 Duo)"     },
-	{  6, 15, -1, -1, -1, KENTSFIELD        , "Kentsfield"              },
-	{  6, 15, -1, -1, -1, MORE_THAN_QUADCORE, "More than quad-core"     },
-	{  6, 15, -1, -1, -1, ALLENDALE         , "Allendale (Core 2 Duo)"  },
+	{  6, 15, -1, -1, -1, NO_CODE           , "Unknown Core 2"            },
+	{  6, 15, -1, -1, -1, CORE_DUO          , "Conroe (Core 2 Duo)"       },
+	{  6, 15, -1, -1, -1, CORE_DUO_1024K    , "Conroe (Core 2 Duo) 1024K" },
+	{  6, 15, -1, -1, -1, CORE_DUO_512K     , "Conroe (Core 2 Duo) 512K"  },
+	{  6, 15, -1, -1, -1, QUAD_CORE         , "Kentsfield (Core 2 Quad)"  },
+	{  6, 15, -1, -1, -1, MORE_THAN_QUADCORE, "More than quad-core"       },
+	{  6, 15, -1, -1, -1, ALLENDALE         , "Allendale (Core 2 Duo)"    },
+	{  6, 15, -1, -1, -1, XEON              , "Xeon (Clovertown) Quad"    },
 	
-	{  6, 16, -1, -1, -1, NO_CODE           , "Unknown Core ?"          }, // future ones
-	{  6, 17, -1, -1, -1, NO_CODE           , "Unknown Core ?"          }, // future ones
-	{  6, 16, -1, -1, -1, MORE_THAN_QUADCORE, "More than quad-core"     }, // future ones
-	{  6, 17, -1, -1, -1, MORE_THAN_QUADCORE, "More than quad-core"     }, // future ones
+	{  6,  6, -1, -1, 22, CELERON           , "Conroe-L (Celeron)"        },
+	
+	
+	{  6, -1, -1, -1, 22, NO_CODE           , "Unknown Core ?"          },
+	{  6, -1, -1, -1, 23, NO_CODE           , "Unknown Core ?"          },
+	{  6, -1, -1, -1, 22, MORE_THAN_QUADCORE, "More than quad-core"     },
+	{  6, -1, -1, -1, 23, MORE_THAN_QUADCORE, "More than quad-core"     },
+	
+	{  6, -1, -1, -1, 23, WOLFDALE          , "Wolfdale (Core 2 Duo)"   },
+	{  6, -1, -1, -1, 23, PENRYN            , "Penryn (Core 2 Duo)"     },
+	{  6, -1, -1, -1, 23, QUAD_CORE         , "Yorkfield (Core 2 Quad)" },
+	
+	{  6, 10, -1, -1, 26, NO_CODE           , "Intel Core i7"           },
+	{  6, 10, -1, -1, 26, QUAD_CORE_HT      , "Bloomfield (Core i7)"    },
+	
 	
 	/* Itaniums */
 	{  7, -1, -1, -1, -1, NO_CODE           , "Itanium"                 },
-	{ 15, -1, -1,  1, -1, NO_CODE           , "Itanium 2"               },
+	{ 15, -1, -1, 16, -1, NO_CODE           , "Itanium 2"               },
 	
 	/* Netburst based (Pentium 4 and later)
 	   classic P4s */
-	{ 15, -1, -1,  0, -1, NO_CODE           , "Unknown Pentium 4"       },
-	{ 15, -1, -1,  0, -1, CELERON           , "Unknown P-4 Celeron"     },
-	{ 15, -1, -1,  0, -1, XEON              , "Unknown Xeon"            },
+	{ 15, -1, -1, -1, -1, NO_CODE           , "Unknown Pentium 4"       },
+	{ 15, -1, -1, 15, -1, CELERON           , "Unknown P-4 Celeron"     },
+	{ 15, -1, -1, 15, -1, XEON              , "Unknown Xeon"            },
 	
-	{ 15,  0, -1,  0, -1, NO_CODE           , "Pentium 4 (Willamette)"  },
-	{ 15,  1, -1,  0, -1, NO_CODE           , "Pentium 4 (Willamette)"  },
-	{ 15,  2, -1,  0, -1, NO_CODE           , "Pentium 4 (Northwood)"   },
-	{ 15,  3, -1,  0, -1, NO_CODE           , "Pentium 4 (Prescott)"    },
-	{ 15,  4, -1,  0, -1, NO_CODE           , "Pentium 4 (Prescott)"    },
+	{ 15,  0, -1, 15, -1, NO_CODE           , "Pentium 4 (Willamette)"  },
+	{ 15,  1, -1, 15, -1, NO_CODE           , "Pentium 4 (Willamette)"  },
+	{ 15,  2, -1, 15, -1, NO_CODE           , "Pentium 4 (Northwood)"   },
+	{ 15,  3, -1, 15, -1, NO_CODE           , "Pentium 4 (Prescott)"    },
+	{ 15,  4, -1, 15, -1, NO_CODE           , "Pentium 4 (Prescott)"    },
+	{ 15,  6, -1, 15, -1, NO_CODE           , "Pentium 4 (Cedar Mill)"  },
 	
 	/* server CPUs */
-	{ 15,  0, -1,  0, -1, XEON              , "Xeon (Foster)"           },
-	{ 15,  1, -1,  0, -1, XEON              , "Xeon (Foster)"           },
-	{ 15,  2, -1,  0, -1, XEON              , "Xeon (Prestonia)"        },
-	{ 15,  2, -1,  0, -1, XEONMP            , "Xeon (Gallatin)"         },
-	{ 15,  3, -1,  0, -1, XEON              , "Xeon (Nocona)"           },
-	{ 15,  4, -1,  0, -1, XEON              , "Xeon (Nocona)"           },
-	{ 15,  4, -1,  0, -1, XEON_IRWIN        , "Xeon (Irwindale)"        },
-	{ 15,  4, -1,  0, -1, XEONMP            , "Xeon (Cranford)"         },
-	{ 15,  4, -1,  0, -1, XEON_POTOMAC      , "Xeon (Potomac)"          },
-	{ 15,  6, -1,  0, -1, XEON              , "Xeon 5000"               },
+	{ 15,  0, -1, 15, -1, XEON              , "Xeon (Foster)"           },
+	{ 15,  1, -1, 15, -1, XEON              , "Xeon (Foster)"           },
+	{ 15,  2, -1, 15, -1, XEON              , "Xeon (Prestonia)"        },
+	{ 15,  2, -1, 15, -1, XEONMP            , "Xeon (Gallatin)"         },
+	{ 15,  3, -1, 15, -1, XEON              , "Xeon (Nocona)"           },
+	{ 15,  4, -1, 15, -1, XEON              , "Xeon (Nocona)"           },
+	{ 15,  4, -1, 15, -1, XEON_IRWIN        , "Xeon (Irwindale)"        },
+	{ 15,  4, -1, 15, -1, XEONMP            , "Xeon (Cranford)"         },
+	{ 15,  4, -1, 15, -1, XEON_POTOMAC      , "Xeon (Potomac)"          },
+	{ 15,  6, -1, 15, -1, XEON              , "Xeon 5000"               },
 	
 	/* Pentium Ds */
-	{ 15,  4,  4,  0, -1, NO_CODE           , "Pentium D"               },
-	{ 15,  4, -1,  0, -1, PENTIUM_D         , "Pentium D"               },
-	{ 15,  4,  7,  0, -1, NO_CODE           , "Pentium D"               },
-	{ 15,  6, -1,  0, -1, PENTIUM_D         , "Pentium D"               },
+	{ 15,  4,  4, 15, -1, NO_CODE           , "Pentium D"               },
+	{ 15,  4, -1, 15, -1, PENTIUM_D         , "Pentium D"               },
+	{ 15,  4,  7, 15, -1, NO_CODE           , "Pentium D"               },
+	{ 15,  6, -1, 15, -1, PENTIUM_D         , "Pentium D"               },
 
 	/* Celeron and Celeron Ds */
-	{ 15,  1, -1,  0, -1, CELERON           , "P-4 Celeron (128K)"      }, 
-	{ 15,  2, -1,  0, -1, CELERON           , "P-4 Celeron (128K)"      },
-	{ 15,  3, -1,  0, -1, CELERON           , "Celeron D"               },
-	{ 15,  4, -1,  0, -1, CELERON           , "Celeron D"               },
-	{ 15,  6, -1,  0, -1, CELERON           , "Celeron D"               },
+	{ 15,  1, -1, 15, -1, CELERON           , "P-4 Celeron (128K)"      }, 
+	{ 15,  2, -1, 15, -1, CELERON           , "P-4 Celeron (128K)"      },
+	{ 15,  3, -1, 15, -1, CELERON           , "Celeron D"               },
+	{ 15,  4, -1, 15, -1, CELERON           , "Celeron D"               },
+	{ 15,  6, -1, 15, -1, CELERON           , "Celeron D"               },
 };
 
 
@@ -458,14 +479,40 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 	if (code == CORE_SOLO) {
 		switch (data->num_cores) {
 			case 1: break;
-			case 2: code = CORE_DUO; break;
-			case 4: code = KENTSFIELD; break;
+			case 2:
+			{
+				code = CORE_DUO;
+				if (data->num_logical_cpus > 2)
+					code = DUAL_CORE_HT;
+				break;
+			}
+			case 4:
+			{
+				code = QUAD_CORE;
+				if (data->num_logical_cpus > 4)
+					code = QUAD_CORE_HT;
+				break;
+			}
 			default:
 				code = MORE_THAN_QUADCORE; break;
 		}
 	}
-	if (code == CORE_DUO && data->l2_cache == 2048)
-		code = ALLENDALE;
+	const struct { int cache_size; intel_code_t code; }
+	match_cache[] = {
+		{  512, CORE_DUO_512K },
+		{ 1024, CORE_DUO_1024K },
+		{ 2048, ALLENDALE },
+		{ 3072, PENRYN },
+		{ 6144, WOLFDALE },
+	};
+	if (code == CORE_DUO && data->l2_cache != 4096) {
+		for (i = 0; i < COUNT_OF(match_cache); i++) {
+			if (match_cache[i].cache_size == data->l2_cache) {
+				code = match_cache[i].code;
+				break;
+			}
+		}
+	}
 	match_cpu_codename(cpudb_intel, COUNT_OF(cpudb_intel), data, code);
 }
 
