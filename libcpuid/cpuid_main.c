@@ -221,12 +221,18 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	if (data->vendor == VENDOR_UNKNOWN)
 		return set_error(ERR_CPU_UNKN);
 	int basic = raw->basic_cpuid[0][0];
+	int xmodel, xfamily;
 	if (basic >= 1) {
 		data->family = (raw->basic_cpuid[1][0] >> 8) & 0xf;
 		data->model = (raw->basic_cpuid[1][0] >> 4) & 0xf;
 		data->stepping = raw->basic_cpuid[1][0] & 0xf;
-		data->ext_model = (raw->basic_cpuid[1][0] >> 16) & 0xf;
-		data->ext_family = (raw->basic_cpuid[1][0] >> 20) & 0xff;
+		xmodel = (raw->basic_cpuid[1][0] >> 16) & 0xf;
+		xfamily = (raw->basic_cpuid[1][0] >> 20) & 0xff;
+		if (data->vendor == VENDOR_AMD && data->family < 0xf)
+			data->ext_family = data->family;
+		else
+			data->ext_family = data->family + xfamily;
+		data->ext_model = data->model + (xmodel << 4);
 	}
 	int ext = raw->ext_cpuid[0][0] - 0x8000000;
 	
