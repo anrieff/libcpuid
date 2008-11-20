@@ -443,28 +443,35 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 	intel_code_t code = NO_CODE;
 	int i;
 	const char* bs = data->brand_str;
+	const struct { int cache_size; intel_code_t code; }	match_cache[] = {
+		{  512, CORE_DUO_512K },
+		{ 1024, CORE_DUO_1024K },
+		{ 2048, ALLENDALE },
+		{ 3072, PENRYN },
+		{ 6144, WOLFDALE },
+	};
+	const struct { intel_code_t c; const char *search; } matchtable[] = {
+		{ XEONMP, "Xeon MP" },
+		{ XEONMP, "Xeon(TM) MP" },
+		{ XEON, "Xeon" },
+		{ CELERON, "Celeron" },
+		{ MOBILE_PENTIUM_M, "Pentium(R) M" },
+		{ PENTIUM_D, "Pentium(R) D" },
+		{ PENTIUM, "Pentium" },
+		{ CORE_SOLO, "Genuine Intel(R) CPU" },
+		{ CORE_SOLO, "Intel(R) Core(TM)2" },
+		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU 2" },
+		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU N" },
+		{ ATOM_DUALCORE, "Atom(TM) CPU 3" },
+		{ ATOM_SILVERTHORNE, "Atom(TM) CPU Z" },
+	};
+
 	if (strstr(bs, "Mobile")) {
 		if (strstr(bs, "Celeron"))
 			code = MOBILE_CELERON;
 		else if (strstr(bs, "Pentium"))
 			code = MOBILE_PENTIUM;
 	} else {
-		const struct { intel_code_t c; const char *search; }
-		matchtable[] = {
-			{ XEONMP, "Xeon MP" },
-			{ XEONMP, "Xeon(TM) MP" },
-			{ XEON, "Xeon" },
-			{ CELERON, "Celeron" },
-			{ MOBILE_PENTIUM_M, "Pentium(R) M" },
-			{ PENTIUM_D, "Pentium(R) D" },
-			{ PENTIUM, "Pentium" },
-			{ CORE_SOLO, "Genuine Intel(R) CPU" },
-			{ CORE_SOLO, "Intel(R) Core(TM)2" },
-			{ ATOM_DIAMONDVILLE, "Atom(TM) CPU 2" },
-			{ ATOM_DIAMONDVILLE, "Atom(TM) CPU N" },
-			{ ATOM_DUALCORE, "Atom(TM) CPU 3" },
-			{ ATOM_SILVERTHORNE, "Atom(TM) CPU Z" },
-		};
 		for (i = 0; i < COUNT_OF(matchtable); i++)
 			if (strstr(bs, matchtable[i].search)) {
 				code = matchtable[i].c;
@@ -497,14 +504,7 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 				code = MORE_THAN_QUADCORE; break;
 		}
 	}
-	const struct { int cache_size; intel_code_t code; }
-	match_cache[] = {
-		{  512, CORE_DUO_512K },
-		{ 1024, CORE_DUO_1024K },
-		{ 2048, ALLENDALE },
-		{ 3072, PENRYN },
-		{ 6144, WOLFDALE },
-	};
+	
 	if (code == CORE_DUO && data->l2_cache != 4096) {
 		for (i = 0; i < COUNT_OF(match_cache); i++) {
 			if (match_cache[i].cache_size == data->l2_cache) {

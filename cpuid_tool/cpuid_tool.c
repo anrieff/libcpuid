@@ -137,6 +137,7 @@ const int sz_match = (sizeof(matchtable) / sizeof(matchtable[0]));
 
 static void usage(void)
 {
+	int line_fill, l, i;
 	printf("Usage: cpuid_tool [options]\n\n");
 	printf("Options:\n");
 	printf("  -h,--help      - Show this help\n");
@@ -152,7 +153,7 @@ static void usage(void)
 	printf("\n");
 	printf("Query switches (generate 1 line of ouput per switch; in order of appearance):");
 	
-	int line_fill = 80, l, i;
+	line_fill = 80;
 	for (i = 0; i < sz_match; i++) {
 		l = (int) strlen(matchtable[i].synopsis);
 		if (line_fill + l > 76) {
@@ -177,6 +178,8 @@ static int parse_cmdline(int argc, char** argv)
 		fprintf(stderr, "Error: %s\n\n", msg); \
 		fprintf(stderr, "Use -h to get a list of supported options\n"); \
 		return -1;
+
+	int i, j, recog;
 	if (argc == 1) {
 		/* Default command line options */
 		need_output = 1;
@@ -186,7 +189,6 @@ static int parse_cmdline(int argc, char** argv)
 		need_verbose = 1;
 		return 1;
 	}
-	int i, j, recog;
 	for (i = 1; i < argc; i++) {
 		char *arg = argv[i];
 		recog = 0;
@@ -389,11 +391,12 @@ int main(int argc, char** argv)
 	int parseres = parse_cmdline(argc, argv);
 	int i, readres, writeres;
 	int only_clock_queries;
-	if (parseres != 1)
-		return parseres;
 	struct cpu_raw_data_t raw;
 	struct cpu_id_t data;
-	
+
+	if (parseres != 1)
+		return parseres;
+
 	/* In quiet mode, disable libcpuid warning messages: */
 	if (need_quiet)
 		cpuid_set_warn_function(NULL);

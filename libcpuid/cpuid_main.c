@@ -191,13 +191,8 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 
 static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
-	int i, j;
-	
-	memcpy(data->vendor_str + 0, &raw->basic_cpuid[0][1], 4);
-	memcpy(data->vendor_str + 4, &raw->basic_cpuid[0][3], 4);
-	memcpy(data->vendor_str + 8, &raw->basic_cpuid[0][2], 4);
-	data->vendor_str[12] = 0;
-	/* Determine vendor: */
+	int i, j, basic, xmodel, xfamily, ext;
+	char brandstr[64] = {0};
 	const struct { cpu_vendor_t vendor; char match[16]; }
 	matchtable[NUM_CPU_VENDORS] = {
 		/* source: http://www.sandpile.org/ia32/cpuid.htm */
@@ -212,6 +207,12 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		{ VENDOR_SIS		, "SiS SiS SiS " },
 		{ VENDOR_NSC		, "Geode by NSC" },
 	};
+	
+	memcpy(data->vendor_str + 0, &raw->basic_cpuid[0][1], 4);
+	memcpy(data->vendor_str + 4, &raw->basic_cpuid[0][3], 4);
+	memcpy(data->vendor_str + 8, &raw->basic_cpuid[0][2], 4);
+	data->vendor_str[12] = 0;
+	/* Determine vendor: */
 	data->vendor = VENDOR_UNKNOWN;
 	for (i = 0; i < NUM_CPU_VENDORS; i++)
 		if (!strcmp(data->vendor_str, matchtable[i].match)) {
@@ -220,8 +221,7 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		}
 	if (data->vendor == VENDOR_UNKNOWN)
 		return set_error(ERR_CPU_UNKN);
-	int basic = raw->basic_cpuid[0][0];
-	int xmodel, xfamily;
+	basic = raw->basic_cpuid[0][0];
 	if (basic >= 1) {
 		data->family = (raw->basic_cpuid[1][0] >> 8) & 0xf;
 		data->model = (raw->basic_cpuid[1][0] >> 4) & 0xf;
@@ -234,10 +234,9 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 			data->ext_family = data->family + xfamily;
 		data->ext_model = data->model + (xmodel << 4);
 	}
-	int ext = raw->ext_cpuid[0][0] - 0x8000000;
+	ext = raw->ext_cpuid[0][0] - 0x8000000;
 	
 	/* obtain the brand string, if present: */
-	char brandstr[64] = {0};
 	if (ext >= 4) {
 		for (i = 0; i < 3; i++)
 			for (j = 0; j < 4; j++)
@@ -342,7 +341,7 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
 	if (!f) return set_error(ERR_OPEN);
 	while (fgets(line, sizeof(line), f)) {
 		++cur_line;
-		len = strlen(line);
+		len = (int) strlen(line);
 		if (len < 2) continue;
 		if (line[len - 1] == '\n')
 			line[--len] = '\0';
