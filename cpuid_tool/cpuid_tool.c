@@ -490,11 +490,11 @@ int main(int argc, char** argv)
 		fprintf(fout, "  vendor_str : `%s'\n", data.vendor_str);
 		fprintf(fout, "  vendor id  : %d\n", (int) data.vendor);
 		fprintf(fout, "  brand_str  : `%s'\n", data.brand_str);
-		fprintf(fout, "  family     : %d\n", data.family);
-		fprintf(fout, "  model      : %d\n", data.model);
-		fprintf(fout, "  stepping   : %d\n", data.stepping);
-		fprintf(fout, "  ext_family : %d\n", data.ext_family);
-		fprintf(fout, "  ext_model  : %d\n", data.ext_model);
+		fprintf(fout, "  family     : %d (%02Xh)\n", data.family, data.family);
+		fprintf(fout, "  model      : %d (%02Xh)\n", data.model, data.model);
+		fprintf(fout, "  stepping   : %d (%02Xh)\n", data.stepping, data.stepping);
+		fprintf(fout, "  ext_family : %d (%02Xh)\n", data.ext_family, data.ext_family);
+		fprintf(fout, "  ext_model  : %d (%02Xh)\n", data.ext_model, data.ext_model);
 		fprintf(fout, "  num_cores  : %d\n", data.num_cores);
 		fprintf(fout, "  num_logical: %d\n", data.num_logical_cpus);
 		fprintf(fout, "  total_cpus : %d\n", data.total_cpus);
