@@ -53,4 +53,4 @@ __attribute__((format(printf, 1, 2)))
 
 extern libcpuid_warn_fn_t _warn_fun;
 
-#endif // __LIBCPUID_UTIL_H__
+#endif /* __LIBCPUID_UTIL_H__ */

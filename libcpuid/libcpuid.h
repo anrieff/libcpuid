@@ -318,7 +318,7 @@ typedef enum {
 	CPU_FEATURE_100MHZSTEPS,/*!< 100 MHz multiplier control */
 	CPU_FEATURE_HWPSTATE,	/*!< Hardware P-state control */
 	CPU_FEATURE_CONSTANT_TSC,	/*!< TSC ticks at constant rate */
-	// termination:
+	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;
 
@@ -636,10 +636,10 @@ typedef void (*libcpuid_warn_fn_t) (const char *msg);
 libcpuid_warn_fn_t cpuid_set_warn_function(libcpuid_warn_fn_t warn_fun);
 
 #ifdef __cplusplus
-}; // extern "C"
+}; /* extern "C" */
 #endif
 
 
 /** @} */
 
-#endif // __LIBCPUID_H__
+#endif /* __LIBCPUID_H__ */

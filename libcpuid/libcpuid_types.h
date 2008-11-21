@@ -35,7 +35,7 @@
 #if defined(HAVE_STDINT_H)
 #  include <stdint.h>
 #else
-// we have to provide our own:
+/* we have to provide our own: */
 #  if !defined(HAVE_INT32_T) && !defined(__int32_t_defined)
 typedef int int32_t;
 #  endif
@@ -53,4 +53,4 @@ typedef unsigned long long	uint64_t;
 
 #endif
 
-#endif // __LIBCPUID_TYPES_H__
+#endif /* __LIBCPUID_TYPES_H__ */

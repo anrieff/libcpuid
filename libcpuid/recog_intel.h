@@ -28,4 +28,4 @@
 
 int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data);
 
-#endif //__RECOG_INTEL_H__
+#endif /*__RECOG_INTEL_H__*/

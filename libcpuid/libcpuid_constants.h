@@ -39,4 +39,4 @@
 #define MAX_EXT_CPUID_LEVEL	32
 #define MAX_INTELFN4_LEVEL	4
 
-#endif // __LIBCPUID_CONSTANTS_H__
+#endif /* __LIBCPUID_CONSTANTS_H__ */

@@ -108,7 +108,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  5, -1, -1, -1, CELERON           , "P-II Celeron (no L2)"    },
 	{  6,  6, -1, -1, -1, CELERON           , "P-II Celeron (128K)"     },
 	
-	/* ////////////////////////////////////////////////// */
+	/* -------------------------------------------------- */
 	
 	{  6,  7, -1, -1, -1, NO_CODE           , "Pentium III (Katmai)"    },
 	{  6,  8, -1, -1, -1, NO_CODE           , "Pentium III (Coppermine)"},
@@ -125,7 +125,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, -1, CELERON           , "P-III Celeron"           },
 	{  6, 11, -1, -1, -1, CELERON           , "P-III Celeron"           },
 	
-	/* ////////////////////////////////////////////////// */
+	/* -------------------------------------------------- */
 	
 	{  6,  9, -1, -1, -1, NO_CODE           , "Unknown Pentium M"       },
 	{  6,  9, -1, -1, -1, MOBILE_PENTIUM_M  , "Unknown Pentium M"       },
@@ -139,7 +139,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 12, -1, -1, -1, ATOM_DUALCORE     , "Atom (Dual Core)"        },
 	{  6, 12, -1, -1, -1, ATOM_SILVERTHORNE , "Atom (Silverthorne)"     },
 	
-	/* ////////////////////////////////////////////////// */
+	/* -------------------------------------------------- */
 	
 	{  6, 14, -1, -1, -1, NO_CODE           , "Unknown Yonah"             },
 	{  6, 14, -1, -1, -1, CORE_SOLO         , "Yonah (Core Solo)"         },

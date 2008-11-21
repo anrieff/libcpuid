@@ -30,7 +30,7 @@
 int cpuid_exists_by_eflags(void)
 {
 #ifdef __x86_64__
-	return 1; // CPUID is always present on the x86_64
+	return 1; /* CPUID is always present on the x86_64 */
 #else
 #  ifdef __GNUC__
 	int result;
@@ -70,9 +70,9 @@ int cpuid_exists_by_eflags(void)
 	return (result != 0);
 #    else
 #      error "Unsupported compiler"
-#    endif // _MSC_VER
-#  endif // __GNUC__
-#endif // __x86_64__
+#    endif /* _MSC_VER */
+#  endif /* __GNUC__ */
+#endif /* __x86_64__ */
 }
 
 void exec_cpiud(uint32_t *regs)
@@ -133,7 +133,7 @@ void exec_cpiud(uint32_t *regs)
 		:"m"(regs)
 		:"memory", "eax"
 	);
-#	endif // __x86_64__
+#	endif /* __x86_64__ */
 #else
 #  ifdef _MSC_VER
 	__asm {
@@ -162,7 +162,7 @@ void exec_cpiud(uint32_t *regs)
 	}
 #  else
 #    error "Unsupported compiler"
-#  endif // _MSC_VER
+#  endif /* _MSC_VER */
 #endif
 
 }
@@ -186,7 +186,7 @@ void cpu_rdtsc(uint64_t* result)
 	};
 #  else
 #    error "Unsupported compiler"
-#  endif // _MSC_VER
-#endif // __GNUC__
+#  endif /* _MSC_VER */
+#endif /* __GNUC__ */
 	*result = (uint64_t)low_part + (((uint64_t) hi_part) << 32);
 }

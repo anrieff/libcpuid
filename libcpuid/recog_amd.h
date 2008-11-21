@@ -28,4 +28,4 @@
 
 int cpuid_identify_amd(struct cpu_raw_data_t* raw, struct cpu_id_t* data);
 
-#endif // __RECOG_AMD_H__
+#endif /* __RECOG_AMD_H__ */

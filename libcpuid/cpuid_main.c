@@ -64,8 +64,8 @@ static int parse_token(const char* expected_token, const char *token,
 	int veax, vebx, vecx, vedx;
 	int index;
 
-	if (*recognized) return 1; // already recognized
-	if (strncmp(token, expected_token, strlen(expected_token))) return 1; // not what we search for
+	if (*recognized) return 1; /* already recognized */
+	if (strncmp(token, expected_token, strlen(expected_token))) return 1; /* not what we search for */
 	sprintf(format, "%s[%%d]", expected_token);
 	*recognized = 1;
 	if (1 == sscanf(token, format, &index) && index >=0 && index < limit) {
@@ -134,7 +134,7 @@ static int get_total_cpus(void)
 	}
 	return 1;
 }
-#endif // GET_TOTAL_CPUS_DEFINED
+#endif /* GET_TOTAL_CPUS_DEFINED */
 
 
 static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
@@ -353,7 +353,7 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
 		strncpy(token, line, i);
 		token[i] = '\0';
 		value = &line[i + 1];
-		// try to recognize the line
+		/* try to recognize the line */
 		recognized = 0;
 		if (!strcmp(token, "version")) {
 			recognized = 1;

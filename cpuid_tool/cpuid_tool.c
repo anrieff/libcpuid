@@ -240,6 +240,7 @@ static int parse_cmdline(int argc, char** argv)
 			recog = 1;
 		}
 		if (!strcmp(arg, "--clock-rdtsc")) {
+			need_clockreport = 1;
 			need_timed_clockreport = 1;
 			recog = 1;
 		}
