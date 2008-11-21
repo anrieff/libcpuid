@@ -81,6 +81,7 @@ typedef enum {
 	NEED_CODENAME,
 	NEED_FEATURES,
 	NEED_CLOCK,
+	NEED_CLOCK_OS,
 	NEED_CLOCK_RDTSC,
 } output_data_switch;
 
@@ -128,6 +129,7 @@ matchtable[] = {
 	{ NEED_CODENAME     , "--codename"     , 1},
 	{ NEED_FEATURES     , "--flags"        , 1},
 	{ NEED_CLOCK        , "--clock"        , 0},
+	{ NEED_CLOCK_OS     , "--clock-os"     , 0},
 	{ NEED_CLOCK_RDTSC  , "--clock-rdtsc"  , 1},
 };
 
@@ -377,6 +379,9 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 		}
 		case NEED_CLOCK:
 			fprintf(fout, "%d\n", cpu_clock());
+			break;
+		case NEED_CLOCK_OS:
+			fprintf(fout, "%d\n", cpu_clock_by_os());
 			break;
 		case NEED_CLOCK_RDTSC:
 			fprintf(fout, "%d\n", cpu_clock_measure(400, 1));

@@ -31,12 +31,13 @@
 #include <windows.h>
 static void sys_precise_clock(uint64_t *result)
 {
+	double c, f;
 	LARGE_INTEGER freq, counter;
 	QueryPerformanceCounter(&counter);
 	QueryPerformanceFrequency(&freq);
-	double c = counter.QuadPart;
-	double f = freq.QuadPart;
-	result = (uint64_t) ( c * 1000000.0 / f );
+	c = (double) counter.QuadPart;
+	f = (double) freq.QuadPart;
+	*result = (uint64_t) ( c * 1000000.0 / f );
 }
 #else
 /* assuming Linux, Mac OS or other POSIX */
@@ -91,23 +92,19 @@ int cpu_clock_by_mark(struct cpu_mark_t* mark)
 int cpu_clock_by_os(void)
 {
 	HKEY key;
-	char buff[20];
-	DWORD size = 20;
-	int result;
+	DWORD result;
+	DWORD size = 4;
 	
-	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0\\~MHz", 0, KEY_READ, &key) != ERROR_SUCCESS)
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"), 0, KEY_READ, &key) != ERROR_SUCCESS)
 		return -1;
 	
-	if (RegQueryValueEx(key, "~MHz", NULL, NULL, (LPBYTE) buff, (LPDWORD) &size) != ERROR_SUCCESS) {
+	if (RegQueryValueEx(key, TEXT("~MHz"), NULL, NULL, (LPBYTE) &result, (LPDWORD) &size) != ERROR_SUCCESS) {
 		RegCloseKey(key);
 		return -1;
 	}
-	buff[size] = 0;
 	RegCloseKey(key);
 	
-	if (1 != sscanf(buff, "%d", &result))
-		return -1;
-	return result;
+	return (int)result;
 }
 #else
 /* Assuming Linux with /proc/cpuinfo */
@@ -175,7 +172,7 @@ int cpu_clock_measure(int millis, int quad_check)
 		mark_t_subtract(&end[k], &begin[k], &temp);
 		results[k] = cpu_clock_by_mark(&temp);
 	}
-	if (n == 1) return results[k];
+	if (n == 1) return results[0];
 	mdiff = 0x7fffffff;
 	bi = bj = -1;
 	for (i = 0; i < 4; i++) {
@@ -198,6 +195,6 @@ int cpu_clock(void)
 	int result;
 	result = cpu_clock_by_os();
 	if (result <= 0)
-		result = cpu_clock_measure(200, 1);
+		result = cpu_clock_measure(200, 0);
 	return result;
 }
