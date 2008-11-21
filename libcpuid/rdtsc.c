@@ -195,6 +195,6 @@ int cpu_clock(void)
 	int result;
 	result = cpu_clock_by_os();
 	if (result <= 0)
-		result = cpu_clock_measure(200, 0);
+		result = cpu_clock_measure(200, 1);
 	return result;
 }
