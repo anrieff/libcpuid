@@ -43,12 +43,19 @@ enum _intel_code_t {
 	MOBILE_CELERON,
 	NOT_CELERON,
 	CORE_SOLO,
+	MOBILE_CORE,
 	CORE_DUO,
 	CORE_DUO_512K,
 	CORE_DUO_1024K,
 	ALLENDALE,
-	WOLFDALE,
-	PENRYN,
+	WOLFDALE_2M,
+	WOLFDALE_3M,
+	WOLFDALE_6M,
+	MEROM_2M,
+	MEROM_4M,
+	PENRYN_3M,
+	PENRYN_6M,
+	PENRYN_QUAD,
 	QUAD_CORE,
 	DUAL_CORE_HT,
 	QUAD_CORE_HT,
@@ -148,18 +155,28 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, -1, MORE_THAN_QUADCORE, "More than quad-core"       },
 	{  6, 15, -1, -1, -1, ALLENDALE         , "Allendale (Core 2 Duo)"    },
 	{  6, 15, -1, -1, -1, XEON              , "Xeon (Clovertown) Quad"    },
+	{  6, 15, -1, -1, -1, MOBILE_CORE       , "Merom (Core 2 Duo)"        },
+	{  6, 15, -1, -1, -1, MEROM_2M          , "Merom (Core 2 Duo) 2048K"  },
+	{  6, 15, -1, -1, -1, MEROM_4M          , "Merom (Core 2 Duo) 4192K"  },
+	
 	
 	{  6,  6, -1, -1, 22, CELERON           , "Conroe-L (Celeron)"        },
 	
 	
-	{  6, -1, -1, -1, 22, NO_CODE           , "Unknown Core ?"          },
-	{  6, -1, -1, -1, 23, NO_CODE           , "Unknown Core ?"          },
-	{  6, -1, -1, -1, 22, MORE_THAN_QUADCORE, "More than quad-core"     },
-	{  6, -1, -1, -1, 23, MORE_THAN_QUADCORE, "More than quad-core"     },
+	{  6,  6, -1, -1, 22, NO_CODE           , "Unknown Core ?"           },
+	{  6,  7, -1, -1, 23, NO_CODE           , "Unknown Core ?"           },
+	{  6,  6, -1, -1, 22, MORE_THAN_QUADCORE, "More than quad-core"      },
+	{  6,  7, -1, -1, 23, MORE_THAN_QUADCORE, "More than quad-core"      },
 	
-	{  6, -1, -1, -1, 23, WOLFDALE          , "Wolfdale (Core 2 Duo)"   },
-	{  6, -1, -1, -1, 23, PENRYN            , "Penryn (Core 2 Duo)"     },
-	{  6, -1, -1, -1, 23, QUAD_CORE         , "Yorkfield (Core 2 Quad)" },
+	{  6,  7, -1, -1, 23, CORE_SOLO         , "Unknown Core 45nm"        },
+	{  6,  7, -1, -1, 23, CORE_DUO          , "Unknown Core 45nm"        },
+	{  6,  7, -1, -1, 23, WOLFDALE_2M       , "Wolfdale (Core 2 Duo) 2M" },
+	{  6,  7, -1, -1, 23, WOLFDALE_3M       , "Wolfdale (Core 2 Duo) 3M" },
+	{  6,  7, -1, -1, 23, WOLFDALE_6M       , "Wolfdale (Core 2 Duo) 6M" },
+	{  6,  7, -1, -1, 23, MOBILE_CORE       , "Penryn (Core 2 Duo)"      },
+	{  6,  7, -1, -1, 23, PENRYN_3M         , "Penryn (Core 2 Duo) 3M"   },
+	{  6,  7, -1, -1, 23, PENRYN_6M         , "Penryn (Core 2 Duo) 6M"   },
+	{  6,  7, -1, -1, 23, QUAD_CORE         , "Yorkfield (Core 2 Quad)"  },
 	
 	{  6, 10, -1, -1, 26, NO_CODE           , "Intel Core i7"           },
 	{  6, 10, -1, -1, 26, QUAD_CORE_HT      , "Bloomfield (Core i7)"    },
@@ -442,13 +459,12 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 {
 	intel_code_t code = NO_CODE;
 	int i;
+	int L2 = data->l2_cache;
 	const char* bs = data->brand_str;
-	const struct { int cache_size; intel_code_t code; }	match_cache[] = {
+	const struct { int cache_size; intel_code_t code; } match_cache[] = {
 		{  512, CORE_DUO_512K },
 		{ 1024, CORE_DUO_1024K },
 		{ 2048, ALLENDALE },
-		{ 3072, PENRYN },
-		{ 6144, WOLFDALE },
 	};
 	const struct { intel_code_t c; const char *search; } matchtable[] = {
 		{ XEONMP, "Xeon MP" },
@@ -458,6 +474,8 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 		{ MOBILE_PENTIUM_M, "Pentium(R) M" },
 		{ PENTIUM_D, "Pentium(R) D" },
 		{ PENTIUM, "Pentium" },
+		{ MOBILE_CORE, "Intel(R) Core(TM)2 CPU T" },
+		{ MOBILE_CORE, "Genuine Intel(R) CPU T" },
 		{ CORE_SOLO, "Genuine Intel(R) CPU" },
 		{ CORE_SOLO, "Intel(R) Core(TM)2" },
 		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU 2" },
@@ -505,12 +523,31 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 		}
 	}
 	
-	if (code == CORE_DUO && data->l2_cache != 4096) {
+	if (code == CORE_DUO && L2 != 4096) {
 		for (i = 0; i < COUNT_OF(match_cache); i++) {
-			if (match_cache[i].cache_size == data->l2_cache) {
+			if (match_cache[i].cache_size == L2) {
 				code = match_cache[i].code;
 				break;
 			}
+		}
+	}
+	if (code == CORE_DUO && data->ext_model >= 23) {
+		if (L2 == 3072 || L2 == 6144)
+			code = (L2 == 3072) ? WOLFDALE_3M : WOLFDALE_6M;
+	}
+	if (code == PENTIUM_D && data->ext_model >= 23) {
+		code = WOLFDALE_2M;
+	}
+	if (code == MOBILE_CORE) {
+		if (data->ext_model < 23) {
+			if (L2 == 2048 || L2 == 4096)
+				code = (L2 == 2048) ? MEROM_2M : MEROM_4M;
+		} else {
+			if (data->num_cores == 2) {
+				if (L2 == 3072 || L2 == 6144)
+					code = (L2 == 3072) ? PENRYN_3M : PENRYN_6M;
+			} else
+				code = PENRYN_QUAD;
 		}
 	}
 	match_cpu_codename(cpudb_intel, COUNT_OF(cpudb_intel), data, code);
