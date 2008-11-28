@@ -1,7 +1,7 @@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
-includedir=@includedir@
+includedir=@includedir@/libcpuid
 
 Name: libcpuid
 Description: libcpuid provides CPU identification for x86

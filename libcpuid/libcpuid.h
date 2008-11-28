@@ -372,7 +372,7 @@ void cpu_exec_cpuid(uint32_t eax, uint32_t* regs);
 void cpu_exec_cpuid_ext(uint32_t* regs);
 
 /**
- * @brief Obtains the raw CPUID data
+ * @brief Obtains the raw CPUID data from the current CPU
  * @param data - a pointer to cpu_raw_data_t structure
  * @returns zero if successful, and some negative number on error.
  *          The error message can be obtained by calling \ref cpuid_error.
