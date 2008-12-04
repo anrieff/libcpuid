@@ -157,7 +157,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, -1, XEON              , "Xeon (Clovertown) Quad"    },
 	{  6, 15, -1, -1, -1, MOBILE_CORE       , "Merom (Core 2 Duo)"        },
 	{  6, 15, -1, -1, -1, MEROM_2M          , "Merom (Core 2 Duo) 2048K"  },
-	{  6, 15, -1, -1, -1, MEROM_4M          , "Merom (Core 2 Duo) 4192K"  },
+	{  6, 15, -1, -1, -1, MEROM_4M          , "Merom (Core 2 Duo) 4096K"  },
 	
 	
 	{  6,  6, -1, -1, 22, CELERON           , "Conroe-L (Celeron)"        },
@@ -461,6 +461,7 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 	int i;
 	int L2 = data->l2_cache;
 	const char* bs = data->brand_str;
+	const char* s;
 	const struct { int cache_size; intel_code_t code; } match_cache[] = {
 		{  512, CORE_DUO_512K },
 		{ 1024, CORE_DUO_1024K },
@@ -474,8 +475,6 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 		{ MOBILE_PENTIUM_M, "Pentium(R) M" },
 		{ PENTIUM_D, "Pentium(R) D" },
 		{ PENTIUM, "Pentium" },
-		{ MOBILE_CORE, "Intel(R) Core(TM)2 CPU T" },
-		{ MOBILE_CORE, "Genuine Intel(R) CPU T" },
 		{ CORE_SOLO, "Genuine Intel(R) CPU" },
 		{ CORE_SOLO, "Intel(R) Core(TM)2" },
 		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU 2" },
@@ -501,6 +500,15 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 		code = XEON_IRWIN;
 	if (code == XEONMP && data->l3_cache > 0)
 		code = XEON_POTOMAC;
+	if (code == CORE_SOLO) {
+		s = strstr(bs, "CPU");
+		if (s) {
+			s += 3;
+			while (*s == ' ') s++;
+			if (*s == 'T')
+				code = MOBILE_CORE;
+		}
+	}
 	if (code == CORE_SOLO) {
 		switch (data->num_cores) {
 			case 1: break;
