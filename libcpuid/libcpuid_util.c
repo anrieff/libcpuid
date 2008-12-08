@@ -62,8 +62,8 @@ void warnf(const char* format, ...)
 void debugf(int verboselevel, const char* format, ...)
 {
 	char buff[1024];
-	if (verboselevel > _current_verboselevel) return;
 	va_list va;
+	if (verboselevel > _current_verboselevel) return;
 	va_start(va, format);
 	vsnprintf(buff, sizeof(buff), format, va);
 	va_end(va);
