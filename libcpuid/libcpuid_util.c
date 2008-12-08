@@ -31,6 +31,8 @@
 #include "libcpuid.h"
 #include "libcpuid_util.h"
 
+int _current_verboselevel;
+
 void match_features(const struct feature_map_t* matchtable, int count, uint32_t reg, struct cpu_id_t* data)
 {
 	int i;
@@ -57,6 +59,17 @@ void warnf(const char* format, ...)
 	_warn_fun(buff);
 }
 
+void debugf(int verboselevel, const char* format, ...)
+{
+	char buff[1024];
+	if (verboselevel > _current_verboselevel) return;
+	va_list va;
+	va_start(va, format);
+	vsnprintf(buff, sizeof(buff), format, va);
+	va_end(va);
+	_warn_fun(buff);
+}
+
 static int score(const struct match_entry_t* entry, int family, int model,
                  int stepping, int xfamily, int xmodel, int code)
 {
@@ -77,11 +90,17 @@ void match_cpu_codename(const struct match_entry_t* matchtable, int count,
 	int bestindex = 0;
 	int i, t;
 	
+	debugf(3, "Matching cpu f:%d, m:%d, s:%d, xf:%d, xm:%d, code:%d\n",
+		data->family, data->model, data->stepping, data->ext_family,
+		data->ext_model, code);
+	
 	for (i = 0; i < count; i++) {
 		t = score(&matchtable[i], data->family, data->model,
-		              data->stepping, data->ext_model,
-		              data->ext_family, code);
+		              data->stepping, data->ext_family,
+		              data->ext_model, code);
+		debugf(3, "Entry %d, `%s', score %d\n", i, matchtable[i].name, t);
 		if (t > bestscore) {
+			debugf(2, "Entry `%s' selected - best score so far (%d)\n", matchtable[i].name, t);
 			bestscore = t;
 			bestindex = i;
 		}

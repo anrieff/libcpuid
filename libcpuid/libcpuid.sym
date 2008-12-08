@@ -16,3 +16,4 @@ cpu_clock_measure
 cpu_clock
 cpuid_lib_version
 cpuid_set_warn_function
+cpuid_set_verbosiness_level

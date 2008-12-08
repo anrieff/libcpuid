@@ -534,3 +534,7 @@ libcpuid_warn_fn_t cpuid_set_warn_function(libcpuid_warn_fn_t new_fn)
 	return ret;
 }
 
+void cpuid_set_verbosiness_level(int level)
+{
+	_current_verboselevel = level;
+}

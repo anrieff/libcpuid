@@ -635,6 +635,19 @@ typedef void (*libcpuid_warn_fn_t) (const char *msg);
  */
 libcpuid_warn_fn_t cpuid_set_warn_function(libcpuid_warn_fn_t warn_fun);
 
+/**
+ * @brief Sets the verbosiness level
+ *
+ * When the verbosiness level is above zero, some functions might print
+ * diagnostic information about what are they doing. The higher the level is,
+ * the more detail is printed. Level zero is guaranteed to omit all such
+ * output. The output is written using the same machinery as the warnings,
+ * @see cpuid_set_warn_function()
+ *
+ * @param level the desired verbosiness level. Useful values 0..2 inclusive
+ */
+void cpuid_set_verbosiness_level(int level);
+
 #ifdef __cplusplus
 }; /* extern "C" */
 #endif

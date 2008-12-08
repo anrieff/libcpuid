@@ -91,7 +91,7 @@ int need_input = 0,
     need_report = 0,
     need_clockreport = 0,
     need_timed_clockreport = 0,
-    need_verbose = 0,
+    verbose_level = 0,
     need_version = 0;
 
 #define MAX_REQUESTS 32
@@ -150,7 +150,7 @@ static void usage(void)
 	printf("  --clock-rdtsc  - same as --clock, but use RDTSC for clock detection\n");
 	printf("  --quiet        - disable warnings\n");
 	printf("  --outfile=<file> - redirect all output to this file, instead of stdout\n");
-	printf("  --verbose      - be extra verbose\n");
+	printf("  --verbose, -v  - be extra verbose (more keys increase verbosiness level)\n");
 	printf("  --version      - print library version\n");
 	printf("\n");
 	printf("Query switches (generate 1 line of ouput per switch; in order of appearance):");
@@ -181,14 +181,14 @@ static int parse_cmdline(int argc, char** argv)
 		fprintf(stderr, "Use -h to get a list of supported options\n"); \
 		return -1;
 
-	int i, j, recog;
+	int i, j, recog, num_vs;
 	if (argc == 1) {
 		/* Default command line options */
 		need_output = 1;
 		strcpy(raw_data_file, "raw.txt");
 		strcpy(out_file, "report.txt");
 		need_report = 1;
-		need_verbose = 1;
+		verbose_level = 1;
 		return 1;
 	}
 	for (i = 1; i < argc; i++) {
@@ -251,12 +251,21 @@ static int parse_cmdline(int argc, char** argv)
 			recog = 1;
 		}
 		if (!strcmp(arg, "--verbose")) {
-			need_verbose = 1;
+			verbose_level++;
 			recog = 1;
 		}
 		if (!strcmp(arg, "--version")) {
 			need_version = 1;
 			recog = 1;
+		}
+		if (arg[0] == '-' && arg[1] == 'v') {
+			num_vs = 1;
+			while (arg[num_vs] == 'v')
+				num_vs++;
+			if (arg[num_vs] == '\0') {
+				verbose_level += num_vs-1;
+				recog = 1;
+			}
 		}
 		for (j = 0; j < sz_match; j++)
 			if (!strcmp(arg, matchtable[j].synopsis)) {
@@ -406,6 +415,8 @@ int main(int argc, char** argv)
 	/* In quiet mode, disable libcpuid warning messages: */
 	if (need_quiet)
 		cpuid_set_warn_function(NULL);
+	
+	cpuid_set_verbosiness_level(verbose_level);
 
 	/* Redirect output, if necessary: */
 	if (strcmp(out_file, "") && strcmp(out_file, "-")) {
@@ -460,7 +471,7 @@ int main(int argc, char** argv)
 	
 	/* Need to dump raw CPUID data to file: */
 	if (need_output) {
-		if (need_verbose)
+		if (verbose_level >= 1)
 			printf("Writing raw CPUID dump to `%s'\n", raw_data_file);
 		if (!strcmp(raw_data_file, "-"))
 			/* Serialize to stdout */
@@ -482,7 +493,7 @@ int main(int argc, char** argv)
 		}
 	}
 	if (need_report) {
-		if (need_verbose) {
+		if (verbose_level >= 1) {
 			printf("Writing decoded CPU report to `%s'\n", out_file);
 		}
 		/* Write a thorough report of cpu_id_t structure to output (usually stdout) */

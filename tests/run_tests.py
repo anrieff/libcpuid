@@ -32,6 +32,10 @@ def make_tempname(prefix):
 		prefix += random.choice(chars)
 	return prefix
 
+def fmt_error(err):
+	pfix = "  %s: " % err[0]
+	return "%sexpected `%s'\n%sgot      `%s'" % (pfix, err[1], " "*len(pfix), err[2])
+
 def do_test(inp, expected_out, testno, binary):
 	fninp = make_tempname("cpuidin")
 	fnoutp = make_tempname("cpuidout")
@@ -54,11 +58,11 @@ def do_test(inp, expected_out, testno, binary):
 	err_fields = []
 	for i in range(len(real_out)):
 		if real_out[i] != expected_out[i]:
-			err_fields.append(fields[i])
+			err_fields.append((fields[i], expected_out[i], real_out[i]))
 	if not err_fields:
 		return "OK"
 	else:
-		return "Mismatch in fields %s" % str(err_fields)
+		return "Mismatch in fields:\n%s" % "\n".join([fmt_error(err) for err in err_fields]) 
 
 current_input = []
 current_output = []

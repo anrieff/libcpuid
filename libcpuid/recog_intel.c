@@ -159,7 +159,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, -1, MEROM_2M          , "Merom (Core 2 Duo) 2048K"  },
 	{  6, 15, -1, -1, -1, MEROM_4M          , "Merom (Core 2 Duo) 4096K"  },
 	
-	
+	{  6, 15, -1, -1, 15, CELERON           , "Conroe-L (Celeron)"        },
 	{  6,  6, -1, -1, 22, CELERON           , "Conroe-L (Celeron)"        },
 	
 	
@@ -173,6 +173,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 23, WOLFDALE_2M       , "Wolfdale (Core 2 Duo) 2M" },
 	{  6,  7, -1, -1, 23, WOLFDALE_3M       , "Wolfdale (Core 2 Duo) 3M" },
 	{  6,  7, -1, -1, 23, WOLFDALE_6M       , "Wolfdale (Core 2 Duo) 6M" },
+	{  6,  7, -1, -1, 23, XEON              , "Xeon (Wolfdale)" },
 	{  6,  7, -1, -1, 23, MOBILE_CORE       , "Penryn (Core 2 Duo)"      },
 	{  6,  7, -1, -1, 23, PENRYN_3M         , "Penryn (Core 2 Duo) 3M"   },
 	{  6,  7, -1, -1, 23, PENRYN_6M         , "Penryn (Core 2 Duo) 6M"   },
@@ -198,6 +199,12 @@ const struct match_entry_t cpudb_intel[] = {
 	{ 15,  3, -1, 15, -1, NO_CODE           , "Pentium 4 (Prescott)"    },
 	{ 15,  4, -1, 15, -1, NO_CODE           , "Pentium 4 (Prescott)"    },
 	{ 15,  6, -1, 15, -1, NO_CODE           , "Pentium 4 (Cedar Mill)"  },
+	{ 15,  0, -1, 15, -1, MOBILE_PENTIUM    , "Mobile P-4 (Willamette)" },
+	{ 15,  1, -1, 15, -1, MOBILE_PENTIUM    , "Mobile P-4 (Willamette)" },
+	{ 15,  2, -1, 15, -1, MOBILE_PENTIUM    , "Mobile P-4 (Northwood)"  },
+	{ 15,  3, -1, 15, -1, MOBILE_PENTIUM    , "Mobile P-4 (Prescott)"   },
+	{ 15,  4, -1, 15, -1, MOBILE_PENTIUM    , "Mobile P-4 (Prescott)"   },
+	{ 15,  6, -1, 15, -1, MOBILE_PENTIUM    , "Mobile P-4 (Cedar Mill)" },
 	
 	/* server CPUs */
 	{ 15,  0, -1, 15, -1, XEON              , "Xeon (Foster)"           },
@@ -473,6 +480,7 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 		{ XEON, "Xeon" },
 		{ CELERON, "Celeron" },
 		{ MOBILE_PENTIUM_M, "Pentium(R) M" },
+		{ CORE_SOLO, "Pentium(R) Dual  CPU" },
 		{ PENTIUM_D, "Pentium(R) D" },
 		{ PENTIUM, "Pentium" },
 		{ CORE_SOLO, "Genuine Intel(R) CPU" },

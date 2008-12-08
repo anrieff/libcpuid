@@ -63,6 +63,9 @@ enum _amd_code_t {
 	TURION_X2_1M,
 	SEMPRON_64_128K,
 	SEMPRON_64_256K,
+	SEMPRON_64_512K,
+	M_SEMPRON_64_256K,
+	M_SEMPRON_64_512K,
 	SEMPRON_DUALCORE,
 	PHENOM,
 	PHENOM_X2,
@@ -143,9 +146,13 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 15, -1, NO_CODE          , "Unknown A64"             },
 	{ 15, -1, -1, 15, -1, OPTERON_SINGLE   , "Opteron"                 },
 	{ 15, -1, -1, 15, -1, OPTERON_DUALCORE , "Opteron (Dual Core)"     },
+	{ 15,  3, -1, 15, -1, OPTERON_SINGLE   , "Opteron"                 },
+	{ 15,  3, -1, 15, -1, OPTERON_DUALCORE , "Opteron (Dual Core)"     },
 	{ 15, -1, -1, 15, -1, ATHLON_64_512K   , "Athlon 64 (512K)"        },
 	{ 15, -1, -1, 15, -1, ATHLON_64_1M     , "Athlon 64 (1024K)"       },
+	{ 15, -1, -1, 15, 0x2c, ATHLON_64_512K   , "Athlon 64 (Venice/512K)"        },
 	{ 15, -1, -1, 15, -1, ATHLON_64_X2_512K, "Athlon 64 X2 (512K)"     },
+	{ 15, -1, -1, 15, 0x6b, ATHLON_64_X2_512K, "Athlon 64 X2 (Brisbane/512K)"     },
 	{ 15, -1, -1, 15, -1, ATHLON_64_X2_1M  , "Athlon 64 X2 (1024K)"    },
 	{ 15, -1, -1, 15, -1, ATHLON_FX        , "Athlon FX"               },
 	{ 15, -1, -1, 15, -1, ATHLON_64_FX     , "Athlon 64 FX"            },
@@ -155,6 +162,17 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 15, -1, TURION_X2_1M     , "Turion 64 X2 (1024K)"    },
 	{ 15, -1, -1, 15, -1, SEMPRON_64_128K  , "A64 Sempron (128K)"      },
 	{ 15, -1, -1, 15, -1, SEMPRON_64_256K  , "A64 Sempron (256K)"      },
+	{ 15, -1, -1, 15, -1, SEMPRON_64_512K  , "A64 Sempron (512K)"      },
+	{ 15, -1, -1, 15, 0x2c, SEMPRON_64_128K, "Sempron 64 (Palermo/128K)"      },
+	{ 15, -1, -1, 15, 0x2c, SEMPRON_64_256K, "Sempron 64 (Palermo/256K)"      },
+	{ 15, -1, -1, 15, 0x2f, SEMPRON_64_128K, "Sempron 64 (Palermo/128K)"      },
+	{ 15, -1, -1, 15, 0x2f, SEMPRON_64_256K, "Sempron 64 (Palermo/256K)"      },
+	{ 15, -1, -1, 15, 0x4f, SEMPRON_64_128K, "Sempron 64 (Manila/128K)"      },
+	{ 15, -1, -1, 15, 0x4f, SEMPRON_64_256K, "Sempron 64 (Manila/256K)"      },
+	{ 15, -1, -1, 15, 0x7f, SEMPRON_64_256K, "Sempron 64 (Sparta/256K)"      },
+	{ 15, -1, -1, 15, 0x7f, SEMPRON_64_512K, "Sempron 64 (Sparta/512K)"      },
+	{ 15, -1, -1, 15, -1, M_SEMPRON_64_256K, "Mobile Sempron 64 (Keene/256K)"  },
+	{ 15, -1, -1, 15, -1, M_SEMPRON_64_512K, "Mobile Sempron 64 (Keene/512K)"  },
 	{ 15, -1, -1, 15, -1, SEMPRON_DUALCORE , "A64 Sempron (Dual Core)" },
 	
 	/* K9 Architecture */
@@ -286,16 +304,18 @@ static amd_code_t decode_amd_codename_part1(const char *bs)
 		else
 			return TURION_64_512K;
 	}
-	if (strstr(bs, "Sempron(tm)")) return SEMPRON_64_128K;
 	
 	if (strstr(bs, "mobile") || strstr(bs, "Mobile")) {
 		if (strstr(bs, "Athlon(tm) XP-M (LV)")) return ATHLON_XP_M_LV;
 		if (strstr(bs, "Athlon(tm) XP")) return ATHLON_XP_M;
+		if (strstr(bs, "Sempron(tm)")) return M_SEMPRON_64_256K;
 		if (strstr(bs, "Athlon")) return MOBILE_ATHLON64;
 		if (strstr(bs, "Duron")) return MOBILE_DURON;
+		
 	} else {
 		if (strstr(bs, "Athlon(tm) XP")) return ATHLON_XP;
 		if (strstr(bs, "Athlon(tm) MP")) return ATHLON_MP;
+		if (strstr(bs, "Sempron(tm)")) return SEMPRON_64_128K;
 		if (strstr(bs, "Duron")) return DURON;
 		if (strstr(bs, "Athlon")) return ATHLON;
 	}
@@ -311,8 +331,14 @@ static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		code = ATHLON_XP_BARTON;
 	if (code == ATHLON_64_512K && data->l2_cache > 512)
 		code = ATHLON_64_1M;
-	if (code == SEMPRON_64_128K && data->l2_cache > 128)
-		code = SEMPRON_64_256K;
+	if (code == SEMPRON_64_128K && data->l2_cache > 128) {
+		if (data->l2_cache == 256)
+			code = SEMPRON_64_256K;
+		else
+			code = SEMPRON_64_512K;
+	}
+	if (code == M_SEMPRON_64_256K && data->l2_cache > 256)
+		code = M_SEMPRON_64_512K;
 	if (code == TURION_64_512K && data->l2_cache > 512)
 		code = TURION_64_1M;
 	if (code == TURION_X2_512K && data->l2_cache > 512)

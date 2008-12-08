@@ -51,6 +51,9 @@ __attribute__((format(printf, 1, 2)))
 #endif
 ;
 
+void debugf(int verboselevel, const char* format, ...);
+
 extern libcpuid_warn_fn_t _warn_fun;
+extern int _current_verboselevel;
 
 #endif /* __LIBCPUID_UTIL_H__ */
