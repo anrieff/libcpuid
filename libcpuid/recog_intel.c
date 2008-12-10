@@ -43,8 +43,9 @@ enum _intel_code_t {
 	MOBILE_CELERON,
 	NOT_CELERON,
 	CORE_SOLO,
-	MOBILE_CORE,
+	MOBILE_CORE_SOLO,
 	CORE_DUO,
+	MOBILE_CORE_DUO,
 	CORE_DUO_512K,
 	CORE_DUO_1024K,
 	ALLENDALE,
@@ -127,23 +128,27 @@ const struct match_entry_t cpudb_intel[] = {
 	
 	/* -------------------------------------------------- */
 	
-	{  6,  9, -1, -1, -1, NO_CODE           , "Unknown Pentium M"       },
-	{  6,  9, -1, -1, -1, MOBILE_PENTIUM_M  , "Unknown Pentium M"       },
-	{  6,  9, -1, -1, -1, PENTIUM           , "Pentium M (Banias)"      },
-	{  6,  9, -1, -1, -1, CELERON           , "Celeron M"               },
-	{  6, 13, -1, -1, -1, PENTIUM           , "Pentium M (Dothan)"      },
-	{  6, 13, -1, -1, -1, CELERON           , "Celeron M"               },
+	{  6,  9, -1, -1, -1, NO_CODE           , "Unknown Pentium M"          },
+	{  6,  9, -1, -1, -1, MOBILE_PENTIUM_M  , "Unknown Pentium M"          },
+	{  6,  9, -1, -1, -1, PENTIUM           , "Pentium M (Banias)"         },
+	{  6,  9, -1, -1, -1, MOBILE_PENTIUM_M  , "Pentium M (Banias)"         },
+	{  6,  9, -1, -1, -1, CELERON           , "Celeron M"                  },
+	{  6, 13, -1, -1, -1, PENTIUM           , "Pentium M (Dothan)"         },
+	{  6, 13, -1, -1, -1, MOBILE_PENTIUM_M  , "Pentium M (Dothan)"         },
+	{  6, 13, -1, -1, -1, CELERON           , "Celeron M"                  },
 	
-	{  6, 12, -1, -1, -1, NO_CODE           , "Unknown Atom"            },
-	{  6, 12, -1, -1, -1, ATOM_DIAMONDVILLE , "Atom (Diamondville)"     },
-	{  6, 12, -1, -1, -1, ATOM_DUALCORE     , "Atom (Dual Core)"        },
-	{  6, 12, -1, -1, -1, ATOM_SILVERTHORNE , "Atom (Silverthorne)"     },
+	{  6, 12, -1, -1, -1, NO_CODE           , "Unknown Atom"               },
+	{  6, 12, -1, -1, -1, ATOM_DIAMONDVILLE , "Atom (Diamondville)"        },
+	{  6, 12, -1, -1, -1, ATOM_DUALCORE     , "Atom Dualcore (Diamondville)"  },
+	{  6, 12, -1, -1, -1, ATOM_SILVERTHORNE , "Atom (Silverthorne)"        },
 	
 	/* -------------------------------------------------- */
 	
 	{  6, 14, -1, -1, -1, NO_CODE           , "Unknown Yonah"             },
 	{  6, 14, -1, -1, -1, CORE_SOLO         , "Yonah (Core Solo)"         },
 	{  6, 14, -1, -1, -1, CORE_DUO          , "Yonah (Core Duo)"          },
+	{  6, 14, -1, -1, -1, MOBILE_CORE_SOLO  , "Yonah (Core Solo)"         },
+	{  6, 14, -1, -1, -1, MOBILE_CORE_DUO   , "Yonah (Core Duo)"          },
 	{  6, 14, -1, -1, -1, XEON              , "Xeon LV"                   },
 	{  6, 14, -1, -1, -1, CORE_SOLO         , "Yonah (Core Solo)"         },
 	
@@ -155,7 +160,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, -1, MORE_THAN_QUADCORE, "More than quad-core"       },
 	{  6, 15, -1, -1, -1, ALLENDALE         , "Allendale (Core 2 Duo)"    },
 	{  6, 15, -1, -1, -1, XEON              , "Xeon (Clovertown) Quad"    },
-	{  6, 15, -1, -1, -1, MOBILE_CORE       , "Merom (Core 2 Duo)"        },
+	{  6, 15, -1, -1, -1, MOBILE_CORE_DUO   , "Merom (Core 2 Duo)"        },
 	{  6, 15, -1, -1, -1, MEROM_2M          , "Merom (Core 2 Duo) 2048K"  },
 	{  6, 15, -1, -1, -1, MEROM_4M          , "Merom (Core 2 Duo) 4096K"  },
 	
@@ -174,7 +179,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 23, WOLFDALE_3M       , "Wolfdale (Core 2 Duo) 3M" },
 	{  6,  7, -1, -1, 23, WOLFDALE_6M       , "Wolfdale (Core 2 Duo) 6M" },
 	{  6,  7, -1, -1, 23, XEON              , "Xeon (Wolfdale)" },
-	{  6,  7, -1, -1, 23, MOBILE_CORE       , "Penryn (Core 2 Duo)"      },
+	{  6,  7, -1, -1, 23, MOBILE_CORE_DUO   , "Penryn (Core 2 Duo)"      },
 	{  6,  7, -1, -1, 23, PENRYN_3M         , "Penryn (Core 2 Duo) 3M"   },
 	{  6,  7, -1, -1, 23, PENRYN_6M         , "Penryn (Core 2 Duo) 6M"   },
 	{  6,  7, -1, -1, 23, QUAD_CORE         , "Yorkfield (Core 2 Quad)"  },
@@ -485,9 +490,9 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 		{ PENTIUM, "Pentium" },
 		{ CORE_SOLO, "Genuine Intel(R) CPU" },
 		{ CORE_SOLO, "Intel(R) Core(TM)2" },
-		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU 2" },
+		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU  2" },
 		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU N" },
-		{ ATOM_DUALCORE, "Atom(TM) CPU 3" },
+		{ ATOM_DUALCORE, "Atom(TM) CPU  3" },
 		{ ATOM_SILVERTHORNE, "Atom(TM) CPU Z" },
 	};
 
@@ -514,7 +519,7 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 			s += 3;
 			while (*s == ' ') s++;
 			if (*s == 'T')
-				code = MOBILE_CORE;
+				code = (data->num_cores == 1) ? MOBILE_CORE_SOLO : MOBILE_CORE_DUO;
 		}
 	}
 	if (code == CORE_SOLO) {
@@ -554,7 +559,7 @@ static void decode_intel_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 	if (code == PENTIUM_D && data->ext_model >= 23) {
 		code = WOLFDALE_2M;
 	}
-	if (code == MOBILE_CORE) {
+	if (code == MOBILE_CORE_DUO && data->model != 14) {
 		if (data->ext_model < 23) {
 			if (L2 == 2048 || L2 == 4096)
 				code = (L2 == 2048) ? MEROM_2M : MEROM_4M;
