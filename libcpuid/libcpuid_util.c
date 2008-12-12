@@ -70,34 +70,35 @@ void debugf(int verboselevel, const char* format, ...)
 	_warn_fun(buff);
 }
 
-static int score(const struct match_entry_t* entry, int family, int model,
-                 int stepping, int xfamily, int xmodel, int code)
+static int score(const struct match_entry_t* entry, const struct cpu_id_t* data,
+                 int brand_code, int model_code)
 {
 	int res = 0;
-	if (entry->family	== family  ) res += 2;
-	if (entry->model	== model   ) res += 2;
-	if (entry->stepping	== stepping) res += 2;
-	if (entry->ext_family	== xfamily ) res += 2;
-	if (entry->ext_model	== xmodel  ) res += 2;
-	if (entry->code		== code    ) res += 2;
+	if (entry->family	== data->family    ) res++;
+	if (entry->model	== data->model     ) res++;
+	if (entry->stepping	== data->stepping  ) res++;
+	if (entry->ext_family	== data->ext_family) res++;
+	if (entry->ext_model	== data->ext_model ) res++;
+	if (entry->ncores	== data->num_cores ) res++;
+	if (entry->l2cache	== data->l2_cache  ) res++;
+	if (entry->brand_code   == brand_code      ) res++;
+	if (entry->model_code   == model_code      ) res++;
 	return res;
 }
 
 void match_cpu_codename(const struct match_entry_t* matchtable, int count,
-                        struct cpu_id_t* data, int code)
+                        struct cpu_id_t* data, int brand_code, int model_code)
 {
 	int bestscore = -1;
 	int bestindex = 0;
 	int i, t;
 	
-	debugf(3, "Matching cpu f:%d, m:%d, s:%d, xf:%d, xm:%d, code:%d\n",
+	debugf(3, "Matching cpu f:%d, m:%d, s:%d, xf:%d, xm:%d, ncore:%d, l2:%d, bcode:%d, code:%d\n",
 		data->family, data->model, data->stepping, data->ext_family,
-		data->ext_model, code);
+		data->ext_model, data->num_cores, data->l2_cache, brand_code, model_code);
 	
 	for (i = 0; i < count; i++) {
-		t = score(&matchtable[i], data->family, data->model,
-		              data->stepping, data->ext_family,
-		              data->ext_model, code);
+		t = score(&matchtable[i], data, brand_code, model_code);
 		debugf(3, "Entry %d, `%s', score %d\n", i, matchtable[i].name, t);
 		if (t > bestscore) {
 			debugf(2, "Entry `%s' selected - best score so far (%d)\n", matchtable[i].name, t);

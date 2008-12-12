@@ -36,7 +36,6 @@ enum _amd_code_t {
 	OPTERON_GENERIC,
 	OPTERON_800,
 	ATHLON_XP,
-	ATHLON_XP_BARTON,
 	ATHLON_XP_M,
 	ATHLON_XP_M_LV,
 	ATHLON,
@@ -46,163 +45,150 @@ enum _amd_code_t {
 	DURON,
 	DURON_MP,
 	MOBILE_DURON,
-	SEMPRON,
 	MOBILE_SEMPRON,
 	OPTERON_SINGLE,
 	OPTERON_DUALCORE,
 	OPTERON_800_DUALCORE,
 	MOBILE_TURION,
-	ATHLON_64_512K,
-	ATHLON_64_1M,
-	ATHLON_64_X2_512K,
-	ATHLON_64_X2_1M,
+	ATHLON_64,
+	ATHLON_64_X2,
 	ATHLON_64_FX,
-	TURION_64_512K,
-	TURION_64_1M,
-	TURION_X2_512K,
-	TURION_X2_1M,
-	SEMPRON_64_128K,
-	SEMPRON_64_256K,
-	SEMPRON_64_512K,
-	M_SEMPRON_64_256K,
-	M_SEMPRON_64_512K,
+	TURION_64,
+	TURION_X2,
+	SEMPRON,
+	M_SEMPRON,
 	SEMPRON_DUALCORE,
 	PHENOM,
-	PHENOM_X2,
-	PHENOM_X3,
-	PHENOM_X4,
 };
 typedef enum _amd_code_t amd_code_t;
 
 const struct match_entry_t cpudb_amd[] = {
-	{ -1, -1, -1, -1,   -1, NO_CODE                 , "Unknown AMD CPU"               },
+	{ -1, -1, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Unknown AMD CPU"               },
 	
 	/* 486 and the likes */
-	{  4, -1, -1, -1,   -1, NO_CODE                 , "Unknown AMD 486"               },
-	{  4,  3, -1, -1,   -1, NO_CODE                 , "AMD 486DX2"                    },
-	{  4,  7, -1, -1,   -1, NO_CODE                 , "AMD 486DX2WB"                  },
-	{  4,  8, -1, -1,   -1, NO_CODE                 , "AMD 486DX4"                    },
-	{  4,  9, -1, -1,   -1, NO_CODE                 , "AMD 486DX4WB"                  },
+	{  4, -1, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Unknown AMD 486"               },
+	{  4,  3, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "AMD 486DX2"                    },
+	{  4,  7, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "AMD 486DX2WB"                  },
+	{  4,  8, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "AMD 486DX4"                    },
+	{  4,  9, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "AMD 486DX4WB"                  },
 	
 	/* Pentia clones */
-	{  5, -1, -1, -1,   -1, NO_CODE                 , "Unknown AMD 586"               },
-	{  5,  0, -1, -1,   -1, NO_CODE                 , "K5"                            },
-	{  5,  1, -1, -1,   -1, NO_CODE                 , "K5"                            },
-	{  5,  2, -1, -1,   -1, NO_CODE                 , "K5"                            },
-	{  5,  3, -1, -1,   -1, NO_CODE                 , "K5"                            },
+	{  5, -1, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Unknown AMD 586"               },
+	{  5,  0, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "K5"                            },
+	{  5,  1, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "K5"                            },
+	{  5,  2, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "K5"                            },
+	{  5,  3, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "K5"                            },
 	
 	/* The K6 */
-	{  5,  6, -1, -1,   -1, NO_CODE                 , "K6"                            },
-	{  5,  7, -1, -1,   -1, NO_CODE                 , "K6"                            },
+	{  5,  6, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "K6"                            },
+	{  5,  7, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "K6"                            },
 	
-	{  5,  8, -1, -1,   -1, NO_CODE                 , "K6-2"                          },
-	{  5,  9, -1, -1,   -1, NO_CODE                 , "K6-III"                        },
-	{  5, 10, -1, -1,   -1, NO_CODE                 , "Unknown K6"                    },
-	{  5, 11, -1, -1,   -1, NO_CODE                 , "Unknown K6"                    },
-	{  5, 12, -1, -1,   -1, NO_CODE                 , "Unknown K6"                    },
-	{  5, 13, -1, -1,   -1, NO_CODE                 , "K6-2+"                         },
+	{  5,  8, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "K6-2"                          },
+	{  5,  9, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "K6-III"                        },
+	{  5, 10, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Unknown K6"                    },
+	{  5, 11, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Unknown K6"                    },
+	{  5, 12, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Unknown K6"                    },
+	{  5, 13, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "K6-2+"                         },
 	
 	/* Athlon et al. */
-	{  6,  1, -1, -1,   -1, NO_CODE                 , "Athlon (Slot-A)"               },
-	{  6,  2, -1, -1,   -1, NO_CODE                 , "Athlon (Slot-A)"               },
-	{  6,  3, -1, -1,   -1, NO_CODE                 , "Duron (Spitfire)"              },
-	{  6,  4, -1, -1,   -1, NO_CODE                 , "Athlon (ThunderBird)"          },
+	{  6,  1, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Athlon (Slot-A)"               },
+	{  6,  2, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Athlon (Slot-A)"               },
+	{  6,  3, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Duron (Spitfire)"              },
+	{  6,  4, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Athlon (ThunderBird)"          },
 	
-	{  6,  6, -1, -1,   -1, NO_CODE                 , "Unknown Athlon"                },
-	{  6,  6, -1, -1,   -1, ATHLON                  , "Athlon (Palomino)"             },
-	{  6,  6, -1, -1,   -1, ATHLON_MP               , "Athlon MP (Palomino)"          },
-	{  6,  6, -1, -1,   -1, DURON                   , "Duron (Palomino)"              },
-	{  6,  6, -1, -1,   -1, ATHLON_XP               , "Athlon XP"                     },
+	{  6,  6, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Unknown Athlon"                },
+	{  6,  6, -1, -1,   -1,   1,    -1, ATHLON                  ,     0, "Athlon (Palomino)"             },
+	{  6,  6, -1, -1,   -1,   1,    -1, ATHLON_MP               ,     0, "Athlon MP (Palomino)"          },
+	{  6,  6, -1, -1,   -1,   1,    -1, DURON                   ,     0, "Duron (Palomino)"              },
+	{  6,  6, -1, -1,   -1,   1,    -1, ATHLON_XP               ,     0, "Athlon XP"                     },
 	
-	{  6,  7, -1, -1,   -1, NO_CODE                 , "Unknown Athlon XP"             },
-	{  6,  7, -1, -1,   -1, DURON                   , "Duron (Morgan)"                },
+	{  6,  7, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Unknown Athlon XP"             },
+	{  6,  7, -1, -1,   -1,   1,    -1, DURON                   ,     0, "Duron (Morgan)"                },
 	
-	{  6,  8, -1, -1,   -1, NO_CODE                 , "Athlon XP"                     },
-	{  6,  8, -1, -1,   -1, ATHLON                  , "Athlon XP"                     },
-	{  6,  8, -1, -1,   -1, ATHLON_XP               , "Athlon XP"                     },
-	{  6,  8, -1, -1,   -1, DURON                   , "Duron (Applebred)"             },
-	{  6,  8, -1, -1,   -1, SEMPRON                 , "Sempron (Thoroughbred)"        },
-	{  6,  8, -1, -1,   -1, SEMPRON_64_128K         , "Sempron (Thoroughbred)"        },
-	{  6,  8, -1, -1,   -1, SEMPRON_64_256K         , "Sempron (Thoroughbred)"        },
-	{  6,  8, -1, -1,   -1, ATHLON_MP               , "Athlon MP (Thoroughbred)"      },
-	{  6,  8, -1, -1,   -1, ATHLON_XP_M             , "Mobile Athlon (T-Bred)"        },
-	{  6,  8, -1, -1,   -1, ATHLON_XP_M_LV          , "Mobile Athlon (T-Bred)"        },
+	{  6,  8, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Athlon XP"                     },
+	{  6,  8, -1, -1,   -1,   1,    -1, ATHLON                  ,     0, "Athlon XP (Thoroughbred)"      },
+	{  6,  8, -1, -1,   -1,   1,    -1, ATHLON_XP               ,     0, "Athlon XP (Thoroughbred)"      },
+	{  6,  8, -1, -1,   -1,   1,    -1, DURON                   ,     0, "Duron (Applebred)"             },
+	{  6,  8, -1, -1,   -1,   1,    -1, SEMPRON                 ,     0, "Sempron (Thoroughbred)"        },
+	{  6,  8, -1, -1,   -1,   1,   128, SEMPRON                 ,     0, "Sempron (Thoroughbred)"        },
+	{  6,  8, -1, -1,   -1,   1,   256, SEMPRON                 ,     0, "Sempron (Thoroughbred)"        },
+	{  6,  8, -1, -1,   -1,   1,    -1, ATHLON_MP               ,     0, "Athlon MP (Thoroughbred)"      },
+	{  6,  8, -1, -1,   -1,   1,    -1, ATHLON_XP_M             ,     0, "Mobile Athlon (T-Bred)"        },
+	{  6,  8, -1, -1,   -1,   1,    -1, ATHLON_XP_M_LV          ,     0, "Mobile Athlon (T-Bred)"        },
 	
-	{  6, 10, -1, -1,   -1, NO_CODE                 , "Athlon XP (Barton)"            },
-	{  6, 10, -1, -1,   -1, ATHLON                  , "Athlon XP (Barton)"            },
-	{  6, 10, -1, -1,   -1, ATHLON_XP_BARTON        , "Athlon XP (Barton)"            },
-	{  6, 10, -1, -1,   -1, SEMPRON                 , "Sempron (Barton)"              },
-	{  6, 10, -1, -1,   -1, SEMPRON_64_256K         , "Sempron (Barton)"              },
-	{  6, 10, -1, -1,   -1, ATHLON_XP               , "Athlon XP"                     },
-	/* ^^ Actually, Thorton, but it's equivallent to Thoroughbred */
-	{  6, 10, -1, -1,   -1, ATHLON_MP               , "Athlon MP (Barton)"            },
-	{  6, 10, -1, -1,   -1, ATHLON_XP_M             , "Mobile Athlon (Barton)"        },
-	{  6, 10, -1, -1,   -1, ATHLON_XP_M_LV          , "Mobile Athlon (Barton)"        },
+	{  6, 10, -1, -1,   -1,   1,    -1, NO_CODE                 ,     0, "Athlon XP (Barton)"            },
+	{  6, 10, -1, -1,   -1,   1,   512, ATHLON_XP               ,     0, "Athlon XP (Barton)"            },
+	{  6, 10, -1, -1,   -1,   1,   512, SEMPRON                 ,     0, "Sempron (Barton)"              },
+	{  6, 10, -1, -1,   -1,   1,   256, SEMPRON                 ,     0, "Sempron (Thorton)"             },
+	{  6, 10, -1, -1,   -1,   1,   256, ATHLON_XP               ,     0, "Athlon XP (Thorton)"           },
+	{  6, 10, -1, -1,   -1,   1,    -1, ATHLON_MP               ,     0, "Athlon MP (Barton)"            },
+	{  6, 10, -1, -1,   -1,   1,    -1, ATHLON_XP_M             ,     0, "Mobile Athlon (Barton)"        },
+	{  6, 10, -1, -1,   -1,   1,    -1, ATHLON_XP_M_LV          ,     0, "Mobile Athlon (Barton)"        },
 	
 	/* K8 Architecture */
-	{ 15, -1, -1, 15,   -1, NO_CODE                 , "Unknown K8"                    },
-	{ 15, -1, -1, 16,   -1, NO_CODE                 , "Unknown K9"                    },
+	{ 15, -1, -1, 15,   -1,   1,    -1, NO_CODE                 ,     0, "Unknown K8"                    },
+	{ 15, -1, -1, 16,   -1,   1,    -1, NO_CODE                 ,     0, "Unknown K9"                    },
 	
-	{ 15, -1, -1, 15,   -1, NO_CODE                 , "Unknown A64"                   },
-	{ 15, -1, -1, 15,   -1, OPTERON_SINGLE          , "Opteron"                       },
-	{ 15, -1, -1, 15,   -1, OPTERON_DUALCORE        , "Opteron (Dual Core)"           },
-	{ 15,  3, -1, 15,   -1, OPTERON_SINGLE          , "Opteron"                       },
-	{ 15,  3, -1, 15,   -1, OPTERON_DUALCORE        , "Opteron (Dual Core)"           },
-	{ 15, -1, -1, 15,   -1, ATHLON_64_512K          , "Athlon 64 (512K)"              },
-	{ 15, -1, -1, 15,   -1, ATHLON_64_1M            , "Athlon 64 (1024K)"             },
-	{ 15, -1, -1, 15,   -1, ATHLON_FX               , "Athlon FX"                     },
-	{ 15, -1, -1, 15,   -1, ATHLON_64_FX            , "Athlon 64 FX"                  },
-	{ 15, -1, -1, 15,   -1, ATHLON_64_X2_512K       , "Athlon 64 X2 (512K)"           },
-	{ 15, -1, -1, 15,   -1, ATHLON_64_X2_1M         , "Athlon 64 X2 (1024K)"          },
-	{ 15, -1, -1, 15,   -1, TURION_64_512K          , "Turion 64 (512K)"              },
-	{ 15, -1, -1, 15,   -1, TURION_64_1M            , "Turion 64 (1024K)"             },
-	{ 15, -1, -1, 15,   -1, TURION_X2_512K          , "Turion 64 X2 (512K)"           },
-	{ 15, -1, -1, 15,   -1, TURION_X2_1M            , "Turion 64 X2 (1024K)"          },
-	{ 15, -1, -1, 15,   -1, SEMPRON_64_128K         , "A64 Sempron (128K)"            },
-	{ 15, -1, -1, 15,   -1, SEMPRON_64_256K         , "A64 Sempron (256K)"            },
-	{ 15, -1, -1, 15,   -1, SEMPRON_64_512K         , "A64 Sempron (512K)"            },
-	{ 15, -1, -1, 15, 0x4f, ATHLON_64_512K          , "Athlon 64 (Orleans/512K)"      },
-	{ 15, -1, -1, 15, 0x5f, ATHLON_64_512K          , "Athlon 64 (Orleans/512K)"      },
-	{ 15, -1, -1, 15, 0x2f, ATHLON_64_512K          , "Athlon 64 (Venice/512K)"       },
-	{ 15, -1, -1, 15, 0x2c, ATHLON_64_512K          , "Athlon 64 (Venice/512K)"       },
-	{ 15, -1, -1, 15, 0x1f, ATHLON_64_512K          , "Athlon 64 (Winchester/512K)"   },
-	{ 15, -1, -1, 15, 0x0c, ATHLON_64_512K          , "Athlon 64 (Newcastle/512K)"    },
-	{ 15, -1, -1, 15, 0x27, ATHLON_64_512K          , "Athlon 64 (San Diego/512K)"    },
-	{ 15, -1, -1, 15, 0x37, ATHLON_64_512K          , "Athlon 64 (San Diego/512K)"    },
-	{ 15, -1, -1, 15, 0x04, ATHLON_64_512K          , "Athlon 64 (ClawHammer/512K)"   },
+	{ 15, -1, -1, 15,   -1,   1,    -1, NO_CODE                 ,     0, "Unknown A64"                   },
+	{ 15, -1, -1, 15,   -1,   1,    -1, OPTERON_SINGLE          ,     0, "Opteron"                       },
+	{ 15, -1, -1, 15,   -1,   2,    -1, OPTERON_DUALCORE        ,     0, "Opteron (Dual Core)"           },
+	{ 15,  3, -1, 15,   -1,   1,    -1, OPTERON_SINGLE          ,     0, "Opteron"                       },
+	{ 15,  3, -1, 15,   -1,   2,    -1, OPTERON_DUALCORE        ,     0, "Opteron (Dual Core)"           },
+	{ 15, -1, -1, 15,   -1,   1,   512, ATHLON_64               ,     0, "Athlon 64 (512K)"              },
+	{ 15, -1, -1, 15,   -1,   1,  1024, ATHLON_64               ,     0, "Athlon 64 (1024K)"             },
+	{ 15, -1, -1, 15,   -1,   1,    -1, ATHLON_FX               ,     0, "Athlon FX"                     },
+	{ 15, -1, -1, 15,   -1,   1,    -1, ATHLON_64_FX            ,     0, "Athlon 64 FX"                  },
+	{ 15, -1, -1, 15,   -1,   2,   512, ATHLON_64_X2            ,     0, "Athlon 64 X2 (512K)"           },
+	{ 15, -1, -1, 15,   -1,   2,  1024, ATHLON_64_X2            ,     0, "Athlon 64 X2 (1024K)"          },
+	{ 15, -1, -1, 15,   -1,   1,   512, TURION_64               ,     0, "Turion 64 (512K)"              },
+	{ 15, -1, -1, 15,   -1,   1,  1024, TURION_64               ,     0, "Turion 64 (1024K)"             },
+	{ 15, -1, -1, 15,   -1,   2,   512, TURION_X2               ,     0, "Turion 64 X2 (512K)"           },
+	{ 15, -1, -1, 15,   -1,   2,  1024, TURION_X2               ,     0, "Turion 64 X2 (1024K)"          },
+	{ 15, -1, -1, 15,   -1,   1,   128, SEMPRON                 ,     0, "A64 Sempron (128K)"            },
+	{ 15, -1, -1, 15,   -1,   1,   256, SEMPRON                 ,     0, "A64 Sempron (256K)"            },
+	{ 15, -1, -1, 15,   -1,   1,   512, SEMPRON                 ,     0, "A64 Sempron (512K)"            },
+	{ 15, -1, -1, 15, 0x4f,   1,   512, ATHLON_64               ,     0, "Athlon 64 (Orleans/512K)"      },
+	{ 15, -1, -1, 15, 0x5f,   1,   512, ATHLON_64               ,     0, "Athlon 64 (Orleans/512K)"      },
+	{ 15, -1, -1, 15, 0x2f,   1,   512, ATHLON_64               ,     0, "Athlon 64 (Venice/512K)"       },
+	{ 15, -1, -1, 15, 0x2c,   1,   512, ATHLON_64               ,     0, "Athlon 64 (Venice/512K)"       },
+	{ 15, -1, -1, 15, 0x1f,   1,   512, ATHLON_64               ,     0, "Athlon 64 (Winchester/512K)"   },
+	{ 15, -1, -1, 15, 0x0c,   1,   512, ATHLON_64               ,     0, "Athlon 64 (Newcastle/512K)"    },
+	{ 15, -1, -1, 15, 0x27,   1,   512, ATHLON_64               ,     0, "Athlon 64 (San Diego/512K)"    },
+	{ 15, -1, -1, 15, 0x37,   1,   512, ATHLON_64               ,     0, "Athlon 64 (San Diego/512K)"    },
+	{ 15, -1, -1, 15, 0x04,   1,   512, ATHLON_64               ,     0, "Athlon 64 (ClawHammer/512K)"   },
 	
-	{ 15, -1, -1, 15, 0x5f, ATHLON_64_1M            , "Athlon 64 (Orleans/1024K)"     },
-	{ 15, -1, -1, 15, 0x27, ATHLON_64_1M            , "Athlon 64 (San Diego/1024K)"   },
-	{ 15, -1, -1, 15, 0x04, ATHLON_64_1M            , "Athlon 64 (ClawHammer/1024K)"  },
+	{ 15, -1, -1, 15, 0x5f,   1,  1024, ATHLON_64               ,     0, "Athlon 64 (Orleans/1024K)"     },
+	{ 15, -1, -1, 15, 0x27,   1,  1024, ATHLON_64               ,     0, "Athlon 64 (San Diego/1024K)"   },
+	{ 15, -1, -1, 15, 0x04,   1,  1024, ATHLON_64               ,     0, "Athlon 64 (ClawHammer/1024K)"  },
 	
-	{ 15, -1, -1, 15, 0x4b, SEMPRON_DUALCORE        , "Athlon 64 X2 (Windsor/256K)"   },
+	{ 15, -1, -1, 15, 0x4b,   2,   256, SEMPRON_DUALCORE        ,     0, "Athlon 64 X2 (Windsor/256K)"   },
 	
-	{ 15, -1, -1, 15, 0x23, ATHLON_64_X2_512K       , "Athlon 64 X2 (Toledo/512K)"    },
-	{ 15, -1, -1, 15, 0x4b, ATHLON_64_X2_512K       , "Athlon 64 X2 (Windsor/512K)"   },
-	{ 15, -1, -1, 15, 0x43, ATHLON_64_X2_512K       , "Athlon 64 X2 (Windsor/512K)"   },
-	{ 15, -1, -1, 15, 0x6b, ATHLON_64_X2_512K       , "Athlon 64 X2 (Brisbane/512K)"  },
-	{ 15, -1, -1, 15, 0x2b, ATHLON_64_X2_512K       , "Athlon 64 X2 (Manchester/512K)"},
+	{ 15, -1, -1, 15, 0x23,   2,   512, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Toledo/512K)"    },
+	{ 15, -1, -1, 15, 0x4b,   2,   512, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Windsor/512K)"   },
+	{ 15, -1, -1, 15, 0x43,   2,   512, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Windsor/512K)"   },
+	{ 15, -1, -1, 15, 0x6b,   2,   512, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Brisbane/512K)"  },
+	{ 15, -1, -1, 15, 0x2b,   2,   512, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Manchester/512K)"},
 	
-	{ 15, -1, -1, 15, 0x23, ATHLON_64_X2_1M         , "Athlon 64 X2 (Toledo/1024K)"   },
-	{ 15, -1, -1, 15, 0x43, ATHLON_64_X2_1M         , "Athlon 64 X2 (Windsor/1024K)"  },
+	{ 15, -1, -1, 15, 0x23,   2,  1024, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Toledo/1024K)"   },
+	{ 15, -1, -1, 15, 0x43,   2,  1024, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Windsor/1024K)"  },
 	
-	{ 15, -1, -1, 15, 0x2c, SEMPRON_64_128K         , "Sempron 64 (Palermo/128K)"     },
-	{ 15, -1, -1, 15, 0x2c, SEMPRON_64_256K         , "Sempron 64 (Palermo/256K)"     },
-	{ 15, -1, -1, 15, 0x2f, SEMPRON_64_128K         , "Sempron 64 (Palermo/128K)"     },
-	{ 15, -1, -1, 15, 0x2f, SEMPRON_64_256K         , "Sempron 64 (Palermo/256K)"     },
-	{ 15, -1, -1, 15, 0x4f, SEMPRON_64_128K         , "Sempron 64 (Manila/128K)"      },
-	{ 15, -1, -1, 15, 0x4f, SEMPRON_64_256K         , "Sempron 64 (Manila/256K)"      },
-	{ 15, -1, -1, 15, 0x7f, SEMPRON_64_256K         , "Sempron 64 (Sparta/256K)"      },
-	{ 15, -1, -1, 15, 0x7f, SEMPRON_64_512K         , "Sempron 64 (Sparta/512K)"      },
-	{ 15, -1, -1, 15,   -1, M_SEMPRON_64_256K       , "Mobile Sempron 64 (Keene/256K)"},
-	{ 15, -1, -1, 15,   -1, M_SEMPRON_64_512K       , "Mobile Sempron 64 (Keene/512K)"},
-	{ 15, -1, -1, 15,   -1, SEMPRON_DUALCORE        , "Sempron Dual Core"             },
+	{ 15, -1, -1, 15, 0x2c,   1,   128, SEMPRON                 ,     0, "Sempron 64 (Palermo/128K)"     },
+	{ 15, -1, -1, 15, 0x2c,   1,   256, SEMPRON                 ,     0, "Sempron 64 (Palermo/256K)"     },
+	{ 15, -1, -1, 15, 0x2f,   1,   128, SEMPRON                 ,     0, "Sempron 64 (Palermo/128K)"     },
+	{ 15, -1, -1, 15, 0x2f,   1,   256, SEMPRON                 ,     0, "Sempron 64 (Palermo/256K)"     },
+	{ 15, -1, -1, 15, 0x4f,   1,   128, SEMPRON                 ,     0, "Sempron 64 (Manila/128K)"      },
+	{ 15, -1, -1, 15, 0x4f,   1,   256, SEMPRON                 ,     0, "Sempron 64 (Manila/256K)"      },
+	{ 15, -1, -1, 15, 0x7f,   1,   256, SEMPRON                 ,     0, "Sempron 64 (Sparta/256K)"      },
+	{ 15, -1, -1, 15, 0x7f,   1,   512, SEMPRON                 ,     0, "Sempron 64 (Sparta/512K)"      },
+	{ 15, -1, -1, 15,   -1,   1,   256, M_SEMPRON               ,     0, "Mobile Sempron 64 (Keene/256K)"},
+	{ 15, -1, -1, 15,   -1,   1,   512, M_SEMPRON               ,     0, "Mobile Sempron 64 (Keene/512K)"},
+	{ 15, -1, -1, 15,   -1,   2,    -1, SEMPRON_DUALCORE        ,     0, "Sempron Dual Core"             },
 	
 	/* K9 Architecture */
-	{ 15, -1, -1, 16,   -1, PHENOM                  , "Unknown AMD Phenom"            },
-	{ 15,  2, -1, 16,   -1, PHENOM                  , "Phenom"                        },
-	{ 15,  2, -1, 16,   -1, PHENOM_X3               , "Phenom X3 (Toliman)"           },
-	{ 15,  2, -1, 16,   -1, PHENOM_X4               , "Phenom X4 (Agena)"             },
+	{ 15, -1, -1, 16,   -1,   1,    -1, PHENOM                  ,     0, "Unknown AMD Phenom"            },
+	{ 15,  2, -1, 16,   -1,   1,    -1, PHENOM                  ,     0, "Phenom"                        },
+	{ 15,  2, -1, 16,   -1,   3,    -1, PHENOM                  ,     0, "Phenom X3 (Toliman)"           },
+	{ 15,  2, -1, 16,   -1,   4,    -1, PHENOM                  ,     0, "Phenom X4 (Agena)"             },
 };
 
 
@@ -315,30 +301,30 @@ static amd_code_t decode_amd_codename_part1(const char *bs)
 	if (strstr(bs, "Athlon(tm) 64 FX")) return ATHLON_64_FX;
 	if (strstr(bs, "Athlon(tm) FX")) return ATHLON_FX;
 	if (strstr(bs, "Athlon(tm) 64")) {
-		if (strstr(bs, "Dual Core")) return ATHLON_64_X2_512K;
-		return ATHLON_64_512K;
+		if (strstr(bs, "Dual Core")) return ATHLON_64_X2;
+		return ATHLON_64;
 	}
 	if (strstr(bs, "Athlon(tm) X2")) {
-		return ATHLON_64_X2_512K;
+		return ATHLON_64_X2;
 	}
 	if (strstr(bs, "Turion(tm)")) {
 		if (strstr(bs, "X2"))
-			return TURION_X2_512K;
+			return TURION_X2;
 		else
-			return TURION_64_512K;
+			return TURION_64;
 	}
 	
 	if (strstr(bs, "mobile") || strstr(bs, "Mobile")) {
 		if (strstr(bs, "Athlon(tm) XP-M (LV)")) return ATHLON_XP_M_LV;
 		if (strstr(bs, "Athlon(tm) XP")) return ATHLON_XP_M;
-		if (strstr(bs, "Sempron(tm)")) return M_SEMPRON_64_256K;
+		if (strstr(bs, "Sempron(tm)")) return M_SEMPRON;
 		if (strstr(bs, "Athlon")) return MOBILE_ATHLON64;
 		if (strstr(bs, "Duron")) return MOBILE_DURON;
 		
 	} else {
 		if (strstr(bs, "Athlon(tm) XP")) return ATHLON_XP;
 		if (strstr(bs, "Athlon(tm) MP")) return ATHLON_MP;
-		if (strstr(bs, "Sempron(tm)")) return SEMPRON_64_128K;
+		if (strstr(bs, "Sempron(tm)")) return SEMPRON;
 		if (strstr(bs, "Duron")) return DURON;
 		if (strstr(bs, "Athlon")) return ATHLON;
 	}
@@ -350,42 +336,9 @@ static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 {
 	amd_code_t code = decode_amd_codename_part1(data->brand_str);
 	
-	if (code == ATHLON_XP && data->l2_cache == 512)
-		code = ATHLON_XP_BARTON;
-	if (code == ATHLON_64_512K && data->l2_cache > 512)
-		code = ATHLON_64_1M;
-	if (code == SEMPRON_64_128K && data->l2_cache > 128) {
-		if (data->l2_cache == 256)
-			code = SEMPRON_64_256K;
-		else
-			code = SEMPRON_64_512K;
-	}
-	if (code == M_SEMPRON_64_256K && data->l2_cache > 256)
-		code = M_SEMPRON_64_512K;
-	if (code == TURION_64_512K && data->l2_cache > 512)
-		code = TURION_64_1M;
-	if (code == TURION_X2_512K && data->l2_cache > 512)
-		code = TURION_X2_1M;
-	if (code == ATHLON_64_X2_512K && data->l2_cache > 512)
-		code = ATHLON_64_X2_1M;
-	if (code == ATHLON_64_X2_512K && data->l2_cache < 512)
+	if (code == ATHLON_64_X2 && data->l2_cache < 512)
 		code = SEMPRON_DUALCORE;
-	if (code == PHENOM) {
-		switch (data->num_cores) {
-			case 2:
-				code = PHENOM_X2;
-				break;
-			case 3:
-				code = PHENOM_X3;
-				break;
-			case 4:
-				code = PHENOM_X4;
-				break;
-			default:
-				break;
-		}
-	}
-	match_cpu_codename(cpudb_amd, COUNT_OF(cpudb_amd), data, code);
+	match_cpu_codename(cpudb_amd, COUNT_OF(cpudb_amd), data, code, 0);
 }
 
 int cpuid_identify_amd(struct cpu_raw_data_t* raw, struct cpu_id_t* data)

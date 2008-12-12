@@ -38,12 +38,12 @@ void match_features(const struct feature_map_t* matchtable, int count,
 
 struct match_entry_t {
 	int family, model, stepping, ext_family, ext_model;
-	int code;
+	int ncores, l2cache, brand_code, model_code;
 	char name[32];
 };
 
 void match_cpu_codename(const struct match_entry_t* matchtable, int count,
-                        struct cpu_id_t* data, int code);
+                        struct cpu_id_t* data, int brand_code, int model_code);
 
 void warnf(const char* format, ...)
 #ifdef __GNUC__
