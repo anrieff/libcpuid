@@ -26,6 +26,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "libcpuid.h"
 #include "recog_amd.h"
 #include "libcpuid_util.h"
@@ -172,17 +173,40 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 15, 0x23,   2,  1024, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Toledo/1024K)"   },
 	{ 15, -1, -1, 15, 0x43,   2,  1024, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Windsor/1024K)"  },
 	
+	{ 15, -1, -1, 15, 0x08,   1,   128, M_SEMPRON               ,     0, "Mobile Sempron 64 (Dublin/128K)"},
+	{ 15, -1, -1, 15, 0x08,   1,   256, M_SEMPRON               ,     0, "Mobile Sempron 64 (Dublin/256K)"},
+	{ 15, -1, -1, 15, 0x0c,   1,   256, SEMPRON                 ,     0, "Sempron 64 (Paris)"            },
+	{ 15, -1, -1, 15, 0x1c,   1,   128, SEMPRON                 ,     0, "Sempron 64 (Palermo/128K)"     },
+	{ 15, -1, -1, 15, 0x1c,   1,   256, SEMPRON                 ,     0, "Sempron 64 (Palermo/256K)"     },
+	{ 15, -1, -1, 15, 0x1c,   1,   128, M_SEMPRON               ,     0, "Mobile Sempron 64 (Sonora/128K)"},
+	{ 15, -1, -1, 15, 0x1c,   1,   256, M_SEMPRON               ,     0, "Mobile Sempron 64 (Sonora/256K)"},
 	{ 15, -1, -1, 15, 0x2c,   1,   128, SEMPRON                 ,     0, "Sempron 64 (Palermo/128K)"     },
 	{ 15, -1, -1, 15, 0x2c,   1,   256, SEMPRON                 ,     0, "Sempron 64 (Palermo/256K)"     },
+	{ 15, -1, -1, 15, 0x2c,   1,   128, M_SEMPRON               ,     0, "Mobile Sempron 64 (Albany/128K)"},
+	{ 15, -1, -1, 15, 0x2c,   1,   256, M_SEMPRON               ,     0, "Mobile Sempron 64 (Albany/256K)"},
 	{ 15, -1, -1, 15, 0x2f,   1,   128, SEMPRON                 ,     0, "Sempron 64 (Palermo/128K)"     },
 	{ 15, -1, -1, 15, 0x2f,   1,   256, SEMPRON                 ,     0, "Sempron 64 (Palermo/256K)"     },
 	{ 15, -1, -1, 15, 0x4f,   1,   128, SEMPRON                 ,     0, "Sempron 64 (Manila/128K)"      },
 	{ 15, -1, -1, 15, 0x4f,   1,   256, SEMPRON                 ,     0, "Sempron 64 (Manila/256K)"      },
+	{ 15, -1, -1, 15, 0x5f,   1,   128, SEMPRON                 ,     0, "Sempron 64 (Manila/128K)"      },
+	{ 15, -1, -1, 15, 0x5f,   1,   256, SEMPRON                 ,     0, "Sempron 64 (Manila/256K)"      },
+	{ 15, -1, -1, 15, 0x6b,   2,   256, SEMPRON                 ,     0, "Sempron 64 Dual (Sherman/256K)"},
+	{ 15, -1, -1, 15, 0x6b,   2,   512, SEMPRON                 ,     0, "Sempron 64 Dual (Sherman/512K)"},
 	{ 15, -1, -1, 15, 0x7f,   1,   256, SEMPRON                 ,     0, "Sempron 64 (Sparta/256K)"      },
 	{ 15, -1, -1, 15, 0x7f,   1,   512, SEMPRON                 ,     0, "Sempron 64 (Sparta/512K)"      },
-	{ 15, -1, -1, 15,   -1,   1,   256, M_SEMPRON               ,     0, "Mobile Sempron 64 (Keene/256K)"},
-	{ 15, -1, -1, 15,   -1,   1,   512, M_SEMPRON               ,     0, "Mobile Sempron 64 (Keene/512K)"},
+	{ 15, -1, -1, 15, 0x4c,   1,   256, M_SEMPRON               ,     0, "Mobile Sempron 64 (Keene/256K)"},
+	{ 15, -1, -1, 15, 0x4c,   1,   512, M_SEMPRON               ,     0, "Mobile Sempron 64 (Keene/512K)"},
 	{ 15, -1, -1, 15,   -1,   2,    -1, SEMPRON_DUALCORE        ,     0, "Sempron Dual Core"             },
+	
+	{ 15, -1, -1, 15, 0x24,   1,   512, TURION_64               ,     0, "Turion 64 (Lancaster/512K)"    },
+	{ 15, -1, -1, 15, 0x24,   1,  1024, TURION_64               ,     0, "Turion 64 (Lancaster/1024K)"   },
+	{ 15, -1, -1, 15, 0x48,   2,   256, TURION_X2               ,     0, "Turion X2 (Taylor)"            },
+	{ 15, -1, -1, 15, 0x48,   2,   512, TURION_X2               ,     0, "Turion X2 (Trinidad)"          },
+	{ 15, -1, -1, 15, 0x4c,   1,   512, TURION_64               ,     0, "Turion 64 (Richmond)"          },
+	{ 15, -1, -1, 15, 0x68,   2,   256, TURION_X2               ,     0, "Turion X2 (Tyler/256K)"        },
+	{ 15, -1, -1, 15, 0x68,   2,   512, TURION_X2               ,     0, "Turion X2 (Tyler/512K)"        },
+	{ 15, -1, -1, 23,    3,   2,   512, TURION_X2               ,     0, "Turion X2 (Griffin/512K)"      },
+	{ 15, -1, -1, 23,    3,   2,  1024, TURION_X2               ,     0, "Turion X2 (Griffin/1024K)"     },
 	
 	/* K9 Architecture */
 	{ 15, -1, -1, 16,   -1,   1,    -1, PHENOM                  ,     0, "Unknown AMD Phenom"            },
@@ -289,29 +313,53 @@ static void decode_amd_number_of_cores(struct cpu_raw_data_t* raw, struct cpu_id
 	}
 }
 
+static int amd_has_turion_modelname(const char *bs)
+{
+	/* We search for something like TL-60. Ahh, I miss regexes...*/
+	int i, l, k;
+	char code[3] = {0};
+	const char* codes[] = { "ML", "MT", "MK", "TK", "TL", "RM", "ZM", "" };
+	l = (int) strlen(bs);
+	for (i = 3; i < l - 2; i++) {
+		if (bs[i] == '-' &&
+		    isupper(bs[i-1]) && isupper(bs[i-2]) && !isupper(bs[i-3]) &&
+		    isdigit(bs[i+1]) && isdigit(bs[i+2]) && !isdigit(bs[i+3]))
+		{
+			code[0] = bs[i-2];
+			code[1] = bs[i-1];
+			for (k = 0; codes[k][0]; k++)
+				if (!strcmp(codes[k], code)) return 1;
+		}
+	}
+	return 0;
+}
+
 static amd_code_t decode_amd_codename_part1(const char *bs)
 {
+	int is_dual = 0;
+	if (strstr(bs, "Dual Core") ||
+	    strstr(bs, "Dual-Core") ||
+	    strstr(bs, " X2 "))
+		is_dual = 1;
 	if (strstr(bs, "Opteron")) {
-		if (strstr(bs, "Dual Core")) return OPTERON_DUALCORE;
-		return OPTERON_SINGLE;
+		return is_dual ? OPTERON_DUALCORE : OPTERON_SINGLE;
 	}
 	if (strstr(bs, "Phenom")) {
 		return PHENOM;
 	}
+	if (amd_has_turion_modelname(bs)) {
+		return is_dual ? TURION_X2 : TURION_64;
+	}
 	if (strstr(bs, "Athlon(tm) 64 FX")) return ATHLON_64_FX;
 	if (strstr(bs, "Athlon(tm) FX")) return ATHLON_FX;
 	if (strstr(bs, "Athlon(tm) 64")) {
-		if (strstr(bs, "Dual Core")) return ATHLON_64_X2;
-		return ATHLON_64;
+		return is_dual ? ATHLON_64_X2 : ATHLON_64;
 	}
 	if (strstr(bs, "Athlon(tm) X2")) {
 		return ATHLON_64_X2;
 	}
-	if (strstr(bs, "Turion(tm)")) {
-		if (strstr(bs, "X2"))
-			return TURION_X2;
-		else
-			return TURION_64;
+	if (strstr(bs, "Turion")) {
+		return is_dual ? TURION_X2 : TURION_64;
 	}
 	
 	if (strstr(bs, "mobile") || strstr(bs, "Mobile")) {
