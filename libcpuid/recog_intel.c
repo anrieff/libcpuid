@@ -108,6 +108,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  1, -1, -1, -1,   1,    -1, NO_CODE           ,     0, "Pentium Pro"             },
 	{  6,  3, -1, -1, -1,   1,    -1, NO_CODE           ,     0, "Pentium II (Klamath)"    },
 	{  6,  5, -1, -1, -1,   1,    -1, NO_CODE           ,     0, "Pentium II (Deschutes)"  },
+	{  6,  5, -1, -1, -1,   1,    -1, MOBILE_PENTIUM    ,     0, "Mobile Pentium II (Tonga)"},
 	{  6,  6, -1, -1, -1,   1,    -1, NO_CODE           ,     0, "Pentium II (Dixon)"      },
 	
 	{  6,  3, -1, -1, -1,   1,    -1, XEON              ,     0, "P-II Xeon"               },

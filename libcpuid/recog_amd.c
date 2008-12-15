@@ -213,6 +213,15 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  2, -1, 16,   -1,   1,    -1, PHENOM                  ,     0, "Phenom"                        },
 	{ 15,  2, -1, 16,   -1,   3,    -1, PHENOM                  ,     0, "Phenom X3 (Toliman)"           },
 	{ 15,  2, -1, 16,   -1,   4,    -1, PHENOM                  ,     0, "Phenom X4 (Agena)"             },
+	{ 15,  2, -1, 16,   -1,   3,   512, PHENOM                  ,     0, "Phenom X3 (Toliman/256K)"      },
+	{ 15,  2, -1, 16,   -1,   3,   512, PHENOM                  ,     0, "Phenom X3 (Toliman/512K)"      },
+	{ 15,  2, -1, 16,   -1,   4,   128, PHENOM                  ,     0, "Phenom X4 (Agena/128K)"        },
+	{ 15,  2, -1, 16,   -1,   4,   256, PHENOM                  ,     0, "Phenom X4 (Agena/256K)"        },
+	{ 15,  2, -1, 16,   -1,   4,   512, PHENOM                  ,     0, "Phenom X4 (Agena/512K)"        },
+	/* these are a bit speculative: */
+	{ 15,  4, -1, 16,   -1,   3,    -1, PHENOM                  ,     0, "Phenom X3 (???)"               },
+	{ 15,  4, -1, 16,   -1,   4,    -1, PHENOM                  ,     0, "Phenom X4 (Deneb)"             },
+	{ 15,  4, -1, 16,   -1,   4,    -1, NO_CODE                 ,     0, "Phenom (Deneb-based)"          },
 };
 
 
