@@ -7,18 +7,22 @@ if len(sys.argv) != 2:
 	sys.exit(0)
 
 rexp = re.compile('.*{ CPU_FEATURE_([^,]+), "([^"]+)".*}.*')
-
+print "Finding features:"
 for fn in glob.glob("%s/*.c" % sys.argv[1]):
 	f = open(fn, "rt")
 	line = 1
+	nfeat = 0
 	for s in f.readlines():
 		if rexp.match(s):
+			nfeat += 1
 			res = rexp.findall(s)
 			if len(res) > 1:
-				raise "Too many matches"
+				raise "..Too many matches"
 			if res[0][0].lower() != res[0][1]:
-				print "Mismatch - %s:%d - `%s' vs `%s'" % (fn, line, res[0][0], res[0][1])
+				print "..Mismatch - %s:%d - `%s' vs `%s'" % (os.path.basename(fn), line, res[0][0], res[0][1])
 		line += 1
+	if nfeat:
+		print "  %s: %d features described" % (os.path.basename(fn), nfeat)
 	f.close()
 
 # Check whether all features are converted by cpu_feature_str():
@@ -43,15 +47,19 @@ for s in f.readlines():
 		impf.append(entry)
 f.close()
 
+print "Found %d total features and %d named features" % (len(allf), len(impf))
+
 for feature in allf:
 	if not feature in impf:
 		print "cpu_feature_str(): don't have entry for %s" % feature
 
 # Check whether all features have detection code:
+print "Checking whether all features have detection code...",
+firstError = True
 
 files_code = {}
 
-rexp = re.compile('.*{ *[0-9]+, (CPU_FEATURE_[^ }]+).*')
+rexp = re.compile('\t+{ *[0-9]+, (CPU_FEATURE_[^ }]+).*')
 
 for fn in glob.glob("%s/*.c" % sys.argv[1]):
 	f = open(fn, "rt")
@@ -68,19 +76,33 @@ for feature in allf:
 		if feature in files_code[fn]:
 			matching_files.append(fn)
 	if len(matching_files) == 0:
-		print "No detection code for %s" % feature
+		if firstError:
+			print "FAILED:"
+			firstError = False
+		print "..No detection code for %s" % feature
 	if len(matching_files) > 1:
-		print "Conflicting detection code for %s in files %s" % (feature, " and ".join(matching_files))
+		if firstError:
+			print "FAILED:"
+			firstError = False
+		print "..Conflicting detection code for %s in files %s" % (feature, " and ".join(matching_files))
 
+if firstError:
+	print "All OK."
+print ""
+
+print "Checking processor definitions:"
 cache_exp = re.compile(".*([\(/ ][0-9]+K).*")
 # Check whether CPU codenames for consistency:
 #   - Codenames should not exceed 31 characters
 #   - Check for common typos
 common_cache_sizes = ["8", "16", "32", "64", "128", "256", "512", "1024", "2048", "3072", "4096", "6144", "8192", "12288", "16384"]
 for fn in glob.glob("%s/*.c" % sys.argv[1]):
+	bfn = os.path.basename(fn)
 	nline = 0
 	f = open(fn, "rt")
 	has_matchtable = False
+	cdefs = 0
+	allok = True
 	for line in f.readlines():
 		nline += 1
 		if line.find("struct match_entry_t") != -1:
@@ -94,15 +116,25 @@ for fn in glob.glob("%s/*.c" % sys.argv[1]):
 		inner = line[i+1:j]
 		parts = inner.split(",")
 		if len(parts) == 10: #this number needs to change if the definition of match_entry_t ever changes
+			cdefs += 1
 			s = parts[9].strip()
 			if s[0] != '"' or s[-1] != '"':
-				print "Warning, %s:%d - cannot correctly handle the cpu codename" % (fn, nline)
+				print "..Warning, %s:%d - cannot correctly handle the cpu codename" % (bfn, nline)
+				allok = False
 				continue
 			s = s[1:-1]
 			if len(s) > 31:
-				print "%s:%d - codename (%s) is longer than 31 characters!" %(fn, nline, s)
+				print "..%s:%d - codename (%s) is longer than 31 characters!" % (bfn, nline, s)
+				allok = False
 			if cache_exp.match(s):
 				cache_size = cache_exp.findall(s)[0][1:-1]
 				if not cache_size in common_cache_sizes:
-					print "Warning, %s:%d - suspicious cache size in codename [%s] (%s)" % (fn, nline, s, cache_size)
+					print "..Warning, %s:%d - suspicious cache size in codename [%s] (%s)" % (bfn, nline, s, cache_size)
+					allok = False
+	if cdefs:
+		print "  %s: %d processor definitions," % (bfn, cdefs),
+		if allok:
+			print "all OK"
+		else:
+			print "some errors/warnings"
 	f.close()

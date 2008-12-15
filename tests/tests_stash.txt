@@ -1775,7 +1775,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
-Atom Dualcore (Diamondville)
+Atom Dual-Core (Diamondville)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl tm2 ssse3 cx16 xtpr pdcm xd movbe lm lahf_lm
 --------------------------------------------------------------------------------
 basic_cpuid[0]=0000000a 756e6547 6c65746e 49656e69
