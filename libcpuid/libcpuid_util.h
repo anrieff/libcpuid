@@ -50,8 +50,13 @@ void warnf(const char* format, ...)
 __attribute__((format(printf, 1, 2)))
 #endif
 ;
-
-void debugf(int verboselevel, const char* format, ...);
+void debugf(int verboselevel, const char* format, ...)
+#ifdef __GNUC__
+__attribute__((format(printf, 2, 3)))
+#endif
+;
+void generic_get_cpu_list(const struct match_entry_t* matchtable, int count,
+                          struct cpu_list_t* list);
 
 extern libcpuid_warn_fn_t _warn_fun;
 extern int _current_verboselevel;

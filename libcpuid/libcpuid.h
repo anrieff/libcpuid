@@ -648,6 +648,43 @@ libcpuid_warn_fn_t cpuid_set_warn_function(libcpuid_warn_fn_t warn_fun);
  */
 void cpuid_set_verbosiness_level(int level);
 
+
+/** @see cpuid_get_cpu_list */
+struct cpu_list_t {
+	int num_entries;
+	char **names;
+};
+
+/**
+ * @brief Gets a list of all known CPU names from a specific vendor.
+ *
+ * This function compiles a list of all known CPU (code)names
+ * (i.e. the possible values of cpu_id_t::cpu_codename) for the given vendor.
+ *
+ * There are about 100 entries for Intel and AMD, and a few for the other
+ * vendors. The list is written out in approximate chronological introduction
+ * order of the parts.
+ *
+ * @param vendor - the vendor to be queried
+ * @param list [out] - the resulting list will be written here. The `names'
+ *                     field of the structure will hold the names (memory is
+ *                     allocated by this function). `num_entries' will hold
+ *                     the count.
+ * NOTE: As the memory is dynamically allocated, be sure to call
+ *       @see cpuid_free_cpu_list() after you're done with the data
+ */
+void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list);
+
+/**
+ * @brief Frees a CPU list
+ *
+ * This function deletes all the memory associated with a CPU list, as obtained
+ * by @see cpuid_get_cpu_list()
+ *
+ * @param list - the list to be free()'d.
+ */
+void cpuid_free_cpu_list(struct cpu_list_t* list);
+
 #ifdef __cplusplus
 }; /* extern "C" */
 #endif

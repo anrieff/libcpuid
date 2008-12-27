@@ -108,3 +108,23 @@ void match_cpu_codename(const struct match_entry_t* matchtable, int count,
 	}
 	strcpy(data->cpu_codename, matchtable[bestindex].name);
 }
+
+void generic_get_cpu_list(const struct match_entry_t* matchtable, int count,
+                          struct cpu_list_t* list)
+{
+	int i, j, n, good;
+	n = 0;
+	list->names = (char**) malloc(sizeof(char*) * count);
+	for (i = 0; i < count; i++) {
+		if (strstr(matchtable[i].name, "Unknown")) continue;
+		good = 1;
+		for (j = n - 1; j >= 0; j--)
+			if (!strcmp(list->names[j], matchtable[i].name)) {
+				good = 0;
+				break;
+			}
+		if (!good) continue;
+		list->names[n++] = strdup(matchtable[i].name);
+	}
+	list->num_entries = n;
+}

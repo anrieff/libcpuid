@@ -33,6 +33,7 @@
 #endif
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 /* Implementation: */
 
@@ -251,6 +252,26 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	load_features_common(raw, data);
 	data->total_cpus = get_total_cpus();
 	return set_error(ERR_OK);
+}
+
+static void make_list_from_string(const char* csv, struct cpu_list_t* list)
+{
+	int i, n, l, last;
+	l = (int) strlen(csv);
+	n = 0;
+	for (i = 0; i < l; i++) if (csv[i] == ',') n++;
+	n++;
+	list->num_entries = n;
+	list->names = (char**) malloc(sizeof(char*) * n);
+	last = -1;
+	n = 0;
+	for (i = 0; i <= l; i++) if (i == l || csv[i] == ',') {
+		list->names[n] = (char*) malloc(i - last);
+		memcpy(list->names[n], &csv[last + 1], i - last - 1);
+		list->names[n][i - last - 1] = '\0';
+		n++;
+		last = i;
+	}
 }
 
 
@@ -537,4 +558,52 @@ libcpuid_warn_fn_t cpuid_set_warn_function(libcpuid_warn_fn_t new_fn)
 void cpuid_set_verbosiness_level(int level)
 {
 	_current_verboselevel = level;
+}
+
+void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list)
+{
+	switch (vendor) {
+		case VENDOR_INTEL:
+			cpuid_get_list_intel(list);
+			break;
+		case VENDOR_AMD:
+			cpuid_get_list_amd(list);
+			break;
+		case VENDOR_CYRIX:
+			make_list_from_string("Cx486,Cx5x86,6x86,6x86MX,M II,MediaGX,MediaGXi,MediaGXm", list);
+			break;
+		case VENDOR_NEXGEN:
+			make_list_from_string("Nx586", list);
+			break;
+		case VENDOR_TRANSMETA:
+			make_list_from_string("Crusoe,Efficeon", list);
+			break;
+		case VENDOR_UMC:
+			make_list_from_string("UMC x86 CPU", list);
+			break;
+		case VENDOR_CENTAUR:
+			make_list_from_string("VIA C3,VIA C7,VIA Nano", list);
+			break;
+		case VENDOR_RISE:
+			make_list_from_string("Rise mP6", list);
+			break;
+		case VENDOR_SIS:
+			make_list_from_string("SiS mP6", list);
+			break;
+		case VENDOR_NSC:
+			make_list_from_string("Geode GXm,Geode GXLV,Geode GX1,Geode GX2", list);
+			break;
+		default:
+			warnf("Unknown vendor passed to cpuid_get_cpu_list()\n");
+			break;
+ 	}
+}
+
+void cpuid_free_cpu_list(struct cpu_list_t* list)
+{
+	int i;
+	if (list->num_entries <= 0) return;
+	for (i = 0; i < list->num_entries; i++)
+		free(list->names[i]);
+	free(list->names);
 }

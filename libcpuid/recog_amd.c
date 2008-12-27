@@ -406,3 +406,8 @@ int cpuid_identify_amd(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	decode_amd_codename(raw, data);
 	return 0;
 }
+
+void cpuid_get_list_amd(struct cpu_list_t* list)
+{
+	generic_get_cpu_list(cpudb_amd, COUNT_OF(cpudb_amd), list);
+}

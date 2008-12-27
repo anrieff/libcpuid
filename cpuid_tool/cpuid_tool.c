@@ -92,7 +92,8 @@ int need_input = 0,
     need_clockreport = 0,
     need_timed_clockreport = 0,
     verbose_level = 0,
-    need_version = 0;
+    need_version = 0,
+    need_cpulist = 0;
 
 #define MAX_REQUESTS 32
 int num_requests = 0;
@@ -152,6 +153,7 @@ static void usage(void)
 	printf("  --outfile=<file> - redirect all output to this file, instead of stdout\n");
 	printf("  --verbose, -v  - be extra verbose (more keys increase verbosiness level)\n");
 	printf("  --version      - print library version\n");
+	printf("  --cpulist      - list all known CPUs\n");
 	printf("\n");
 	printf("Query switches (generate 1 line of ouput per switch; in order of appearance):");
 	
@@ -256,6 +258,10 @@ static int parse_cmdline(int argc, char** argv)
 		}
 		if (!strcmp(arg, "--version")) {
 			need_version = 1;
+			recog = 1;
+		}
+		if (!strcmp(arg, "--cpulist")) {
+			need_cpulist = 1;
 			recog = 1;
 		}
 		if (arg[0] == '-' && arg[1] == 'v') {
@@ -398,6 +404,31 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 		default:
 			fprintf(fout, "How did you get here?!?\n");
 			break;
+	}
+}
+
+static void print_cpulist(void)
+{
+	int i, j;
+	struct cpu_list_t list;
+	const struct { const char *name; cpu_vendor_t vendor; } cpu_vendors[] = {
+		{ "Intel", VENDOR_INTEL },
+		{ "AMD", VENDOR_AMD },
+		{ "Cyrix", VENDOR_CYRIX },
+		{ "NexGen", VENDOR_NEXGEN },
+		{ "Transmeta", VENDOR_TRANSMETA },
+		{ "UMC", VENDOR_UMC },
+		{ "Centaur/VIA", VENDOR_CENTAUR },
+		{ "Rise", VENDOR_RISE },
+		{ "SiS", VENDOR_SIS },
+		{ "NSC", VENDOR_NSC },
+	};
+	for (i = 0; i < sizeof(cpu_vendors)/sizeof(cpu_vendors[0]); i++) {
+		fprintf(fout, "-----%s-----\n", cpu_vendors[i].name);
+		cpuid_get_cpu_list(cpu_vendors[i].vendor, &list);
+		for (j = 0; j < list.num_entries; j++)
+			fprintf(fout, "%s\n", list.names[j]);
+		cpuid_free_cpu_list(&list);
 	}
 }
 
@@ -577,6 +608,9 @@ int main(int argc, char** argv)
 		}
 		for (i = 0; i < num_requests; i++)
 			print_info(requests[i], &raw, &data);
+	}
+	if (need_cpulist) {
+		print_cpulist();
 	}
 	
 	return 0;

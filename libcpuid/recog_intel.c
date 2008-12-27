@@ -135,7 +135,52 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, -1,   1,    -1, CELERON           ,     0, "P-III Celeron"           },
 	{  6, 11, -1, -1, -1,   1,    -1, CELERON           ,     0, "P-III Celeron"           },
 	
+	/* Netburst based (Pentium 4 and later)
+	   classic P4s */
+	{ 15, -1, -1, -1, -1,   1,    -1, NO_CODE           ,     0, "Unknown Pentium 4"       },
+	{ 15, -1, -1, 15, -1,   1,    -1, CELERON           ,     0, "Unknown P-4 Celeron"     },
+	{ 15, -1, -1, 15, -1,   1,    -1, XEON              ,     0, "Unknown Xeon"            },
+	
+	{ 15,  0, -1, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium 4 (Willamette)"  },
+	{ 15,  1, -1, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium 4 (Willamette)"  },
+	{ 15,  2, -1, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium 4 (Northwood)"   },
+	{ 15,  3, -1, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium 4 (Prescott)"    },
+	{ 15,  4, -1, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium 4 (Prescott)"    },
+	{ 15,  6, -1, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium 4 (Cedar Mill)"  },
+	{ 15,  0, -1, 15, -1,   1,    -1, MOBILE_PENTIUM    ,     0, "Mobile P-4 (Willamette)" },
+	{ 15,  1, -1, 15, -1,   1,    -1, MOBILE_PENTIUM    ,     0, "Mobile P-4 (Willamette)" },
+	{ 15,  2, -1, 15, -1,   1,    -1, MOBILE_PENTIUM    ,     0, "Mobile P-4 (Northwood)"  },
+	{ 15,  3, -1, 15, -1,   1,    -1, MOBILE_PENTIUM    ,     0, "Mobile P-4 (Prescott)"   },
+	{ 15,  4, -1, 15, -1,   1,    -1, MOBILE_PENTIUM    ,     0, "Mobile P-4 (Prescott)"   },
+	{ 15,  6, -1, 15, -1,   1,    -1, MOBILE_PENTIUM    ,     0, "Mobile P-4 (Cedar Mill)" },
+	
+	/* server CPUs */
+	{ 15,  0, -1, 15, -1,   1,    -1, XEON              ,     0, "Xeon (Foster)"           },
+	{ 15,  1, -1, 15, -1,   1,    -1, XEON              ,     0, "Xeon (Foster)"           },
+	{ 15,  2, -1, 15, -1,   1,    -1, XEON              ,     0, "Xeon (Prestonia)"        },
+	{ 15,  2, -1, 15, -1,   1,    -1, XEONMP            ,     0, "Xeon (Gallatin)"         },
+	{ 15,  3, -1, 15, -1,   1,    -1, XEON              ,     0, "Xeon (Nocona)"           },
+	{ 15,  4, -1, 15, -1,   1,    -1, XEON              ,     0, "Xeon (Nocona)"           },
+	{ 15,  4, -1, 15, -1,   1,    -1, XEON_IRWIN        ,     0, "Xeon (Irwindale)"        },
+	{ 15,  4, -1, 15, -1,   1,    -1, XEONMP            ,     0, "Xeon (Cranford)"         },
+	{ 15,  4, -1, 15, -1,   1,    -1, XEON_POTOMAC      ,     0, "Xeon (Potomac)"          },
+	{ 15,  6, -1, 15, -1,   1,    -1, XEON              ,     0, "Xeon (Dempsey)"          },
+	
+	/* Pentium Ds */
+	{ 15,  4,  4, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium D"               },
+	{ 15,  4, -1, 15, -1,   1,    -1, PENTIUM_D         ,     0, "Pentium D"               },
+	{ 15,  4,  7, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium D"               },
+	{ 15,  6, -1, 15, -1,   1,    -1, PENTIUM_D         ,     0, "Pentium D"               },
+
+	/* Celeron and Celeron Ds */
+	{ 15,  1, -1, 15, -1,   1,    -1, CELERON           ,     0, "P-4 Celeron (128K)"      }, 
+	{ 15,  2, -1, 15, -1,   1,    -1, CELERON           ,     0, "P-4 Celeron (128K)"      },
+	{ 15,  3, -1, 15, -1,   1,    -1, CELERON           ,     0, "Celeron D"               },
+	{ 15,  4, -1, 15, -1,   1,    -1, CELERON           ,     0, "Celeron D"               },
+	{ 15,  6, -1, 15, -1,   1,    -1, CELERON           ,     0, "Celeron D"               },
+	
 	/* -------------------------------------------------- */
+	/* Intel Core microarchitecture - P6-based */
 	
 	{  6,  9, -1, -1, -1,   1,    -1, NO_CODE           ,     0, "Unknown Pentium M"          },
 	{  6,  9, -1, -1, -1,   1,    -1, MOBILE_PENTIUM_M  ,     0, "Unknown Pentium M"          },
@@ -207,54 +252,10 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 23,   4,  3072, XEON              , X3300, "Xeon (Yorkfield/3M)"      },
 	{  6,  7, -1, -1, 23,   4,  6144, XEON              , X3300, "Xeon (Yorkfield/6M)"      },
 
-	
 	/* Itaniums */
 	{  7, -1, -1, -1, -1,   1,    -1, NO_CODE           ,     0, "Itanium"                 },
 	{ 15, -1, -1, 16, -1,   1,    -1, NO_CODE           ,     0, "Itanium 2"               },
 	
-	/* Netburst based (Pentium 4 and later)
-	   classic P4s */
-	{ 15, -1, -1, -1, -1,   1,    -1, NO_CODE           ,     0, "Unknown Pentium 4"       },
-	{ 15, -1, -1, 15, -1,   1,    -1, CELERON           ,     0, "Unknown P-4 Celeron"     },
-	{ 15, -1, -1, 15, -1,   1,    -1, XEON              ,     0, "Unknown Xeon"            },
-	
-	{ 15,  0, -1, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium 4 (Willamette)"  },
-	{ 15,  1, -1, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium 4 (Willamette)"  },
-	{ 15,  2, -1, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium 4 (Northwood)"   },
-	{ 15,  3, -1, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium 4 (Prescott)"    },
-	{ 15,  4, -1, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium 4 (Prescott)"    },
-	{ 15,  6, -1, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium 4 (Cedar Mill)"  },
-	{ 15,  0, -1, 15, -1,   1,    -1, MOBILE_PENTIUM    ,     0, "Mobile P-4 (Willamette)" },
-	{ 15,  1, -1, 15, -1,   1,    -1, MOBILE_PENTIUM    ,     0, "Mobile P-4 (Willamette)" },
-	{ 15,  2, -1, 15, -1,   1,    -1, MOBILE_PENTIUM    ,     0, "Mobile P-4 (Northwood)"  },
-	{ 15,  3, -1, 15, -1,   1,    -1, MOBILE_PENTIUM    ,     0, "Mobile P-4 (Prescott)"   },
-	{ 15,  4, -1, 15, -1,   1,    -1, MOBILE_PENTIUM    ,     0, "Mobile P-4 (Prescott)"   },
-	{ 15,  6, -1, 15, -1,   1,    -1, MOBILE_PENTIUM    ,     0, "Mobile P-4 (Cedar Mill)" },
-	
-	/* server CPUs */
-	{ 15,  0, -1, 15, -1,   1,    -1, XEON              ,     0, "Xeon (Foster)"           },
-	{ 15,  1, -1, 15, -1,   1,    -1, XEON              ,     0, "Xeon (Foster)"           },
-	{ 15,  2, -1, 15, -1,   1,    -1, XEON              ,     0, "Xeon (Prestonia)"        },
-	{ 15,  2, -1, 15, -1,   1,    -1, XEONMP            ,     0, "Xeon (Gallatin)"         },
-	{ 15,  3, -1, 15, -1,   1,    -1, XEON              ,     0, "Xeon (Nocona)"           },
-	{ 15,  4, -1, 15, -1,   1,    -1, XEON              ,     0, "Xeon (Nocona)"           },
-	{ 15,  4, -1, 15, -1,   1,    -1, XEON_IRWIN        ,     0, "Xeon (Irwindale)"        },
-	{ 15,  4, -1, 15, -1,   1,    -1, XEONMP            ,     0, "Xeon (Cranford)"         },
-	{ 15,  4, -1, 15, -1,   1,    -1, XEON_POTOMAC      ,     0, "Xeon (Potomac)"          },
-	{ 15,  6, -1, 15, -1,   1,    -1, XEON              ,     0, "Xeon (Dempsey)"          },
-	
-	/* Pentium Ds */
-	{ 15,  4,  4, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium D"               },
-	{ 15,  4, -1, 15, -1,   1,    -1, PENTIUM_D         ,     0, "Pentium D"               },
-	{ 15,  4,  7, 15, -1,   1,    -1, NO_CODE           ,     0, "Pentium D"               },
-	{ 15,  6, -1, 15, -1,   1,    -1, PENTIUM_D         ,     0, "Pentium D"               },
-
-	/* Celeron and Celeron Ds */
-	{ 15,  1, -1, 15, -1,   1,    -1, CELERON           ,     0, "P-4 Celeron (128K)"      }, 
-	{ 15,  2, -1, 15, -1,   1,    -1, CELERON           ,     0, "P-4 Celeron (128K)"      },
-	{ 15,  3, -1, 15, -1,   1,    -1, CELERON           ,     0, "Celeron D"               },
-	{ 15,  4, -1, 15, -1,   1,    -1, CELERON           ,     0, "Celeron D"               },
-	{ 15,  6, -1, 15, -1,   1,    -1, CELERON           ,     0, "Celeron D"               },
 };
 
 
@@ -636,4 +637,9 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	match_cpu_codename(cpudb_intel, COUNT_OF(cpudb_intel), data,
 		get_brand_code(data), get_model_code(data));
 	return 0;
+}
+
+void cpuid_get_list_intel(struct cpu_list_t* list)
+{
+	generic_get_cpu_list(cpudb_intel, COUNT_OF(cpudb_intel), list);
 }
