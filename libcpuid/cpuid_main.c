@@ -250,7 +250,7 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		data->brand_str[48] = 0;
 	}
 	load_features_common(raw, data);
-	data->total_cpus = get_total_cpus();
+	data->total_logical_cpus = get_total_cpus();
 	return set_error(ERR_OK);
 }
 

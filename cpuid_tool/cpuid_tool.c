@@ -143,17 +143,17 @@ static void usage(void)
 	int line_fill, l, i;
 	printf("Usage: cpuid_tool [options]\n\n");
 	printf("Options:\n");
-	printf("  -h,--help      - Show this help\n");
-	printf("  --load=<file>  - Load RAW CPUID data from file\n");
-	printf("  --save=<file>  - Aquire RAW CPUID data and write it to file\n");
-	printf("  --report,--all - Report all decoded CPU info (w/o clock)\n");
-	printf("  --clock        - in conjunction to --report: print CPU clock as well\n");
-	printf("  --clock-rdtsc  - same as --clock, but use RDTSC for clock detection\n");
-	printf("  --quiet        - disable warnings\n");
+	printf("  -h, --help       - Show this help\n");
+	printf("  --load=<file>    - Load raw CPUID data from file\n");
+	printf("  --save=<file>    - Aquire raw CPUID data and write it to file\n");
+	printf("  --report, --all  - Report all decoded CPU info (w/o clock)\n");
+	printf("  --clock          - in conjunction to --report: print CPU clock as well\n");
+	printf("  --clock-rdtsc    - same as --clock, but use RDTSC for clock detection\n");
+	printf("  --cpulist        - list all known CPUs\n");
+	printf("  --quiet          - disable warnings\n");
 	printf("  --outfile=<file> - redirect all output to this file, instead of stdout\n");
-	printf("  --verbose, -v  - be extra verbose (more keys increase verbosiness level)\n");
-	printf("  --version      - print library version\n");
-	printf("  --cpulist      - list all known CPUs\n");
+	printf("  --verbose, -v    - be extra verbose (more keys increase verbosiness level)\n");
+	printf("  --version        - print library version\n");
 	printf("\n");
 	printf("Query switches (generate 1 line of ouput per switch; in order of appearance):");
 	
@@ -349,7 +349,7 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 			fprintf(fout, "%d\n", data->num_logical_cpus);
 			break;
 		case NEED_TOTAL_CPUS:
-			fprintf(fout, "%d\n", data->total_cpus);
+			fprintf(fout, "%d\n", data->total_logical_cpus);
 			break;
 		case NEED_L1D_SIZE:
 			fprintf(fout, "%d\n", data->l1_data_cache);
@@ -548,7 +548,7 @@ int main(int argc, char** argv)
 		fprintf(fout, "  ext_model  : %d (%02Xh)\n", data.ext_model, data.ext_model);
 		fprintf(fout, "  num_cores  : %d\n", data.num_cores);
 		fprintf(fout, "  num_logical: %d\n", data.num_logical_cpus);
-		fprintf(fout, "  total_cpus : %d\n", data.total_cpus);
+		fprintf(fout, "  tot_logical: %d\n", data.total_logical_cpus);
 		fprintf(fout, "  L1 D cache : %d KB\n", data.l1_data_cache);
 		fprintf(fout, "  L1 I cache : %d KB\n", data.l1_instruction_cache);
 		fprintf(fout, "  L2 cache   : %d KB\n", data.l2_cache);

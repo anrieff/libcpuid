@@ -154,7 +154,7 @@ struct cpu_id_t {
 	 * If you're writing a multithreaded program and you want to run it on
 	 * all CPUs, this is the number of threads you need.
 	 */
-	int32_t total_cpus;
+	int32_t total_logical_cpus;
 	
 	/**
 	 * L1 data cache size in KB. Could be zero, if the CPU lacks cache.
@@ -649,9 +649,13 @@ libcpuid_warn_fn_t cpuid_set_warn_function(libcpuid_warn_fn_t warn_fun);
 void cpuid_set_verbosiness_level(int level);
 
 
-/** @see cpuid_get_cpu_list */
+/**
+ * @brief a structure that holds a list of processor names
+ */
 struct cpu_list_t {
+	/** Number of entries in the list */
 	int num_entries;
+	/** Pointers to names. There will be num_entries of them */
 	char **names;
 };
 
@@ -665,13 +669,11 @@ struct cpu_list_t {
  * vendors. The list is written out in approximate chronological introduction
  * order of the parts.
  *
- * @param vendor - the vendor to be queried
- * @param list [out] - the resulting list will be written here. The `names'
- *                     field of the structure will hold the names (memory is
- *                     allocated by this function). `num_entries' will hold
- *                     the count.
+ * @param vendor the vendor to be queried
+ * @param list [out] the resulting list will be written here.
  * NOTE: As the memory is dynamically allocated, be sure to call
- *       @see cpuid_free_cpu_list() after you're done with the data
+ *       cpuid_free_cpu_list() after you're done with the data
+ * @see cpu_list_t
  */
 void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list);
 
@@ -679,7 +681,7 @@ void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list);
  * @brief Frees a CPU list
  *
  * This function deletes all the memory associated with a CPU list, as obtained
- * by @see cpuid_get_cpu_list()
+ * by cpuid_get_cpu_list()
  *
  * @param list - the list to be free()'d.
  */
