@@ -200,9 +200,9 @@ const struct match_entry_t cpudb_intel[] = {
 	
 	{  6, 14, -1, -1, -1,   1,    -1, NO_CODE           ,     0, "Unknown Yonah"             },
 	{  6, 14, -1, -1, -1,   1,    -1, CORE_SOLO         ,     0, "Yonah (Core Solo)"         },
-	{  6, 14, -1, -1, -1,   1,    -1, CORE_DUO          ,     0, "Yonah (Core Duo)"          },
+	{  6, 14, -1, -1, -1,   2,    -1, CORE_DUO          ,     0, "Yonah (Core Duo)"          },
 	{  6, 14, -1, -1, -1,   1,    -1, MOBILE_CORE_SOLO  ,     0, "Yonah (Core Solo)"         },
-	{  6, 14, -1, -1, -1,   1,    -1, MOBILE_CORE_DUO   ,     0, "Yonah (Core Duo)"          },
+	{  6, 14, -1, -1, -1,   2,    -1, MOBILE_CORE_DUO   ,     0, "Yonah (Core Duo)"          },
 	{  6, 14, -1, -1, -1,   1,    -1, CORE_SOLO         ,     0, "Yonah (Core Solo)"         },
 	
 	{  6, 15, -1, -1, -1,   1,    -1, NO_CODE           ,     0, "Unknown Core 2"            },
