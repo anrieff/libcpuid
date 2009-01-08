@@ -107,6 +107,19 @@ int cpu_clock_by_os(void)
 	return (int)result;
 }
 #else
+#ifdef __APPLE__
+#include <sys/types.h>
+#include <sys/sysctl.h>
+/* Assuming Mac OS X with hw.cpufrequency sysctl */
+int cpu_clock_by_os(void)
+{
+	long long result = -1;
+	size_t size = sizeof(result);
+	if (sysctlbyname("hw.cpufrequency", &result, &size, NULL, 0))
+		return -1;
+	return (int) (result / (long long) 1000000);
+}
+#else
 /* Assuming Linux with /proc/cpuinfo */
 int cpu_clock_by_os(void)
 {
@@ -129,6 +142,7 @@ int cpu_clock_by_os(void)
 	fclose(f);
 	return -1;
 }
+#endif /* __APPLE__ */
 #endif /* _WIN32 */
 
 /* Emulate doing useful CPU intensive work */
