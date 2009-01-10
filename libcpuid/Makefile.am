@@ -29,4 +29,4 @@ noinst_HEADERS = 		\
 	recog_intel.h		\
 	recog_amd.h
 
-EXTRA_DIST += libcpuid.sym
+EXTRA_DIST += libcpuid.sym libcpuid.vcproj
