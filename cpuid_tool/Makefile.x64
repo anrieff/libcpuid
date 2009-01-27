@@ -1,0 +1,12 @@
+# Makefile for cpuid_tool, MSVC, for AMD64
+
+OPTFLAGS =
+LINKFLAGS = /MT
+
+all: cpuid_tool.exe
+
+cpuid_tool.exe: cpuid_tool.c ..\libcpuid\libcpuid.lib
+	cl /TC $(OPTFLAGS) $(LINKFLAGS) /I ..\libcpuid cpuid_tool.c /link ..\libcpuid\libcpuid.lib  advapi32.lib
+
+clean:
+	del cpuid_tool.obj cpuid_tool.exe
