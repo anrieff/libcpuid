@@ -29,10 +29,10 @@
 
 int cpuid_exists_by_eflags(void)
 {
-#ifdef __x86_64__
+#ifdef PLATFORM_X64
 	return 1; /* CPUID is always present on the x86_64 */
 #else
-#  ifdef __GNUC__
+#  ifdef COMPILER_GCC
 	int result;
 	__asm __volatile(
 		"	pushfl\n"
@@ -51,7 +51,7 @@ int cpuid_exists_by_eflags(void)
 		: :"eax", "ecx", "memory");
 	return (result != 0);
 #  else
-#    ifdef _MSC_VER
+#    ifdef COMPILER_MICROSOFT
 	int result;
 	__asm {
 		pushfd
@@ -70,15 +70,20 @@ int cpuid_exists_by_eflags(void)
 	return (result != 0);
 #    else
 #      error "Unsupported compiler"
-#    endif /* _MSC_VER */
-#  endif /* __GNUC__ */
-#endif /* __x86_64__ */
+#    endif /* COMPILER_MICROSOFT */
+#  endif /* COMPILER_GCC */
+#endif /* PLATFORM_X64 */
 }
 
+/* 
+ * with MSVC/AMD64, the exec_cpuid() and cpu_rdtsc() functions
+ * are implemented in separate .asm files. Otherwise, use inline assembly
+ */
+#ifdef INLINE_ASM_SUPPORTED
 void exec_cpiud(uint32_t *regs)
 {
-#ifdef __GNUC__
-#	ifdef __x86_64__
+#ifdef COMPILER_GCC
+#	ifdef PLATFORM_X64
 	__asm __volatile(
 		"	push	%%rbx\n"
 		"	push	%%rcx\n"
@@ -133,9 +138,9 @@ void exec_cpiud(uint32_t *regs)
 		:"m"(regs)
 		:"memory", "eax"
 	);
-#	endif /* __x86_64__ */
+#	endif /* COMPILER_GCC */
 #else
-#  ifdef _MSC_VER
+#  ifdef COMPILER_MICROSOFT
 	__asm {
 		push	ebx
 		push	ecx
@@ -162,15 +167,16 @@ void exec_cpiud(uint32_t *regs)
 	}
 #  else
 #    error "Unsupported compiler"
-#  endif /* _MSC_VER */
+#  endif /* COMPILER_MICROSOFT */
 #endif
-
 }
+#endif /* INLINE_ASSEMBLY_SUPPORTED */
 
+#ifdef INLINE_ASM_SUPPORTED
 void cpu_rdtsc(uint64_t* result)
 {
 	uint32_t low_part, hi_part;
-#ifdef __GNUC__
+#ifdef COMPILER_GCC
 	__asm __volatile (
 		"	rdtsc\n"
 		"	mov	%%eax,	%0\n"
@@ -178,7 +184,7 @@ void cpu_rdtsc(uint64_t* result)
 		:"=m"(low_part), "=m"(hi_part)::"memory", "eax", "edx"
 	);
 #else
-#  ifdef _MSC_VER
+#  ifdef COMPILER_MICROSOFT
 	__asm {
 		rdtsc
 		mov	low_part,	eax
@@ -186,7 +192,8 @@ void cpu_rdtsc(uint64_t* result)
 	};
 #  else
 #    error "Unsupported compiler"
-#  endif /* _MSC_VER */
-#endif /* __GNUC__ */
+#  endif /* COMPILER_MICROSOFT */
+#endif /* COMPILER_GCC */
 	*result = (uint64_t)low_part + (((uint64_t) hi_part) << 32);
 }
+#endif /* INLINE_ASM_SUPPORTED */

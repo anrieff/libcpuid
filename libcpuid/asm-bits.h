@@ -27,6 +27,25 @@
 #define __ASM_BITS_H__
 #include "libcpuid.h"
 
+/* Determine Compiler: */
+#ifdef _MSC_VER
+#	define COMPILER_MICROSOFT
+#else
+#	define COMPILER_GCC
+#endif
+
+/* Determine Platform */
+#if defined(__x86_64__) || defined(_M_AMD64)
+#	define PLATFORM_X64
+#else
+#	define PLATFORM_X86
+#endif
+
+/* Under Windows/AMD64 with MSVC, inline assembly isn't supported */
+#if defined(COMPILER_GCC) || defined(PLATFORM_X86)
+#	define INLINE_ASM_SUPPORTED
+#endif
+
 int cpuid_exists_by_eflags(void);
 void exec_cpiud(uint32_t *regs);
 
