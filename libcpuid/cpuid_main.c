@@ -286,12 +286,12 @@ void cpu_exec_cpuid(uint32_t eax, uint32_t* regs)
 {
 	regs[0] = eax;
 	regs[1] = regs[2] = regs[3] = 0;
-	exec_cpiud(regs);
+	exec_cpuid(regs);
 }
 
 void cpu_exec_cpuid_ext(uint32_t* regs)
 {
-	exec_cpiud(regs);
+	exec_cpuid(regs);
 }
 
 int cpuid_get_raw_data(struct cpu_raw_data_t* data)
