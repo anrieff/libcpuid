@@ -80,7 +80,7 @@ int cpuid_exists_by_eflags(void)
  * are implemented in separate .asm files. Otherwise, use inline assembly
  */
 #ifdef INLINE_ASM_SUPPORTED
-void exec_cpiud(uint32_t *regs)
+void exec_cpuid(uint32_t *regs)
 {
 #ifdef COMPILER_GCC
 #	ifdef PLATFORM_X64
