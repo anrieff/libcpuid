@@ -48,7 +48,7 @@ static void default_warn(const char *msg)
 
 libcpuid_warn_fn_t _warn_fun = default_warn;
 
-#if defined(_MSC_VER) && defined(_M_AMD64)
+#if defined(_MSC_VER)
 #	define vsnprintf _vsnprintf
 #endif
 void warnf(const char* format, ...)
