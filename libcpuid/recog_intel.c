@@ -58,6 +58,7 @@ enum _intel_code_t {
 	ATOM_DIAMONDVILLE,
 	ATOM_DUALCORE,
 	ATOM_SILVERTHORNE,
+	CORE_Ix,
 };
 typedef enum _intel_code_t intel_code_t;
 
@@ -236,8 +237,8 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 23,   1,  3072, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad) 3M"},
 	{  6,  7, -1, -1, 23,   1,  6144, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad) 6M"},
 	
-	{  6, 10, -1, -1, 26,   1,    -1, NO_CODE           ,     0, "Intel Core i7"            },
-	{  6, 10, -1, -1, 26,   4,    -1, QUAD_CORE_HT      ,     0, "Bloomfield (Core i7)"     },
+	{  6, 10, -1, -1, 26,   1,    -1, CORE_Ix           ,     0, "Intel Core i7"            },
+	{  6, 10, -1, -1, 26,   4,    -1, CORE_Ix           ,     0, "Bloomfield (Core i7)"     },
 	
 	/* Core microarchitecture-based Xeons: */
 	{  6, 14, -1, -1, 14,   1,    -1, XEON              ,     0, "Xeon LV"                  },
@@ -464,10 +465,37 @@ static void decode_intel_deterministic_cache_info(struct cpu_raw_data_t* raw,
 	}
 }
 
+static int decode_intel_extended_topology(struct cpu_raw_data_t* raw,
+                                           struct cpu_id_t* data)
+{
+	int i, level_type, num_smt = -1, num_core = -1;
+	for (i = 0; i < MAX_INTELFN11_LEVEL; i++) {
+		level_type = (raw->intel_fn11[i][2] & 0xff00) >> 8;
+		switch (level_type) {
+			case 0x01:
+				num_smt = raw->intel_fn11[i][1] & 0xffff;
+				break;
+			case 0x02:
+				num_core = raw->intel_fn11[i][1] & 0xffff;
+				break;
+			default:
+				break;
+		}
+	}
+	if (num_smt == -1 || num_core == -1) return 0;
+	data->num_cores = num_core / num_smt;
+	data->num_logical_cpus = num_core;
+	return 1;
+}
+
 static void decode_intel_number_of_cores(struct cpu_raw_data_t* raw,
                                          struct cpu_id_t* data)
 {
 	int logical_cpus = -1, num_cores = -1;
+	
+	if (raw->basic_cpuid[0][0] >= 11) {
+		if (decode_intel_extended_topology(raw, data)) return;
+	}
 	
 	if (raw->basic_cpuid[0][0] >= 1) {
 		logical_cpus = (raw->basic_cpuid[1][1] >> 16) & 0xff;
@@ -491,9 +519,9 @@ static void decode_intel_number_of_cores(struct cpu_raw_data_t* raw,
 static intel_code_t get_brand_code(struct cpu_id_t* data)
 {
 	intel_code_t code = NO_CODE;
-	int i;
+	int i, need_matchtable = 1;
 	const char* bs = data->brand_str;
-	const char* s;
+	const char* s, *ixs;
 	const struct { intel_code_t c; const char *search; } matchtable[] = {
 		{ XEONMP, "Xeon MP" },
 		{ XEONMP, "Xeon(TM) MP" },
@@ -512,11 +540,21 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 	};
 
 	if (strstr(bs, "Mobile")) {
+		need_matchtable = 0;
 		if (strstr(bs, "Celeron"))
 			code = MOBILE_CELERON;
 		else if (strstr(bs, "Pentium"))
 			code = MOBILE_PENTIUM;
-	} else {
+	}
+	ixs = strstr(bs, "Core(TM) i");
+	if (ixs) {
+		if (ixs[10] == '3' || ixs[10] == '5' || ixs[10] == '7') {
+			/* Core i3, Core i5 or Core i7 */
+			need_matchtable = 0;
+			code = CORE_Ix;
+		}
+	}
+	if (need_matchtable) {
 		for (i = 0; i < COUNT_OF(matchtable); i++)
 			if (strstr(bs, matchtable[i].search)) {
 				code = matchtable[i].c;

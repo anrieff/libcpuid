@@ -11,7 +11,7 @@ if not len(args) in (3, 4):
 
 rawdata = []
 for line in open(args[1], "rt").readlines():
-	lookfor = ["basic_cpuid", "ext_cpuid", "intel_fn4"]
+	lookfor = ["basic_cpuid", "ext_cpuid", "intel_fn4", "intel_fn11"]
 	good = False
 	for match in lookfor:
 		if line.find(match) != -1:

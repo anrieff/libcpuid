@@ -1,12 +1,18 @@
-AC_INIT([libcpuid CPU Identification library], [0.1.0], [libcpuid-devel@lists.sourceforge.net], [libcpuid])
+AC_INIT([libcpuid CPU Identification library], [0.1.1], [libcpuid-devel@lists.sourceforge.net], [libcpuid])
 AC_CONFIG_SRCDIR([libcpuid/libcpuid.h])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([-Wall dist-bzip2 dist-zip foreign])
 
 dnl Versioning scheme shamelessly copied from libexif.
+dnl Short walkthrough. C means CURRENT, A mean AGE, R means REVISION
+dnl 1) When you make a change that breaks binary compatibility, increment CURRENT, reset REVISION to 0 and:
+dnl   1.1) If the change doesn't remove interfaces, increment AGE, otherwise reset to 0.
+dnl 2) When you make just a source change that doesn't break binary compatibility, increment REVISION.
+dnl When you make a change that adds features, increment AGE, and set REVISION to 0
 dnl C:A:R
 dnl 10:0:0   Version 0.1.0
-LIBCPUID_CURRENT=10
+dnl 11:0:0   Version 0.1.1: four more fields to cpu_raw_data_t
+LIBCPUID_CURRENT=11
 LIBCPUID_AGE=0
 LIBCPUID_REVISION=0
 AC_SUBST([LIBCPUID_AGE])

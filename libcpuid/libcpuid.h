@@ -29,11 +29,13 @@
  * @File     libcpuid.h
  * @Author   Veselin Georgiev
  * @Date     Oct 2008
- * @Version  0.1.0
+ * @Version  0.1.1
  *
  * Version history:
  *
  *  0.1.0 (2008-10-15): initial adaptation from wxfractgui sources
+ *  0.1.1 (2009-07-06): Added intel_fn11 fields to cpu_raw_data_t to handle
+ *                      new processor topology enumeration required on Core i7
  */
 
 /** @mainpage A simple libcpuid introduction
@@ -100,6 +102,11 @@ struct cpu_raw_data_t {
 	    information: this contains the results of CPUID for eax = 4
 	    and ecx = 0, 1, ... */
 	uint32_t intel_fn4[MAX_INTELFN4_LEVEL][4];
+	
+	/** when the CPU is intel and it supports leaf 0Bh (Extended Topology
+	    enumeration leaf), this stores the result of CPUID with 
+	    eax = 11 and ecx = 0, 1, 2... */
+	uint32_t intel_fn11[MAX_INTELFN11_LEVEL][4];
 };
 
 /**
@@ -615,7 +622,7 @@ int cpu_clock(void);
 /**
  * @brief Returns the libcpuid version
  *
- * @returns the string representation of the libcpuid version, like "0.1.0"
+ * @returns the string representation of the libcpuid version, like "0.1.1"
  */
 const char* cpuid_lib_version(void);
 

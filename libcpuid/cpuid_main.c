@@ -309,6 +309,12 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 		data->intel_fn4[i][2] = i;
 		cpu_exec_cpuid_ext(data->intel_fn4[i]);
 	}
+	for (i = 0; i < MAX_INTELFN11_LEVEL; i++) {
+		memset(data->intel_fn11[i], 0, sizeof(data->intel_fn11[i]));
+		data->intel_fn11[i][0] = 11;
+		data->intel_fn11[i][2] = i;
+		cpu_exec_cpuid_ext(data->intel_fn11[i]);
+	}
 	return set_error(ERR_OK);
 }
 
@@ -337,6 +343,10 @@ int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 		fprintf(f, "intel_fn4[%d]=%08x %08x %08x %08x\n", i,
 			data->intel_fn4[i][0], data->intel_fn4[i][1],
 			data->intel_fn4[i][2], data->intel_fn4[i][3]);
+	for (i = 0; i < MAX_INTELFN11_LEVEL; i++)
+		fprintf(f, "intel_fn11[%d]=%08x %08x %08x %08x\n", i,
+			data->intel_fn11[i][0], data->intel_fn11[i][1],
+			data->intel_fn11[i][2], data->intel_fn11[i][3]);
 	
 	if (strcmp(filename, ""))
 		fclose(f);
@@ -384,6 +394,7 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
 		syntax = syntax && parse_token("basic_cpuid", token, value, data->basic_cpuid, 32, &recognized);
 		syntax = syntax && parse_token("ext_cpuid", token, value, data->ext_cpuid, 32, &recognized);
 		syntax = syntax && parse_token("intel_fn4", token, value, data->intel_fn4,  4, &recognized);
+		syntax = syntax && parse_token("intel_fn11", token, value, data->intel_fn11,  4, &recognized);
 		if (!syntax) {
 			warnf("Error: %s:%d: Syntax error\n", filename, cur_line);
 			fclose(f);
