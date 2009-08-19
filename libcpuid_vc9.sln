@@ -1,8 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcpuid", "libcpuid\libcpuid.vcproj", "{92BDBA37-96E3-4D85-B762-185E4407BB49}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcpuid", "libcpuid\libcpuid_vc9.vcproj", "{92BDBA37-96E3-4D85-B762-185E4407BB49}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpuid_tool", "cpuid_tool\cpuid_tool.vcproj", "{854A36FB-EA23-4165-9110-A55EB97C6377}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpuid_tool", "cpuid_tool\cpuid_tool_vc9.vcproj", "{854A36FB-EA23-4165-9110-A55EB97C6377}"
 	ProjectSection(ProjectDependencies) = postProject
 		{92BDBA37-96E3-4D85-B762-185E4407BB49} = {92BDBA37-96E3-4D85-B762-185E4407BB49}
 	EndProjectSection
