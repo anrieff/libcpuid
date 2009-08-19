@@ -1,0 +1,35 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcpuid", "libcpuid\libcpuid_vc71.vcproj", "{A517C21D-1467-41B4-966A-7C7FC5E99D62}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpuid_tool", "cpuid_tool\cpuid_tool_vc71.vcproj", "{DD903FEE-4A59-4307-8DE2-0F777DC21FFE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A517C21D-1467-41B4-966A-7C7FC5E99D62} = {A517C21D-1467-41B4-966A-7C7FC5E99D62}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+		Release DLL = Release DLL
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{A517C21D-1467-41B4-966A-7C7FC5E99D62}.Debug.ActiveCfg = Debug|Win32
+		{A517C21D-1467-41B4-966A-7C7FC5E99D62}.Debug.Build.0 = Debug|Win32
+		{A517C21D-1467-41B4-966A-7C7FC5E99D62}.Release.ActiveCfg = Release|Win32
+		{A517C21D-1467-41B4-966A-7C7FC5E99D62}.Release.Build.0 = Release|Win32
+		{A517C21D-1467-41B4-966A-7C7FC5E99D62}.Release DLL.ActiveCfg = Release DLL|Win32
+		{A517C21D-1467-41B4-966A-7C7FC5E99D62}.Release DLL.Build.0 = Release DLL|Win32
+		{DD903FEE-4A59-4307-8DE2-0F777DC21FFE}.Debug.ActiveCfg = Debug|Win32
+		{DD903FEE-4A59-4307-8DE2-0F777DC21FFE}.Debug.Build.0 = Debug|Win32
+		{DD903FEE-4A59-4307-8DE2-0F777DC21FFE}.Release.ActiveCfg = Release|Win32
+		{DD903FEE-4A59-4307-8DE2-0F777DC21FFE}.Release.Build.0 = Release|Win32
+		{DD903FEE-4A59-4307-8DE2-0F777DC21FFE}.Release DLL.ActiveCfg = Release DLL|Win32
+		{DD903FEE-4A59-4307-8DE2-0F777DC21FFE}.Release DLL.Build.0 = Release DLL|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
