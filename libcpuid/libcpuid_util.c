@@ -131,3 +131,39 @@ void generic_get_cpu_list(const struct match_entry_t* matchtable, int count,
 	}
 	list->num_entries = n;
 }
+
+static int xmatch_entry(char c, const char* p)
+{
+	int i, j;
+	if (c == 0) return -1;
+	if (c == p[0]) return 1;
+	if (p[0] == '.') return 1;
+	if (p[0] == '#' && isdigit(c)) return 1;
+	if (p[0] == '[') {
+		j = 1;
+		while (p[j] && p[j] != ']') j++;
+		if (!p[j]) return -1;
+		for (i = 1; i < j; i++)
+			if (p[i] == c) return j + 1;
+	}
+	return -1;
+}
+
+int match_pattern(const char* s, const char* p)
+{
+	int i, j, dj, k, n, m;
+	n = (int) strlen(s);
+	m = (int) strlen(p);
+	for (i = 0; i < n; i++) {
+		if (xmatch_entry(s[i], p)) {
+			j = 0;
+			k = 0;
+			while (j < m && ((dj = xmatch_entry(s[i + k], p + j)) != -1)) {
+				k++;
+				j += dj;
+			}
+			if (j == m) return i + 1;
+		}
+	}
+	return 0;
+}

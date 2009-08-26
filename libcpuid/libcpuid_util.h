@@ -58,6 +58,18 @@ __attribute__((format(printf, 2, 3)))
 void generic_get_cpu_list(const struct match_entry_t* matchtable, int count,
                           struct cpu_list_t* list);
 
+/*
+ * Seek for a pattern in `haystack'.
+ * Pattern may be an fixed string, or contain the special metacharacters
+ * '.' - match any single character
+ * '#' - match any digit
+ * '[<chars>] - match any of the given chars (regex-like ranges are not
+ *              supported)
+ * Return val: 0 if the pattern is not found. Nonzero if it is found (actually,
+ *             x + 1 where x is the index where the match is found).
+ */
+int match_pattern(const char* haystack, const char* pattern);
+
 extern libcpuid_warn_fn_t _warn_fun;
 extern int _current_verboselevel;
 

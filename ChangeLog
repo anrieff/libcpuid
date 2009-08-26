@@ -1,0 +1,4 @@
+Version 0.1.0:
+	* Initial public release
+Version 0.1.1:
+	* Support for Intel Nehalem architecture CPUs (Core i7, Xeon i7)

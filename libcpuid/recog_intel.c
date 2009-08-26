@@ -39,6 +39,7 @@ enum _intel_code_t {
 	XEON_IRWIN,
 	XEONMP,
 	XEON_POTOMAC,
+	XEON_I7,
 	MOBILE_PENTIUM_M,
 	CELERON,
 	MOBILE_CELERON,
@@ -239,6 +240,8 @@ const struct match_entry_t cpudb_intel[] = {
 	
 	{  6, 10, -1, -1, 26,   1,    -1, CORE_Ix           ,     0, "Intel Core i7"            },
 	{  6, 10, -1, -1, 26,   4,    -1, CORE_Ix           ,     0, "Bloomfield (Core i7)"     },
+	{  6, 10, -1, -1, 26,   4,    -1, XEON_I7           ,     0, "Xeon (Bloomfield)"        },
+	
 	
 	/* Core microarchitecture-based Xeons: */
 	{  6, 14, -1, -1, 14,   1,    -1, XEON              ,     0, "Xeon LV"                  },
@@ -521,7 +524,7 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 	intel_code_t code = NO_CODE;
 	int i, need_matchtable = 1;
 	const char* bs = data->brand_str;
-	const char* s, *ixs;
+	const char* s;
 	const struct { intel_code_t c; const char *search; } matchtable[] = {
 		{ XEONMP, "Xeon MP" },
 		{ XEONMP, "Xeon(TM) MP" },
@@ -546,13 +549,10 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 		else if (strstr(bs, "Pentium"))
 			code = MOBILE_PENTIUM;
 	}
-	ixs = strstr(bs, "Core(TM) i");
-	if (ixs) {
-		if (ixs[10] == '3' || ixs[10] == '5' || ixs[10] == '7') {
-			/* Core i3, Core i5 or Core i7 */
-			need_matchtable = 0;
-			code = CORE_Ix;
-		}
+	if (match_pattern(bs, "Core(TM) i[357]")) {
+		/* Core i3, Core i5 or Core i7 */
+		need_matchtable = 0;
+		code = CORE_Ix;
 	}
 	if (need_matchtable) {
 		for (i = 0; i < COUNT_OF(matchtable); i++)
@@ -561,9 +561,12 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 				break;
 			}
 	}
-	
-	if (code == XEON && data->l3_cache > 0)
-		code = XEON_IRWIN;
+	if (code == XEON) {
+		if (match_pattern(bs, "W####"))
+			code = XEON_I7;
+		else if (data->l3_cache > 0)
+			code = XEON_IRWIN;
+	}
 	if (code == XEONMP && data->l3_cache > 0)
 		code = XEON_POTOMAC;
 	if (code == CORE_SOLO) {
