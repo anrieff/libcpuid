@@ -213,6 +213,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, -1,   2,  1024, CORE_DUO          ,     0, "Conroe (Core 2 Duo) 1024K" },
 	{  6, 15, -1, -1, -1,   2,   512, CORE_DUO          ,     0, "Conroe (Core 2 Duo) 512K"  },
 	{  6, 15, -1, -1, -1,   4,    -1, QUAD_CORE         ,     0, "Kentsfield (Core 2 Quad)"  },
+	{  6, 15, -1, -1, -1,   4,  4096, QUAD_CORE         ,     0, "Kentsfield (Core 2 Quad)"  },
 	{  6, 15, -1, -1, -1, 400,    -1, MORE_THAN_QUADCORE,     0, "More than quad-core"       },
 	{  6, 15, -1, -1, -1,   2,  2048, CORE_DUO          ,     0, "Allendale (Core 2 Duo)"    },
 	{  6, 15, -1, -1, -1,   2,    -1, MOBILE_CORE_DUO   ,     0, "Merom (Core 2 Duo)"        },
