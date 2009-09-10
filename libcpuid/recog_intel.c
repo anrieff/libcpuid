@@ -40,6 +40,7 @@ enum _intel_code_t {
 	XEONMP,
 	XEON_POTOMAC,
 	XEON_I7,
+	XEON_GAINESTOWN,
 	MOBILE_PENTIUM_M,
 	CELERON,
 	MOBILE_CELERON,
@@ -218,8 +219,10 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, -1,   2,  2048, MEROM             ,     0, "Merom (Core 2 Duo) 2048K"  },
 	{  6, 15, -1, -1, -1,   2,  4096, MEROM             ,     0, "Merom (Core 2 Duo) 4096K"  },
 	
-	{  6, 15, -1, -1, 15,   2,    -1, CELERON           ,     0, "Conroe-L (Celeron)"        },
-	{  6,  6, -1, -1, 22,   2,    -1, CELERON           ,     0, "Conroe-L (Celeron)"        },
+	{  6, 15, -1, -1, 15,   1,    -1, CELERON           ,     0, "Conroe-L (Celeron)"        },
+	{  6,  6, -1, -1, 22,   1,    -1, CELERON           ,     0, "Conroe-L (Celeron)"        },
+	{  6, 15, -1, -1, 15,   2,    -1, CELERON           ,     0, "Conroe-L (Allendale)"      },
+	{  6,  6, -1, -1, 22,   2,    -1, CELERON           ,     0, "Conroe-L (Allendale)"      },
 	
 	
 	{  6,  6, -1, -1, 22,   1,    -1, NO_CODE           ,     0, "Unknown Core ?"           },
@@ -241,6 +244,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 26,   1,    -1, CORE_Ix           ,     0, "Intel Core i7"            },
 	{  6, 10, -1, -1, 26,   4,    -1, CORE_Ix           ,     0, "Bloomfield (Core i7)"     },
 	{  6, 10, -1, -1, 26,   4,    -1, XEON_I7           ,     0, "Xeon (Bloomfield)"        },
+	{  6, 10, -1, -1, 26,   4,    -1, XEON_GAINESTOWN   ,     0, "Xeon (Gainestown)"        },
 	
 	
 	/* Core microarchitecture-based Xeons: */
@@ -562,8 +566,10 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 			}
 	}
 	if (code == XEON) {
-		if (match_pattern(bs, "W####"))
+		if (match_pattern(bs, "W35##"))
 			code = XEON_I7;
+		else if (match_pattern(bs, "[ELXW]55##"))
+			code = XEON_GAINESTOWN;
 		else if (data->l3_cache > 0)
 			code = XEON_IRWIN;
 	}
