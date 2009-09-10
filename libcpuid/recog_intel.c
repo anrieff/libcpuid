@@ -540,7 +540,7 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 		{ PENTIUM_D, "Pentium(R) D" },
 		{ PENTIUM, "Pentium" },
 		{ CORE_SOLO, "Genuine Intel(R) CPU" },
-		{ CORE_SOLO, "Intel(R) Core(TM)2" },
+		{ CORE_SOLO, "Intel(R) Core(TM)" },
 		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU  2" },
 		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU N" },
 		{ ATOM_DUALCORE, "Atom(TM) CPU  3" },
