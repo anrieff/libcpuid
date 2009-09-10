@@ -60,6 +60,7 @@ enum _amd_code_t {
 	M_SEMPRON,
 	SEMPRON_DUALCORE,
 	PHENOM,
+	PHENOM2,
 };
 typedef enum _amd_code_t amd_code_t;
 
@@ -218,10 +219,14 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  2, -1, 16,   -1,   4,   128, PHENOM                  ,     0, "Phenom X4 (Agena/128K)"        },
 	{ 15,  2, -1, 16,   -1,   4,   256, PHENOM                  ,     0, "Phenom X4 (Agena/256K)"        },
 	{ 15,  2, -1, 16,   -1,   4,   512, PHENOM                  ,     0, "Phenom X4 (Agena/512K)"        },
-	/* these are a bit speculative: */
-	{ 15,  4, -1, 16,   -1,   3,    -1, PHENOM                  ,     0, "Phenom X3 (?)"                 },
-	{ 15,  4, -1, 16,   -1,   4,    -1, PHENOM                  ,     0, "Phenom X4 (Deneb)"             },
+	{ 15,  2, -1, 16,   -1,   4,   512, ATHLON_64_X2            ,     0, "Athlon X4 (Kuma)"              },
+	/* Phenom II derivates: */
 	{ 15,  4, -1, 16,   -1,   4,    -1, NO_CODE                 ,     0, "Phenom (Deneb-based)"          },
+	{ 15,  4, -1, 16,   -1,   1,  1024, SEMPRON                 ,     0, "Sempron (Sargas)"              },
+	{ 15,  4, -1, 16,   -1,   2,  1024, ATHLON_64_X2            ,     0, "Athlon II X2 (Regor)"          },
+	{ 15,  4, -1, 16,   -1,   2,   512, PHENOM2                 ,     0, "Phenom II X2 (Callisto)"       },
+	{ 15,  4, -1, 16,   -1,   3,   512, PHENOM2                 ,     0, "Phenom II X3 (Heka)"           },
+	{ 15,  4, -1, 16,   -1,   4,   512, PHENOM2                 ,     0, "Phenom II X4 (Deneb)"          },
 };
 
 
@@ -354,7 +359,8 @@ static amd_code_t decode_amd_codename_part1(const char *bs)
 		return is_dual ? OPTERON_DUALCORE : OPTERON_SINGLE;
 	}
 	if (strstr(bs, "Phenom")) {
-		return PHENOM;
+		if (strstr(bs, "II")) return PHENOM2;
+		else return PHENOM;
 	}
 	if (amd_has_turion_modelname(bs)) {
 		return is_dual ? TURION_X2 : TURION_64;
