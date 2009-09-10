@@ -219,7 +219,7 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  2, -1, 16,   -1,   4,   128, PHENOM                  ,     0, "Phenom X4 (Agena/128K)"        },
 	{ 15,  2, -1, 16,   -1,   4,   256, PHENOM                  ,     0, "Phenom X4 (Agena/256K)"        },
 	{ 15,  2, -1, 16,   -1,   4,   512, PHENOM                  ,     0, "Phenom X4 (Agena/512K)"        },
-	{ 15,  2, -1, 16,   -1,   4,   512, ATHLON_64_X2            ,     0, "Athlon X4 (Kuma)"              },
+	{ 15,  2, -1, 16,   -1,   2,   512, ATHLON_64_X2            ,     0, "Athlon X2 (Kuma)"              },
 	/* Phenom II derivates: */
 	{ 15,  4, -1, 16,   -1,   4,    -1, NO_CODE                 ,     0, "Phenom (Deneb-based)"          },
 	{ 15,  4, -1, 16,   -1,   1,  1024, SEMPRON                 ,     0, "Sempron (Sargas)"              },
