@@ -61,6 +61,7 @@ enum _amd_code_t {
 	SEMPRON_DUALCORE,
 	PHENOM,
 	PHENOM2,
+	ATHLON_64_X4,
 };
 typedef enum _amd_code_t amd_code_t;
 
@@ -227,6 +228,8 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  4, -1, 16,   -1,   2,   512, PHENOM2                 ,     0, "Phenom II X2 (Callisto)"       },
 	{ 15,  4, -1, 16,   -1,   3,   512, PHENOM2                 ,     0, "Phenom II X3 (Heka)"           },
 	{ 15,  4, -1, 16,   -1,   4,   512, PHENOM2                 ,     0, "Phenom II X4 (Deneb)"          },
+	
+	{ 15,  5, -1, 16,   -1,   4,   512, ATHLON_64_X4            ,     0, "Athlon II X4 (Propus)"         },
 };
 
 
@@ -350,11 +353,12 @@ static int amd_has_turion_modelname(const char *bs)
 
 static amd_code_t decode_amd_codename_part1(const char *bs)
 {
-	int is_dual = 0;
+	int is_dual = 0, is_quad = 0;
 	if (strstr(bs, "Dual Core") ||
 	    strstr(bs, "Dual-Core") ||
 	    strstr(bs, " X2 "))
 		is_dual = 1;
+	if (strstr(bs, " X4 ")) is_quad = 1;
 	if (strstr(bs, "Opteron")) {
 		return is_dual ? OPTERON_DUALCORE : OPTERON_SINGLE;
 	}
@@ -368,7 +372,9 @@ static amd_code_t decode_amd_codename_part1(const char *bs)
 	if (strstr(bs, "Athlon(tm) 64 FX")) return ATHLON_64_FX;
 	if (strstr(bs, "Athlon(tm) FX")) return ATHLON_FX;
 	if (strstr(bs, "Athlon(tm) 64")) {
-		return is_dual ? ATHLON_64_X2 : ATHLON_64;
+		if (is_quad) return ATHLON_64_X4;
+		if (is_dual) return ATHLON_64_X2;
+		return ATHLON_64;
 	}
 	if (strstr(bs, "Athlon(tm) X2")) {
 		return ATHLON_64_X2;
