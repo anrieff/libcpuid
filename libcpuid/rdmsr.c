@@ -215,31 +215,7 @@ static int load_driver(struct msr_driver_t* drv)
 					debugf(1, "Create driver service failed: %d\n", dwLastError);
 					break;
 			}				
-		} /*else {
-				switch(getImageType(lpszDriverFilePath)){
-					case IMAGE_FILE_MACHINE_AMD64:
-						if(!isRunning_x64()){
-							if(!DeleteFile(lpszDriverFilePath)){
-								addLastErrorMessageMsgEx(g_hLogEdit, __TEXT("Error deleting driver file(due to binary incompatibility):"), GetLastError());
-								goto clean_up;
-							}
-							if(!extractDriver(lpszDriverFilePath))
-								goto clean_up;
-						}
-						break;
-					case IMAGE_FILE_MACHINE_I386:
-						if(isRunning_x64()){
-							if(!DeleteFile(lpszDriverFilePath)){
-								addLastErrorMessageMsgEx(g_hLogEdit, __TEXT("Error deleting driver file(due to binary incompatibility):"), GetLastError());
-								goto clean_up;
-							}
-							if(!extractDriver(lpszDriverFilePath))
-								goto clean_up;
-						}
-						break;
-				}
-			}*/
-
+		}
 		if(drv->scDriver != NULL){
 			if(StartService(drv->scDriver, 0, NULL)){
 				if(!wait_for_service_state(drv->scDriver, SERVICE_RUNNING, &srvStatus)){
@@ -312,6 +288,7 @@ int cpu_rdmsr(struct msr_driver_t* driver, int msr_index, uint64_t* result)
 int cpu_msr_driver_close(struct msr_driver_t* drv)
 {
 	SERVICE_STATUS srvStatus = {0};
+	if (drv == NULL) return 0;
 	if(drv->scDriver != NULL){
 		if (drv->hhDriver) CancelIo(drv->hhDriver);
 		if(drv->ovl.hEvent != NULL)
@@ -327,5 +304,40 @@ int cpu_msr_driver_close(struct msr_driver_t* drv)
 	}
 	return 0;
 }
+
+int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
+{
+	uint64_t r;
+	int err;
+
+	if (handle == NULL)
+		return set_error(ERR_HANDLE);
+	switch (which) {
+		case INFO_MPERF:
+		{
+			err = cpu_rdmsr(handle, 0xe7, &r);
+			if (err) return CPU_INVALID_VALUE;
+			return (int) (r & 0x7fffffff);
+		}
+		case INFO_APERF:
+		{
+			err = cpu_rdmsr(handle, 0xe8, &r);
+			if (err) return CPU_INVALID_VALUE;
+			return (int) (r & 0x7fffffff);
+		}
+		case INFO_CUR_MULTIPLIER:
+		{
+			err = cpu_rdmsr(handle, 0x2a, &r);
+			if (err) return CPU_INVALID_VALUE;
+			return (int) ((r >> 22) & 0x3f) * 100;
+		}
+		case INFO_MAX_MULTIPLIER:
+		case INFO_TEMPERATURE:
+		case INFO_THROTTLING:
+		default:
+			return CPU_INVALID_VALUE;
+	}
+}
+
 
 #endif /* _WIN32 */

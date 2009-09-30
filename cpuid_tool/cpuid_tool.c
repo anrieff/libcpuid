@@ -317,7 +317,6 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 {
 	int i;
 	struct msr_driver_t* handle;
-	uint64_t value;
 	switch (query) {
 		case NEED_CPUID_PRESENT:
 			fprintf(fout, "%d\n", cpuid_present());
@@ -410,8 +409,9 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 			if ((handle = cpu_msr_driver_open()) == NULL) {
 				fprintf(fout, "Cannot open MSR driver: %s\n", cpuid_error());
 			} else {
-				cpu_rdmsr(handle, 0x10, &value);
-				fprintf(fout, "%I64d\n", value);
+				fprintf(fout, "mperf = %d\n", cpu_msrinfo(handle, INFO_MPERF));
+				fprintf(fout, "aperf = %d\n", cpu_msrinfo(handle, INFO_APERF));
+				fprintf(fout, "cpu:fsb = %.1f\n", cpu_msrinfo(handle, INFO_CUR_MULTIPLIER) / 100.0f);
 				cpu_msr_driver_close(handle);
 			}
 			break;

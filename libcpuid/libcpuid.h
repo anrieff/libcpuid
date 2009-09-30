@@ -741,6 +741,38 @@ struct msr_driver_t* cpu_msr_driver_open(void);
  */
 int cpu_rdmsr(struct msr_driver_t* handle, int msr_index, uint64_t* result);
 
+
+typedef enum {
+	INFO_MPERF,                /*!< Maximum performance frequency clock. This
+                                    is a counter, which increments as a
+                                    proportion of the actual processor speed */
+	INFO_APERF,                /*!< Actual performance frequency clock. This
+                                    accumulates the core clock counts when the
+                                    core is active. */
+	INFO_CUR_MULTIPLIER,       /*!< Current CPU:FSB ratio, multiplied by 100.
+                                    e.g., a CPU:FSB value of 18.5 reads as
+                                    1850. */
+	INFO_MAX_MULTIPLIER,       /*!< Maxumum CPU:FSB ratio for this CPU,
+                                    multiplied by 100 */
+	INFO_TEMPERATURE,          /*!< The current core temperature in Celsius */
+	INFO_THROTTLING,           /*!< 1 if the current logical processor is
+                                    throttling. 0 if it is running normally. */
+} cpu_msrinfo_request_t;
+
+/**
+ * @brief Reads extended CPU information from Model-Specific Registers.
+ * @param handle - a handle to an open MSR driver, @see cpu_msr_driver_open
+ * @param which - which info field should be returned. A list of
+ *                available information entities is listed in the
+ *                cpu_msrinfo_request_t enum.
+ * @retval - if the requested information is available for the current
+ *           processor model, the respective value is returned.
+ *           if no information is available, or the CPU doesn't support
+ *           the query, the special value CPU_INVALID_VALUE is returned
+ */
+int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which);
+#define CPU_INVALID_VALUE 0x3fffffff
+
 /**
  * @brief Closes an open MSR driver
  *
