@@ -159,6 +159,12 @@
 				RelativePath=".\libcpuid_util.c">
 			</File>
 			<File
+				RelativePath=".\msrdriver.c">
+			</File>
+			<File
+				RelativePath=".\rdmsr.c">
+			</File>
+			<File
 				RelativePath=".\rdtsc.c">
 			</File>
 			<File
@@ -177,6 +183,9 @@
 			</File>
 			<File
 				RelativePath=".\libcpuid.h">
+			</File>
+			<File
+				RelativePath=".\libcpuid_constants.h">
 			</File>
 			<File
 				RelativePath=".\libcpuid_types.h">

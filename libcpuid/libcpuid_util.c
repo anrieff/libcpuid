@@ -168,3 +168,14 @@ int match_pattern(const char* s, const char* p)
 	}
 	return 0;
 }
+
+struct cpu_id_t* get_cached_cpuid(void)
+{
+	static int initialized = 0;
+	static struct cpu_id_t id;
+	if (initialized) return &id;
+	if (cpu_identify(NULL, &id))
+		memset(&id, 0, sizeof(id));
+	initialized = 1;
+	return &id;
+}

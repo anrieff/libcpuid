@@ -83,6 +83,7 @@ typedef enum {
 	NEED_CLOCK,
 	NEED_CLOCK_OS,
 	NEED_CLOCK_RDTSC,
+	NEED_RDMSR,
 } output_data_switch;
 
 int need_input = 0,
@@ -132,6 +133,7 @@ matchtable[] = {
 	{ NEED_CLOCK        , "--clock"        , 0},
 	{ NEED_CLOCK_OS     , "--clock-os"     , 0},
 	{ NEED_CLOCK_RDTSC  , "--clock-rdtsc"  , 1},
+	{ NEED_RDMSR        , "--rdmsr"        , 0},
 };
 
 const int sz_match = (sizeof(matchtable) / sizeof(matchtable[0]));
@@ -314,6 +316,8 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
                        struct cpu_id_t* data)
 {
 	int i;
+	struct msr_driver_t* handle;
+	uint64_t value;
 	switch (query) {
 		case NEED_CPUID_PRESENT:
 			fprintf(fout, "%d\n", cpuid_present());
@@ -401,6 +405,17 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 		case NEED_CLOCK_RDTSC:
 			fprintf(fout, "%d\n", cpu_clock_measure(400, 1));
 			break;
+		case NEED_RDMSR:
+		{
+			if ((handle = cpu_msr_driver_open()) == NULL) {
+				fprintf(fout, "Cannot open MSR driver: %s\n", cpuid_error());
+			} else {
+				cpu_rdmsr(handle, 0x10, &value);
+				fprintf(fout, "%I64d\n", value);
+				cpu_msr_driver_close(handle);
+			}
+			break;
+		}
 		default:
 			fprintf(fout, "How did you get here?!?\n");
 			break;

@@ -29,13 +29,15 @@
  * @File     libcpuid.h
  * @Author   Veselin Georgiev
  * @Date     Oct 2008
- * @Version  0.1.1
+ * @Version  0.1.2
  *
  * Version history:
  *
  *  0.1.0 (2008-10-15): initial adaptation from wxfractgui sources
  *  0.1.1 (2009-07-06): Added intel_fn11 fields to cpu_raw_data_t to handle
  *                      new processor topology enumeration required on Core i7
+ *  0.1.2 (2009-09-26): Added support for MSR reading through self-extracting
+ *                      kernel driver on Win32.
  */
 
 /** @mainpage A simple libcpuid introduction
@@ -341,6 +343,11 @@ typedef enum {
 	ERR_BADFMT   = -5,	/*!< "Bad file format" */
 	ERR_NOT_IMP  = -6,	/*!< "Not implemented" */
 	ERR_CPU_UNKN = -7,	/*!< "Unsupported processor" */
+	ERR_NO_RDMSR = -8,  /*!< "RDMSR instruction is not supported" */
+	ERR_NO_DRIVER= -9,  /*!< "RDMSR driver error (generic)" */
+	ERR_NO_PERMS = -10, /*!< "No permissions to install RDMSR driver" */
+	ERR_EXTRACT  = -11, /*!< "Cannot extract RDMSR driver (read only media?)" */
+	ERR_HANDLE   = -12, /*!< "Bad handle" */
 } cpu_error_t;
 
 /**
@@ -693,6 +700,61 @@ void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list);
  * @param list - the list to be free()'d.
  */
 void cpuid_free_cpu_list(struct cpu_list_t* list);
+
+/**
+ * @brief Starts/opens a driver, needed to read MSRs (Model Specific Registers)
+ *
+ * On systems that support it, this function will create a temporary
+ * system driver, that has privileges to execute the RDMSR instruction.
+ * After the driver is created, you can read MSRs by calling \ref cpu_rdmsr
+ *
+ * @returns a handle to the driver on success, and NULL on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
+ */
+struct msr_driver_t;
+struct msr_driver_t* cpu_msr_driver_open(void);
+
+/**
+ * @brief Reads a Model-Specific Register (MSR)
+ *
+ * If the CPU has MSRs (as indicated by the CPU_FEATURE_MSR flag), you can
+ * read a MSR with the given index by calling this function.
+ *
+ * There are several prerequisites you must do before reading MSRs:
+ * 1) You must ensure the CPU has RDMSR. Check the CPU_FEATURE_MSR flag
+ *    in cpu_id_t::flags
+ * 2) You must ensure that the CPU implements the specific MSR you intend to
+ *    read.
+ * 3) You must open a MSR-reader driver. RDMSR is a privileged instruction and
+ *    needs ring-0 access in order to work. This temporary driver is created
+ *    by calling \ref cpu_msr_driver_open
+ *
+ * @param handle - a handle to the MSR reader driver, as created by
+ *                 cpu_msr_driver_open
+ * @param msr_index - the numeric ID of the MSR you want to read
+ * @param result - a pointer to a 64-bit integer, where the MSR value is stored
+ *
+ * @returns zero if successful, and some negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
+ */
+int cpu_rdmsr(struct msr_driver_t* handle, int msr_index, uint64_t* result);
+
+/**
+ * @brief Closes an open MSR driver
+ *
+ * This function unloads the MSR driver opened by cpu_msr_driver_open and
+ * frees any resources associated with it.
+ *
+ * @param handle - a handle to the MSR reader driver, as created by
+ *                 cpu_msr_driver_open
+ *
+ * @returns zero if successful, and some negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
+ */
+int cpu_msr_driver_close(struct msr_driver_t* handle);
 
 #ifdef __cplusplus
 }; /* extern "C" */

@@ -39,7 +39,7 @@
 
 static int _libcpiud_errno = ERR_OK;
 
-static int set_error(cpu_error_t err)
+int set_error(cpu_error_t err)
 {
 	_libcpiud_errno = (int) err;
 	return (int) err;

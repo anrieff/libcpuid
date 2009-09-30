@@ -70,6 +70,17 @@ void generic_get_cpu_list(const struct match_entry_t* matchtable, int count,
  */
 int match_pattern(const char* haystack, const char* pattern);
 
+/*
+ * Gets an initialized cpu_id_t. It is cached, so that internal libcpuid
+ * machinery doesn't need to issue cpu_identify more than once.
+ */
+struct cpu_id_t* get_cached_cpuid(void);
+
+/*
+ * Sets the current errno
+ */
+int set_error(cpu_error_t err);
+
 extern libcpuid_warn_fn_t _warn_fun;
 extern int _current_verboselevel;
 
