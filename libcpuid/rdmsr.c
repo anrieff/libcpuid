@@ -52,8 +52,10 @@ int cpu_msr_driver_close(struct msr_driver_t* driver)
 #else /* _WIN32 */
 #include <windows.h>
 
-extern uint8_t cc_driver_code[];
-extern int cc_driver_code_size;
+extern uint8_t cc_x86driver_code[];
+extern int cc_x86driver_code_size;
+extern uint8_t cc_x64driver_code[];
+extern int cc_x64driver_code_size;
 
 struct msr_driver_t {
 	char driver_path[MAX_PATH + 1];
@@ -107,6 +109,18 @@ static int rdmsr_supported(void)
 	return id->flags[CPU_FEATURE_MSR];
 }
 
+typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+static BOOL is_running_x64(void)
+{
+	BOOL bIsWow64 = FALSE;
+
+	LPFN_ISWOW64PROCESS fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(__TEXT("kernel32")), "IsWow64Process");
+	if(NULL != fnIsWow64Process)
+		fnIsWow64Process(GetCurrentProcess(), &bIsWow64);
+	return bIsWow64;
+}
+
+
 static int extract_driver(struct msr_driver_t* driver)
 {
 	FILE *f;
@@ -115,7 +129,10 @@ static int extract_driver(struct msr_driver_t* driver)
 	
 	f = fopen(driver->driver_path, "wb");
 	if (!f) return 0;
-	fwrite(cc_driver_code, 1, cc_driver_code_size, f);
+	if (is_running_x64())
+		fwrite(cc_x64driver_code, 1, cc_x64driver_code_size, f);
+	else
+		fwrite(cc_x86driver_code, 1, cc_x86driver_code_size, f);
 	fclose(f);
 	return 1;
 }

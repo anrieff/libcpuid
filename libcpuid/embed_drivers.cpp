@@ -46,10 +46,10 @@ bool read_source(const char* filename)
 	return true;
 }
 
-void print_image(FILE* f, const char* image, int size)
+void print_image(FILE* f, const char* arch, const char* image, int size)
 {
-	fprintf(f, "int cc_driver_code_size = %d;\n", size);
-	fprintf(f, "uint8_t cc_driver_code[%d] = {", size);
+	fprintf(f, "int cc_%sdriver_code_size = %d;\n", arch, size);
+	fprintf(f, "uint8_t cc_%sdriver_code[%d] = {", arch, size);
 	for (int i = 0; i < size; i++) {
 		if (i % 18 == 0) fprintf(f, "\n\t");
 		fprintf(f, "0x%02x,", (unsigned) (unsigned char) image[i]);
@@ -76,11 +76,8 @@ int main(void)
 		if (on) fprintf(f, "%s\n", source[i].c_str());
 		if (source[i] == "//begin {") {
 			on = false;
-			fprintf(f, "#ifdef PLATFORM_X86\n");
-			print_image(f, images[0], sizes[0]);
-			fprintf(f, "#else\n");
-			print_image(f, images[1], sizes[1]);
-			fprintf(f, "#endif // PLATFORM_X86\n");
+			print_image(f, "x86", images[0], sizes[0]);
+			print_image(f, "x64", images[1], sizes[1]);
 		}
 	}
 	return 0;
