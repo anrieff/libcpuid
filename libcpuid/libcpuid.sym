@@ -19,3 +19,7 @@ cpuid_set_warn_function
 cpuid_set_verbosiness_level
 cpuid_get_cpu_list
 cpuid_free_cpu_list
+cpu_msr_driver_open
+cpu_rdmsr
+cpu_msrinfo
+cpu_msr_driver_close

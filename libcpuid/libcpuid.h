@@ -343,11 +343,12 @@ typedef enum {
 	ERR_BADFMT   = -5,	/*!< "Bad file format" */
 	ERR_NOT_IMP  = -6,	/*!< "Not implemented" */
 	ERR_CPU_UNKN = -7,	/*!< "Unsupported processor" */
-	ERR_NO_RDMSR = -8,  /*!< "RDMSR instruction is not supported" */
-	ERR_NO_DRIVER= -9,  /*!< "RDMSR driver error (generic)" */
-	ERR_NO_PERMS = -10, /*!< "No permissions to install RDMSR driver" */
-	ERR_EXTRACT  = -11, /*!< "Cannot extract RDMSR driver (read only media?)" */
-	ERR_HANDLE   = -12, /*!< "Bad handle" */
+	ERR_NO_RDMSR = -8,	/*!< "RDMSR instruction is not supported" */
+	ERR_NO_DRIVER= -9,	/*!< "RDMSR driver error (generic)" */
+	ERR_NO_PERMS = -10,	/*!< "No permissions to install RDMSR driver" */
+	ERR_EXTRACT  = -11,	/*!< "Cannot extract RDMSR driver (read only media?)" */
+	ERR_HANDLE   = -12,	/*!< "Bad handle" */
+	ERR_INVMSR   = -13,     /*!< "Invalid MSR" */
 } cpu_error_t;
 
 /**

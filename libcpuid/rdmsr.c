@@ -23,6 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#define _XOPEN_SOURCE 500
 #include <stdio.h>
 #include <stdlib.h>
 #include "libcpuid.h"
@@ -30,25 +31,81 @@
 #include "libcpuid_util.h"
 
 #ifndef _WIN32
-/* On Linux and Apple, we still do not support RDMSR, so supply dummy struct
+#  ifdef __APPLE__
+/* On Darwin, we still do not support RDMSR, so supply dummy struct
    and functions */
-struct msr_driver_t { int dummy; }
+struct msr_driver_t { int dummy; };
 struct msr_driver_t* cpu_msr_driver_open(void)
 {
-	set_error(ERR_NOT_IMPL);
+	set_error(ERR_NOT_IMP);
 	return NULL;
 }
 
 int cpu_rdmsr(struct msr_driver_t* driver, int msr_index, uint64_t* result)
 {
-	return set_error(ERR_NOT_IMPL);
+	return set_error(ERR_NOT_IMP);
 }
 
 int cpu_msr_driver_close(struct msr_driver_t* driver)
 {
-	return set_error(ERR_NOT_IMPL);
+	return set_error(ERR_NOT_IMP);
 }
 
+int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
+{
+	return set_error(ERR_NOT_IMP);
+}
+#  else /* __APPLE__ */
+/* Assuming linux with /dev/cpu/x/msr: */
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
+struct msr_driver_t { int fd; };
+static int rdmsr_supported(void);
+struct msr_driver_t* cpu_msr_driver_open(void)
+{
+	struct msr_driver_t* handle;
+	if (!rdmsr_supported()) {
+		set_error(ERR_NO_RDMSR);
+		return NULL;
+	}
+		int fd = open("/dev/cpu/0/msr", O_RDONLY);
+	if (fd < 0) {
+		if (errno == EIO) {
+			set_error(ERR_NO_RDMSR);
+			return NULL;
+		}
+		set_error(ERR_NO_DRIVER);
+		return NULL;
+	}
+	handle = (struct msr_driver_t*) malloc(sizeof(struct msr_driver_t));
+	handle->fd = fd;
+	return handle;
+}
+int cpu_rdmsr(struct msr_driver_t* driver, int msr_index, uint64_t* result)
+{
+	ssize_t ret;
+
+	if (!driver || driver->fd < 0)
+		return set_error(ERR_HANDLE);
+	ret = pread(driver->fd, result, 8, msr_index * 8);
+	if (ret != 8)
+		return set_error(ERR_INVMSR);
+	return 0;
+}
+
+int cpu_msr_driver_close(struct msr_driver_t* drv)
+{
+	if (drv && drv->fd >= 0) {
+		close(drv->fd);
+		free(drv);
+	}
+	return 0;
+}
+#  endif /* __APPLE__ */
 #else /* _WIN32 */
 #include <windows.h>
 
@@ -101,12 +158,6 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 		return NULL;
 	}
 	return drv;
-}
-
-static int rdmsr_supported(void)
-{
-	struct cpu_id_t* id = get_cached_cpuid();
-	return id->flags[CPU_FEATURE_MSR];
 }
 
 typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
@@ -305,6 +356,15 @@ int cpu_msr_driver_close(struct msr_driver_t* drv)
 	return 0;
 }
 
+#endif /* _WIN32 */
+
+
+static int rdmsr_supported(void)
+{
+	struct cpu_id_t* id = get_cached_cpuid();
+	return id->flags[CPU_FEATURE_MSR];
+}
+
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 {
 	uint64_t r;
@@ -339,5 +399,3 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 	}
 }
 
-
-#endif /* _WIN32 */
