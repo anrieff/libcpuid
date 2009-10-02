@@ -389,9 +389,14 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		{
 			err = cpu_rdmsr(handle, 0x2a, &r);
 			if (err) return CPU_INVALID_VALUE;
-			return (int) ((r >> 22) & 0x3f) * 100;
+			return (int) ((r>>22) & 0x1f) * 100;
 		}
 		case INFO_MAX_MULTIPLIER:
+		{
+			err = cpu_rdmsr(handle, 0x198, &r);
+			if (err) return CPU_INVALID_VALUE;
+			return (int) ((r >> 40) & 0x1f) * 100;
+		}
 		case INFO_TEMPERATURE:
 		case INFO_THROTTLING:
 		default:

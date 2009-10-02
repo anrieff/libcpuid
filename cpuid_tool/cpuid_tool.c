@@ -411,7 +411,8 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 			} else {
 				fprintf(fout, "mperf = %d\n", cpu_msrinfo(handle, INFO_MPERF));
 				fprintf(fout, "aperf = %d\n", cpu_msrinfo(handle, INFO_APERF));
-				fprintf(fout, "cpu:fsb = %.1f\n", cpu_msrinfo(handle, INFO_CUR_MULTIPLIER) / 100.0f);
+				fprintf(fout, "current cpu:fsb = %.1f\n", cpu_msrinfo(handle, INFO_CUR_MULTIPLIER) / 100.0f);
+				fprintf(fout, "max cpu:fsb = %.1f\n", cpu_msrinfo(handle, INFO_MAX_MULTIPLIER) / 100.0f);
 				cpu_msr_driver_close(handle);
 			}
 			break;
