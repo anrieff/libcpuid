@@ -91,7 +91,7 @@ int cpu_rdmsr(struct msr_driver_t* driver, int msr_index, uint64_t* result)
 
 	if (!driver || driver->fd < 0)
 		return set_error(ERR_HANDLE);
-	ret = pread(driver->fd, result, 8, msr_index * 8);
+	ret = pread(driver->fd, result, 8, msr_index);
 	if (ret != 8)
 		return set_error(ERR_INVMSR);
 	return 0;
