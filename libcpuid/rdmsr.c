@@ -358,11 +358,29 @@ int cpu_msr_driver_close(struct msr_driver_t* drv)
 
 #endif /* _WIN32 */
 
+ /* from rdtsc.c: */
+void sys_precise_clock(uint64_t *result);
+int busy_loop_delay(int milliseconds);
 
 static int rdmsr_supported(void)
 {
 	struct cpu_id_t* id = get_cached_cpuid();
 	return id->flags[CPU_FEATURE_MSR];
+}
+
+static int perfmsr_measure(struct msr_driver_t* handle, int msr)
+{
+	int err;
+	uint64_t a, b;
+	uint64_t x, y;
+	err = cpu_rdmsr(handle, msr, &x);
+	if (err) return CPU_INVALID_VALUE;
+	sys_precise_clock(&a);
+	busy_loop_delay(10);
+	cpu_rdmsr(handle, msr, &y);
+	sys_precise_clock(&b);
+	if (a >= b || x > y) return CPU_INVALID_VALUE;
+	return (y - x) / (b - a);
 }
 
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
@@ -374,17 +392,9 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		return set_error(ERR_HANDLE);
 	switch (which) {
 		case INFO_MPERF:
-		{
-			err = cpu_rdmsr(handle, 0xe7, &r);
-			if (err) return CPU_INVALID_VALUE;
-			return (int) (r & 0x7fffffff);
-		}
+			return perfmsr_measure(handle, 0xe7);
 		case INFO_APERF:
-		{
-			err = cpu_rdmsr(handle, 0xe8, &r);
-			if (err) return CPU_INVALID_VALUE;
-			return (int) (r & 0x7fffffff);
-		}
+			return perfmsr_measure(handle, 0xe8);
 		case INFO_CUR_MULTIPLIER:
 		{
 			err = cpu_rdmsr(handle, 0x2a, &r);

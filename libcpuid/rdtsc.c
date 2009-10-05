@@ -29,7 +29,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
-static void sys_precise_clock(uint64_t *result)
+void sys_precise_clock(uint64_t *result)
 {
 	double c, f;
 	LARGE_INTEGER freq, counter;
@@ -42,7 +42,7 @@ static void sys_precise_clock(uint64_t *result)
 #else
 /* assuming Linux, Mac OS or other POSIX */
 #include <sys/time.h>
-static void sys_precise_clock(uint64_t *result)
+void sys_precise_clock(uint64_t *result)
 {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
@@ -155,6 +155,25 @@ static int busy_loop(int amount)
 			for (k = 0; k < 42; k++)
 				s += data[k];
 	return s;
+}
+
+int busy_loop_delay(int milliseconds)
+{
+	int cycles = 0, r = 0, first = 1;
+	uint64_t a, b, c;
+	sys_precise_clock(&a);
+	while (1) {
+		sys_precise_clock(&c);
+		if ((c - a) / 1000 > milliseconds) return r;
+		r += busy_loop(cycles);
+		if (first) {
+			first = 0;
+		} else {
+			if (c - b < 1000) cycles *= 2;
+			if (c - b > 10000) cycles /= 2;
+		}
+		b = c;
+	}
 }
 
 int cpu_clock_measure(int millis, int quad_check)
