@@ -51,6 +51,7 @@ int cpu_msr_driver_close(struct msr_driver_t* driver)
 	return set_error(ERR_NOT_IMP);
 }
 
+#define MSRINFO_DEFINED
 int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
 {
 	return set_error(ERR_NOT_IMP);
@@ -383,6 +384,7 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 	return (y - x) / (b - a);
 }
 
+#ifndef MSRINFO_DEFINED
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 {
 	uint64_t r;
@@ -413,4 +415,5 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			return CPU_INVALID_VALUE;
 	}
 }
+#endif // MSRINFO_DEFINED
 
