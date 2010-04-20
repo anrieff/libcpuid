@@ -226,14 +226,34 @@ int cpu_clock_measure(int millis, int quad_check)
 	return (results[bi] + results[bj] + _zero) / 2;
 }
 
+static int sse_is_128_bit(struct cpu_id_t* id)
+{
+	switch (id->vendor) {
+		case VENDOR_AMD:
+			return (id->ext_family >= 16 && id->ext_family != 23);
+		case VENDOR_INTEL:
+			return (id->family == 6 && id->ext_model >= 15);
+		default:
+			return 0;
+	}
+}
+
 int cpu_clock_by_ic(int millis, int runs)
 {
 	int max_value = 0, cur_value, i, ri, cycles_inner, cycles_outer, c;
 	struct cpu_id_t* id;
 	uint64_t t0, t1, tl, hz;
+	int num_instructions = 256000000;
 	if (millis <= 0 || runs <= 0) return -2;
 	id = get_cached_cpuid();
 	if (!id || !id->flags[CPU_FEATURE_SSE]) return -1;
+	//
+	if (!sse_is_128_bit(id)) {
+		debugf(1, "SSE execution path is 64-bit\n");
+		num_instructions *= 2;
+	} else {
+		debugf(1, "SSE execution path is 128-bit\n");
+	}
 	//
 	tl = millis * 125; // (*1000 / 8)
 	cycles_inner = 128;
@@ -258,7 +278,7 @@ int cpu_clock_by_ic(int millis, int runs)
 		} while (t1 - t0 < tl * (uint64_t) 8);
 		// cpu_Hz = cycles_inner * cycles_outer * 256 / (t1 - t0) * 1000000
 		debugf(2, "c = %d, td = %llu\n", c, t1 - t0);
-		hz = (uint64_t) cycles_inner * (uint64_t) cycles_outer * (uint64_t) c * (uint64_t) 256000000 / (t1 - t0);
+		hz = (uint64_t) cycles_inner * (uint64_t) cycles_outer * (uint64_t) c * (uint64_t) num_instructions / (t1 - t0);
 		cur_value = (int) (hz / 1000000);
 		if (cur_value > max_value) max_value = cur_value;
 	}
