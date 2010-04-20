@@ -227,6 +227,15 @@ void busy_sse_loop(int cycles)
 		"	addps	%%xmm6, %%xmm5\n"
 		"	addps	%%xmm7, %%xmm6\n"
 		"	addps	%%xmm0, %%xmm7\n"
+		// 1:
+		"	addps	%%xmm1, %%xmm0\n"
+		"	addps	%%xmm2, %%xmm1\n"
+		"	addps	%%xmm3, %%xmm2\n"
+		"	addps	%%xmm4, %%xmm3\n"
+		"	addps	%%xmm5, %%xmm4\n"
+		"	addps	%%xmm6, %%xmm5\n"
+		"	addps	%%xmm7, %%xmm6\n"
+		"	addps	%%xmm0, %%xmm7\n"
 		// 2:
 		"	addps	%%xmm1, %%xmm0\n"
 		"	addps	%%xmm2, %%xmm1\n"
