@@ -1,7 +1,7 @@
 AC_INIT([libcpuid CPU Identification library], [0.1.3], [libcpuid-devel@lists.sourceforge.net], [libcpuid])
 AC_CONFIG_SRCDIR([libcpuid/libcpuid.h])
-AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE([-Wall dist-bzip2 dist-zip foreign])
+AM_CONFIG_HEADER([config.h])
+AM_INIT_AUTOMAKE([dist-bzip2 dist-zip foreign])
 
 dnl Versioning scheme shamelessly copied from libexif.
 dnl Short walkthrough. C means CURRENT, A mean AGE, R means REVISION
