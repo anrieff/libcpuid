@@ -509,7 +509,7 @@ void busy_sse_loop(int cycles)
 		
 		"	dec	%%eax\n"
 		"	jnz	.bsLoop\n"
-		::"eax"(cycles)
+		::"a"(cycles)
 	);
 #else
 #  ifdef COMPILER_MICROSOFT
