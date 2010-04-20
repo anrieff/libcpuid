@@ -278,7 +278,7 @@ int cpu_clock_by_ic(int millis, int runs)
 		} while (t1 - t0 < tl * (uint64_t) 8);
 		// cpu_Hz = cycles_inner * cycles_outer * 256 / (t1 - t0) * 1000000
 		debugf(2, "c = %d, td = %llu\n", c, t1 - t0);
-		hz = ((uint64_t) cycles_inner * (uint64_t) 258 + 12) * 
+		hz = ((uint64_t) cycles_inner * (uint64_t) 256 + 12) * 
 		     (uint64_t) cycles_outer * (uint64_t) sse_multiplier * (uint64_t) c * (uint64_t) 1000000
 		     / (t1 - t0);
 		cur_value = (int) (hz / 1000000);
