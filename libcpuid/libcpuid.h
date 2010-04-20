@@ -29,7 +29,7 @@
  * @File     libcpuid.h
  * @Author   Veselin Georgiev
  * @Date     Oct 2008
- * @Version  0.1.2
+ * @Version  0.1.3
  *
  * Version history:
  *
@@ -38,6 +38,8 @@
  *                      new processor topology enumeration required on Core i7
  *  0.1.2 (2009-09-26): Added support for MSR reading through self-extracting
  *                      kernel driver on Win32.
+ *  0.1.3 (2010-04-20): Added support for greater more accurate CPU clock measurements
+ *                      with cpu_clock_by_ic()
  */
 
 /** @mainpage A simple libcpuid introduction
@@ -614,6 +616,38 @@ int cpu_clock_by_os(void);
  * margin). If RDTSC is not supported, the result is -1.
  */
 int cpu_clock_measure(int millis, int quad_check);
+
+/**
+ * @brief Measure the CPU clock frequency using instruction-counting
+ *
+ * @param millis - how much time to allocate for each run, in milliseconds
+ * @param runs - how many runs to perform
+ *
+ * The function performs a busy-wait cycle using a known number of "heavy" (SSE)
+ * instructions. These instructions run at (more or less guaranteed) 1 IPC rate,
+ * so by running a busy loop for a fixed amount of time, and measuring the
+ * amount of instructions done, the CPU clock is accurately measured.
+ *
+ * Of course, this function is still affected by the power-saving schemes, so
+ * the warnings as of cpu_clock_measure() still apply. However, this function is
+ * immune to problems with detection, related to the Intel Nehalem's "Turbo"
+ * mode, where the internal clock is raised, but the RDTSC rate is unaffected.
+ *
+ * The function will run for about (millis * runs) milliseconds.
+ * You can make only a single busy-wait run (runs == 1); however, this can
+ * be affected by task scheduling (which will break the counting), so allowing
+ * more than one run is recommended. As run length is not imperative for
+ * accurate readings (e.g., 50ms is sufficient), you can afford a lot of short
+ * runs, e.g. 10 runs of 50ms or 20 runs of 25ms.
+ *
+ * Recommended values - millis = 50, runs = 4. For more robustness,
+ * increase the number of runs.
+ *
+ * @returns the CPU clock frequency in MHz (within some measurement error
+ * margin). If SSE is not supported, the result is -1. If the input parameters
+ * are incorrect, or some other internal fault is detected, the result is -2.
+ */
+int cpu_clock_by_ic(int millis, int runs);
 
 /**
  * @brief Get the CPU clock frequency (all-in-one method)

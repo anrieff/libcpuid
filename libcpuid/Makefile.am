@@ -28,6 +28,7 @@ noinst_HEADERS = 		\
 	asm-bits.h		\
 	libcpuid_util.h		\
 	recog_intel.h		\
-	recog_amd.h
+	recog_amd.h		\
+	rdtsc.h
 
 EXTRA_DIST += libcpuid.sym libcpuid.vcproj

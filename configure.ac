@@ -1,4 +1,4 @@
-AC_INIT([libcpuid CPU Identification library], [0.1.1], [libcpuid-devel@lists.sourceforge.net], [libcpuid])
+AC_INIT([libcpuid CPU Identification library], [0.1.3], [libcpuid-devel@lists.sourceforge.net], [libcpuid])
 AC_CONFIG_SRCDIR([libcpuid/libcpuid.h])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([-Wall dist-bzip2 dist-zip foreign])
@@ -12,9 +12,11 @@ dnl When you make a change that adds features, increment AGE, and set REVISION t
 dnl C:A:R
 dnl 10:0:0   Version 0.1.0
 dnl 11:0:0   Version 0.1.1: four more fields to cpu_raw_data_t
+dnl 11:0:1   Version 0.1.2: added cpu_msr* functions
+dnl 11:0:2   Version 0.1.3: added cpu_clock_by_ic() function
 LIBCPUID_CURRENT=11
 LIBCPUID_AGE=0
-LIBCPUID_REVISION=0
+LIBCPUID_REVISION=2
 AC_SUBST([LIBCPUID_AGE])
 AC_SUBST([LIBCPUID_REVISION])
 AC_SUBST([LIBCPUID_CURRENT])

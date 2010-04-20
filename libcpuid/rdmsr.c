@@ -29,6 +29,7 @@
 #include "libcpuid.h"
 #include "asm-bits.h"
 #include "libcpuid_util.h"
+#include "rdtsc.h"
 
 #ifndef _WIN32
 #  ifdef __APPLE__
@@ -358,10 +359,6 @@ int cpu_msr_driver_close(struct msr_driver_t* drv)
 }
 
 #endif /* _WIN32 */
-
- /* from rdtsc.c: */
-void sys_precise_clock(uint64_t *result);
-int busy_loop_delay(int milliseconds);
 
 static int rdmsr_supported(void)
 {

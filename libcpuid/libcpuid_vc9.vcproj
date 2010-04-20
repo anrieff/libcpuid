@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;VERSION=&quot;\&quot;0.1.1\&quot;&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;VERSION=&quot;\&quot;0.1.3\&quot;&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -104,7 +104,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;VERSION=&quot;\&quot;0.1.1\&quot;&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;VERSION=&quot;\&quot;0.1.3\&quot;&quot;"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -206,6 +206,10 @@
 			</File>
 			<File
 				RelativePath=".\recog_intel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\rdtsc.h"
 				>
 			</File>
 		</Filter>
