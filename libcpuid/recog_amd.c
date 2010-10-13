@@ -227,7 +227,10 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  4, -1, 16,   -1,   2,  1024,    -1, ATHLON_64_X2            ,     0, "Athlon II X2 (Regor)"          },
 	{ 15,  4, -1, 16,   -1,   2,   512,    -1, PHENOM2                 ,     0, "Phenom II X2 (Callisto)"       },
 	{ 15,  4, -1, 16,   -1,   3,   512,    -1, PHENOM2                 ,     0, "Phenom II X3 (Heka)"           },
-	{ 15,  4, -1, 16,   -1,   4,   512,    -1, PHENOM2                 ,     0, "Phenom II X4 (Deneb)"          },
+	{ 15,  4, -1, 16,   -1,   4,   512,    -1, PHENOM2                 ,     0, "Phenom II X4"                  },
+	{ 15,  4, -1, 16,    4,   4,   512,    -1, PHENOM2                 ,     0, "Phenom II X4 (Deneb)"          },
+	{ 15,  4, -1, 16,   10,   4,   512,    -1, PHENOM2                 ,     0, "Phenom II X4 (Zosma)"          },
+	{ 15,  4, -1, 16,   10,   6,   512,    -1, PHENOM2                 ,     0, "Phenom II X6 (Thuban)"         },
 	
 	{ 15,  5, -1, 16,   -1,   4,   512,    -1, ATHLON_64_X4            ,     0, "Athlon II X4 (Propus)"         },
 };

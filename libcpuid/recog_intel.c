@@ -41,6 +41,7 @@ enum _intel_code_t {
 	XEON_POTOMAC,
 	XEON_I7,
 	XEON_GAINESTOWN,
+	XEON_WESTMERE,
 	MOBILE_PENTIUM_M,
 	CELERON,
 	MOBILE_CELERON,
@@ -254,7 +255,15 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 26,   1,    -1,    -1, CORE_I7           ,     0, "Intel Core i7"            },
 	{  6, 10, -1, -1, 26,   4,    -1,    -1, CORE_I7           ,     0, "Bloomfield (Core i7)"     },
 	{  6, 10, -1, -1, 26,   4,    -1,    -1, XEON_I7           ,     0, "Xeon (Bloomfield)"        },
+
 	{  6, 10, -1, -1, 26,   4,    -1,    -1, XEON_GAINESTOWN   ,     0, "Xeon (Gainestown)"        },
+	{  6, 10, -1, -1, 26,   4,    -1,  4096, XEON_GAINESTOWN   ,     0, "Xeon (Gainestown) 4M"     },
+	{  6, 10, -1, -1, 26,   4,    -1,  8192, XEON_GAINESTOWN   ,     0, "Xeon (Gainestown) 8M"     },
+	
+	{  6, 12, -1, -1, 44,  -1,    -1,    -1, XEON_WESTMERE     ,     0, "Xeon (Westmere-based)"    },
+	{  6, 12, -1, -1, 44,   4,    -1, 12288, CORE_I7           ,     0, "Gulftown (Core i7)"       },
+	{  6, 12, -1, -1, 44,  -1,    -1, 12288, XEON_WESTMERE     ,     0, "Xeon (Gulftown)"          },
+	
 	
 	
 	/* Core microarchitecture-based Xeons: */
@@ -580,10 +589,12 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 			}
 	}
 	if (code == XEON) {
-		if (match_pattern(bs, "W35##"))
+		if (match_pattern(bs, "W35##") || match_pattern(bs, "[ELXW]75##"))
 			code = XEON_I7;
 		else if (match_pattern(bs, "[ELXW]55##"))
 			code = XEON_GAINESTOWN;
+		else if (match_pattern(bs, "[ELXW]56##"))
+			code = XEON_WESTMERE;
 		else if (data->l3_cache > 0)
 			code = XEON_IRWIN;
 	}
