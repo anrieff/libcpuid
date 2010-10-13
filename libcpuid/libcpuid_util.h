@@ -38,7 +38,7 @@ void match_features(const struct feature_map_t* matchtable, int count,
 
 struct match_entry_t {
 	int family, model, stepping, ext_family, ext_model;
-	int ncores, l2cache, brand_code, model_code;
+	int ncores, l2cache, l3cache, brand_code, model_code;
 	char name[32];
 };
 

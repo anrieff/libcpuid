@@ -85,6 +85,7 @@ static int score(const struct match_entry_t* entry, const struct cpu_id_t* data,
 	if (entry->ext_model	== data->ext_model ) res++;
 	if (entry->ncores	== data->num_cores ) res++;
 	if (entry->l2cache	== data->l2_cache  ) res++;
+	if (entry->l3cache	== data->l3_cache  ) res++;
 	if (entry->brand_code   == brand_code      ) res++;
 	if (entry->model_code   == model_code      ) res++;
 	return res;
@@ -156,7 +157,7 @@ int match_pattern(const char* s, const char* p)
 	n = (int) strlen(s);
 	m = (int) strlen(p);
 	for (i = 0; i < n; i++) {
-		if (xmatch_entry(s[i], p)) {
+		if (xmatch_entry(s[i], p) != -1) {
 			j = 0;
 			k = 0;
 			while (j < m && ((dj = xmatch_entry(s[i + k], p + j)) != -1)) {
