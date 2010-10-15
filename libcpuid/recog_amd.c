@@ -52,7 +52,6 @@ enum _amd_code_t {
 	OPTERON_800_DUALCORE,
 	MOBILE_TURION,
 	ATHLON_64,
-	ATHLON_64_X2,
 	ATHLON_64_FX,
 	TURION_64,
 	TURION_X2,
@@ -61,6 +60,8 @@ enum _amd_code_t {
 	SEMPRON_DUALCORE,
 	PHENOM,
 	PHENOM2,
+	ATHLON_64_X2,
+	ATHLON_64_X3,
 	ATHLON_64_X4,
 };
 typedef enum _amd_code_t amd_code_t;
@@ -224,15 +225,18 @@ const struct match_entry_t cpudb_amd[] = {
 	/* Phenom II derivates: */
 	{ 15,  4, -1, 16,   -1,   4,    -1,    -1, NO_CODE                 ,     0, "Phenom (Deneb-based)"          },
 	{ 15,  4, -1, 16,   -1,   1,  1024,    -1, SEMPRON                 ,     0, "Sempron (Sargas)"              },
-	{ 15,  4, -1, 16,   -1,   2,  1024,    -1, ATHLON_64_X2            ,     0, "Athlon II X2 (Regor)"          },
 	{ 15,  4, -1, 16,   -1,   2,   512,    -1, PHENOM2                 ,     0, "Phenom II X2 (Callisto)"       },
 	{ 15,  4, -1, 16,   -1,   3,   512,    -1, PHENOM2                 ,     0, "Phenom II X3 (Heka)"           },
 	{ 15,  4, -1, 16,   -1,   4,   512,    -1, PHENOM2                 ,     0, "Phenom II X4"                  },
 	{ 15,  4, -1, 16,    4,   4,   512,    -1, PHENOM2                 ,     0, "Phenom II X4 (Deneb)"          },
+	{ 15,  5, -1, 16,    5,   4,   512,    -1, PHENOM2                 ,     0, "Phenom II X4 (Deneb)"          },
 	{ 15,  4, -1, 16,   10,   4,   512,    -1, PHENOM2                 ,     0, "Phenom II X4 (Zosma)"          },
 	{ 15,  4, -1, 16,   10,   6,   512,    -1, PHENOM2                 ,     0, "Phenom II X6 (Thuban)"         },
 	
-	{ 15,  5, -1, 16,   -1,   4,   512,    -1, ATHLON_64_X4            ,     0, "Athlon II X4 (Propus)"         },
+	{ 15,  4, -1, 16,   -1,   2,  1024,    -1, ATHLON_64_X2            ,     0, "Athlon II X2 (Regor)"          },
+	{ 15,  4, -1, 16,   -1,   2,   512,    -1, ATHLON_64_X2            ,     0, "Athlon II X2 (Regor)"          },
+	{ 15,  5, -1, 16,    5,   3,   512,    -1, ATHLON_64_X3            ,     0, "Athlon II X3 (Rana)"           },
+	{ 15,  5, -1, 16,    5,   4,   512,    -1, ATHLON_64_X4            ,     0, "Athlon II X4 (Propus)"         },
 };
 
 
@@ -356,12 +360,13 @@ static int amd_has_turion_modelname(const char *bs)
 
 static amd_code_t decode_amd_codename_part1(const char *bs)
 {
-	int is_dual = 0, is_quad = 0;
+	int is_dual = 0, is_quad = 0, is_tri = 0;
 	if (strstr(bs, "Dual Core") ||
 	    strstr(bs, "Dual-Core") ||
 	    strstr(bs, " X2 "))
 		is_dual = 1;
 	if (strstr(bs, " X4 ")) is_quad = 1;
+	if (strstr(bs, " X3 ")) is_tri = 1;
 	if (strstr(bs, "Opteron")) {
 		return is_dual ? OPTERON_DUALCORE : OPTERON_SINGLE;
 	}
@@ -374,13 +379,11 @@ static amd_code_t decode_amd_codename_part1(const char *bs)
 	}
 	if (strstr(bs, "Athlon(tm) 64 FX")) return ATHLON_64_FX;
 	if (strstr(bs, "Athlon(tm) FX")) return ATHLON_FX;
-	if (strstr(bs, "Athlon(tm) 64")) {
+	if (strstr(bs, "Athlon(tm) 64") || strstr(bs, "Athlon(tm) II X") || match_pattern(bs, "Athlon(tm) X#")) {
 		if (is_quad) return ATHLON_64_X4;
 		if (is_dual) return ATHLON_64_X2;
+		if (is_tri) return ATHLON_64_X3;
 		return ATHLON_64;
-	}
-	if (strstr(bs, "Athlon(tm) X2")) {
-		return ATHLON_64_X2;
 	}
 	if (strstr(bs, "Turion")) {
 		return is_dual ? TURION_X2 : TURION_64;

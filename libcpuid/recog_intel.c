@@ -254,6 +254,7 @@ const struct match_entry_t cpudb_intel[] = {
 	
 	{  6, 10, -1, -1, 26,   1,    -1,    -1, CORE_I7           ,     0, "Intel Core i7"            },
 	{  6, 10, -1, -1, 26,   4,    -1,    -1, CORE_I7           ,     0, "Bloomfield (Core i7)"     },
+	{  6, 10, -1, -1, 30,   4,    -1,    -1, CORE_I7           ,     0, "Lynnfield (Core i7)"      },
 	{  6, 10, -1, -1, 26,   4,    -1,    -1, XEON_I7           ,     0, "Xeon (Bloomfield)"        },
 
 	{  6, 10, -1, -1, 26,   4,    -1,    -1, XEON_GAINESTOWN   ,     0, "Xeon (Gainestown)"        },
