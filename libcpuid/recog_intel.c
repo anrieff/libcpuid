@@ -246,6 +246,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 23,   1,  6144,    -1, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad) 6M"},
 	
 	{  6,  5, -1, -1, 37,   2,    -1,    -1, NO_CODE           ,     0, "Unknown Core i3/i5 CPU"   },
+	{  6,  5, -1, -1, 37,   2,    -1,  4096, CORE_I7           ,     0, "Arrandale (Core i7)"      },
 	{  6,  5, -1, -1, 37,   2,    -1,  3072, CORE_I5           ,     0, "Arrandale (Core i5)"      },
 	{  6,  5, -1, -1, 37,   2,    -1,  4096, CORE_I5           ,     0, "Clarkdale (Core i5)"      },
 	{  6,  5, -1, -1, 37,   4,    -1,  8192, CORE_I5           ,     0, "Lynnfield (Core i5)"      },
