@@ -236,6 +236,7 @@ const struct match_entry_t cpudb_intel[] = {
 	
 	{  6,  7, -1, -1, 23,   1,    -1,    -1, CORE_SOLO         ,     0, "Unknown Core 45nm"        },
 	{  6,  7, -1, -1, 23,   1,    -1,    -1, CORE_DUO          ,     0, "Unknown Core 45nm"        },
+	{  6,  7, -1, -1, 23,   2,  1024,    -1, WOLFDALE          ,     0, "Celeron Wolfdale 1M" },
 	{  6,  7, -1, -1, 23,   2,  2048,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo) 2M" },
 	{  6,  7, -1, -1, 23,   2,  3072,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo) 3M" },
 	{  6,  7, -1, -1, 23,   2,  6144,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo) 6M" },
