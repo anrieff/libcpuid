@@ -243,8 +243,9 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 23,   1,    -1,    -1, MOBILE_CORE_DUO   ,     0, "Penryn (Core 2 Duo)"      },
 	{  6,  7, -1, -1, 23,   2,  3072,    -1, PENRYN            ,     0, "Penryn (Core 2 Duo) 3M"   },
 	{  6,  7, -1, -1, 23,   2,  6144,    -1, PENRYN            ,     0, "Penryn (Core 2 Duo) 6M"   },
-	{  6,  7, -1, -1, 23,   1,  3072,    -1, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad) 3M"},
-	{  6,  7, -1, -1, 23,   1,  6144,    -1, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad) 6M"},
+	{  6,  7, -1, -1, 23,   4,  2048,    -1, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad) 2M"},
+	{  6,  7, -1, -1, 23,   4,  3072,    -1, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad) 3M"},
+	{  6,  7, -1, -1, 23,   4,  6144,    -1, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad) 6M"},
 	
 	{  6,  5, -1, -1, 37,   2,    -1,    -1, NO_CODE           ,     0, "Unknown Core i3/i5 CPU"   },
 	{  6,  5, -1, -1, 37,   2,    -1,  4096, CORE_I7           ,     0, "Arrandale (Core i7)"      },
