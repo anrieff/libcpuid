@@ -84,6 +84,7 @@ intel_fn4[3]=665b5001 00000000 00000000 007b7040
 64
 64
 -1
+64 (non-authoritative)
 Xeon (Prestonia)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe cid xtpr
 --------------------------------------------------------------------------------
@@ -173,6 +174,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Opteron (Dual Core)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni syscall mmxext 3dnow 3dnowext nx fxsr_opt lm lahf_lm cmp_legacy ts fid vid ttp
 --------------------------------------------------------------------------------
@@ -262,6 +264,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Conroe (Core 2 Duo)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm xd lm lahf_lm
 --------------------------------------------------------------------------------
@@ -351,6 +354,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Wolfdale (Core 2 Duo) 2M
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl est tm2 ssse3 cx16 xtpr pdcm xd lm lahf_lm
 --------------------------------------------------------------------------------
@@ -440,6 +444,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Allendale (Core 2 Duo)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl est tm2 ssse3 cx16 xtpr pdcm xd lm lahf_lm
 --------------------------------------------------------------------------------
@@ -529,6 +534,7 @@ intel_fn4[3]=03020101 00000000 00000000 0c040882
 32
 32
 -1
+64 (non-authoritative)
 Pentium III (Coppermine)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 mmx fxsr sse syscall
 --------------------------------------------------------------------------------
@@ -618,6 +624,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Celeron D
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl cid xtpr
 --------------------------------------------------------------------------------
@@ -707,6 +714,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Duron (Applebred)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 mmx fxsr sse syscall mmxext 3dnow 3dnowext ts
 --------------------------------------------------------------------------------
@@ -796,6 +804,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Atom (Diamondville)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl est tm2 ssse3 xtpr pdcm xd movbe lahf_lm
 --------------------------------------------------------------------------------
@@ -885,6 +894,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Merom (Core 2 Duo) 4096K
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm xd lm lahf_lm
 --------------------------------------------------------------------------------
@@ -974,6 +984,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Mobile Sempron 64 (Keene/512K)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 pni cx16 syscall mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm ts fid vid ttp tm_amd stc
 --------------------------------------------------------------------------------
@@ -1063,6 +1074,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Conroe (Core 2 Duo) 1024K
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl est tm2 ssse3 cx16 xtpr pdcm xd lm lahf_lm
 --------------------------------------------------------------------------------
@@ -1152,6 +1164,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Sempron 64 (Sparta/256K)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 pni cx16 syscall mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm 3dnowprefetch ts fid vid ttp tm_amd stc 100mhzsteps
 --------------------------------------------------------------------------------
@@ -1241,6 +1254,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Xeon (Wolfdale)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm sse4_1 xd lm lahf_lm
 --------------------------------------------------------------------------------
@@ -1330,6 +1344,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Conroe-L (Allendale)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl est tm2 ssse3 cx16 xtpr pdcm lm lahf_lm
 --------------------------------------------------------------------------------
@@ -1419,6 +1434,7 @@ intel_fn4[3]=665b5101 00000000 00000000 007b7040
 64
 64
 -1
+64 (non-authoritative)
 Mobile P-4 (Northwood)
 fpu vme de pse tsc msr pae mce cx8 mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe cid xtpr
 --------------------------------------------------------------------------------
@@ -1508,6 +1524,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Athlon 64 (Venice/512K)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 pni syscall mmxext 3dnow 3dnowext nx fxsr_opt lm lahf_lm ts fid vid ttp tm_amd stc
 --------------------------------------------------------------------------------
@@ -1597,6 +1614,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Athlon 64 X2 (Brisbane/512K)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni cx16 syscall mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm 3dnowprefetch ts fid vid ttp tm_amd stc 100mhzsteps
 --------------------------------------------------------------------------------
@@ -1686,6 +1704,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Yonah (Core Duo)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni monitor vmx est tm2 xtpr pdcm xd
 --------------------------------------------------------------------------------
@@ -1775,6 +1794,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Atom Dual-Core (Diamondville)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl tm2 ssse3 cx16 xtpr pdcm xd movbe lm lahf_lm
 --------------------------------------------------------------------------------
@@ -1864,6 +1884,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Yorkfield (Core 2 Quad) 6M
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm sse4_1 xd lm lahf_lm
 --------------------------------------------------------------------------------
@@ -1953,6 +1974,7 @@ intel_fn4[3]=02b3b001 000000f0 00000000 2c04307d
 64
 64
 -1
+64 (non-authoritative)
 Pentium M (Dothan)
 fpu vme de pse tsc msr mce cx8 mtrr sep pge mca cmov pat clflush dts acpi mmx fxsr sse sse2 ss tm pbe est tm2
 --------------------------------------------------------------------------------
@@ -2042,6 +2064,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 64
+128 (authoritative)
 Phenom X4 (Agena/512K)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni monitor cx16 syscall popcnt mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch osvw ibs ts ttp tm_amd stc 100mhzsteps hwpstate constant_tsc
 --------------------------------------------------------------------------------
@@ -2131,6 +2154,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Xeon (Harpertown)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 xd lm lahf_lm
 --------------------------------------------------------------------------------
@@ -2220,6 +2244,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Athlon XP (Thoroughbred)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 mmx fxsr sse syscall mmxext 3dnow 3dnowext ts
 --------------------------------------------------------------------------------
@@ -2309,6 +2334,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Xeon (Clovertown)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx tm2 ssse3 cx16 xtpr pdcm dca xd lm lahf_lm
 --------------------------------------------------------------------------------
@@ -2398,6 +2424,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Merom (Core 2 Duo) 2048K
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm xd lm lahf_lm
 --------------------------------------------------------------------------------
@@ -2487,6 +2514,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Penryn (Core 2 Duo) 3M
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm sse4_1 xd lm lahf_lm
 --------------------------------------------------------------------------------
@@ -2576,6 +2604,7 @@ intel_fn4[3]=03020101 00000000 00000000 0c040842
 32
 32
 -1
+-1 (non-authoritative)
 Pentium II (Dixon)
 fpu vme de pse tsc msr pae mce cx8 mtrr sep pge mca cmov pat pse36 mmx fxsr syscall
 --------------------------------------------------------------------------------
@@ -2665,6 +2694,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Sempron (Barton)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 mmx fxsr sse syscall mmxext 3dnow 3dnowext ts fid vid
 --------------------------------------------------------------------------------
@@ -2754,6 +2784,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Turion 64 (Lancaster/1024K)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 pni syscall mmxext 3dnow 3dnowext nx fxsr_opt lm lahf_lm ts fid vid ttp tm_amd stc
 --------------------------------------------------------------------------------
@@ -2843,6 +2874,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Mobile Sempron 64 (Sonora/128K)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 syscall mmxext 3dnow 3dnowext nx fxsr_opt lahf_lm ts fid vid ttp
 --------------------------------------------------------------------------------
@@ -2932,6 +2964,7 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Yonah (Core Duo)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni monitor vmx est tm2 xtpr pdcm xd
 --------------------------------------------------------------------------------
@@ -3025,6 +3058,7 @@ intel_fn11[3]=00000000 00000000 00000003 00000003
 64
 64
 64
+128 (non-authoritative)
 Bloomfield (Core i7)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 xd popcnt lm lahf_lm
 --------------------------------------------------------------------------------
@@ -3118,6 +3152,7 @@ intel_fn11[3]=00000000 00000000 00000003 00000000
 64
 64
 64
+128 (non-authoritative)
 Xeon (Bloomfield)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 sse4_2 xd popcnt lm lahf_lm
 --------------------------------------------------------------------------------
@@ -3211,6 +3246,7 @@ intel_fn11[3]=00000000 00000000 00000003 00000001
 64
 64
 64
+128 (non-authoritative)
 Xeon (Gainestown) 8M
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 sse4_2 xd popcnt lm lahf_lm
 --------------------------------------------------------------------------------
@@ -3304,6 +3340,7 @@ intel_fn11[3]=07280202 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Conroe-L (Celeron)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss tm pbe pni dts64 monitor ds_cpl tm2 ssse3 cx16 xtpr pdcm xd lm lahf_lm
 --------------------------------------------------------------------------------
@@ -3397,6 +3434,7 @@ intel_fn11[3]=00000000 00000000 00000000 00000000
 64
 64
 64
+128 (authoritative)
 Phenom II X4 (Deneb)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni monitor cx16 syscall popcnt mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch osvw ibs skinit wdt ts ttp tm_amd stc 100mhzsteps hwpstate constant_tsc
 --------------------------------------------------------------------------------
@@ -3490,6 +3528,7 @@ intel_fn11[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (authoritative)
 Athlon II X2 (Regor)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni monitor cx16 syscall popcnt mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch osvw ibs skinit wdt ts ttp tm_amd stc 100mhzsteps hwpstate constant_tsc
 --------------------------------------------------------------------------------
@@ -3583,6 +3622,7 @@ intel_fn11[3]=00000000 00000000 00000000 00000000
 64
 64
 64
+128 (authoritative)
 Phenom II X3 (Heka)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni monitor cx16 syscall popcnt mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch osvw ibs skinit wdt ts ttp tm_amd stc 100mhzsteps hwpstate constant_tsc
 --------------------------------------------------------------------------------
@@ -3676,6 +3716,7 @@ intel_fn11[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (authoritative)
 Sempron (Sargas)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 pni monitor cx16 syscall popcnt mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm svm abm misalignsse sse4a 3dnowprefetch osvw ibs skinit wdt ts ttp tm_amd stc 100mhzsteps hwpstate constant_tsc
 --------------------------------------------------------------------------------
@@ -3769,6 +3810,7 @@ intel_fn11[3]=07280202 00000000 00000000 00000503
 64
 64
 -1
+128 (non-authoritative)
 Kentsfield (Core 2 Quad)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm lm lahf_lm
 --------------------------------------------------------------------------------
@@ -3862,6 +3904,7 @@ intel_fn11[3]=00000000 00000000 00000000 00000000
 64
 64
 64
+128 (authoritative)
 Athlon X2 (Kuma)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni monitor cx16 syscall popcnt mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch osvw ibs ts ttp tm_amd stc 100mhzsteps hwpstate constant_tsc
 --------------------------------------------------------------------------------
@@ -3955,6 +3998,7 @@ intel_fn11[3]=07280201 00000000 00000000 00000000
 64
 64
 -1
+64 (non-authoritative)
 Yonah (Core Duo)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni monitor vmx est tm2 xtpr pdcm xd
 --------------------------------------------------------------------------------
@@ -4048,6 +4092,7 @@ intel_fn11[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (authoritative)
 Athlon II X4 (Propus)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni monitor cx16 syscall popcnt mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch osvw ibs skinit wdt ts ttp tm_amd stc 100mhzsteps hwpstate constant_tsc
 --------------------------------------------------------------------------------
@@ -4141,6 +4186,7 @@ intel_fn11[3]=00000000 00000000 00000003 00000000
 64
 64
 64
+128 (non-authoritative)
 Arrandale (Core i5)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 popcnt lm lahf_lm
 --------------------------------------------------------------------------------
@@ -4234,6 +4280,7 @@ intel_fn11[3]=00000000 00000000 00000003 00000000
 64
 64
 64
+128 (non-authoritative)
 Xeon (Gulftown)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni pclmul dts64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 sse4_2 xd popcnt aes lm lahf_lm
 --------------------------------------------------------------------------------
@@ -4327,6 +4374,7 @@ intel_fn11[3]=00000000 00000000 00000003 00000000
 64
 64
 64
+128 (non-authoritative)
 Gulftown (Core i7)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni pclmul dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 xd popcnt aes lm lahf_lm
 --------------------------------------------------------------------------------
@@ -4420,6 +4468,7 @@ intel_fn11[3]=00000000 00000000 00000000 00000000
 64
 64
 64
+128 (authoritative)
 Phenom II X6 (Thuban)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni monitor cx16 syscall popcnt mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch osvw ibs skinit wdt ts ttp tm_amd stc 100mhzsteps hwpstate constant_tsc
 --------------------------------------------------------------------------------
@@ -4513,6 +4562,7 @@ intel_fn11[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (authoritative)
 Athlon II X4 (Propus)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni monitor cx16 syscall popcnt mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch osvw ibs skinit wdt ts ttp tm_amd stc 100mhzsteps hwpstate constant_tsc
 --------------------------------------------------------------------------------
@@ -4606,6 +4656,7 @@ intel_fn11[3]=00000000 00000000 00000003 00000000
 64
 64
 64
+128 (non-authoritative)
 Lynnfield (Core i7)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 xd popcnt lm lahf_lm
 --------------------------------------------------------------------------------
@@ -4699,6 +4750,7 @@ intel_fn11[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (authoritative)
 Athlon II X4 (Propus)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni monitor cx16 syscall popcnt mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch osvw ibs skinit wdt ts ttp tm_amd stc 100mhzsteps hwpstate constant_tsc
 --------------------------------------------------------------------------------
@@ -4792,6 +4844,7 @@ intel_fn11[3]=00000000 00000000 00000003 00000000
 64
 64
 64
+128 (non-authoritative)
 Arrandale (Core i7)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni pclmul dts64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 xd popcnt aes lm lahf_lm
 --------------------------------------------------------------------------------
@@ -4885,6 +4938,7 @@ intel_fn11[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Celeron Wolfdale 1M
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm xd xsave osxsave lm lahf_lm
 --------------------------------------------------------------------------------
@@ -4978,6 +5032,7 @@ intel_fn11[3]=00000000 00000000 00000003 00000000
 64
 64
 64
+128 (non-authoritative)
 Sandy Bridge (Core i7)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni pclmul dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 xd popcnt aes xsave osxsave avx lm lahf_lm
 --------------------------------------------------------------------------------
@@ -5071,6 +5126,7 @@ intel_fn11[3]=00000000 00000000 00000000 00000000
 64
 64
 -1
+128 (non-authoritative)
 Yorkfield (Core 2 Quad) 2M
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm sse4_1 xd xsave osxsave lm lahf_lm
 --------------------------------------------------------------------------------

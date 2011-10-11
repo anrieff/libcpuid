@@ -7,7 +7,7 @@ import os, sys, re, random
 fields = [ "family", "model", "stepping", "extfamily", "extmodel", "cores",
            "logical", "l1d-cache", "l1i-cache", "l2-cache", "l3-cache",
 	   "l1d-assoc", "l2-assoc", "l3-assoc", "l1d-cacheline",
-	   "l2-cacheline", "l3-cacheline", "codename", "flags" ]
+	   "l2-cacheline", "l3-cacheline", "sse-size", "codename", "flags" ]
 
 args = sys.argv
 
