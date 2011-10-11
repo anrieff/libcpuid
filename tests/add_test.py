@@ -42,6 +42,13 @@ for line in open(args[2], "rt").readlines():
 	if field == "features":
 		value = s[s.find(":") + 2:]
 		repdata.append(value)
+	if field == "SSE units":
+		value = s[s.find(":") + 2:]
+		# the value here is something like "XX bits (authoritative)". We remove the "bits" part:
+		i = value.find("bits")
+		if i != -1:
+			value = value[:i] + value[i + 5:]
+		repdata.append(value)
 
 stash = "tests_stash.txt"
 if len(args) == 4:
