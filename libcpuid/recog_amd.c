@@ -247,10 +247,17 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 20,    1,   1,   512,    -1, FUSION_E                ,     0, "Brazos Zacate"                 },
 	{ 15, -1, -1, 20,    1,   2,   512,    -1, FUSION_E                ,     0, "Brazos Zacate (Dual-core)"     },
 	{ 15, -1, -1, 20,    1,   1,   512,    -1, FUSION_Z                ,     0, "Brazos Desna"                  },
-	{ 15, -1, -1, 18,    2,   1,   512,    -1, FUSION_EA               ,     0, "Llano X2"                      },
-	{ 15, -1, -1, 18,    2,   1,  1024,    -1, FUSION_EA               ,     0, "Llano X2"                      },
-	{ 15, -1, -1, 18,    3,   1,  1024,    -1, FUSION_EA               ,     0, "Llano X3"                      },
-	{ 15, -1, -1, 18,    4,   1,  1024,    -1, FUSION_EA               ,     0, "Llano X4"                      },
+	{ 15, -1, -1, 18,    1,   2,   512,    -1, FUSION_EA               ,     0, "Llano X2"                      },
+	{ 15, -1, -1, 18,    1,   2,  1024,    -1, FUSION_EA               ,     0, "Llano X2"                      },
+	{ 15, -1, -1, 18,    1,   3,  1024,    -1, FUSION_EA               ,     0, "Llano X3"                      },
+	{ 15, -1, -1, 18,    1,   4,  1024,    -1, FUSION_EA               ,     0, "Llano X4"                      },
+	/* Bulldozer CPUs: */
+	{ 15, -1, -1, 21,    1,   2,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
+	{ 15, -1, -1, 21,    1,   2,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
+	{ 15, -1, -1, 21,    1,   3,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X3"                  },
+	{ 15, -1, -1, 21,    1,   3,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X3"                  },
+	{ 15, -1, -1, 21,    1,   4,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X4"                  },
+	{ 15, -1, -1, 21,    1,   4,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X4"                  },
 };
 
 
