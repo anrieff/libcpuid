@@ -29,7 +29,7 @@
  * @File     libcpuid.h
  * @Author   Veselin Georgiev
  * @Date     Oct 2008
- * @Version  0.1.3
+ * @Version  0.2.0
  *
  * Version history:
  *
@@ -38,8 +38,11 @@
  *                      new processor topology enumeration required on Core i7
  *  0.1.2 (2009-09-26): Added support for MSR reading through self-extracting
  *                      kernel driver on Win32.
- *  0.1.3 (2010-04-20): Added support for greater more accurate CPU clock measurements
- *                      with cpu_clock_by_ic()
+ *  0.1.3 (2010-04-20): Added support for greater more accurate CPU clock
+ *                      measurements with cpu_clock_by_ic()
+ *  0.2.0 (2011-10-11): Support for AMD Bulldozer CPUs, 128-bit SSE unit size
+ *                      checking. A backwards-incompatible change, since the
+ *                      sizeof cpu_id_t is now different.
  */
 
 /** @mainpage A simple libcpuid introduction
@@ -223,6 +226,15 @@ struct cpu_id_t {
 	 * @endcode
 	 */
 	char cpu_codename[64];
+	
+	/** SSE execution unit size (64 or 128; -1 if N/A) */
+	int32_t sse_size;
+	
+	/**
+	 * contain miscellaneous detection information. Used to test about specifics of
+	 * certain detected features. See CPU_HINT_* macros below. @see Hints
+	 */
+	uint8_t detection_hints[CPU_HINTS_MAX];
 };
 
 /**
@@ -317,7 +329,7 @@ typedef enum {
 	CPU_FEATURE_3DNOWPREFETCH,	/*!< PREFETCH/PREFETCHW support */
 	CPU_FEATURE_OSVW,	/*!< OS Visible Workaround (AMD) */
 	CPU_FEATURE_IBS,	/*!< Instruction-based sampling */
-	CPU_FEATURE_SSE5,	/*!< SSE 5 instructions supported */
+	CPU_FEATURE_SSE5,	/*!< SSE 5 instructions supported (deprecated, will never be 1) */
 	CPU_FEATURE_SKINIT,	/*!< SKINIT / STGI supported */
 	CPU_FEATURE_WDT,	/*!< Watchdog timer support */
 	CPU_FEATURE_TS,		/*!< Temperature sensor */
@@ -329,9 +341,25 @@ typedef enum {
 	CPU_FEATURE_100MHZSTEPS,/*!< 100 MHz multiplier control */
 	CPU_FEATURE_HWPSTATE,	/*!< Hardware P-state control */
 	CPU_FEATURE_CONSTANT_TSC,	/*!< TSC ticks at constant rate */
+	CPU_FEATURE_XOP,	/*!< The XOP instruction set (same as the old CPU_FEATURE_SSE5) */
+	CPU_FEATURE_FMA3,	/*!< The FMA3 instruction set */
+	CPU_FEATURE_FMA4,	/*!< The FMA4 instruction set */
+	CPU_FEATURE_TBM,	/*!< Trailing bit manipulation instruction support */
+	CPU_FEATURE_F16C,	/*!< 16-bit FP convert instruction support */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;
+
+/**
+ * @brief CPU detection hints identifiers
+ *
+ * Usage: similar to the flags usage
+ */
+typedef enum {
+	CPU_HINT_SSE_SIZE_AUTH = 0,	/*!< SSE unit size is authoritative (not only a Family/Model guesswork, but based on an actual CPUID bit) */
+	/* termination */
+	NUM_CPU_HINTS,
+} cpu_hint_t;
 
 /**
  * @brief Describes common library error codes

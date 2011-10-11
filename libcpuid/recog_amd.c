@@ -259,9 +259,10 @@ static void load_amd_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		{  8, CPU_FEATURE_3DNOWPREFETCH },
 		{  9, CPU_FEATURE_OSVW },
 		{ 10, CPU_FEATURE_IBS },
-		{ 11, CPU_FEATURE_SSE5 },
+		{ 11, CPU_FEATURE_XOP },
 		{ 12, CPU_FEATURE_SKINIT },
 		{ 13, CPU_FEATURE_WDT },
+		{ 16, CPU_FEATURE_FMA4 },
 	};
 	const struct feature_map_t matchtable_edx87[] = {
 		{  0, CPU_FEATURE_TS },
@@ -280,6 +281,11 @@ static void load_amd_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	}
 	if (raw->ext_cpuid[0][0] >= 7)
 		match_features(matchtable_edx87, COUNT_OF(matchtable_edx87), raw->ext_cpuid[7][3], data);
+	if (raw->ext_cpuid[0][0] >= 0x1a) {
+		/* We have the extended info about SSE unit size */
+		data->detection_hints[CPU_HINT_SSE_SIZE_AUTH] = 1;
+		data->sse_size = (raw->ext_cpuid[0x1a][0] & 1) ? 128 : 64;
+	}
 }
 
 static void decode_amd_cache_info(struct cpu_raw_data_t* raw, struct cpu_id_t* data)

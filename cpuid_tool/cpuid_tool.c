@@ -85,6 +85,7 @@ typedef enum {
 	NEED_CLOCK_RDTSC,
 	NEED_CLOCK_IC,
 	NEED_RDMSR,
+	NEED_SSE_UNIT_SIZE,
 } output_data_switch;
 
 int need_input = 0,
@@ -136,6 +137,7 @@ matchtable[] = {
 	{ NEED_CLOCK_RDTSC  , "--clock-rdtsc"  , 1},
 	{ NEED_CLOCK_IC     , "--clock-ic"     , 1},
 	{ NEED_RDMSR        , "--rdmsr"        , 0},
+	{ NEED_SSE_UNIT_SIZE, "--sse_size"     , 1},
 };
 
 const int sz_match = (sizeof(matchtable) / sizeof(matchtable[0]));
@@ -422,6 +424,12 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 			}
 			break;
 		}
+		case NEED_SSE_UNIT_SIZE:
+		{
+			fprintf(fout, "%d (%s)\n", data->sse_size, 
+				data->detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
+			break;
+		}
 		default:
 			fprintf(fout, "How did you get here?!?\n");
 			break;
@@ -580,6 +588,7 @@ int main(int argc, char** argv)
 		fprintf(fout, "  L1D line sz: %d bytes\n", data.l1_cacheline);
 		fprintf(fout, "  L2 line sz : %d bytes\n", data.l2_cacheline);
 		fprintf(fout, "  L3 line sz : %d bytes\n", data.l3_cacheline);
+		fprintf(fout, "  SSE units  : %d bits (%s)\n", data.sse_size, data.detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
 		fprintf(fout, "  code name  : `%s'\n", data.cpu_codename);
 		fprintf(fout, "  features   :");
 		/*

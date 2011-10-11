@@ -226,18 +226,6 @@ int cpu_clock_measure(int millis, int quad_check)
 	return (results[bi] + results[bj] + _zero) / 2;
 }
 
-static int sse_is_128_bit(struct cpu_id_t* id)
-{
-	switch (id->vendor) {
-		case VENDOR_AMD:
-			return (id->ext_family >= 16 && id->ext_family != 23);
-		case VENDOR_INTEL:
-			return (id->family == 6 && id->ext_model >= 15);
-		default:
-			return 0;
-	}
-}
-
 int cpu_clock_by_ic(int millis, int runs)
 {
 	int max_value = 0, cur_value, i, ri, cycles_inner, cycles_outer, c;
@@ -248,7 +236,7 @@ int cpu_clock_by_ic(int millis, int runs)
 	id = get_cached_cpuid();
 	if (!id || !id->flags[CPU_FEATURE_SSE]) return -1;
 	//
-	if (!sse_is_128_bit(id)) {
+	if (id->sse_size < 128) {
 		debugf(1, "SSE execution path is 64-bit\n");
 		sse_multiplier = 2;
 	} else {
