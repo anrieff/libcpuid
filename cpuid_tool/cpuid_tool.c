@@ -137,7 +137,7 @@ matchtable[] = {
 	{ NEED_CLOCK_RDTSC  , "--clock-rdtsc"  , 1},
 	{ NEED_CLOCK_IC     , "--clock-ic"     , 1},
 	{ NEED_RDMSR        , "--rdmsr"        , 0},
-	{ NEED_SSE_UNIT_SIZE, "--sse_size"     , 1},
+	{ NEED_SSE_UNIT_SIZE, "--sse-size"     , 1},
 };
 
 const int sz_match = (sizeof(matchtable) / sizeof(matchtable[0]));
