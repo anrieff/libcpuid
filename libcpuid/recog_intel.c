@@ -259,6 +259,8 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, CORE_I7           ,     0, "Sandy Bridge i7"          },
 	{  6, 10, -1, -1, 42,   4,    -1,    -1, CORE_I7           ,     0, "Sandy Bridge (Core i7)"   },
 	{  6, 10, -1, -1, 42,   4,    -1,    -1, CORE_I5           ,     0, "Sandy Bridge (Core i5)"   },
+	{  6, 10, -1, -1, 42,   1,    -1,    -1, CELERON           ,     0, "Celeron (Sandy Bridge)"   },
+	{  6, 10, -1, -1, 42,   2,    -1,    -1, CELERON           ,     0, "Celeron (Sandy Bridge)"   },
 
 	{  6, 10, -1, -1, 26,   1,    -1,    -1, CORE_I7           ,     0, "Intel Core i7"            },
 	{  6, 10, -1, -1, 26,   4,    -1,    -1, CORE_I7           ,     0, "Bloomfield (Core i7)"     },
