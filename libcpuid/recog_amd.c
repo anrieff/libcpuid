@@ -256,8 +256,12 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 21,    1,   2,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
 	{ 15, -1, -1, 21,    1,   3,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X3"                  },
 	{ 15, -1, -1, 21,    1,   3,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X3"                  },
-	{ 15, -1, -1, 21,    1,   4,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X4"                  },
-	{ 15, -1, -1, 21,    1,   4,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X4"                  },
+	{ 15, -1, -1, 21,    1,   4,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
+	{ 15, -1, -1, 21,    1,   4,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
+	{ 15, -1, -1, 21,    1,   6,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X3"                  },
+	{ 15, -1, -1, 21,    1,   6,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X3"                  },
+	{ 15, -1, -1, 21,    1,   8,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X4"                  },
+	{ 15, -1, -1, 21,    1,   8,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X4"                  },
 };
 
 
