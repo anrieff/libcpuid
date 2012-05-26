@@ -64,6 +64,9 @@ enum _intel_code_t {
 	CORE_I3,
 	CORE_I5,
 	CORE_I7,
+	CORE_IVY3, /* 22nm Core-iX */
+	CORE_IVY5,
+	CORE_IVY7,
 };
 typedef enum _intel_code_t intel_code_t;
 
@@ -79,6 +82,8 @@ enum _intel_model_t {
 	_5200,
 	_5300,
 	_5400,
+	_2xxx, /* Core i[357] 2xxx */
+	_3xxx, /* Core i[357] 3xxx */
 };
 typedef enum _intel_model_t intel_model_t;
 
@@ -259,8 +264,10 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, CORE_I7           ,     0, "Sandy Bridge i7"          },
 	{  6, 10, -1, -1, 42,   4,    -1,    -1, CORE_I7           ,     0, "Sandy Bridge (Core i7)"   },
 	{  6, 10, -1, -1, 42,   4,    -1,    -1, CORE_I5           ,     0, "Sandy Bridge (Core i5)"   },
+	{  6, 10, -1, -1, 42,   2,    -1,    -1, CORE_I3           ,     0, "Sandy Bridge (Core i3)"   },
 	{  6, 10, -1, -1, 42,   1,    -1,    -1, CELERON           ,     0, "Celeron (Sandy Bridge)"   },
 	{  6, 10, -1, -1, 42,   2,    -1,    -1, CELERON           ,     0, "Celeron (Sandy Bridge)"   },
+	{  6, 10, -1, -1, 42,   2,    -1,    -1, PENTIUM           ,     0, "Pentium (Sandy Bridge)"   },
 
 	{  6, 10, -1, -1, 26,   1,    -1,    -1, CORE_I7           ,     0, "Intel Core i7"            },
 	{  6, 10, -1, -1, 26,   4,    -1,    -1, CORE_I7           ,     0, "Bloomfield (Core i7)"     },
@@ -274,8 +281,17 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 12, -1, -1, 44,  -1,    -1,    -1, XEON_WESTMERE     ,     0, "Xeon (Westmere-based)"    },
 	{  6, 12, -1, -1, 44,   4,    -1, 12288, CORE_I7           ,     0, "Gulftown (Core i7)"       },
 	{  6, 12, -1, -1, 44,  -1,    -1, 12288, XEON_WESTMERE     ,     0, "Xeon (Gulftown)"          },
+
+	{  6, 13, -1, -1, 45,  -1,    -1,    -1, XEON              ,     0, "Xeon (Sandy Bridge)"      },
 	
-	
+	{  6, 13, -1, -1, 45,  -1,    -1,    -1, CORE_I7           ,     0, "Sandy Bridge-E (Core i7)"   },
+	{  6, 13, -1, -1, 45,  -1,    -1,    -1, CORE_I5           ,     0, "Sandy Bridge-E (Core i5)"   },
+	{  6, 13, -1, -1, 45,  -1,    -1,    -1, CORE_I3           ,     0, "Sandy Bridge-E (Core i3)"   },
+
+	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY7         ,     0, "Ivy Bridge (Core i7)"   },
+	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY5         ,     0, "Ivy Bridge (Core i5)"   },
+	{  6, 10, -1, -1, 58,   2,    -1,    -1, CORE_IVY3         ,     0, "Ivy Bridge (Core i3)"   },
+
 	
 	/* Core microarchitecture-based Xeons: */
 	{  6, 14, -1, -1, 14,   1,    -1,    -1, XEON              ,     0, "Xeon LV"                  },
@@ -326,6 +342,7 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		{ 26, CPU_FEATURE_XSAVE },
 		{ 27, CPU_FEATURE_OSXSAVE },
 		{ 28, CPU_FEATURE_AVX },
+		{ 30, CPU_FEATURE_RDRAND },
 	};
 	const struct feature_map_t matchtable_edx81[] = {
 		{ 20, CPU_FEATURE_XD },
@@ -556,7 +573,7 @@ static void decode_intel_number_of_cores(struct cpu_raw_data_t* raw,
 static intel_code_t get_brand_code(struct cpu_id_t* data)
 {
 	intel_code_t code = NO_CODE;
-	int i, need_matchtable = 1;
+	int i, need_matchtable = 1, ivy_bridge = 0;
 	const char* bs = data->brand_str;
 	const char* s;
 	const struct { intel_code_t c; const char *search; } matchtable[] = {
@@ -586,10 +603,12 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 	if ((i = match_pattern(bs, "Core(TM) i[357]")) != 0) {
 		/* Core i3, Core i5 or Core i7 */
 		need_matchtable = 0;
+		if (data->flags[CPU_FEATURE_RDRAND])
+			ivy_bridge = 1;
 		switch (bs[i + 9]) {
-			case '3': code = CORE_I3; break;
-			case '5': code = CORE_I5; break;
-			case '7': code = CORE_I7; break;
+			case '3': code = ivy_bridge ? CORE_IVY3 : CORE_I3; break;
+			case '5': code = ivy_bridge ? CORE_IVY5 : CORE_I5; break;
+			case '7': code = ivy_bridge ? CORE_IVY7 : CORE_I7; break;
 		}
 	}
 	if (need_matchtable) {
@@ -664,6 +683,16 @@ static intel_model_t get_model_code(struct cpu_id_t* data)
 	int l = (int) strlen(data->brand_str);
 	const char *bs = data->brand_str;
 	int mod_flags = 0, model_no = 0, ndigs = 0;
+	/* If the CPU is a Core ix, then just return the model number generation: */
+	if ((i = match_pattern(bs, "Core(TM) i[357]")) != 0) {
+		i += 11;
+		if (i + 4 >= l) return UNKNOWN;
+		if (bs[i] == '2') return _2xxx;
+		if (bs[i] == '3') return _3xxx;
+		return UNKNOWN;
+	}
+	
+	/* For Core2-based Xeons: */
 	while (i < l - 3) {
 		if (bs[i] == 'C' && bs[i+1] == 'P' && bs[i+2] == 'U')
 			break;

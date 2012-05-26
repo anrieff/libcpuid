@@ -251,6 +251,10 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 18,    1,   2,  1024,    -1, FUSION_EA               ,     0, "Llano X2"                      },
 	{ 15, -1, -1, 18,    1,   3,  1024,    -1, FUSION_EA               ,     0, "Llano X3"                      },
 	{ 15, -1, -1, 18,    1,   4,  1024,    -1, FUSION_EA               ,     0, "Llano X4"                      },
+	
+	/* Newer Opterons: */
+	{ 15,  9, -1, 16,    9,   8,    -1,    -1, OPTERON_GENERIC         ,     0, "Magny-Cours Opteron"           },
+	
 	/* Bulldozer CPUs: */
 	{ 15, -1, -1, 21,    1,   2,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
 	{ 15, -1, -1, 21,    1,   2,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },

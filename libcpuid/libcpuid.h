@@ -43,6 +43,8 @@
  *  0.2.0 (2011-10-11): Support for AMD Bulldozer CPUs, 128-bit SSE unit size
  *                      checking. A backwards-incompatible change, since the
  *                      sizeof cpu_id_t is now different.
+ *  0.2.1 (2012-05-26): Support for Ivy Bridge, and detecting the presence of
+ *                      the RdRand instruction.
  */
 
 /** @mainpage A simple libcpuid introduction
@@ -346,6 +348,7 @@ typedef enum {
 	CPU_FEATURE_FMA4,	/*!< The FMA4 instruction set */
 	CPU_FEATURE_TBM,	/*!< Trailing bit manipulation instruction support */
 	CPU_FEATURE_F16C,	/*!< 16-bit FP convert instruction support */
+	CPU_FEATURE_RDRAND,     /*!< RdRand instruction */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

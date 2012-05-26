@@ -544,7 +544,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_FMA4, "fma4" },
 		{ CPU_FEATURE_TBM, "tbm" },
 		{ CPU_FEATURE_F16C, "f16c" },
-
+		{ CPU_FEATURE_RDRAND, "rdrand" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {
