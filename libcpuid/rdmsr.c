@@ -110,6 +110,8 @@ int cpu_msr_driver_close(struct msr_driver_t* drv)
 #  endif /* __APPLE__ */
 #else /* _WIN32 */
 #include <windows.h>
+#include <winioctl.h>
+#include <winerror.h>
 
 extern uint8_t cc_x86driver_code[];
 extern int cc_x86driver_code_size;
@@ -378,7 +380,7 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 	cpu_rdmsr(handle, msr, &y);
 	sys_precise_clock(&b);
 	if (a >= b || x > y) return CPU_INVALID_VALUE;
-	return (y - x) / (b - a);
+	return (int) ((y - x) / (b - a));
 }
 
 #ifndef MSRINFO_DEFINED
