@@ -115,9 +115,9 @@ for fn in glob.glob("%s/*.c" % sys.argv[1]):
 			continue
 		inner = line[i+1:j]
 		parts = inner.split(",")
-		if len(parts) == 10: #this number needs to change if the definition of match_entry_t ever changes
+		if len(parts) == 11: #this number needs to change if the definition of match_entry_t ever changes
 			cdefs += 1
-			s = parts[9].strip()
+			s = parts[10].strip()
 			if s[0] != '"' or s[-1] != '"':
 				print "..Warning, %s:%d - cannot correctly handle the cpu codename" % (bfn, nline)
 				allok = False
