@@ -206,6 +206,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 12, -1, -1, -1,   1,    -1,    -1, ATOM_DIAMONDVILLE ,     0, "Atom (Diamondville)"        },
 	{  6, 12, -1, -1, -1,   1,    -1,    -1, ATOM_DUALCORE     ,     0, "Atom Dual-Core (Diamondville)"  },
 	{  6, 12, -1, -1, -1,   1,    -1,    -1, ATOM_SILVERTHORNE ,     0, "Atom (Silverthorne)"        },
+	{  6, 12, -1, -1, -1,   2,    -1,    -1, NO_CODE           ,     0, "Atom (Cedarview)"           },
 	
 	/* -------------------------------------------------- */
 	
