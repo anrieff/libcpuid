@@ -172,6 +172,7 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 		{  9, CPU_FEATURE_SSSE3 },
 		{ 13, CPU_FEATURE_CX16 },
 		{ 19, CPU_FEATURE_SSE4_1 },
+		{ 21, CPU_FEATURE_X2APIC },
 		{ 23, CPU_FEATURE_POPCNT },
 		{ 29, CPU_FEATURE_F16C },
 	};
@@ -505,6 +506,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SSE4_2, "sse4_2" },
 		{ CPU_FEATURE_SYSCALL, "syscall" },
 		{ CPU_FEATURE_XD, "xd" },
+		{ CPU_FEATURE_X2APIC , "x2apic"},
 		{ CPU_FEATURE_MOVBE, "movbe" },
 		{ CPU_FEATURE_POPCNT, "popcnt" },
 		{ CPU_FEATURE_AES, "aes" },

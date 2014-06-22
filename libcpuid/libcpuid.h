@@ -349,6 +349,7 @@ typedef enum {
 	CPU_FEATURE_TBM,	/*!< Trailing bit manipulation instruction support */
 	CPU_FEATURE_F16C,	/*!< 16-bit FP convert instruction support */
 	CPU_FEATURE_RDRAND,     /*!< RdRand instruction */
+	CPU_FEATURE_X2APIC,     /*!< x2APIC, APIC_BASE.EXTD, MSRs 0000_0800h...0000_0BFFh 64-bit ICR (+030h but not +031h), no DFR (+00Eh), SELF_IPI (+040h) also see standard level 0000_000Bh */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

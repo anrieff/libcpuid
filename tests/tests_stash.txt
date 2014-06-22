@@ -5410,7 +5410,7 @@ intel_fn11[3]=00000000 00000000 00000003 00000000
 64
 128 (non-authoritative)
 Xeon (Sandy Bridge)
-fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni pclmul dts64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 sse4_2 xd popcnt aes xsave osxsave avx lm lahf_lm
+fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni pclmul dts64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 sse4_2 xd popcnt aes xsave osxsave avx lm lahf_lm x2apic
 --------------------------------------------------------------------------------
 basic_cpuid[0]=0000000d 756e6547 6c65746e 49656e69
 basic_cpuid[1]=000206d7 00200800 1fbee3bf bfebfbff
@@ -5504,7 +5504,7 @@ intel_fn11[3]=00000000 00000000 00000003 00000000
 64
 128 (non-authoritative)
 Sandy Bridge-E (Core i7)
-fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni pclmul dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 sse4_2 popcnt aes xsave osxsave avx lm lahf_lm
+fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni pclmul dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 sse4_2 popcnt aes xsave osxsave avx lm lahf_lm x2apic
 --------------------------------------------------------------------------------
 basic_cpuid[0]=0000000d 756e6547 6c65746e 49656e69
 basic_cpuid[1]=000306a9 00100800 7f9ae3bf bfebfbff
