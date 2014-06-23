@@ -61,6 +61,7 @@ enum _intel_code_t {
 	ATOM_DIAMONDVILLE,
 	ATOM_DUALCORE,
 	ATOM_SILVERTHORNE,
+	ATOM_PINEVIEW,
 	CORE_I3,
 	CORE_I5,
 	CORE_I7,
@@ -207,6 +208,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 12, -1, -1, -1,   1,    -1,    -1, ATOM_DUALCORE     ,     0, "Atom Dual-Core (Diamondville)"  },
 	{  6, 12, -1, -1, -1,   1,    -1,    -1, ATOM_SILVERTHORNE ,     0, "Atom (Silverthorne)"        },
 	{  6, 12, -1, -1, -1,   2,    -1,    -1, NO_CODE           ,     0, "Atom (Cedarview)"           },
+	{  6, 12, -1, -1, -1,   1,    -1,    -1, ATOM_PINEVIEW     ,     0, "Atom (Pineview)"            },
 	
 	/* -------------------------------------------------- */
 	
@@ -592,6 +594,7 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU N" },
 		{ ATOM_DUALCORE, "Atom(TM) CPU  3" },
 		{ ATOM_SILVERTHORNE, "Atom(TM) CPU Z" },
+		{ ATOM_PINEVIEW, "Atom(TM) CPU D" },
 	};
 
 	if (strstr(bs, "Mobile")) {
