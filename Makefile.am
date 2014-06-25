@@ -4,7 +4,7 @@ SUBDIRS = libcpuid cpuid_tool tests
 pkgconfigdir = $(libdir)/pkgconfig
 
 pkgconfig_DATA = libcpuid.pc
-EXTRA_DIST     = libcpuid.pc.in libcpuid.sln
+EXTRA_DIST     = libcpuid.pc.in libcpuid_vc71.sln libcpuid_vc9.sln
 
 consistency:
 	$(top_srcdir)/libcpuid/check-consistency.py $(top_srcdir)/libcpuid

@@ -31,4 +31,4 @@ noinst_HEADERS = 		\
 	recog_amd.h		\
 	rdtsc.h
 
-EXTRA_DIST += libcpuid.sym libcpuid.vcproj
+EXTRA_DIST += libcpuid.sym libcpuid_vc71.vcproj libcpuid_vc9.vcproj
