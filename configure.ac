@@ -1,4 +1,4 @@
-AC_INIT([libcpuid CPU Identification library], [0.2.0], [libcpuid-devel@lists.sourceforge.net], [libcpuid])
+AC_INIT([libcpuid CPU Identification library], [0.2.1], [libcpuid-devel@lists.sourceforge.net], [libcpuid])
 AC_CONFIG_SRCDIR([libcpuid/libcpuid.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -17,9 +17,10 @@ dnl 11:0:1   Version 0.1.2: added cpu_msr* functions
 dnl 11:0:2   Version 0.1.3: added cpu_clock_by_ic() function
 dnl 11:0:3   Version 0.1.4: just an identification change, to reflect the detection table upgrades
 dnl 12:1:0   Version 0.2.0: two more fields to cpu_id_t
+dnl 12:1:1   Version 0.2.1: more processors support
 LIBCPUID_CURRENT=12
 LIBCPUID_AGE=1
-LIBCPUID_REVISION=0
+LIBCPUID_REVISION=1
 AC_SUBST([LIBCPUID_AGE])
 AC_SUBST([LIBCPUID_REVISION])
 AC_SUBST([LIBCPUID_CURRENT])

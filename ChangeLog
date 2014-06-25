@@ -1,4 +1,24 @@
-Version 0.1.0:
+Version 0.1.0 (2008-10-15):
 	* Initial public release
-Version 0.1.1:
+
+Version 0.1.1 (2009-07-06):
+	* Added intel_fn11 fields to cpu_raw_data_t to handle
+	  new processor topology enumeration required on Core i7
 	* Support for Intel Nehalem architecture CPUs (Core i7, Xeon i7)
+
+Version 0.1.2 (2009-09-26):
+	* Added support for MSR reading through self-extracting kernel driver
+	  on Win32.
+
+Version 0.1.3 (2010-04-20):
+	* Added support for greater more accurate CPU clock measurements with
+	  cpu_clock_by_ic()
+
+Version 0.2.0 (2011-10-11):
+	* Support for AMD Bulldozer CPUs, 128-bit SSE unit size checking.
+	  A backwards-incompatible change, since the sizeof cpu_id_t is now
+	  different.
+
+Version 0.2.1 (2012-05-26):
+	* Support for Ivy Bridge, and detecting the presence of the RdRand
+	  instruction.

@@ -29,7 +29,7 @@
  * @File     libcpuid.h
  * @Author   Veselin Georgiev
  * @Date     Oct 2008
- * @Version  0.2.0
+ * @Version  0.2.1
  *
  * Version history:
  *
