@@ -1,3 +1,4 @@
+ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = libcpuid cpuid_tool tests
 
 pkgconfigdir = $(libdir)/pkgconfig
