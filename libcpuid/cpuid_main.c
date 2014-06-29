@@ -506,7 +506,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SSE4_2, "sse4_2" },
 		{ CPU_FEATURE_SYSCALL, "syscall" },
 		{ CPU_FEATURE_XD, "xd" },
-		{ CPU_FEATURE_X2APIC , "x2apic"},
+		{ CPU_FEATURE_X2APIC, "x2apic"},
 		{ CPU_FEATURE_MOVBE, "movbe" },
 		{ CPU_FEATURE_POPCNT, "popcnt" },
 		{ CPU_FEATURE_AES, "aes" },
