@@ -183,13 +183,19 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 	const struct feature_map_t matchtable_ecx81[] = {
 		{  0, CPU_FEATURE_LAHF_LM },
 	};
+	const struct feature_map_t matchtable_edx87[] = {
+		{  8, CPU_FEATURE_CONSTANT_TSC },
+	};
 	if (raw->basic_cpuid[0][0] >= 1) {
 		match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][3], data);
 		match_features(matchtable_ecx1, COUNT_OF(matchtable_ecx1), raw->basic_cpuid[1][2], data);
 	}
-	if (raw->ext_cpuid[0][0] >= 1) {
+	if (raw->ext_cpuid[0][0] >= 0x80000001) {
 		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][3], data);
 		match_features(matchtable_ecx81, COUNT_OF(matchtable_ecx81), raw->ext_cpuid[1][2], data);
+	}
+	if (raw->ext_cpuid[0][0] >= 0x80000007) {
+		match_features(matchtable_edx87, COUNT_OF(matchtable_edx87), raw->ext_cpuid[7][3], data);
 	}
 	if (data->flags[CPU_FEATURE_SSE]) {
 		/* apply guesswork to check if the SSE unit width is 128 bit */
@@ -547,6 +553,10 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_TBM, "tbm" },
 		{ CPU_FEATURE_F16C, "f16c" },
 		{ CPU_FEATURE_RDRAND, "rdrand" },
+		{ CPU_FEATURE_CPB, "cpb" },
+		{ CPU_FEATURE_APERFMPERF, "aperfmperf" },
+		{ CPU_FEATURE_PFI, "pfi" },
+		{ CPU_FEATURE_PA, "pa" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {

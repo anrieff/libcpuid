@@ -302,7 +302,11 @@ static void load_amd_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		{  5, CPU_FEATURE_STC },
 		{  6, CPU_FEATURE_100MHZSTEPS },
 		{  7, CPU_FEATURE_HWPSTATE },
-		{  8, CPU_FEATURE_CONSTANT_TSC },
+		/* id 8 is handled in common */
+		{  9, CPU_FEATURE_CPB },
+		{ 10, CPU_FEATURE_APERFMPERF },
+		{ 11, CPU_FEATURE_PFI },
+		{ 12, CPU_FEATURE_PA },
 	};
 	if (raw->ext_cpuid[0][0] >= 0x80000001) {
 		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][3], data);
