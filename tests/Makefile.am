@@ -1,1 +1,2 @@
-EXTRA_DIST = run_tests.py tests_stash.txt
+EXTRA_DIST = run_tests.py intel/*/* amd/*/*
+
