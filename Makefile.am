@@ -10,4 +10,4 @@ consistency:
 	$(top_srcdir)/libcpuid/check-consistency.py $(top_srcdir)/libcpuid
 
 test:
-	$(top_srcdir)/tests/run_tests.py $(top_srcdir)/tests/tests_stash.txt $(top_srcdir)/cpuid_tool/cpuid_tool
+	$(top_srcdir)/tests/run_tests.py $(top_srcdir)/cpuid_tool/cpuid_tool $(top_srcdir)/tests

@@ -11,13 +11,28 @@ fields = [ "family", "model", "stepping", "extfamily", "extmodel", "cores",
 
 args = sys.argv
 
-if len(args) != 3:
-	print "Usage: run_tests <tests stash file> <cpiud_tool binary>"
+if len(args) < 3:
+	print """
+Usage: run_tests.py <cpuid_tool binary> <test file/dir> [test file/dir ...]
+
+If a test file is given, it is tested by itself.
+If a directory is given, process all *.test files there, subdirectories included.
+"""
 	sys.exit(1)
 
-f = open(args[1], "rt")
-lines = f.readlines()
-f.close()
+filelist = []
+cpuid_tool = args[1]
+for arg in args[2:]:
+	if os.path.isdir(arg):
+		# gather all *.test files from subdirs amd and intel:
+		for dirpath, dirnames, filenames in os.walk(arg):
+			filelist += [os.path.join(dirpath, fn) for fn in filenames if fn[-5:] == ".test"]
+	else:
+		filelist.append(arg)
+
+#f = open(args[1], "rt")
+#lines = f.readlines()
+#f.close()
 
 # One would usually use os.tempnam, but libc gives off hell a lot of
 # warnings when you attempt to use that :(
@@ -36,7 +51,7 @@ def fmt_error(err):
 	pfix = "  %s: " % err[0]
 	return "%sexpected `%s'\n%sgot      `%s'" % (pfix, err[1], " "*len(pfix), err[2])
 
-def do_test(inp, expected_out, testno, binary):
+def do_test(inp, expected_out, binary):
 	fninp = make_tempname("cpuidin")
 	fnoutp = make_tempname("cpuidout")
 	f = open(fninp, "wt")
@@ -64,31 +79,27 @@ def do_test(inp, expected_out, testno, binary):
 	else:
 		return "Mismatch in fields:\n%s" % "\n".join([fmt_error(err) for err in err_fields]) 
 
-current_input = []
-current_output = []
-build_output = False
 errors = False
-test_no = 1
 print "Testing..."
-for line in lines:
-	if line[:3] == "---":
-		if build_output:
-			codename = current_output[len(current_output) - 2]
-			result = do_test(current_input, current_output, test_no, args[2])
-			print "Test %d [%s]: %s" % (test_no, codename, result)
-			if result != "OK":
-				errors = True
-			build_output = False
-			test_no += 1
-			current_input = []
-			current_output = []
-		else:
-			build_output = True
-	else:
-		if build_output:
-			current_output.append(line.strip())
-		else:
-			current_input.append(line.strip())
+for test_file_name in filelist:
+	current_input = []
+	current_output = []
+	build_output = False
+	with open(test_file_name, "rt") as f:
+		for line in f.readlines():
+			if line[:3] == "---":
+				build_output = True
+			else:
+				if build_output:
+					current_output.append(line.strip())
+				else:
+					current_input.append(line.strip())
+		#codename = current_output[len(current_output) - 2]
+		result = do_test(current_input, current_output, cpuid_tool)
+		print "Test [%s]: %s" % (test_file_name[:-5], result)
+		if result != "OK":
+			errors = True
+		build_output = False
 
 if not errors:
 	print "All successfull!"
