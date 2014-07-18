@@ -68,6 +68,9 @@ enum _intel_code_t {
 	CORE_IVY3, /* 22nm Core-iX */
 	CORE_IVY5,
 	CORE_IVY7,
+	CORE_HASWELL3, /* 22nm Core-iX, Haswell */
+	CORE_HASWELL5,
+	CORE_HASWELL7,
 };
 typedef enum _intel_code_t intel_code_t;
 
@@ -294,6 +297,10 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY7         ,     0, "Ivy Bridge (Core i7)"   },
 	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY5         ,     0, "Ivy Bridge (Core i5)"   },
 	{  6, 10, -1, -1, 58,   2,    -1,    -1, CORE_IVY3         ,     0, "Ivy Bridge (Core i3)"   },
+
+	{  6, 12, -1, -1, 60,   4,    -1,    -1, CORE_HASWELL7     ,     0, "Haswell (Core i7)"   },
+	{  6, 12, -1, -1, 60,   4,    -1,    -1, CORE_HASWELL5     ,     0, "Haswell (Core i5)"   },
+	{  6, 12, -1, -1, 60,   2,    -1,    -1, CORE_HASWELL3     ,     0, "Haswell (Core i3)"   },
 
 	
 	/* Core microarchitecture-based Xeons: */
@@ -576,7 +583,7 @@ static void decode_intel_number_of_cores(struct cpu_raw_data_t* raw,
 static intel_code_t get_brand_code(struct cpu_id_t* data)
 {
 	intel_code_t code = NO_CODE;
-	int i, need_matchtable = 1, ivy_bridge = 0;
+	int i, need_matchtable = 1, core_ix_base = 0;
 	const char* bs = data->brand_str;
 	const char* s;
 	const struct { intel_code_t c; const char *search; } matchtable[] = {
@@ -607,12 +614,20 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 	if ((i = match_pattern(bs, "Core(TM) i[357]")) != 0) {
 		/* Core i3, Core i5 or Core i7 */
 		need_matchtable = 0;
+		
+		core_ix_base = CORE_I3;
+		
+		/* if it has RdRand, then it is at least Ivy Bridge */
 		if (data->flags[CPU_FEATURE_RDRAND])
-			ivy_bridge = 1;
+			core_ix_base = CORE_IVY3;
+		/* if it has FMA, then it is at least Haswell */
+		if (data->flags[CPU_FEATURE_FMA3])
+			core_ix_base = CORE_HASWELL3;
+		
 		switch (bs[i + 9]) {
-			case '3': code = ivy_bridge ? CORE_IVY3 : CORE_I3; break;
-			case '5': code = ivy_bridge ? CORE_IVY5 : CORE_I5; break;
-			case '7': code = ivy_bridge ? CORE_IVY7 : CORE_I7; break;
+			case '3': code = core_ix_base + 0; break;
+			case '5': code = core_ix_base + 1; break;
+			case '7': code = core_ix_base + 2; break;
 		}
 	}
 	if (need_matchtable) {

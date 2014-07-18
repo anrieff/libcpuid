@@ -170,6 +170,7 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 		{  0, CPU_FEATURE_PNI },
 		{  3, CPU_FEATURE_MONITOR },
 		{  9, CPU_FEATURE_SSSE3 },
+		{ 12, CPU_FEATURE_FMA3 },
 		{ 13, CPU_FEATURE_CX16 },
 		{ 19, CPU_FEATURE_SSE4_1 },
 		{ 21, CPU_FEATURE_X2APIC },
