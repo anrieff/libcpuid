@@ -256,16 +256,12 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  9, -1, 16,    9,   8,    -1,    -1, OPTERON_GENERIC         ,     0, "Magny-Cours Opteron"           },
 	
 	/* Bulldozer CPUs: */
-	{ 15, -1, -1, 21,    1,   2,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
-	{ 15, -1, -1, 21,    1,   2,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
-	{ 15, -1, -1, 21,    1,   3,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X3"                  },
-	{ 15, -1, -1, 21,    1,   3,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X3"                  },
 	{ 15, -1, -1, 21,    1,   4,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
-	{ 15, -1, -1, 21,    1,   4,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
 	{ 15, -1, -1, 21,    1,   6,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X3"                  },
-	{ 15, -1, -1, 21,    1,   6,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X3"                  },
 	{ 15, -1, -1, 21,    1,   8,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X4"                  },
-	{ 15, -1, -1, 21,    1,   8,  4096,    -1, NO_CODE                 ,     0, "Bulldozer X4"                  },
+	{ 15, -1, -1, 21,    2,   4,  2048,    -1, NO_CODE                 ,     0, "Vishera X2"                    },
+	{ 15, -1, -1, 21,    2,   6,  2048,    -1, NO_CODE                 ,     0, "Vishera X3"                    },
+	{ 15, -1, -1, 21,    2,   8,  2048,    -1, NO_CODE                 ,     0, "Vishera X4"                    },
 };
 
 
