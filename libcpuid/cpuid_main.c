@@ -202,7 +202,7 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 		/* apply guesswork to check if the SSE unit width is 128 bit */
 		switch (data->vendor) {
 			case VENDOR_AMD:
-				data->sse_size = (data->ext_family >= 16 && data->ext_family != 23) ? 128 : 64;
+				data->sse_size = (data->ext_family >= 16 && data->ext_family != 17) ? 128 : 64;
 				break;
 			case VENDOR_INTEL:
 				data->sse_size = (data->family == 6 && data->ext_model >= 15) ? 128 : 64;

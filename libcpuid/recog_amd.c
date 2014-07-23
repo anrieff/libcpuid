@@ -212,8 +212,8 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 15, 0x4c,   1,   512,    -1, TURION_64               ,     0, "Turion 64 (Richmond)"          },
 	{ 15, -1, -1, 15, 0x68,   2,   256,    -1, TURION_X2               ,     0, "Turion X2 (Tyler/256K)"        },
 	{ 15, -1, -1, 15, 0x68,   2,   512,    -1, TURION_X2               ,     0, "Turion X2 (Tyler/512K)"        },
-	{ 15, -1, -1, 23,    3,   2,   512,    -1, TURION_X2               ,     0, "Turion X2 (Griffin/512K)"      },
-	{ 15, -1, -1, 23,    3,   2,  1024,    -1, TURION_X2               ,     0, "Turion X2 (Griffin/1024K)"     },
+	{ 15, -1, -1, 17,    3,   2,   512,    -1, TURION_X2               ,     0, "Turion X2 (Griffin/512K)"      },
+	{ 15, -1, -1, 17,    3,   2,  1024,    -1, TURION_X2               ,     0, "Turion X2 (Griffin/1024K)"     },
 	
 	/* K9 Architecture */
 	{ 15, -1, -1, 16,   -1,   1,    -1,    -1, PHENOM                  ,     0, "Unknown AMD Phenom"            },
