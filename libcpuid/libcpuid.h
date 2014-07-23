@@ -678,6 +678,15 @@ int cpu_clock_measure(int millis, int quad_check);
  *
  * Recommended values - millis = 50, runs = 4. For more robustness,
  * increase the number of runs.
+ * 
+ * NOTE: on Bulldozer and later CPUs, the busy-wait cycle runs at 1.4 IPC, thus
+ * the results are skewed. This is corrected internally by dividing the resulting
+ * value by 1.4.
+ * However, this only occurs if the thread is executed on a single CMT
+ * module - if there are other threads competing for resources, the results are
+ * unpredictable. Make sure you run cpu_clock_by_ic() on a CPU that is free from
+ * competing threads, or if there are such threads, they shouldn't exceed the
+ * number of modules. On a Bulldozer X8, that means 4 threads.
  *
  * @returns the CPU clock frequency in MHz (within some measurement error
  * margin). If SSE is not supported, the result is -1. If the input parameters
