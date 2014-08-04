@@ -355,7 +355,6 @@ int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 	if (!f) return set_error(ERR_OPEN);
 	
 	fprintf(f, "version=%s\n", VERSION);
-	fprintf(f, "build_date=%s\n", __DATE__);
 	for (i = 0; i < MAX_CPUID_LEVEL; i++)
 		fprintf(f, "basic_cpuid[%d]=%08x %08x %08x %08x\n", i,
 			data->basic_cpuid[i][0], data->basic_cpuid[i][1],
