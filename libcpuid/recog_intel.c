@@ -33,24 +33,29 @@
 enum _intel_code_t {
 	NA,
 	NO_CODE,
-	PENTIUM,
+	PENTIUM = 10,
 	MOBILE_PENTIUM,
-	XEON,
+	
+	XEON = 20,
 	XEON_IRWIN,
 	XEONMP,
 	XEON_POTOMAC,
 	XEON_I7,
 	XEON_GAINESTOWN,
 	XEON_WESTMERE,
-	MOBILE_PENTIUM_M,
+	
+	MOBILE_PENTIUM_M = 30,
 	CELERON,
 	MOBILE_CELERON,
 	NOT_CELERON,
-	CORE_SOLO,
+	
+	
+	CORE_SOLO = 40,
 	MOBILE_CORE_SOLO,
 	CORE_DUO,
 	MOBILE_CORE_DUO,
-	WOLFDALE,
+	
+	WOLFDALE = 50,
 	MEROM,
 	PENRYN,
 	QUAD_CORE,
@@ -58,11 +63,14 @@ enum _intel_code_t {
 	QUAD_CORE_HT,
 	MORE_THAN_QUADCORE,
 	PENTIUM_D,
-	ATOM_DIAMONDVILLE,
-	ATOM_DUALCORE,
+	
+	ATOM = 60,
 	ATOM_SILVERTHORNE,
+	ATOM_DIAMONDVILLE,
 	ATOM_PINEVIEW,
-	CORE_I3,
+	ATOM_CEDARVIEW,
+	
+	CORE_I3 = 70,
 	CORE_I5,
 	CORE_I7,
 	CORE_IVY3, /* 22nm Core-iX */
@@ -206,12 +214,13 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 13, -1, -1, -1,   1,    -1,    -1, MOBILE_PENTIUM_M  ,     0, "Pentium M (Dothan)"         },
 	{  6, 13, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "Celeron M"                  },
 	
-	{  6, 12, -1, -1, -1,   1,    -1,    -1, NO_CODE           ,     0, "Unknown Atom"               },
-	{  6, 12, -1, -1, -1,   1,    -1,    -1, ATOM_DIAMONDVILLE ,     0, "Atom (Diamondville)"        },
-	{  6, 12, -1, -1, -1,   1,    -1,    -1, ATOM_DUALCORE     ,     0, "Atom Dual-Core (Diamondville)"  },
-	{  6, 12, -1, -1, -1,   1,    -1,    -1, ATOM_SILVERTHORNE ,     0, "Atom (Silverthorne)"        },
-	{  6, 12, -1, -1, -1,   2,    -1,    -1, NO_CODE           ,     0, "Atom (Cedarview)"           },
-	{  6, 12, -1, -1, -1,   1,    -1,    -1, ATOM_PINEVIEW     ,     0, "Atom (Pineview)"            },
+	{  6, 12, -1, -1, -1,  -1,    -1,    -1, ATOM              ,     0, "Unknown Atom"               },
+	{  6, 12, -1, -1, -1,  -1,    -1,    -1, ATOM_DIAMONDVILLE ,     0, "Atom (Diamondville)"        },
+	{  6, 12, -1, -1, -1,  -1,    -1,    -1, ATOM_DIAMONDVILLE ,     0, "Atom (Diamondville)"        },
+	{  6, 12, -1, -1, -1,  -1,    -1,    -1, ATOM_SILVERTHORNE ,     0, "Atom (Silverthorne)"        },
+	{  6, 12, -1, -1, -1,  -1,    -1,    -1, ATOM_CEDARVIEW    ,     0, "Atom (Cedarview)"           },
+	{  6,  6, -1, -1, -1,  -1,    -1,    -1, ATOM_CEDARVIEW    ,     0, "Atom (Cedarview)"           },
+	{  6, 12, -1, -1, -1,  -1,    -1,    -1, ATOM_PINEVIEW     ,     0, "Atom (Pineview)"            },
 	
 	/* -------------------------------------------------- */
 	
@@ -597,11 +606,11 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 		{ PENTIUM, "Pentium" },
 		{ CORE_SOLO, "Genuine Intel(R) CPU" },
 		{ CORE_SOLO, "Intel(R) Core(TM)" },
-		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU  2" },
-		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU N" },
-		{ ATOM_DUALCORE, "Atom(TM) CPU  3" },
+		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU [N ][23]## " },
 		{ ATOM_SILVERTHORNE, "Atom(TM) CPU Z" },
 		{ ATOM_PINEVIEW, "Atom(TM) CPU D" },
+		{ ATOM_CEDARVIEW, "Atom(TM) CPU N####" },
+		{ ATOM,              "Atom(TM) CPU" },
 	};
 
 	if (strstr(bs, "Mobile")) {
@@ -632,10 +641,11 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 	}
 	if (need_matchtable) {
 		for (i = 0; i < COUNT_OF(matchtable); i++)
-			if (strstr(bs, matchtable[i].search)) {
+			if (match_pattern(bs, matchtable[i].search)) {
 				code = matchtable[i].c;
 				break;
 			}
+		debugf(2, "intel matchtable result is %d\n", code);
 	}
 	if (code == XEON) {
 		if (match_pattern(bs, "W35##") || match_pattern(bs, "[ELXW]75##"))
