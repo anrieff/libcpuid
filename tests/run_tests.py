@@ -10,19 +10,26 @@ fields = [ "family", "model", "stepping", "extfamily", "extmodel", "cores",
 	   "l2-cacheline", "l3-cacheline", "sse-size", "codename", "flags" ]
 
 args = sys.argv
+fix = False
 
 if len(args) < 3:
 	print """
-Usage: run_tests.py <cpuid_tool binary> <test file/dir> [test file/dir ...]
+Usage: run_tests.py <cpuid_tool binary> <test file/dir> [test file/dir ...] [OPTIONS]
 
 If a test file is given, it is tested by itself.
 If a directory is given, process all *.test files there, subdirectories included.
+
+If the --fix option is given, the behaviour of the cpuid_tool binary is deemed correct
+and any failing tests are updated.
 """
 	sys.exit(1)
 
 filelist = []
 cpuid_tool = args[1]
 for arg in args[2:]:
+	if arg == "--fix":
+		fix = True
+		continue
 	if os.path.isdir(arg):
 		# gather all *.test files from subdirs amd and intel:
 		for dirpath, dirnames, filenames in os.walk(arg):
@@ -51,7 +58,14 @@ def fmt_error(err):
 	pfix = "  %s: " % err[0]
 	return "%sexpected `%s'\n%sgot      `%s'" % (pfix, err[1], " "*len(pfix), err[2])
 
-def do_test(inp, expected_out, binary):
+def fixFile(filename, input_lines, output_lines):
+	f = open(filename, "wt")
+	f.writelines(map(lambda s: s + "\n", input_lines))
+	f.write("--------------------------------------------------------------------------------\n")
+	f.writelines(map(lambda s: s + "\n", output_lines))
+	f.close()
+
+def do_test(inp, expected_out, binary, test_file_name):
 	fninp = make_tempname("cpuidin")
 	fnoutp = make_tempname("cpuidout")
 	f = open(fninp, "wt")
@@ -77,7 +91,11 @@ def do_test(inp, expected_out, binary):
 	if not err_fields:
 		return "OK"
 	else:
-		return "Mismatch in fields:\n%s" % "\n".join([fmt_error(err) for err in err_fields]) 
+		if fix:
+			fixFile(test_file_name, inp, real_out)
+			return "Mismatch, fixed."
+		else:
+			return "Mismatch in fields:\n%s" % "\n".join([fmt_error(err) for err in err_fields]) 
 
 errors = False
 print "Testing..."
@@ -95,7 +113,7 @@ for test_file_name in filelist:
 				else:
 					current_input.append(line.strip())
 		#codename = current_output[len(current_output) - 2]
-		result = do_test(current_input, current_output, cpuid_tool)
+		result = do_test(current_input, current_output, cpuid_tool, test_file_name)
 		print "Test [%s]: %s" % (test_file_name[:-5], result)
 		if result != "OK":
 			errors = True

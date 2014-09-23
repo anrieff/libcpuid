@@ -11,3 +11,6 @@ consistency:
 
 test:
 	$(top_srcdir)/tests/run_tests.py $(top_srcdir)/cpuid_tool/cpuid_tool $(top_srcdir)/tests
+
+fix-tests:
+	$(top_srcdir)/tests/run_tests.py $(top_srcdir)/cpuid_tool/cpuid_tool $(top_srcdir)/tests --fix
