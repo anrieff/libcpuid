@@ -271,7 +271,6 @@ static void load_amd_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		{ 20, CPU_FEATURE_NX },
 		{ 22, CPU_FEATURE_MMXEXT },
 		{ 25, CPU_FEATURE_FXSR_OPT },
-		{ 27, CPU_FEATURE_RDTSCP },
 		{ 30, CPU_FEATURE_3DNOWEXT },
 		{ 31, CPU_FEATURE_3DNOW },
 	};

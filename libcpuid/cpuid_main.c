@@ -179,6 +179,7 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 	};
 	const struct feature_map_t matchtable_edx81[] = {
 		{ 11, CPU_FEATURE_SYSCALL },
+		{ 27, CPU_FEATURE_RDTSCP },
 		{ 29, CPU_FEATURE_LM },
 	};
 	const struct feature_map_t matchtable_ecx81[] = {
