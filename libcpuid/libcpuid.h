@@ -354,6 +354,7 @@ typedef enum {
 	CPU_FEATURE_APERFMPERF,	/*!< MPERF/APERF MSRs support */
 	CPU_FEATURE_PFI,	/*!< Processor Feedback Interface support */
 	CPU_FEATURE_PA,		/*!< Processor accumulator */
+	CPU_FEATURE_AVX2,	/*!< AVX2 instructions */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

@@ -558,6 +558,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_APERFMPERF, "aperfmperf" },
 		{ CPU_FEATURE_PFI, "pfi" },
 		{ CPU_FEATURE_PA, "pa" },
+		{ CPU_FEATURE_AVX2, "avx2" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {
