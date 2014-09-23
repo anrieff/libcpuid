@@ -90,4 +90,4 @@ intel_fn11[3]=00000000 00000000 00000003 00000000
 64
 128 (non-authoritative)
 Celeron (Sandy Bridge)
-fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni pclmul dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 xd popcnt xsave lm lahf_lm constant_tsc
+fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni pclmul dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 xd popcnt xsave rdtscp lm lahf_lm constant_tsc
