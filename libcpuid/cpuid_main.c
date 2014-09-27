@@ -113,13 +113,27 @@ static int get_total_cpus(void)
 #define GET_TOTAL_CPUS_DEFINED
 #endif
 
-#if defined linux || defined __linux__
+#if defined linux || defined __linux__ || defined __sun
 #include <sys/sysinfo.h>
 #include <unistd.h>
  
 static int get_total_cpus(void)
 {
 	return sysconf(_SC_NPROCESSORS_ONLN);
+}
+#define GET_TOTAL_CPUS_DEFINED
+#endif
+
+#if defined __FreeBSD__ || defined __OpenBSD__ || defined __NetBSD__ || defined __bsdi__ || defined __QNX__
+#include <sys/sysctl.h>
+
+static int get_total_cpus(void)
+{
+	int mib[2] = { CTL_HW, HW_NCPU };
+	int ncpus;
+	size_t len = sizeof(ncpus);
+	if (sysctl(mib, 2, &ncpus, &len, (void *) 0, 0) != 0) return 1;
+	return ncpus;
 }
 #define GET_TOTAL_CPUS_DEFINED
 #endif
