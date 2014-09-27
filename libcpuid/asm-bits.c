@@ -29,10 +29,10 @@
 
 int cpuid_exists_by_eflags(void)
 {
-#ifdef PLATFORM_X64
+#if defined(PLATFORM_X64)
 	return 1; /* CPUID is always present on the x86_64 */
-#else
-#  ifdef COMPILER_GCC
+#elif defined(PLATFORM_X86)
+#  if defined(COMPILER_GCC)
 	int result;
 	__asm __volatile(
 		"	pushfl\n"
@@ -50,8 +50,7 @@ int cpuid_exists_by_eflags(void)
 		: "=m"(result)
 		: :"eax", "ecx", "memory");
 	return (result != 0);
-#  else
-#    ifdef COMPILER_MICROSOFT
+#  elif defined(COMPILER_MICROSOFT)
 	int result;
 	__asm {
 		pushfd
@@ -68,20 +67,21 @@ int cpuid_exists_by_eflags(void)
 		popfd
 	};
 	return (result != 0);
-#    else
-#      error "Unsupported compiler"
-#    endif /* COMPILER_MICROSOFT */
-#  endif /* COMPILER_GCC */
-#endif /* PLATFORM_X64 */
+#  else
+	return 0;
+#  endif /* COMPILER_MICROSOFT */
+#else
+	return 0;
+#endif /* PLATFORM_X86 */
 }
 
 /* 
  * with MSVC/AMD64, the exec_cpuid() and cpu_rdtsc() functions
  * are implemented in separate .asm files. Otherwise, use inline assembly
  */
-#ifdef INLINE_ASM_SUPPORTED
 void exec_cpuid(uint32_t *regs)
 {
+#ifdef INLINE_ASM_SUPPORTED
 #ifdef COMPILER_GCC
 #	ifdef PLATFORM_X64
 	__asm __volatile(
@@ -166,8 +166,8 @@ void exec_cpuid(uint32_t *regs)
 #    error "Unsupported compiler"
 #  endif /* COMPILER_MICROSOFT */
 #endif
-}
 #endif /* INLINE_ASSEMBLY_SUPPORTED */
+}
 
 #ifdef INLINE_ASM_SUPPORTED
 void cpu_rdtsc(uint64_t* result)
