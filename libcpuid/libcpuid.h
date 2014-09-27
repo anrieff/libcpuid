@@ -400,6 +400,12 @@ struct cpu_mark_t {
 };
 
 /**
+ * @brief Returns the total number of CPUs even if CPUID is not present
+ * @retval Number of CPUs available
+ */
+int cpuid_get_total_cpus(void);
+
+/**
  * @brief Checks if the CPUID instruction is supported
  * @retval 1 if CPUID is present
  * @retval 0 the CPU doesn't have CPUID.

@@ -317,6 +317,11 @@ static void make_list_from_string(const char* csv, struct cpu_list_t* list)
 
 /* Interface: */
 
+int cpuid_get_total_cpus(void)
+{
+	return get_total_cpus();
+}
+
 int cpuid_present(void)
 {
 	return cpuid_exists_by_eflags();
