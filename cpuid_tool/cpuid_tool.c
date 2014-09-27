@@ -356,7 +356,7 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 			fprintf(fout, "%d\n", data->num_logical_cpus);
 			break;
 		case NEED_TOTAL_CPUS:
-			fprintf(fout, "%d\n", data->total_logical_cpus);
+			fprintf(fout, "%d\n", cpuid_get_total_cpus());
 			break;
 		case NEED_L1D_SIZE:
 			fprintf(fout, "%d\n", data->l1_data_cache);

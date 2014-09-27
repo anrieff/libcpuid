@@ -27,3 +27,4 @@ cpu_rdmsr @23
 cpu_msrinfo @24
 cpu_msr_driver_close @25
 cpu_clock_by_ic @26
+cpuid_get_total_cpus @27
