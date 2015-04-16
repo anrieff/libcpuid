@@ -355,6 +355,8 @@ typedef enum {
 	CPU_FEATURE_PFI,	/*!< Processor Feedback Interface support */
 	CPU_FEATURE_PA,		/*!< Processor accumulator */
 	CPU_FEATURE_AVX2,	/*!< AVX2 instructions */
+	CPU_FEATURE_BMI1,	/*!< BMI1 instructions */
+	CPU_FEATURE_BMI2,	/*!< BMI2 instructions */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

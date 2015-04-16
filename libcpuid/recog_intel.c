@@ -359,11 +359,7 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		{ 25, CPU_FEATURE_AES },
 		{ 26, CPU_FEATURE_XSAVE },
 		{ 27, CPU_FEATURE_OSXSAVE },
-		{ 28, CPU_FEATURE_AVX },
 		{ 30, CPU_FEATURE_RDRAND },
-	};
-	const struct feature_map_t matchtable_ebx7[] = {
-		{  5, CPU_FEATURE_AVX2 },
 	};
 	const struct feature_map_t matchtable_edx81[] = {
 		{ 20, CPU_FEATURE_XD },
@@ -371,9 +367,6 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	if (raw->basic_cpuid[0][0] >= 1) {
 		match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][3], data);
 		match_features(matchtable_ecx1, COUNT_OF(matchtable_ecx1), raw->basic_cpuid[1][2], data);
-	}
-	if (raw->basic_cpuid[0][0] >= 7) {
-		match_features(matchtable_ebx7, COUNT_OF(matchtable_ebx7), raw->basic_cpuid[7][1], data);
 	}
 	if (raw->ext_cpuid[0][0] >= 1) {
 		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][3], data);
