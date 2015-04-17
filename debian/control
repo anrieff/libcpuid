@@ -1,0 +1,20 @@
+Source: libcpuid
+Section: linx
+Priority: optional
+Maintainer: Zhang, Guodong <gdzhang@linx-info.com>
+Build-Depends: debhelper (>= 9), autotools-dev, libtool, automake, autoconf, python
+Standards-Version: 3.9.5
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Git: git://anonscm.debian.org/collab-maint/libcpuid.git
+#Vcs-Browser: http://anonscm.debian.org/?p=collab-maint/libcpuid.git;a=summary
+
+Package: libcpuid
+Architecture: amd64 i386
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
+
+Package: libcpuid-dev
+Architecture: amd64 i386
+Description: dev for libcpuid
+ <insert long description, indented with spaces>
