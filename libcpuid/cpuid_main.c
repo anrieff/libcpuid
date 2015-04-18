@@ -189,7 +189,13 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 		{ 19, CPU_FEATURE_SSE4_1 },
 		{ 21, CPU_FEATURE_X2APIC },
 		{ 23, CPU_FEATURE_POPCNT },
+		{ 28, CPU_FEATURE_AVX },
 		{ 29, CPU_FEATURE_F16C },
+	};
+	const struct feature_map_t matchtable_ebx7[] = {
+		{  3, CPU_FEATURE_BMI1 },
+		{  5, CPU_FEATURE_AVX2 },
+		{  8, CPU_FEATURE_BMI2 },
 	};
 	const struct feature_map_t matchtable_edx81[] = {
 		{ 11, CPU_FEATURE_SYSCALL },
@@ -205,6 +211,9 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 	if (raw->basic_cpuid[0][0] >= 1) {
 		match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][3], data);
 		match_features(matchtable_ecx1, COUNT_OF(matchtable_ecx1), raw->basic_cpuid[1][2], data);
+	}
+	if (raw->basic_cpuid[0][0] >= 7) {
+		match_features(matchtable_ebx7, COUNT_OF(matchtable_ebx7), raw->basic_cpuid[7][1], data);
 	}
 	if (raw->ext_cpuid[0][0] >= 0x80000001) {
 		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][3], data);
@@ -578,6 +587,8 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_PFI, "pfi" },
 		{ CPU_FEATURE_PA, "pa" },
 		{ CPU_FEATURE_AVX2, "avx2" },
+		{ CPU_FEATURE_BMI1, "bmi1" },
+		{ CPU_FEATURE_BMI2, "bmi2" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {

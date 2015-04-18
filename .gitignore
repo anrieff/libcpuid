@@ -25,3 +25,5 @@ depcomp
 install-sh
 libcpuid.pc
 libcpuid/docs
+ar-lib
+compile
