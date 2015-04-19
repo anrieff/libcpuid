@@ -1,0 +1,18 @@
+Source: libcpuid
+Section: utils
+Priority: optional
+Maintainer: Zhang, Guodong <gdzhang@linx-info.com>
+Build-Depends: debhelper (>= 9), autotools-dev, libtool, automake, autoconf, python
+Standards-Version: 3.9.5
+Homepage: https://github.com/anrieff/libcpuid
+
+Package: libcpuid
+Architecture: amd64 i386
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: libcpuid provides CPU identification for the x86 (and x86_64)
+ For details about the programming API, please see the docs
+ on the project's site (http://libcpuid.sourceforge.net/)
+
+Package: libcpuid-dev
+Architecture: amd64 i386
+Description: develop files for libcpuid
