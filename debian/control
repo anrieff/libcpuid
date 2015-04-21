@@ -8,7 +8,7 @@ Homepage: https://github.com/anrieff/libcpuid
 
 Package: libcpuid11
 Architecture: amd64 i386
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${misc:Pre-Depends}
 Description: small C library for x86/x86_64 CPU detection and feature extraction
  For details about the programming API, please see the docs
  on the project's site (http://libcpuid.sourceforge.net/)
