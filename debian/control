@@ -16,3 +16,5 @@ Description: small C library for x86/x86_64 CPU detection and feature extraction
 Package: libcpuid11-dev
 Architecture: amd64 i386
 Description: develop files for libcpuid
+ For details about the programming API, please see the docs
+ on the project's site (http://libcpuid.sourceforge.net/)
