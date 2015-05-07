@@ -75,13 +75,13 @@ int cpuid_exists_by_eflags(void)
 #endif /* PLATFORM_X86 */
 }
 
+#ifdef INLINE_ASM_SUPPORTED
 /* 
  * with MSVC/AMD64, the exec_cpuid() and cpu_rdtsc() functions
  * are implemented in separate .asm files. Otherwise, use inline assembly
  */
 void exec_cpuid(uint32_t *regs)
 {
-#ifdef INLINE_ASM_SUPPORTED
 #ifdef COMPILER_GCC
 #	ifdef PLATFORM_X64
 	__asm __volatile(
@@ -166,8 +166,8 @@ void exec_cpuid(uint32_t *regs)
 #    error "Unsupported compiler"
 #  endif /* COMPILER_MICROSOFT */
 #endif
-#endif /* INLINE_ASSEMBLY_SUPPORTED */
 }
+#endif /* INLINE_ASSEMBLY_SUPPORTED */
 
 #ifdef INLINE_ASM_SUPPORTED
 void cpu_rdtsc(uint64_t* result)
