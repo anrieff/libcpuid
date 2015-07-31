@@ -129,7 +129,7 @@ void generic_get_cpu_list(const struct match_entry_t* matchtable, int count,
 				break;
 			}
 		if (!good) continue;
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 		list->names[n++] = _strdup(matchtable[i].name);
 #else
 		list->names[n++] = strdup(matchtable[i].name);
