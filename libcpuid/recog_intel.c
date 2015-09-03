@@ -305,6 +305,8 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY7         ,     0, "Ivy Bridge (Core i7)"   },
 	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY5         ,     0, "Ivy Bridge (Core i5)"   },
 	{  6, 10, -1, -1, 58,   2,    -1,    -1, CORE_IVY3         ,     0, "Ivy Bridge (Core i3)"   },
+	
+	{  6, 14, -1, -1, 62,  -1,    -1,    -1, XEON              ,     0, "Xeon (Ivy Bridge)"   },
 
 	{  6, 12, -1, -1, 60,   4,    -1,    -1, CORE_HASWELL7     ,     0, "Haswell (Core i7)"   },
 	{  6, 12, -1, -1, 60,   4,    -1,    -1, CORE_HASWELL5     ,     0, "Haswell (Core i5)"   },
