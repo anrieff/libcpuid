@@ -67,52 +67,53 @@ enum _amd_code_t {
 	FUSION_E,
 	FUSION_EA,
 	FUSION_Z,
+	FUSION_A,
 };
 typedef enum _amd_code_t amd_code_t;
 
 const struct match_entry_t cpudb_amd[] = {
 	{ -1, -1, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Unknown AMD CPU"               },
-	
+
 	/* 486 and the likes */
 	{  4, -1, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Unknown AMD 486"               },
 	{  4,  3, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "AMD 486DX2"                    },
 	{  4,  7, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "AMD 486DX2WB"                  },
 	{  4,  8, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "AMD 486DX4"                    },
 	{  4,  9, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "AMD 486DX4WB"                  },
-	
+
 	/* Pentia clones */
 	{  5, -1, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Unknown AMD 586"               },
 	{  5,  0, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "K5"                            },
 	{  5,  1, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "K5"                            },
 	{  5,  2, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "K5"                            },
 	{  5,  3, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "K5"                            },
-	
+
 	/* The K6 */
 	{  5,  6, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "K6"                            },
 	{  5,  7, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "K6"                            },
-	
+
 	{  5,  8, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "K6-2"                          },
 	{  5,  9, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "K6-III"                        },
 	{  5, 10, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Unknown K6"                    },
 	{  5, 11, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Unknown K6"                    },
 	{  5, 12, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Unknown K6"                    },
 	{  5, 13, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "K6-2+"                         },
-	
+
 	/* Athlon et al. */
 	{  6,  1, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Athlon (Slot-A)"               },
 	{  6,  2, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Athlon (Slot-A)"               },
 	{  6,  3, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Duron (Spitfire)"              },
 	{  6,  4, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Athlon (ThunderBird)"          },
-	
+
 	{  6,  6, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Unknown Athlon"                },
 	{  6,  6, -1, -1,   -1,   1,    -1,    -1, ATHLON                  ,     0, "Athlon (Palomino)"             },
 	{  6,  6, -1, -1,   -1,   1,    -1,    -1, ATHLON_MP               ,     0, "Athlon MP (Palomino)"          },
 	{  6,  6, -1, -1,   -1,   1,    -1,    -1, DURON                   ,     0, "Duron (Palomino)"              },
 	{  6,  6, -1, -1,   -1,   1,    -1,    -1, ATHLON_XP               ,     0, "Athlon XP"                     },
-	
+
 	{  6,  7, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Unknown Athlon XP"             },
 	{  6,  7, -1, -1,   -1,   1,    -1,    -1, DURON                   ,     0, "Duron (Morgan)"                },
-	
+
 	{  6,  8, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Athlon XP"                     },
 	{  6,  8, -1, -1,   -1,   1,    -1,    -1, ATHLON                  ,     0, "Athlon XP (Thoroughbred)"      },
 	{  6,  8, -1, -1,   -1,   1,    -1,    -1, ATHLON_XP               ,     0, "Athlon XP (Thoroughbred)"      },
@@ -123,7 +124,7 @@ const struct match_entry_t cpudb_amd[] = {
 	{  6,  8, -1, -1,   -1,   1,    -1,    -1, ATHLON_MP               ,     0, "Athlon MP (Thoroughbred)"      },
 	{  6,  8, -1, -1,   -1,   1,    -1,    -1, ATHLON_XP_M             ,     0, "Mobile Athlon (T-Bred)"        },
 	{  6,  8, -1, -1,   -1,   1,    -1,    -1, ATHLON_XP_M_LV          ,     0, "Mobile Athlon (T-Bred)"        },
-	
+
 	{  6, 10, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Athlon XP (Barton)"            },
 	{  6, 10, -1, -1,   -1,   1,   512,    -1, ATHLON_XP               ,     0, "Athlon XP (Barton)"            },
 	{  6, 10, -1, -1,   -1,   1,   512,    -1, SEMPRON                 ,     0, "Sempron (Barton)"              },
@@ -132,11 +133,11 @@ const struct match_entry_t cpudb_amd[] = {
 	{  6, 10, -1, -1,   -1,   1,    -1,    -1, ATHLON_MP               ,     0, "Athlon MP (Barton)"            },
 	{  6, 10, -1, -1,   -1,   1,    -1,    -1, ATHLON_XP_M             ,     0, "Mobile Athlon (Barton)"        },
 	{  6, 10, -1, -1,   -1,   1,    -1,    -1, ATHLON_XP_M_LV          ,     0, "Mobile Athlon (Barton)"        },
-	
+
 	/* K8 Architecture */
 	{ 15, -1, -1, 15,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Unknown K8"                    },
 	{ 15, -1, -1, 16,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Unknown K9"                    },
-	
+
 	{ 15, -1, -1, 15,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Unknown A64"                   },
 	{ 15, -1, -1, 15,   -1,   1,    -1,    -1, OPTERON_SINGLE          ,     0, "Opteron"                       },
 	{ 15, -1, -1, 15,   -1,   2,    -1,    -1, OPTERON_DUALCORE        ,     0, "Opteron (Dual Core)"           },
@@ -164,22 +165,22 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 15, 0x27,   1,   512,    -1, ATHLON_64               ,     0, "Athlon 64 (San Diego/512K)"    },
 	{ 15, -1, -1, 15, 0x37,   1,   512,    -1, ATHLON_64               ,     0, "Athlon 64 (San Diego/512K)"    },
 	{ 15, -1, -1, 15, 0x04,   1,   512,    -1, ATHLON_64               ,     0, "Athlon 64 (ClawHammer/512K)"   },
-	
+
 	{ 15, -1, -1, 15, 0x5f,   1,  1024,    -1, ATHLON_64               ,     0, "Athlon 64 (Orleans/1024K)"     },
 	{ 15, -1, -1, 15, 0x27,   1,  1024,    -1, ATHLON_64               ,     0, "Athlon 64 (San Diego/1024K)"   },
 	{ 15, -1, -1, 15, 0x04,   1,  1024,    -1, ATHLON_64               ,     0, "Athlon 64 (ClawHammer/1024K)"  },
-	
+
 	{ 15, -1, -1, 15, 0x4b,   2,   256,    -1, SEMPRON_DUALCORE        ,     0, "Athlon 64 X2 (Windsor/256K)"   },
-	
+
 	{ 15, -1, -1, 15, 0x23,   2,   512,    -1, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Toledo/512K)"    },
 	{ 15, -1, -1, 15, 0x4b,   2,   512,    -1, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Windsor/512K)"   },
 	{ 15, -1, -1, 15, 0x43,   2,   512,    -1, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Windsor/512K)"   },
 	{ 15, -1, -1, 15, 0x6b,   2,   512,    -1, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Brisbane/512K)"  },
 	{ 15, -1, -1, 15, 0x2b,   2,   512,    -1, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Manchester/512K)"},
-	
+
 	{ 15, -1, -1, 15, 0x23,   2,  1024,    -1, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Toledo/1024K)"   },
 	{ 15, -1, -1, 15, 0x43,   2,  1024,    -1, ATHLON_64_X2            ,     0, "Athlon 64 X2 (Windsor/1024K)"  },
-	
+
 	{ 15, -1, -1, 15, 0x08,   1,   128,    -1, M_SEMPRON               ,     0, "Mobile Sempron 64 (Dublin/128K)"},
 	{ 15, -1, -1, 15, 0x08,   1,   256,    -1, M_SEMPRON               ,     0, "Mobile Sempron 64 (Dublin/256K)"},
 	{ 15, -1, -1, 15, 0x0c,   1,   256,    -1, SEMPRON                 ,     0, "Sempron 64 (Paris)"            },
@@ -204,7 +205,7 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 15, 0x4c,   1,   256,    -1, M_SEMPRON               ,     0, "Mobile Sempron 64 (Keene/256K)"},
 	{ 15, -1, -1, 15, 0x4c,   1,   512,    -1, M_SEMPRON               ,     0, "Mobile Sempron 64 (Keene/512K)"},
 	{ 15, -1, -1, 15,   -1,   2,    -1,    -1, SEMPRON_DUALCORE        ,     0, "Sempron Dual Core"             },
-	
+
 	{ 15, -1, -1, 15, 0x24,   1,   512,    -1, TURION_64               ,     0, "Turion 64 (Lancaster/512K)"    },
 	{ 15, -1, -1, 15, 0x24,   1,  1024,    -1, TURION_64               ,     0, "Turion 64 (Lancaster/1024K)"   },
 	{ 15, -1, -1, 15, 0x48,   2,   256,    -1, TURION_X2               ,     0, "Turion X2 (Taylor)"            },
@@ -214,7 +215,7 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 15, 0x68,   2,   512,    -1, TURION_X2               ,     0, "Turion X2 (Tyler/512K)"        },
 	{ 15, -1, -1, 17,    3,   2,   512,    -1, TURION_X2               ,     0, "Turion X2 (Griffin/512K)"      },
 	{ 15, -1, -1, 17,    3,   2,  1024,    -1, TURION_X2               ,     0, "Turion X2 (Griffin/1024K)"     },
-	
+
 	/* K9 Architecture */
 	{ 15, -1, -1, 16,   -1,   1,    -1,    -1, PHENOM                  ,     0, "Unknown AMD Phenom"            },
 	{ 15,  2, -1, 16,   -1,   1,    -1,    -1, PHENOM                  ,     0, "Phenom"                        },
@@ -236,32 +237,62 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  5, -1, 16,    5,   4,   512,    -1, PHENOM2                 ,     0, "Phenom II X4 (Deneb)"          },
 	{ 15,  4, -1, 16,   10,   4,   512,    -1, PHENOM2                 ,     0, "Phenom II X4 (Zosma)"          },
 	{ 15,  4, -1, 16,   10,   6,   512,    -1, PHENOM2                 ,     0, "Phenom II X6 (Thuban)"         },
-	
+
 	{ 15,  4, -1, 16,   -1,   2,  1024,    -1, ATHLON_64_X2            ,     0, "Athlon II X2 (Regor)"          },
 	{ 15,  4, -1, 16,   -1,   2,   512,    -1, ATHLON_64_X2            ,     0, "Athlon II X2 (Regor)"          },
 	{ 15,  5, -1, 16,    5,   3,   512,    -1, ATHLON_64_X3            ,     0, "Athlon II X3 (Rana)"           },
 	{ 15,  5, -1, 16,    5,   4,   512,    -1, ATHLON_64_X4            ,     0, "Athlon II X4 (Propus)"         },
-	/* 2011 CPUs with AMD fusion: */
-	{ 15, -1, -1, 20,    1,   1,   512,    -1, FUSION_C                ,     0, "Brazos Ontario"                },
-	{ 15, -1, -1, 20,    1,   2,   512,    -1, FUSION_C                ,     0, "Brazos Ontario (Dual-core)"    },
-	{ 15, -1, -1, 20,    1,   1,   512,    -1, FUSION_E                ,     0, "Brazos Zacate"                 },
-	{ 15, -1, -1, 20,    1,   2,   512,    -1, FUSION_E                ,     0, "Brazos Zacate (Dual-core)"     },
-	{ 15, -1, -1, 20,    1,   1,   512,    -1, FUSION_Z                ,     0, "Brazos Desna"                  },
-	{ 15, -1, -1, 18,    1,   2,   512,    -1, FUSION_EA               ,     0, "Llano X2"                      },
-	{ 15, -1, -1, 18,    1,   2,  1024,    -1, FUSION_EA               ,     0, "Llano X2"                      },
-	{ 15, -1, -1, 18,    1,   3,  1024,    -1, FUSION_EA               ,     0, "Llano X3"                      },
-	{ 15, -1, -1, 18,    1,   4,  1024,    -1, FUSION_EA               ,     0, "Llano X4"                      },
-	
+	/* 2011 CPUs: K10 architecture: Llano */
+	{ 15,  1, -1, 18,    1,   2,   512,    -1, FUSION_EA               ,     0, "Llano X2"                      },
+	{ 15,  1, -1, 18,    1,   2,  1024,    -1, FUSION_EA               ,     0, "Llano X2"                      },
+	{ 15,  1, -1, 18,    1,   3,  1024,    -1, FUSION_EA               ,     0, "Llano X3"                      },
+	{ 15,  1, -1, 18,    1,   4,  1024,    -1, FUSION_EA               ,     0, "Llano X4"                      },
+	/* 2011 CPUs: Bobcat architecture: Ontario, Zacate, Desna, Hondo */
+	{ 15,  2, -1, 20,   -1,   1,   512,    -1, FUSION_C                ,     0, "Brazos Ontario"                },
+	{ 15,  2, -1, 20,   -1,   2,   512,    -1, FUSION_C                ,     0, "Brazos Ontario (Dual-core)"    },
+	{ 15,  1, -1, 20,   -1,   1,   512,    -1, FUSION_E                ,     0, "Brazos Zacate"                 },
+	{ 15,  1, -1, 20,   -1,   2,   512,    -1, FUSION_E                ,     0, "Brazos Zacate (Dual-core)"     },
+	{ 15,  2, -1, 20,   -1,   2,   512,    -1, FUSION_Z                ,     0, "Brazos Desna (Dual-core)"      },
+	/* 2012 CPUs: Piledriver architecture: Trinity and Richland */
+	{ 15,  0, -1, 21,   10,   2,  1024,    -1, FUSION_A                ,     0, "Trinity X2"                    },
+	{ 15,  0, -1, 21,   10,   4,  1024,    -1, FUSION_A                ,     0, "Trinity X4"                    },
+	{ 15,  3, -1, 21,   13,   2,  1024,    -1, FUSION_A                ,     0, "Richland X2"                   },
+	{ 15,  3, -1, 21,   13,   4,  1024,    -1, FUSION_A                ,     0, "Richland X4"                   },
+	/* 2013 CPUs: Jaguar architecture: Kabini and Temash */
+	{ 15,  0, -1, 22,    0,   2,  1024,    -1, FUSION_A                ,     0, "Kabini X2"                     },
+	{ 15,  0, -1, 22,    0,   4,  1024,    -1, FUSION_A                ,     0, "Kabini X4"                     },
+	/* 2014 CPUs: Steamroller architecture: Kaveri */
+	{ 15,  0, -1, 21,   30,   2,  1024,    -1, FUSION_A                ,     0, "Kaveri X2"                     },
+	{ 15,  0, -1, 21,   30,   4,  1024,    -1, FUSION_A                ,     0, "Kaveri X4"                     },
+	/* 2014 CPUs: Puma architecture: Beema and Mullins */
+	{ 15,  0, -1, 22,   30,   2,  1024,    -1, FUSION_E                ,     0, "Mullins X2"                     },
+	{ 15,  0, -1, 22,   30,   4,  1024,    -1, FUSION_A                ,     0, "Mullins X4"                     },
+	/* 2015 CPUs: Excavator architecture: Carrizo */
+	{ 15,  1, -1, 21,   60,   2,  1024,    -1, FUSION_A                ,     0, "Carrizo X2"                     },
+	{ 15,  1, -1, 21,   60,   4,  1024,    -1, FUSION_A                ,     0, "Carrizo X4"                     },
+	/* 2015 CPUs: Steamroller architecture: Godavari */
+	//TODO
+	/* 2016 CPUs: Excavator architecture: Bristol Ridge */
+	//TODO
+
 	/* Newer Opterons: */
-	{ 15,  9, -1, 16,    9,   8,    -1,    -1, OPTERON_GENERIC         ,     0, "Magny-Cours Opteron"           },
-	
+	{ 15,  9, -1, 22,    9,   8,    -1,    -1, OPTERON_GENERIC         ,     0, "Magny-Cours Opteron"           },
+
 	/* Bulldozer CPUs: */
+	{ 15, -1, -1, 21,    0,   4,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
 	{ 15, -1, -1, 21,    1,   4,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
 	{ 15, -1, -1, 21,    1,   6,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X3"                  },
 	{ 15, -1, -1, 21,    1,   8,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X4"                  },
+	/* Piledriver CPUs: */
 	{ 15, -1, -1, 21,    2,   4,  2048,    -1, NO_CODE                 ,     0, "Vishera X2"                    },
 	{ 15, -1, -1, 21,    2,   6,  2048,    -1, NO_CODE                 ,     0, "Vishera X3"                    },
 	{ 15, -1, -1, 21,    2,   8,  2048,    -1, NO_CODE                 ,     0, "Vishera X4"                    },
+	/* Steamroller CPUs: */
+	//TODO
+	/* Excavator CPUs: */
+	//TODO
+	/* Zen CPUs: */
+	//TODO
 };
 
 
@@ -323,7 +354,7 @@ static void decode_amd_cache_info(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 		0, 1, 2, 0, 4, 0, 8, 0, 16, 0, 32, 48, 64, 92, 128, 255
 	};
 	unsigned n = raw->ext_cpuid[0][0];
-	
+
 	if (n >= 0x80000005) {
 		data->l1_data_cache = (raw->ext_cpuid[5][2] >> 24) & 0xff;
 		data->l1_assoc = (raw->ext_cpuid[5][2] >> 16) & 0xff;
@@ -334,7 +365,7 @@ static void decode_amd_cache_info(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 		data->l2_cache = (raw->ext_cpuid[6][2] >> 16) & 0xffff;
 		data->l2_assoc = assoc_table[(raw->ext_cpuid[6][2] >> 12) & 0xf];
 		data->l2_cacheline = (raw->ext_cpuid[6][2]) & 0xff;
-		
+
 		l3_result = (raw->ext_cpuid[6][3] >> 18);
 		if (l3_result > 0) {
 			l3_result = 512 * l3_result; /* AMD spec says it's a range,
@@ -351,7 +382,7 @@ static void decode_amd_cache_info(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 static void decode_amd_number_of_cores(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
 	int logical_cpus = -1, num_cores = -1;
-	
+
 	if (raw->basic_cpuid[0][0] >= 1) {
 		logical_cpus = (raw->basic_cpuid[1][1] >> 16) & 0xff;
 		if (raw->ext_cpuid[0][0] >= 8) {
@@ -422,14 +453,14 @@ static amd_code_t decode_amd_codename_part1(const char *bs)
 	if (strstr(bs, "Turion")) {
 		return is_dual ? TURION_X2 : TURION_64;
 	}
-	
+
 	if (strstr(bs, "mobile") || strstr(bs, "Mobile")) {
 		if (strstr(bs, "Athlon(tm) XP-M (LV)")) return ATHLON_XP_M_LV;
 		if (strstr(bs, "Athlon(tm) XP")) return ATHLON_XP_M;
 		if (strstr(bs, "Sempron(tm)")) return M_SEMPRON;
 		if (strstr(bs, "Athlon")) return MOBILE_ATHLON64;
 		if (strstr(bs, "Duron")) return MOBILE_DURON;
-		
+
 	} else {
 		if (strstr(bs, "Athlon(tm) XP")) return ATHLON_XP;
 		if (strstr(bs, "Athlon(tm) MP")) return ATHLON_MP;
@@ -441,14 +472,14 @@ static amd_code_t decode_amd_codename_part1(const char *bs)
 	if (match_pattern(bs, "E-###")) return FUSION_E;
 	if (match_pattern(bs, "Z-##")) return FUSION_Z;
 	if (match_pattern(bs, "E#-####") || match_pattern(bs, "A#-####")) return FUSION_EA;
-	
+
 	return NO_CODE;
 }
 
 static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
 	amd_code_t code = decode_amd_codename_part1(data->brand_str);
-	
+
 	if (code == ATHLON_64_X2 && data->l2_cache < 512)
 		code = SEMPRON_DUALCORE;
 	match_cpu_codename(cpudb_amd, COUNT_OF(cpudb_amd), data, code, 0);
