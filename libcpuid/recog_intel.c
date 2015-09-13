@@ -79,6 +79,12 @@ enum _intel_code_t {
 	CORE_HASWELL3, /* 22nm Core-iX, Haswell */
 	CORE_HASWELL5,
 	CORE_HASWELL7,
+	CORE_BROADWELL3, /* 14nm Core-iX, Broadwell */
+	CORE_BROADWELL5,
+	CORE_BROADWELL7,
+	CORE_SKYLAKE3, /* 14nm Core-iX, Skylake */
+	CORE_SKYLAKE5,
+	CORE_SKYLAKE7,
 };
 typedef enum _intel_code_t intel_code_t;
 
@@ -301,7 +307,7 @@ const struct match_entry_t cpudb_intel[] = {
 
 	/* Sandy Bridge CPUs (32nm): */
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, NO_CODE           ,     0, "Unknown Sandy Bridge"     },
-	{  6, 13, -1, -1, 45,  -1,    -1,    -1, XEON              ,     0, "Sandy Bridge (Xeon)"      },
+	{  6, 10, -1, -1, 42,  -1,    -1,    -1, XEON              ,     0, "Sandy Bridge (Xeon)"      },
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, CORE_I7           ,     0, "Sandy Bridge (Core i7)"   },
 	{  6, 10, -1, -1, 42,   4,    -1,    -1, CORE_I7           ,     0, "Sandy Bridge (Core i7)"   },
 	{  6, 10, -1, -1, 42,   4,    -1,    -1, CORE_I5           ,     0, "Sandy Bridge (Core i5)"   },
@@ -309,33 +315,51 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 42,   2,    -1,    -1, PENTIUM           ,     0, "Sandy Bridge (Pentium)"   },
 	{  6, 10, -1, -1, 42,   1,    -1,    -1, CELERON           ,     0, "Sandy Bridge (Celeron)"   },
 	{  6, 10, -1, -1, 42,   2,    -1,    -1, CELERON           ,     0, "Sandy Bridge (Celeron)"   },
-	{  6, 13, -1, -1, 45,  -1,    -1,    -1, CORE_I7           ,     0, "Sandy Bridge-E (Core i7)" },
-	{  6, 13, -1, -1, 45,  -1,    -1,    -1, CORE_I5           ,     0, "Sandy Bridge-E (Core i5)" },
-	{  6, 13, -1, -1, 45,  -1,    -1,    -1, CORE_I3           ,     0, "Sandy Bridge-E (Core i3)" },
+	{  6, 13, -1, -1, 45,  -1,    -1,    -1, NO_CODE           ,     0, "Sandy Bridge-E"           },
 
 	/* Ivy Bridge CPUs (22nm): */
-	{  6, 14, -1, -1, 62,  -1,    -1,    -1, XEON              ,     0, "Ivy Bridge (Xeon)"        },
+	{  6, 10, -1, -1, 58,  -1,    -1,    -1, XEON              ,     0, "Ivy Bridge (Xeon)"        },
 	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY7         ,     0, "Ivy Bridge (Core i7)"     },
 	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY5         ,     0, "Ivy Bridge (Core i5)"     },
 	{  6, 10, -1, -1, 58,   2,    -1,    -1, CORE_IVY3         ,     0, "Ivy Bridge (Core i3)"     },
+	{  6, 10, -1, -1, 58,   2,    -1,    -1, PENTIUM           ,     0, "Ivy Bridge (Pentium)"     },
+	{  6, 10, -1, -1, 58,   1,    -1,    -1, CELERON           ,     0, "Ivy Bridge (Celeron)"     },
+	{  6, 10, -1, -1, 58,   2,    -1,    -1, CELERON           ,     0, "Ivy Bridge (Celeron)"     },
+	{  6, 14, -1, -1, 62,  -1,    -1,    -1, NO_CODE           ,     0, "Ivy Bridge-E"             },
 
 	/* Haswell CPUs (22nm): */
+	{  6, 12, -1, -1, 60,  -1,    -1,    -1, XEON              ,     0, "Haswell (Xeon)"           },
 	{  6, 12, -1, -1, 60,   4,    -1,    -1, CORE_HASWELL7     ,     0, "Haswell (Core i7)"        },
 	{  6,  5, -1, -1, 69,   4,    -1,    -1, CORE_HASWELL7     ,     0, "Haswell (Core i7)"        },
-	{  6,  5, -1, -1, 69,   4,    -1,    -1, CORE_HASWELL5     ,     0, "Haswell (Core i5)"        },
 	{  6, 12, -1, -1, 60,   4,    -1,    -1, CORE_HASWELL5     ,     0, "Haswell (Core i5)"        },
+	{  6,  5, -1, -1, 69,   4,    -1,    -1, CORE_HASWELL5     ,     0, "Haswell (Core i5)"        },
 	{  6, 12, -1, -1, 60,   2,    -1,    -1, CORE_HASWELL3     ,     0, "Haswell (Core i3)"        },
 	{  6,  5, -1, -1, 69,   2,    -1,    -1, CORE_HASWELL3     ,     0, "Haswell (Core i3)"        },
+	{  6, 12, -1, -1, 60,   2,    -1,    -1, PENTIUM           ,     0, "Haswell (Pentium)"        },
+	{  6, 12, -1, -1, 60,   2,    -1,    -1, CELERON           ,     0, "Haswell (Celeron)"        },
+	{  6, 12, -1, -1, 60,   1,    -1,    -1, CELERON           ,     0, "Haswell (Celeron)"        },
+	{  6, 15, -1, -1, 63,  -1,    -1,    -1, NO_CODE           ,     0, "Haswell-E"                },
 
 	/* Broadwell CPUs (14nm): */
-	//TODO
+	{  6,  7, -1, -1, 71,   4,    -1,    -1, CORE_BROADWELL7   ,     0, "Broadwell (Core i7)"      },
+	{  6,  7, -1, -1, 71,   4,    -1,    -1, CORE_BROADWELL5   ,     0, "Broadwell (Core i5)"      },
+	{  6, 13, -1, -1, 61,   4,    -1,    -1, CORE_BROADWELL7   ,     0, "Broadwell-U (Core i7)"    },
+	{  6, 13, -1, -1, 61,   2,    -1,    -1, CORE_BROADWELL7   ,     0, "Broadwell-U (Core i7)"    },
+	{  6, 13, -1, -1, 61,   2,    -1,    -1, CORE_BROADWELL5   ,     0, "Broadwell-U (Core i5)"    },
+	{  6, 13, -1, -1, 61,   2,    -1,    -1, CORE_BROADWELL3   ,     0, "Broadwell-U (Core i3)"    },
+	{  6, 13, -1, -1, 61,   2,    -1,    -1, PENTIUM           ,     0, "Broadwell-U (Pentium)"    },
+	{  6, 13, -1, -1, 61,   2,    -1,    -1, CELERON           ,     0, "Broadwell-U (Celeron)"    },
+	{  6, 13, -1, -1, 61,   2,    -1,    -1, NA                ,     0, "Broadwell-U (Core M)"     },
 
 	/* Skylake CPUs (14nm): */
-	//TODO
+	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_SKYLAKE7     ,     0, "Skylake (Core i7)"        },
+	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_SKYLAKE5     ,     0, "Skylake (Core i5)"        },
+	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_SKYLAKE3     ,     0, "Skylake (Core i3)"        },
+	{  6, 14, -1, -1, 94,   4,    -1,    -1, PENTIUM           ,     0, "Skylake (Pentium)"        },
 
 	/* Itaniums */
-	{  7, -1, -1, -1, -1,   1,    -1,    -1, NO_CODE           ,     0, "Itanium"                 },
-	{ 15, -1, -1, 16, -1,   1,    -1,    -1, NO_CODE           ,     0, "Itanium 2"               },
+	{  7, -1, -1, -1, -1,   1,    -1,    -1, NO_CODE           ,     0, "Itanium"                  },
+	{ 15, -1, -1, 16, -1,   1,    -1,    -1, NO_CODE           ,     0, "Itanium 2"                },
 
 };
 
