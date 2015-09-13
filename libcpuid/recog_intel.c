@@ -316,6 +316,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 42,   1,    -1,    -1, CELERON           ,     0, "Sandy Bridge (Celeron)"   },
 	{  6, 10, -1, -1, 42,   2,    -1,    -1, CELERON           ,     0, "Sandy Bridge (Celeron)"   },
 	{  6, 13, -1, -1, 45,  -1,    -1,    -1, NO_CODE           ,     0, "Sandy Bridge-E"           },
+	{  6, 13, -1, -1, 45,  -1,    -1,    -1, XEON              ,     0, "Sandy Bridge-E (Xeon)"    },
 
 	/* Ivy Bridge CPUs (22nm): */
 	{  6, 10, -1, -1, 58,  -1,    -1,    -1, XEON              ,     0, "Ivy Bridge (Xeon)"        },
@@ -685,7 +686,8 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 			code = XEON_GAINESTOWN;
 		else if (match_pattern(bs, "[ELXW]56##"))
 			code = XEON_WESTMERE;
-		else if (data->l3_cache > 0)
+		else if (data->l3_cache > 0 && data->family == 16)
+			/* restrict by family, since later Xeons also have L3 ... */
 			code = XEON_IRWIN;
 	}
 	if (code == XEONMP && data->l3_cache > 0)
