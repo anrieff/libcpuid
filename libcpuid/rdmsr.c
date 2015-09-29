@@ -69,12 +69,24 @@ struct msr_driver_t { int fd; };
 static int rdmsr_supported(void);
 struct msr_driver_t* cpu_msr_driver_open(void)
 {
+	return cpu_msr_driver_open_core(0);
+}
+
+struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
+{
+	char msr[32];
 	struct msr_driver_t* handle;
+	if(core_num < 0 && cpuid_get_total_cpus() <= core_num)
+	{
+		set_error(ERR_INVCNB);
+		return NULL;
+	}
 	if (!rdmsr_supported()) {
 		set_error(ERR_NO_RDMSR);
 		return NULL;
 	}
-		int fd = open("/dev/cpu/0/msr", O_RDONLY);
+	sprintf(msr, "/dev/cpu/%i/msr", core_num);
+	int fd = open(msr, O_RDONLY);
 	if (fd < 0) {
 		if (errno == EIO) {
 			set_error(ERR_NO_RDMSR);

@@ -390,6 +390,7 @@ typedef enum {
 	ERR_EXTRACT  = -11,	/*!< "Cannot extract RDMSR driver (read only media?)" */
 	ERR_HANDLE   = -12,	/*!< "Bad handle" */
 	ERR_INVMSR   = -13,     /*!< "Invalid MSR" */
+	ERR_INVCNB   = -14,     /*!< "Invalid core number" */
 } cpu_error_t;
 
 /**
@@ -803,6 +804,21 @@ void cpuid_free_cpu_list(struct cpu_list_t* list);
  */
 struct msr_driver_t;
 struct msr_driver_t* cpu_msr_driver_open(void);
+
+/**
+ * @brief Similar to \ref cpu_msr_driver_open, but accept one parameter
+ *
+ * This function works on Linux only
+ *
+ * @param core_num specify the core number for MSR.
+ *          The first core number is 0.
+ *          The last core number is \ref cpuid_get_total_cpus - 1.
+ *
+ * @returns a handle to the driver on success, and NULL on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
+ */
+struct msr_driver_t* cpu_msr_driver_open_core(int core_num);
 
 /**
  * @brief Reads a Model-Specific Register (MSR)
