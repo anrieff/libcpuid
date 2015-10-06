@@ -486,6 +486,20 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			}
 			return CPU_INVALID_VALUE;
 		}
+		case INFO_BCLK:
+		{
+			static int clock = 0, multiplier = 0;
+			double bclk = 0.0;
+
+			if(!clock && (clock = cpu_clock_measure(100, 1)) <= 0) // Return the non-Turbo clock
+				return CPU_INVALID_VALUE;
+			if(!multiplier && (multiplier = cpu_msrinfo(handle, INFO_MAX_MULTIPLIER) / 100) <= 0)
+				return CPU_INVALID_VALUE;
+			if((bclk = (double) clock / multiplier) > 0)
+				return (int) (bclk * 100);
+
+			return CPU_INVALID_VALUE;
+		}
 		default:
 			return CPU_INVALID_VALUE;
 	}

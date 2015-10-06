@@ -865,6 +865,8 @@ typedef enum {
                                     throttling. 0 if it is running normally. */
 	INFO_VOLTAGE,              /*!< The current core voltage in Volt,
 	                            multiplied by 100. */
+	INFO_BCLK,                 /*!< The BCLK (base clock) in MHz,
+	                            multiplied by 100. */
 } cpu_msrinfo_request_t;
 
 /**
