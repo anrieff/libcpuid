@@ -863,6 +863,8 @@ typedef enum {
 	INFO_TEMPERATURE,          /*!< The current core temperature in Celsius */
 	INFO_THROTTLING,           /*!< 1 if the current logical processor is
                                     throttling. 0 if it is running normally. */
+	INFO_VOLTAGE,              /*!< The current core voltage in Volt,
+	                            multiplied by 100. */
 } cpu_msrinfo_request_t;
 
 /**

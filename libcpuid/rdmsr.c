@@ -452,7 +452,7 @@ uint64_t cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t reg, unsigned int
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 {
 	uint64_t r;
-	int err;
+	int err, error_indx;;
 
 	if (handle == NULL)
 		return set_error(ERR_HANDLE);
@@ -475,6 +475,17 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		}
 		case INFO_TEMPERATURE:
 		case INFO_THROTTLING:
+			return CPU_INVALID_VALUE;
+		case INFO_VOLTAGE:
+		{
+			if(cpu_vendor() == VENDOR_INTEL)
+			{
+				unsigned long val = cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &error_indx);
+				double ret = (double) val / (1 << 13);
+				return (ret > 0) ? ret * 100 : CPU_INVALID_VALUE;
+			}
+			return CPU_INVALID_VALUE;
+		}
 		default:
 			return CPU_INVALID_VALUE;
 	}
