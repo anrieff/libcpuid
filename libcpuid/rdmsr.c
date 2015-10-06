@@ -463,6 +463,18 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			return perfmsr_measure(handle, 0xe8);
 		case INFO_CUR_MULTIPLIER:
 		{
+			if(cpu_vendor() == VENDOR_INTEL)
+			{
+				int clock;
+				static double bclk = 0.0;
+				if((clock = cpu_clock_by_ic(10, 4)) <= 0) // Return the real core clock
+					goto cur_multiplier;
+				if(!bclk && (bclk = (double) cpu_msrinfo(handle, INFO_BCLK) / 100) <= 0)
+					goto cur_multiplier;
+				return (int) (clock / bclk * 100);
+			}
+			
+			cur_multiplier:
 			err = cpu_rdmsr(handle, 0x2a, &r);
 			if (err) return CPU_INVALID_VALUE;
 			return (int) ((r>>22) & 0x1f) * 100;
