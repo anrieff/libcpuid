@@ -396,6 +396,59 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 }
 
 #ifndef MSRINFO_DEFINED
+
+#define IA32_THERM_STATUS 0x19C
+#define IA32_TEMPERATURE_TARGET 0x1a2
+#define IA32_PACKAGE_THERM_STATUS 0x1b1
+#define MSR_PERF_STATUS 0x198
+#define MSR_TURBO_RATIO_LIMIT 429
+#define PLATFORM_INFO_MSR 206
+#define PLATFORM_INFO_MSR_low 8
+#define PLATFORM_INFO_MSR_high 15
+
+int get_bits_value(unsigned long val, int highbit, int lowbit)
+{
+	unsigned long data = val;
+	int bits = highbit - lowbit + 1;
+	if(bits < 64){
+	    data >>= lowbit;
+	    data &= (1ULL<<bits) - 1;
+	}
+	return(data);
+}
+
+uint64_t cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t reg, unsigned int highbit,
+                        unsigned int lowbit, int* error_indx)
+{
+	uint64_t data;
+	int bits;
+	*error_indx =0;
+
+	if (pread (handle->fd, &data, sizeof data, reg) != sizeof data)
+	{
+		*error_indx = 1;
+		return set_error(ERR_HANDLE_R);
+	}
+
+	bits = highbit - lowbit + 1;
+	if (bits < 64)
+	{
+		/* Show only part of register */
+		data >>= lowbit;
+		data &= (1ULL << bits) - 1;
+	}
+
+	/* Make sure we get sign correct */
+	if (data & (1ULL << (bits - 1)))
+	{
+		data &= ~(1ULL << (bits - 1));
+		data = -data;
+	}
+
+	*error_indx = 0;
+	return (data);
+}
+
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 {
 	uint64_t r;

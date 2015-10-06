@@ -391,6 +391,7 @@ typedef enum {
 	ERR_HANDLE   = -12,	/*!< "Bad handle" */
 	ERR_INVMSR   = -13,     /*!< "Invalid MSR" */
 	ERR_INVCNB   = -14,     /*!< "Invalid core number" */
+	ERR_HANDLE_R = -15,     /*!< "Error on handle read" */
 } cpu_error_t;
 
 /**
