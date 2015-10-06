@@ -492,6 +492,20 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			return (int) ((r >> 40) & 0x1f) * 100;
 		}
 		case INFO_TEMPERATURE:
+			if(cpu_vendor() == VENDOR_INTEL)
+			{
+				// https://github.com/ajaiantilal/i7z/blob/5023138d7c35c4667c938b853e5ea89737334e92/helper_functions.c#L59
+				unsigned long val = cpu_rdmsr_range(handle, IA32_THERM_STATUS, 63, 0, &error_indx);
+				int digital_readout = get_bits_value(val, 23, 16);
+				int thermal_status = get_bits_value(val, 32, 31);
+				val = cpu_rdmsr_range(handle, IA32_TEMPERATURE_TARGET, 63, 0, &error_indx);
+				int PROCHOT_temp = get_bits_value(val, 23, 16);
+
+				// These bits are thermal status : 1 if supported, 0 else
+				if(thermal_status)
+					return(PROCHOT_temp - digital_readout); // Temperature is prochot - digital readout
+			}
+			return CPU_INVALID_VALUE;
 		case INFO_THROTTLING:
 			return CPU_INVALID_VALUE;
 		case INFO_VOLTAGE:
