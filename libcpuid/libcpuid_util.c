@@ -174,6 +174,21 @@ int match_pattern(const char* s, const char* p)
 	return 0;
 }
 
+int cpu_vendor(void)
+{
+	int r;
+	struct cpu_raw_data_t raw;
+	struct cpu_id_t data;
+	if ((r = cpuid_get_raw_data(&raw)) < 0)
+		return set_error(r);
+	if ((r = cpu_identify(&raw, &data)) < 0)
+		return set_error(r);
+	if (0 <= data.vendor && data.vendor < NUM_CPU_VENDORS)
+		return data.vendor;
+	else
+		return set_error(r);
+}
+
 struct cpu_id_t* get_cached_cpuid(void)
 {
 	static int initialized = 0;
