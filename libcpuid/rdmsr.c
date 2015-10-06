@@ -481,6 +481,12 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		}
 		case INFO_MAX_MULTIPLIER:
 		{
+			if(cpu_vendor() == VENDOR_INTEL)
+			{
+				int multiplier = (int) cpu_rdmsr_range (handle, PLATFORM_INFO_MSR, PLATFORM_INFO_MSR_high, PLATFORM_INFO_MSR_low, &error_indx);
+				if(multiplier > 0)
+					return multiplier * 100;
+			}
 			err = cpu_rdmsr(handle, 0x198, &r);
 			if (err) return CPU_INVALID_VALUE;
 			return (int) ((r >> 40) & 0x1f) * 100;
