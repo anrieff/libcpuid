@@ -452,7 +452,9 @@ uint64_t cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t reg, unsigned int
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 {
 	uint64_t r;
-	int err, error_indx;;
+	int err, error_indx, cur_clock;
+	static int max_clock = 0, multiplier = 0;
+	static double bclk = 0.0;
 
 	if (handle == NULL)
 		return set_error(ERR_HANDLE);
@@ -465,16 +467,15 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		{
 			if(cpu_vendor() == VENDOR_INTEL)
 			{
-				int clock;
-				static double bclk = 0.0;
-				if((clock = cpu_clock_by_ic(10, 4)) <= 0) // Return the real core clock
-					goto cur_multiplier;
-				if(!bclk && (bclk = (double) cpu_msrinfo(handle, INFO_BCLK) / 100) <= 0)
-					goto cur_multiplier;
-				return (int) (clock / bclk * 100);
+				if(!bclk)
+					bclk = (double) cpu_msrinfo(handle, INFO_BCLK) / 100;
+				if(bclk > 0)
+				{
+					cur_clock = cpu_clock_by_ic(10, 4);
+					if(cur_clock > 0)
+						return (int) (cur_clock / bclk * 100);
+				}
 			}
-			
-			cur_multiplier:
 			err = cpu_rdmsr(handle, 0x2a, &r);
 			if (err) return CPU_INVALID_VALUE;
 			return (int) ((r>>22) & 0x1f) * 100;
@@ -483,7 +484,8 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		{
 			if(cpu_vendor() == VENDOR_INTEL)
 			{
-				int multiplier = (int) cpu_rdmsr_range (handle, PLATFORM_INFO_MSR, PLATFORM_INFO_MSR_high, PLATFORM_INFO_MSR_low, &error_indx);
+				if(!multiplier)
+					multiplier = (int) cpu_rdmsr_range(handle, PLATFORM_INFO_MSR, PLATFORM_INFO_MSR_high, PLATFORM_INFO_MSR_low, &error_indx);
 				if(multiplier > 0)
 					return multiplier * 100;
 			}
@@ -520,15 +522,12 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		}
 		case INFO_BCLK:
 		{
-			static int clock = 0, multiplier = 0;
-			double bclk = 0.0;
-
-			if(!clock && (clock = cpu_clock_measure(100, 1)) <= 0) // Return the non-Turbo clock
-				return CPU_INVALID_VALUE;
-			if(!multiplier && (multiplier = cpu_msrinfo(handle, INFO_MAX_MULTIPLIER) / 100) <= 0)
-				return CPU_INVALID_VALUE;
-			if((bclk = (double) clock / multiplier) > 0)
-				return (int) (bclk * 100);
+			if(!max_clock)
+				max_clock = cpu_clock_measure(100, 1); // Return the non-Turbo clock
+			if(!multiplier)
+				multiplier = cpu_msrinfo(handle, INFO_MAX_MULTIPLIER) / 100;
+			if(max_clock > 0 && multiplier > 0)
+				return (int) ((double) max_clock / multiplier * 100);
 
 			return CPU_INVALID_VALUE;
 		}
