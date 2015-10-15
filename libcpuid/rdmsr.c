@@ -465,7 +465,7 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			return perfmsr_measure(handle, 0xe8);
 		case INFO_CUR_MULTIPLIER:
 		{
-			if(cpu_vendor() == VENDOR_INTEL)
+			if(cpuid_get_vendor() == VENDOR_INTEL)
 			{
 				if(!bclk)
 					bclk = (double) cpu_msrinfo(handle, INFO_BCLK) / 100;
@@ -482,7 +482,7 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		}
 		case INFO_MAX_MULTIPLIER:
 		{
-			if(cpu_vendor() == VENDOR_INTEL)
+			if(cpuid_get_vendor() == VENDOR_INTEL)
 			{
 				if(!multiplier)
 					multiplier = (int) cpu_rdmsr_range(handle, PLATFORM_INFO_MSR, PLATFORM_INFO_MSR_high, PLATFORM_INFO_MSR_low, &error_indx);
@@ -494,7 +494,7 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			return (int) ((r >> 40) & 0x1f) * 100;
 		}
 		case INFO_TEMPERATURE:
-			if(cpu_vendor() == VENDOR_INTEL)
+			if(cpuid_get_vendor() == VENDOR_INTEL)
 			{
 				// https://github.com/ajaiantilal/i7z/blob/5023138d7c35c4667c938b853e5ea89737334e92/helper_functions.c#L59
 				unsigned long val = cpu_rdmsr_range(handle, IA32_THERM_STATUS, 63, 0, &error_indx);
@@ -512,7 +512,7 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			return CPU_INVALID_VALUE;
 		case INFO_VOLTAGE:
 		{
-			if(cpu_vendor() == VENDOR_INTEL)
+			if(cpuid_get_vendor() == VENDOR_INTEL)
 			{
 				unsigned long val = cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &error_indx);
 				double ret = (double) val / (1 << 13);

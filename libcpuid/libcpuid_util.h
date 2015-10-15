@@ -71,12 +71,6 @@ void generic_get_cpu_list(const struct match_entry_t* matchtable, int count,
 int match_pattern(const char* haystack, const char* pattern);
 
 /*
- * Get the CPU vendor
- * Return val: see enum cpu_vendor_t
-*/
-int cpu_vendor(void);
-
-/*
  * Gets an initialized cpu_id_t. It is cached, so that internal libcpuid
  * machinery doesn't need to issue cpu_identify more than once.
  */
