@@ -755,6 +755,14 @@ void cpuid_set_verbosiness_level(int level);
 
 
 /**
+ * @brief Obtains the CPU vendor from CPUID from the current CPU
+ * @note The result is cached.
+ * @returns VENDOR_UNKNOWN if failed, otherwise the CPU vendor type.
+ *          @see cpu_vendor_t
+ */
+cpu_vendor_t cpuid_get_vendor(void);
+
+/**
  * @brief a structure that holds a list of processor names
  */
 struct cpu_list_t {
