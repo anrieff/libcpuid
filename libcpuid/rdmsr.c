@@ -69,12 +69,24 @@ struct msr_driver_t { int fd; };
 static int rdmsr_supported(void);
 struct msr_driver_t* cpu_msr_driver_open(void)
 {
+	return cpu_msr_driver_open_core(0);
+}
+
+struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
+{
+	char msr[32];
 	struct msr_driver_t* handle;
+	if(core_num < 0 && cpuid_get_total_cpus() <= core_num)
+	{
+		set_error(ERR_INVCNB);
+		return NULL;
+	}
 	if (!rdmsr_supported()) {
 		set_error(ERR_NO_RDMSR);
 		return NULL;
 	}
-		int fd = open("/dev/cpu/0/msr", O_RDONLY);
+	sprintf(msr, "/dev/cpu/%i/msr", core_num);
+	int fd = open(msr, O_RDONLY);
 	if (fd < 0) {
 		if (errno == EIO) {
 			set_error(ERR_NO_RDMSR);
@@ -384,10 +396,65 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 }
 
 #ifndef MSRINFO_DEFINED
+
+#define IA32_THERM_STATUS 0x19C
+#define IA32_TEMPERATURE_TARGET 0x1a2
+#define IA32_PACKAGE_THERM_STATUS 0x1b1
+#define MSR_PERF_STATUS 0x198
+#define MSR_TURBO_RATIO_LIMIT 429
+#define PLATFORM_INFO_MSR 206
+#define PLATFORM_INFO_MSR_low 8
+#define PLATFORM_INFO_MSR_high 15
+
+static int get_bits_value(unsigned long val, int highbit, int lowbit)
+{
+	unsigned long data = val;
+	int bits = highbit - lowbit + 1;
+	if(bits < 64){
+	    data >>= lowbit;
+	    data &= (1ULL<<bits) - 1;
+	}
+	return(data);
+}
+
+static uint64_t cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t reg, unsigned int highbit,
+                        unsigned int lowbit, int* error_indx)
+{
+	uint64_t data;
+	int bits;
+	*error_indx =0;
+
+	if (pread (handle->fd, &data, sizeof data, reg) != sizeof data)
+	{
+		*error_indx = 1;
+		return set_error(ERR_HANDLE_R);
+	}
+
+	bits = highbit - lowbit + 1;
+	if (bits < 64)
+	{
+		/* Show only part of register */
+		data >>= lowbit;
+		data &= (1ULL << bits) - 1;
+	}
+
+	/* Make sure we get sign correct */
+	if (data & (1ULL << (bits - 1)))
+	{
+		data &= ~(1ULL << (bits - 1));
+		data = -data;
+	}
+
+	*error_indx = 0;
+	return (data);
+}
+
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 {
 	uint64_t r;
-	int err;
+	int err, error_indx, cur_clock;
+	static int max_clock = 0, multiplier = 0;
+	static double bclk = 0.0;
 
 	if (handle == NULL)
 		return set_error(ERR_HANDLE);
@@ -398,18 +465,72 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			return perfmsr_measure(handle, 0xe8);
 		case INFO_CUR_MULTIPLIER:
 		{
+			if(cpuid_get_vendor() == VENDOR_INTEL)
+			{
+				if(!bclk)
+					bclk = (double) cpu_msrinfo(handle, INFO_BCLK) / 100;
+				if(bclk > 0)
+				{
+					cur_clock = cpu_clock_by_ic(10, 4);
+					if(cur_clock > 0)
+						return (int) (cur_clock / bclk * 100);
+				}
+			}
 			err = cpu_rdmsr(handle, 0x2a, &r);
 			if (err) return CPU_INVALID_VALUE;
 			return (int) ((r>>22) & 0x1f) * 100;
 		}
 		case INFO_MAX_MULTIPLIER:
 		{
+			if(cpuid_get_vendor() == VENDOR_INTEL)
+			{
+				if(!multiplier)
+					multiplier = (int) cpu_rdmsr_range(handle, PLATFORM_INFO_MSR, PLATFORM_INFO_MSR_high, PLATFORM_INFO_MSR_low, &error_indx);
+				if(multiplier > 0)
+					return multiplier * 100;
+			}
 			err = cpu_rdmsr(handle, 0x198, &r);
 			if (err) return CPU_INVALID_VALUE;
 			return (int) ((r >> 40) & 0x1f) * 100;
 		}
 		case INFO_TEMPERATURE:
+			if(cpuid_get_vendor() == VENDOR_INTEL)
+			{
+				// https://github.com/ajaiantilal/i7z/blob/5023138d7c35c4667c938b853e5ea89737334e92/helper_functions.c#L59
+				unsigned long val = cpu_rdmsr_range(handle, IA32_THERM_STATUS, 63, 0, &error_indx);
+				int digital_readout = get_bits_value(val, 23, 16);
+				int thermal_status = get_bits_value(val, 32, 31);
+				val = cpu_rdmsr_range(handle, IA32_TEMPERATURE_TARGET, 63, 0, &error_indx);
+				int PROCHOT_temp = get_bits_value(val, 23, 16);
+
+				// These bits are thermal status : 1 if supported, 0 else
+				if(thermal_status)
+					return(PROCHOT_temp - digital_readout); // Temperature is prochot - digital readout
+			}
+			return CPU_INVALID_VALUE;
 		case INFO_THROTTLING:
+			return CPU_INVALID_VALUE;
+		case INFO_VOLTAGE:
+		{
+			if(cpuid_get_vendor() == VENDOR_INTEL)
+			{
+				unsigned long val = cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &error_indx);
+				double ret = (double) val / (1 << 13);
+				return (ret > 0) ? ret * 100 : CPU_INVALID_VALUE;
+			}
+			return CPU_INVALID_VALUE;
+		}
+		case INFO_BCLK:
+		{
+			if(!max_clock)
+				max_clock = cpu_clock_measure(100, 1); // Return the non-Turbo clock
+			if(!multiplier)
+				multiplier = cpu_msrinfo(handle, INFO_MAX_MULTIPLIER) / 100;
+			if(max_clock > 0 && multiplier > 0)
+				return (int) ((double) max_clock / multiplier * 100);
+
+			return CPU_INVALID_VALUE;
+		}
 		default:
 			return CPU_INVALID_VALUE;
 	}

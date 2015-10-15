@@ -25,3 +25,4 @@ cpu_msrinfo
 cpu_msr_driver_close
 cpu_clock_by_ic
 cpuid_get_total_cpus
+cpu_msr_driver_open_core

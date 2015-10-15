@@ -239,10 +239,10 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 	}
 }
 
-static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+static cpu_vendor_t cpuid_vendor_identify(const uint32_t *raw_vendor, char *vendor_str)
 {
-	int i, j, basic, xmodel, xfamily, ext;
-	char brandstr[64] = {0};
+	int i;
+	cpu_vendor_t vendor = VENDOR_UNKNOWN;
 	const struct { cpu_vendor_t vendor; char match[16]; }
 	matchtable[NUM_CPU_VENDORS] = {
 		/* source: http://www.sandpile.org/ia32/cpuid.htm */
@@ -257,18 +257,27 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		{ VENDOR_SIS		, "SiS SiS SiS " },
 		{ VENDOR_NSC		, "Geode by NSC" },
 	};
-	
-	memcpy(data->vendor_str + 0, &raw->basic_cpuid[0][1], 4);
-	memcpy(data->vendor_str + 4, &raw->basic_cpuid[0][3], 4);
-	memcpy(data->vendor_str + 8, &raw->basic_cpuid[0][2], 4);
-	data->vendor_str[12] = 0;
+
+	memcpy(vendor_str + 0, &raw_vendor[1], 4);
+	memcpy(vendor_str + 4, &raw_vendor[3], 4);
+	memcpy(vendor_str + 8, &raw_vendor[2], 4);
+	vendor_str[12] = 0;
+
 	/* Determine vendor: */
-	data->vendor = VENDOR_UNKNOWN;
 	for (i = 0; i < NUM_CPU_VENDORS; i++)
-		if (!strcmp(data->vendor_str, matchtable[i].match)) {
-			data->vendor = matchtable[i].vendor;
+		if (!strcmp(vendor_str, matchtable[i].match)) {
+			vendor = matchtable[i].vendor;
 			break;
 		}
+	return vendor;
+}
+
+static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+{
+	int i, j, basic, xmodel, xfamily, ext;
+	char brandstr[64] = {0};
+	data->vendor = cpuid_vendor_identify(raw->basic_cpuid[0], data->vendor_str);
+
 	if (data->vendor == VENDOR_UNKNOWN)
 		return set_error(ERR_CPU_UNKN);
 	basic = raw->basic_cpuid[0][0];
@@ -636,6 +645,23 @@ libcpuid_warn_fn_t cpuid_set_warn_function(libcpuid_warn_fn_t new_fn)
 void cpuid_set_verbosiness_level(int level)
 {
 	_current_verboselevel = level;
+}
+
+cpu_vendor_t cpuid_get_vendor(void)
+{
+	static cpu_vendor_t vendor = VENDOR_UNKNOWN;
+	uint32_t raw_vendor[4];
+	char vendor_str[VENDOR_STR_MAX];
+
+	if(vendor == VENDOR_UNKNOWN) {
+		if (!cpuid_present())
+			set_error(ERR_NO_CPUID);
+		else {
+			cpu_exec_cpuid(0, raw_vendor);
+			vendor = cpuid_vendor_identify(raw_vendor, vendor_str);
+		}
+	}
+	return vendor;
 }
 
 void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list)
