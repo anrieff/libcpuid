@@ -406,7 +406,7 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 #define PLATFORM_INFO_MSR_low 8
 #define PLATFORM_INFO_MSR_high 15
 
-int get_bits_value(unsigned long val, int highbit, int lowbit)
+static int get_bits_value(unsigned long val, int highbit, int lowbit)
 {
 	unsigned long data = val;
 	int bits = highbit - lowbit + 1;
@@ -417,7 +417,7 @@ int get_bits_value(unsigned long val, int highbit, int lowbit)
 	return(data);
 }
 
-uint64_t cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t reg, unsigned int highbit,
+static uint64_t cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t reg, unsigned int highbit,
                         unsigned int lowbit, int* error_indx)
 {
 	uint64_t data;
