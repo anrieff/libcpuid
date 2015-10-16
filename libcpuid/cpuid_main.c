@@ -621,6 +621,14 @@ const char* cpuid_error(void)
 		{ ERR_BADFMT   , "Bad file format"},
 		{ ERR_NOT_IMP  , "Not implemented"},
 		{ ERR_CPU_UNKN , "Unsupported processor"},
+		{ ERR_NO_RDMSR , "RDMSR instruction is not supported"},
+		{ ERR_NO_DRIVER, "RDMSR driver error (generic)"},
+		{ ERR_NO_PERMS , "No permissions to install RDMSR driver"},
+		{ ERR_EXTRACT  , "Cannot extract RDMSR driver (read only media?)"},
+		{ ERR_HANDLE   , "Bad handle"},
+		{ ERR_INVMSR   , "Invalid MSR"},
+		{ ERR_INVCNB   , "Invalid core number"},
+		{ ERR_HANDLE_R , "Error on handle read"},
 	};
 	unsigned i;
 	for (i = 0; i < COUNT_OF(matchtable); i++)
