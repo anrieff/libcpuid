@@ -42,6 +42,12 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 	return NULL;
 }
 
+struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
+{
+	set_error(ERR_NOT_IMP);
+	return NULL;
+}
+
 int cpu_rdmsr(struct msr_driver_t* driver, int msr_index, uint64_t* result)
 {
 	return set_error(ERR_NOT_IMP);
@@ -174,6 +180,12 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 		return NULL;
 	}
 	return drv;
+}
+
+struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
+{
+	warnf(1, "cpu_msr_driver_open_core(): parameter ignored (function is the same as cpu_msr_driver_open)\n");
+	return cpu_msr_driver_open();
 }
 
 typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
