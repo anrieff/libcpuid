@@ -319,7 +319,7 @@ static int check_need_raw_data(void)
 static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
                        struct cpu_id_t* data)
 {
-	int i;
+	int i, value;
 	struct msr_driver_t* handle;
 	switch (query) {
 		case NEED_CPUID_PRESENT:
@@ -416,10 +416,22 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 			if ((handle = cpu_msr_driver_open()) == NULL) {
 				fprintf(fout, "Cannot open MSR driver: %s\n", cpuid_error());
 			} else {
-				fprintf(fout, "mperf = %d\n", cpu_msrinfo(handle, INFO_MPERF));
-				fprintf(fout, "aperf = %d\n", cpu_msrinfo(handle, INFO_APERF));
-				fprintf(fout, "current cpu:fsb = %.1f\n", cpu_msrinfo(handle, INFO_CUR_MULTIPLIER) / 100.0f);
-				fprintf(fout, "max cpu:fsb = %.1f\n", cpu_msrinfo(handle, INFO_MAX_MULTIPLIER) / 100.0f);
+				if ((value = cpu_msrinfo(handle, INFO_MPERF)) != CPU_INVALID_VALUE)
+					fprintf(fout, "  MSR.mperf  : %d MHz\n", value);
+				if ((value = cpu_msrinfo(handle, INFO_APERF)) != CPU_INVALID_VALUE)
+					fprintf(fout, "  MSR.aperf  : %d MHz\n", value);
+				if ((value = cpu_msrinfo(handle, INFO_CUR_MULTIPLIER)) != CPU_INVALID_VALUE)
+					fprintf(fout, "  cur. multi.: %d MHz\n", value);
+				if ((value = cpu_msrinfo(handle, INFO_MAX_MULTIPLIER)) != CPU_INVALID_VALUE)
+					fprintf(fout, "  max. multi.: %d MHz\n", value);
+				if ((value = cpu_msrinfo(handle, INFO_TEMPERATURE)) != CPU_INVALID_VALUE)
+					fprintf(fout, "  temperature: %d degrees Celsius\n", value);
+				if ((value = cpu_msrinfo(handle, INFO_THROTTLING)) != CPU_INVALID_VALUE)
+					fprintf(fout, "  throttling : %s\n", value ? "yes" : "no");
+				if ((value = cpu_msrinfo(handle, INFO_VOLTAGE)) != CPU_INVALID_VALUE)
+					fprintf(fout, "  core volt. : %.2lf Volts\n", value / 100.0);
+				if ((value = cpu_msrinfo(handle, INFO_BCLK)) != CPU_INVALID_VALUE)
+					fprintf(fout, "  base clock : %.2lf MHz\n", value / 100.0);
 				cpu_msr_driver_close(handle);
 			}
 			break;
