@@ -32,5 +32,6 @@ So far, I'm aware of the following projects which utilize libcpuid:
 
 * CPU-X (https://github.com/X0rg/CPU-X)
 * fre:ac (https://www.freac.org/)
+* ucbench (http://anrieff.net/ucbench)
 
 We'd love to hear from you if you are also using libcpuid and want your project listed above.
