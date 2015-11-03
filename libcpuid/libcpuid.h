@@ -29,7 +29,7 @@
  * @File     libcpuid.h
  * @Author   Veselin Georgiev
  * @Date     Oct 2008
- * @Version  0.2.1
+ * @Version  0.2.2
  *
  * Version history:
  *
@@ -45,6 +45,10 @@
  *                      sizeof cpu_id_t is now different.
  *  0.2.1 (2012-05-26): Support for Ivy Bridge, and detecting the presence of
  *                      the RdRand instruction.
+ *  0.2.2 (2015-11-04): Support for newer processors up to Haswell and Vishera.
+ *                      Fix clock detection in cpu_clock_by_ic() for Bulldozer.
+ *                      More entries supported in cpu_msrinfo().
+ *                      *BSD and Solaris support (unofficial).
  */
 
 /** @mainpage A simple libcpuid introduction

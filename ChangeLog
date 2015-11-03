@@ -22,3 +22,11 @@ Version 0.2.0 (2011-10-11):
 Version 0.2.1 (2012-05-26):
 	* Support for Ivy Bridge, and detecting the presence of the RdRand
 	  instruction.
+
+Version 0.2.2 (2015-11-04):
+	* Support for newer processors up to Haswell and Vishera
+	* Fix clock detection in cpu_clock_by_ic() for Bulldozer
+	* Support for detection of AVX/AVX2/BMI1/BMI2
+	* More entries supported in cpu_msrinfo()
+	* Rename of some CPU codenames, made more consistent
+	* *BSD and Solaris support (unofficial)
