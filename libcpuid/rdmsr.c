@@ -184,7 +184,7 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 
 struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
 {
-	warnf(1, "cpu_msr_driver_open_core(): parameter ignored (function is the same as cpu_msr_driver_open)\n");
+	warnf("cpu_msr_driver_open_core(): parameter ignored (function is the same as cpu_msr_driver_open)\n");
 	return cpu_msr_driver_open();
 }
 
@@ -418,15 +418,15 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 #define PLATFORM_INFO_MSR_low 8
 #define PLATFORM_INFO_MSR_high 15
 
-static int get_bits_value(unsigned long val, int highbit, int lowbit)
+static int get_bits_value(uint64_t val, int highbit, int lowbit)
 {
-	unsigned long data = val;
+	uint64_t data = val;
 	int bits = highbit - lowbit + 1;
 	if(bits < 64){
 	    data >>= lowbit;
 	    data &= (1ULL<<bits) - 1;
 	}
-	return(data);
+	return (int) data;
 }
 
 static uint64_t cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t reg, unsigned int highbit,
@@ -436,8 +436,7 @@ static uint64_t cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t reg, unsig
 	int bits;
 	*error_indx =0;
 
-	if (pread (handle->fd, &data, sizeof data, reg) != sizeof data)
-	{
+	if (cpu_rdmsr(handle, reg, &data)) {
 		*error_indx = 1;
 		return set_error(ERR_HANDLE_R);
 	}
@@ -454,7 +453,9 @@ static uint64_t cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t reg, unsig
 	if (data & (1ULL << (bits - 1)))
 	{
 		data &= ~(1ULL << (bits - 1));
+#pragma warning(disable: 4146)
 		data = -data;
+#pragma warning(default: 4146)
 	}
 
 	*error_indx = 0;
@@ -467,6 +468,8 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 	int err, error_indx, cur_clock;
 	static int max_clock = 0, multiplier = 0;
 	static double bclk = 0.0;
+	uint64_t val;
+	int digital_readout, thermal_status, PROCHOT_temp;
 
 	if (handle == NULL)
 		return set_error(ERR_HANDLE);
@@ -509,11 +512,12 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			if(cpuid_get_vendor() == VENDOR_INTEL)
 			{
 				// https://github.com/ajaiantilal/i7z/blob/5023138d7c35c4667c938b853e5ea89737334e92/helper_functions.c#L59
-				unsigned long val = cpu_rdmsr_range(handle, IA32_THERM_STATUS, 63, 0, &error_indx);
-				int digital_readout = get_bits_value(val, 23, 16);
-				int thermal_status = get_bits_value(val, 32, 31);
+				
+				val = cpu_rdmsr_range(handle, IA32_THERM_STATUS, 63, 0, &error_indx);
+				digital_readout = get_bits_value(val, 23, 16);
+				thermal_status = get_bits_value(val, 32, 31);
 				val = cpu_rdmsr_range(handle, IA32_TEMPERATURE_TARGET, 63, 0, &error_indx);
-				int PROCHOT_temp = get_bits_value(val, 23, 16);
+				PROCHOT_temp = get_bits_value(val, 23, 16);
 
 				// These bits are thermal status : 1 if supported, 0 else
 				if(thermal_status)
@@ -526,9 +530,9 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		{
 			if(cpuid_get_vendor() == VENDOR_INTEL)
 			{
-				unsigned long val = cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &error_indx);
+				uint64_t val = cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &error_indx);
 				double ret = (double) val / (1 << 13);
-				return (ret > 0) ? ret * 100 : CPU_INVALID_VALUE;
+				return (ret > 0) ? (int) (ret * 100) : CPU_INVALID_VALUE;
 			}
 			return CPU_INVALID_VALUE;
 		}
