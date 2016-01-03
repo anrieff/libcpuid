@@ -255,7 +255,9 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  2, -1, 20,   -1,   2,   512,    -1, FUSION_Z                ,     0, "Brazos Desna (Dual-core)"      },
 	/* 2012 CPUs: Piledriver architecture: Trinity and Richland */
 	{ 15,  0, -1, 21,   10,   2,  1024,    -1, FUSION_A                ,     0, "Trinity X2"                    },
+	{ 15,  0, -1, 21,   16,   2,  1024,    -1, FUSION_A                ,     0, "Trinity X2"                    },
 	{ 15,  0, -1, 21,   10,   4,  1024,    -1, FUSION_A                ,     0, "Trinity X4"                    },
+	{ 15,  0, -1, 21,   16,   4,  1024,    -1, FUSION_A                ,     0, "Trinity X4"                    },
 	{ 15,  3, -1, 21,   13,   2,  1024,    -1, FUSION_A                ,     0, "Richland X2"                   },
 	{ 15,  3, -1, 21,   13,   4,  1024,    -1, FUSION_A                ,     0, "Richland X4"                   },
 	/* 2013 CPUs: Jaguar architecture: Kabini and Temash */
