@@ -389,10 +389,8 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		{ 15, CPU_FEATURE_PDCM },
 		{ 18, CPU_FEATURE_DCA },
 		{ 20, CPU_FEATURE_SSE4_2 },
+		{ 21, CPU_FEATURE_X2APIC },
 		{ 22, CPU_FEATURE_MOVBE },
-		{ 25, CPU_FEATURE_AES },
-		{ 26, CPU_FEATURE_XSAVE },
-		{ 27, CPU_FEATURE_OSXSAVE },
 		{ 30, CPU_FEATURE_RDRAND },
 	};
 	const struct feature_map_t matchtable_edx81[] = {
