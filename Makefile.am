@@ -9,7 +9,15 @@ EXTRA_DIST     = libcpuid.pc.in libcpuid_vc71.sln libcpuid_vc9.sln Readme.md
 consistency:
 	$(top_srcdir)/libcpuid/check-consistency.py $(top_srcdir)/libcpuid
 
-test:
+# "make test" is a bit hacked in order to speed up tests by bypassing the
+# libtool wrapper script. The old (slower) version is available as "test-old"
+
+test: test-fast
+
+test-fast:
+	LD_LIBRARY_PATH=$(top_builddir)/libcpuid/.libs $(top_srcdir)/tests/run_tests.py $(top_builddir)/cpuid_tool/.libs/cpuid_tool $(top_srcdir)/tests 
+
+test-old:
 	$(top_srcdir)/tests/run_tests.py $(top_builddir)/cpuid_tool/cpuid_tool $(top_srcdir)/tests
 
 fix-tests:
