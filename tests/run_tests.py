@@ -12,6 +12,7 @@ fields = [ "family", "model", "stepping", "extfamily", "extmodel", "cores",
 
 args = sys.argv
 fix = False
+show_test_fast_warning = False
 
 if len(args) < 3:
 	print """
@@ -30,6 +31,9 @@ cpuid_tool = args[1]
 for arg in args[2:]:
 	if arg == "--fix":
 		fix = True
+		continue
+	if arg == "--show-test-fast-warning":
+		show_test_fast_warning = True
 		continue
 	if os.path.isdir(arg):
 		# gather all *.test files from subdirs amd and intel:
@@ -120,5 +124,10 @@ for test_file_name in filelist:
 			errors = True
 		build_output = False
 
-if not errors:
+if errors:
+	if show_test_fast_warning:
+		print """
+You're running tests in fast mode; before taking any action on the errors
+above, please confirm that the slow mode ('make test-old') also fails."""
+else:
 	print "All successfull!"
