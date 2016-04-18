@@ -196,10 +196,10 @@ const struct match_entry_t cpudb_intel[] = {
 	{ 15,  6, -1, 15, -1,   1,    -1,    -1, XEON              ,     0, "Xeon (Dempsey)"          },
 	
 	/* Pentium Ds */
-	{ 15,  4,  4, 15, -1,   1,    -1,    -1, NO_CODE           ,     0, "Pentium D"               },
-	{ 15,  4, -1, 15, -1,   1,    -1,    -1, PENTIUM_D         ,     0, "Pentium D"               },
-	{ 15,  4,  7, 15, -1,   1,    -1,    -1, NO_CODE           ,     0, "Pentium D"               },
-	{ 15,  6, -1, 15, -1,   1,    -1,    -1, PENTIUM_D         ,     0, "Pentium D"               },
+	{ 15,  4,  4, 15, -1,   1,    -1,    -1, NO_CODE           ,     0, "Pentium D (SmithField)"  },
+	{ 15,  4, -1, 15, -1,   1,    -1,    -1, PENTIUM_D         ,     0, "Pentium D (SmithField)"  },
+	{ 15,  4,  7, 15, -1,   1,    -1,    -1, NO_CODE           ,     0, "Pentium D (SmithField)"  },
+	{ 15,  6, -1, 15, -1,   1,    -1,    -1, PENTIUM_D         ,     0, "Pentium D (Presler)"     },
 
 	/* Celeron and Celeron Ds */
 	{ 15,  1, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron (Willamette-128)"   },
