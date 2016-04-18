@@ -202,11 +202,11 @@ const struct match_entry_t cpudb_intel[] = {
 	{ 15,  6, -1, 15, -1,   1,    -1,    -1, PENTIUM_D         ,     0, "Pentium D"               },
 
 	/* Celeron and Celeron Ds */
-	{ 15,  1, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron (128K)"      }, 
-	{ 15,  2, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron (128K)"      },
-	{ 15,  3, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "Celeron D"               },
-	{ 15,  4, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "Celeron D"               },
-	{ 15,  6, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "Celeron D"               },
+	{ 15,  1, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron (Willamette-128)"   },
+	{ 15,  2, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron (Northwood-128)"    },
+	{ 15,  3, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Prescott-256)"   },
+	{ 15,  4, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Prescott-256)"   },
+	{ 15,  6, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Cedar Mill-512)" },
 	
 	/* -------------------------------------------------- */
 	/* Intel Core microarchitecture - P6-based */
