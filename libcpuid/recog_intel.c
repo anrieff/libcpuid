@@ -140,12 +140,12 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  5, -1, -1, -1,   1,    -1,    -1, MOBILE_PENTIUM    ,     0, "Mobile Pentium II (Tonga)"},
 	{  6,  6, -1, -1, -1,   1,    -1,    -1, NO_CODE           ,     0, "Pentium II (Dixon)"      },
 	
-	{  6,  3, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-II Xeon"               },
-	{  6,  5, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-II Xeon"               },
-	{  6,  6, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-II Xeon"               },
+	{  6,  3, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-II Xeon (Klamath)"     },
+	{  6,  5, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-II Xeon (Drake)"       },
+	{  6,  6, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-II Xeon (Dixon)"       },
 		
-	{  6,  5, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-II Celeron (no L2)"    },
-	{  6,  6, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-II Celeron (128K)"     },
+	{  6,  5, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-II Celeron (Covington) (no L2)" },
+	{  6,  6, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-II Celeron (Mendocino) (128K)"  },
 	
 	/* -------------------------------------------------- */
 	
@@ -154,15 +154,15 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, -1,   1,    -1,    -1, NO_CODE           ,     0, "Pentium III (Coppermine)"},
 	{  6, 11, -1, -1, -1,   1,    -1,    -1, NO_CODE           ,     0, "Pentium III (Tualatin)"  },
 	
-	{  6,  7, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-III Xeon"              },
-	{  6,  8, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-III Xeon"              },
-	{  6, 10, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-III Xeon"              },
-	{  6, 11, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-III Xeon"              },
+	{  6,  7, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-III Xeon (Tanner)"     },
+	{  6,  8, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-III Xeon (Cascades)"   },
+	{  6, 10, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-III Xeon (Cascades)"   },
+	{  6, 11, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-III Xeon (Tualatin)"   },
 	
-	{  6,  7, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron"           },
-	{  6,  8, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron"           },
-	{  6, 10, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron"           },
-	{  6, 11, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron"           },
+	{  6,  7, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Katmai)"     },
+	{  6,  8, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Coppermine-128)" },
+	{  6, 10, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Coppermine-128)" },
+	{  6, 11, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Tualatin-256)"   },
 	
 	/* Netburst based (Pentium 4 and later)
 	   classic P4s */
