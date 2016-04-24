@@ -377,7 +377,6 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		{ 31, CPU_FEATURE_PBE },
 	};
 	const struct feature_map_t matchtable_ecx1[] = {
-		{  1, CPU_FEATURE_PCLMUL },
 		{  2, CPU_FEATURE_DTS64 },
 		{  4, CPU_FEATURE_DS_CPL },
 		{  5, CPU_FEATURE_VMX },
@@ -388,10 +387,7 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		{ 14, CPU_FEATURE_XTPR },
 		{ 15, CPU_FEATURE_PDCM },
 		{ 18, CPU_FEATURE_DCA },
-		{ 20, CPU_FEATURE_SSE4_2 },
 		{ 21, CPU_FEATURE_X2APIC },
-		{ 22, CPU_FEATURE_MOVBE },
-		{ 30, CPU_FEATURE_RDRAND },
 	};
 	const struct feature_map_t matchtable_edx81[] = {
 		{ 20, CPU_FEATURE_XD },

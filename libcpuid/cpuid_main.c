@@ -182,17 +182,21 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 	};
 	const struct feature_map_t matchtable_ecx1[] = {
 		{  0, CPU_FEATURE_PNI },
+		{  1, CPU_FEATURE_PCLMUL },
 		{  3, CPU_FEATURE_MONITOR },
 		{  9, CPU_FEATURE_SSSE3 },
 		{ 12, CPU_FEATURE_FMA3 },
 		{ 13, CPU_FEATURE_CX16 },
 		{ 19, CPU_FEATURE_SSE4_1 },
+		{ 20, CPU_FEATURE_SSE4_2 },
+		{ 22, CPU_FEATURE_MOVBE },
 		{ 23, CPU_FEATURE_POPCNT },
 		{ 25, CPU_FEATURE_AES },
 		{ 26, CPU_FEATURE_XSAVE },
 		{ 27, CPU_FEATURE_OSXSAVE },
 		{ 28, CPU_FEATURE_AVX },
 		{ 29, CPU_FEATURE_F16C },
+		{ 30, CPU_FEATURE_RDRAND },
 	};
 	const struct feature_map_t matchtable_ebx7[] = {
 		{  3, CPU_FEATURE_BMI1 },
