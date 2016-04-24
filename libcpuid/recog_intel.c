@@ -612,7 +612,9 @@ static void decode_intel_number_of_cores(struct cpu_raw_data_t* raw,
 			data->num_logical_cpus = logical_cpus;
 		} else {
 			data->num_cores = 1;
-			data->num_logical_cpus = (logical_cpus >= 2 ? logical_cpus : 2);
+			data->num_logical_cpus = (logical_cpus >= 1 ? logical_cpus : 1);
+			if (data->num_logical_cpus == 1)
+				data->flags[CPU_FEATURE_HT] = 0;
 		}
 	} else {
 		data->num_cores = data->num_logical_cpus = 1;
