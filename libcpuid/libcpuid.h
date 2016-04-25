@@ -372,6 +372,8 @@ typedef enum {
  */
 typedef enum {
 	CPU_HINT_SSE_SIZE_AUTH = 0,	/*!< SSE unit size is authoritative (not only a Family/Model guesswork, but based on an actual CPUID bit) */
+	CPU_HINT_BRAND_CODE,	/*!< Extra info, ex: set for intel processors */
+	CPU_HINT_MODEL_CODE,	/*!< Extra info, ex: set for intel processors */
 	/* termination */
 	NUM_CPU_HINTS,
 } cpu_hint_t;

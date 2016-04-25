@@ -803,9 +803,12 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	} else if (raw->basic_cpuid[0][0] >= 2) {
 		decode_intel_oldstyle_cache_info(raw, data);
 	}
+	data->detection_hints[CPU_HINT_BRAND_CODE] = get_brand_code(data);
+	data->detection_hints[CPU_HINT_MODEL_CODE] = get_model_code(data);
 	decode_intel_number_of_cores(raw, data);
 	match_cpu_codename(cpudb_intel, COUNT_OF(cpudb_intel), data,
-		get_brand_code(data), get_model_code(data));
+		data->detection_hints[CPU_HINT_BRAND_CODE],
+		data->detection_hints[CPU_HINT_MODEL_CODE]);
 	return 0;
 }
 
