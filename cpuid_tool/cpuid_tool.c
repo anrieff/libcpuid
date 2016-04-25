@@ -86,6 +86,8 @@ typedef enum {
 	NEED_CLOCK_IC,
 	NEED_RDMSR,
 	NEED_SSE_UNIT_SIZE,
+	NEED_BRAND_CODE, //intel
+	NEED_MODEL_CODE, //intel
 } output_data_switch;
 
 int need_input = 0,
@@ -98,7 +100,7 @@ int need_input = 0,
     need_version = 0,
     need_cpulist = 0;
 
-#define MAX_REQUESTS 32
+#define MAX_REQUESTS 34
 int num_requests = 0;
 output_data_switch requests[MAX_REQUESTS];
 
@@ -138,6 +140,8 @@ matchtable[] = {
 	{ NEED_CLOCK_IC     , "--clock-ic"     , 1},
 	{ NEED_RDMSR        , "--rdmsr"        , 0},
 	{ NEED_SSE_UNIT_SIZE, "--sse-size"     , 1},
+	{ NEED_BRAND_CODE   , "--brandcode"    , 1},
+	{ NEED_MODEL_CODE   , "--modelcode"    , 1},
 };
 
 const int sz_match = (sizeof(matchtable) / sizeof(matchtable[0]));
@@ -177,6 +181,7 @@ static void usage(void)
 		}
 	}
 	printf("\n\n");
+	printf("--brandcode and --modelcode have meaning for intel cpus\n\n");
 	printf("If `-' is used for <file>, then stdin/stdout will be used instead of files.\n");
 	printf("When no options are present, the program behaves as if it was invoked with\n");
 	printf("  cpuid_tool \"--save=raw.txt --outfile=report.txt --report --verbose\"\n");
@@ -442,6 +447,12 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 				data->detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
 			break;
 		}
+		case NEED_BRAND_CODE:
+			fprintf(fout, "%d\n", data->detection_hints[CPU_HINT_BRAND_CODE]);
+			break;
+		case NEED_MODEL_CODE:
+			fprintf(fout, "%d\n", data->detection_hints[CPU_HINT_MODEL_CODE]);
+			break;
 		default:
 			fprintf(fout, "How did you get here?!?\n");
 			break;
