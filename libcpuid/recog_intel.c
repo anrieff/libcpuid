@@ -804,8 +804,12 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		decode_intel_oldstyle_cache_info(raw, data);
 	}
 	decode_intel_number_of_cores(raw, data);
+	intel_code_t brand_code  = get_brand_code(data);
+	intel_model_t model_code = get_model_code(data);
+	debugf(2, "Detected Intel brand code: %d\n", brand_code);
+	debugf(2, "Detected Intel model code: %d\n", model_code);
 	match_cpu_codename(cpudb_intel, COUNT_OF(cpudb_intel), data,
-		get_brand_code(data), get_model_code(data));
+		brand_code, model_code);
 	return 0;
 }
 
