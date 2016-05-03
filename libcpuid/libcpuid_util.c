@@ -111,7 +111,23 @@ void match_cpu_codename(const struct match_entry_t* matchtable, int count,
 			bestindex = i;
 		}
 	}
-	strcpy(data->cpu_codename, matchtable[bestindex].name);
+
+	char *bestindex_str = matchtable[bestindex].name;
+	char suffix = 'K';
+	int32_t cache  = 0;
+	if (data->l2_cache)
+		cache = data->l2_cache;
+	if (data->l3_cache > data->l2_cache)
+		cache = data->l3_cache;
+	if (cache) {
+		if (cache >= 1024) {
+			cache /= 1024;
+			suffix = 'M';
+		}
+		snprintf(data->cpu_codename, sizeof(char)*64, "%s %d%c", bestindex_str, cache, suffix);
+	}
+	else
+		snprintf(data->cpu_codename, sizeof(char)*64, "%s", bestindex_str);
 }
 
 void generic_get_cpu_list(const struct match_entry_t* matchtable, int count,

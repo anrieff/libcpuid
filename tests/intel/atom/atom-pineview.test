@@ -89,5 +89,5 @@ intel_fn11[3]=07280203 00000000 00000000 00000503
 64
 -1
 128 (non-authoritative)
-Atom (Pineview)
+Atom (Pineview) 512K
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl tm2 ssse3 cx16 xtpr pdcm syscall xd movbe lm lahf_lm

@@ -85,5 +85,5 @@ intel_fn4[3]=02b3b001 000000f0 00000000 2c04307d
 64
 -1
 64 (non-authoritative)
-Pentium M (Dothan)
+Pentium M (Dothan) 2M
 fpu vme de pse tsc msr mce cx8 mtrr sep pge mca cmov pat clflush dts acpi mmx fxsr sse sse2 ss tm pbe est tm2

@@ -85,5 +85,5 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 -1
 128 (non-authoritative)
-Xeon (Harpertown)
+Xeon (Harpertown) 6M
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 xd lm lahf_lm

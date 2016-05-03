@@ -85,5 +85,5 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 -1
 64 (non-authoritative)
-Sempron 64 (Sparta/256K)
+Sempron 64 (Sparta) 256K
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 pni cx16 syscall mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm 3dnowprefetch ts fid vid ttp tm_amd stc 100mhzsteps
