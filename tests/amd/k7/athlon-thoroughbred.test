@@ -85,5 +85,5 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 -1
 64 (non-authoritative)
-Athlon XP (Thoroughbred)
+Athlon XP (Thoroughbred) 256K
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 mmx fxsr sse syscall mmxext 3dnow 3dnowext ts

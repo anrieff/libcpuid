@@ -85,5 +85,5 @@ intel_fn4[3]=665b5001 00000000 00000000 007b7040
 64
 -1
 64 (non-authoritative)
-Xeon (Prestonia)
+Xeon (Prestonia) 512K
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe cid xtpr

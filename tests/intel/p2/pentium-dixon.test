@@ -85,5 +85,5 @@ intel_fn4[3]=03020101 00000000 00000000 0c040842
 32
 -1
 -1 (non-authoritative)
-Pentium II (Dixon)
+Pentium II (Dixon) 256K
 fpu vme de pse tsc msr pae mce cx8 mtrr sep pge mca cmov pat pse36 mmx fxsr

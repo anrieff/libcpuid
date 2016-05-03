@@ -85,5 +85,5 @@ intel_fn4[3]=00000000 00000000 00000000 00000000
 64
 -1
 64 (non-authoritative)
-Opteron (Dual Core)
+Opteron (Dual Core) 1M
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni syscall mmxext 3dnow 3dnowext nx fxsr_opt lm lahf_lm cmp_legacy ts fid vid ttp

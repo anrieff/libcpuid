@@ -160,9 +160,9 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 11, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-III Xeon (Tualatin)"   },
 	
 	{  6,  7, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Katmai)"     },
-	{  6,  8, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Coppermine-128)" },
-	{  6, 10, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Coppermine-128)" },
-	{  6, 11, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Tualatin-256)"   },
+	{  6,  8, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Coppermine)" },
+	{  6, 10, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Coppermine)" },
+	{  6, 11, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Tualatin)"   },
 	
 	/* Netburst based (Pentium 4 and later)
 	   classic P4s */
@@ -202,11 +202,11 @@ const struct match_entry_t cpudb_intel[] = {
 	{ 15,  6, -1, 15, -1,   1,    -1,    -1, PENTIUM_D         ,     0, "Pentium D (Presler)"     },
 
 	/* Celeron and Celeron Ds */
-	{ 15,  1, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron (Willamette-128)"   },
-	{ 15,  2, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron (Northwood-128)"    },
-	{ 15,  3, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Prescott-256)"   },
-	{ 15,  4, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Prescott-256)"   },
-	{ 15,  6, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Cedar Mill-512)" },
+	{ 15,  1, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron (Willamette)"   },
+	{ 15,  2, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron (Northwood)"    },
+	{ 15,  3, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Prescott)"   },
+	{ 15,  4, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Prescott)"   },
+	{ 15,  6, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Cedar Mill)" },
 	
 	/* -------------------------------------------------- */
 	/* Intel Core microarchitecture - P6-based */
@@ -238,15 +238,15 @@ const struct match_entry_t cpudb_intel[] = {
 	
 	{  6, 15, -1, -1, -1,   1,    -1,    -1, NO_CODE           ,     0, "Unknown Core 2"            },
 	{  6, 15, -1, -1, -1,   2,  4096,    -1, CORE_DUO          ,     0, "Conroe (Core 2 Duo)"       },
-	{  6, 15, -1, -1, -1,   2,  1024,    -1, CORE_DUO          ,     0, "Conroe (Core 2 Duo) 1024K" },
-	{  6, 15, -1, -1, -1,   2,   512,    -1, CORE_DUO          ,     0, "Conroe (Core 2 Duo) 512K"  },
+	{  6, 15, -1, -1, -1,   2,  1024,    -1, CORE_DUO          ,     0, "Conroe (Core 2 Duo)"       },
+	{  6, 15, -1, -1, -1,   2,   512,    -1, CORE_DUO          ,     0, "Conroe (Core 2 Duo)"       },
 	{  6, 15, -1, -1, -1,   4,    -1,    -1, QUAD_CORE         ,     0, "Kentsfield (Core 2 Quad)"  },
 	{  6, 15, -1, -1, -1,   4,  4096,    -1, QUAD_CORE         ,     0, "Kentsfield (Core 2 Quad)"  },
 	{  6, 15, -1, -1, -1, 400,    -1,    -1, MORE_THAN_QUADCORE,     0, "More than quad-core"       },
 	{  6, 15, -1, -1, -1,   2,  2048,    -1, CORE_DUO          ,     0, "Allendale (Core 2 Duo)"    },
 	{  6, 15, -1, -1, -1,   2,    -1,    -1, MOBILE_CORE_DUO   ,     0, "Merom (Core 2 Duo)"        },
-	{  6, 15, -1, -1, -1,   2,  2048,    -1, MEROM             ,     0, "Merom (Core 2 Duo) 2048K"  },
-	{  6, 15, -1, -1, -1,   2,  4096,    -1, MEROM             ,     0, "Merom (Core 2 Duo) 4096K"  },
+	{  6, 15, -1, -1, -1,   2,  2048,    -1, MEROM             ,     0, "Merom (Core 2 Duo)"        },
+	{  6, 15, -1, -1, -1,   2,  4096,    -1, MEROM             ,     0, "Merom (Core 2 Duo)"        },
 	
 	{  6, 15, -1, -1, 15,   1,    -1,    -1, CELERON           ,     0, "Conroe-L (Celeron)"        },
 	{  6,  6, -1, -1, 22,   1,    -1,    -1, CELERON           ,     0, "Conroe-L (Celeron)"        },
@@ -261,35 +261,35 @@ const struct match_entry_t cpudb_intel[] = {
 	
 	{  6,  7, -1, -1, 23,   1,    -1,    -1, CORE_SOLO         ,     0, "Unknown Core 45nm"        },
 	{  6,  7, -1, -1, 23,   1,    -1,    -1, CORE_DUO          ,     0, "Unknown Core 45nm"        },
-	{  6,  7, -1, -1, 23,   2,  1024,    -1, WOLFDALE          ,     0, "Celeron Wolfdale 1M" },
-	{  6,  7, -1, -1, 23,   2,  2048,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo) 2M" },
-	{  6,  7, -1, -1, 23,   2,  3072,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo) 3M" },
-	{  6,  7, -1, -1, 23,   2,  6144,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo) 6M" },
+	{  6,  7, -1, -1, 23,   2,  1024,    -1, WOLFDALE          ,     0, "Celeron Wolfdale"         },
+	{  6,  7, -1, -1, 23,   2,  2048,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo)"    },
+	{  6,  7, -1, -1, 23,   2,  3072,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo)"    },
+	{  6,  7, -1, -1, 23,   2,  6144,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo)"    },
 	{  6,  7, -1, -1, 23,   1,    -1,    -1, MOBILE_CORE_DUO   ,     0, "Penryn (Core 2 Duo)"      },
 	{  6,  7, -1, -1, 23,   2,  1024,    -1, PENRYN            ,     0, "Penryn (Core 2 Duo)"      },
-	{  6,  7, -1, -1, 23,   2,  3072,    -1, PENRYN            ,     0, "Penryn (Core 2 Duo) 3M"   },
-	{  6,  7, -1, -1, 23,   2,  6144,    -1, PENRYN            ,     0, "Penryn (Core 2 Duo) 6M"   },
-	{  6,  7, -1, -1, 23,   4,  2048,    -1, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad) 2M"},
-	{  6,  7, -1, -1, 23,   4,  3072,    -1, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad) 3M"},
-	{  6,  7, -1, -1, 23,   4,  6144,    -1, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad) 6M"},
+	{  6,  7, -1, -1, 23,   2,  3072,    -1, PENRYN            ,     0, "Penryn (Core 2 Duo)"      },
+	{  6,  7, -1, -1, 23,   2,  6144,    -1, PENRYN            ,     0, "Penryn (Core 2 Duo)"      },
+	{  6,  7, -1, -1, 23,   4,  2048,    -1, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad)"  },
+	{  6,  7, -1, -1, 23,   4,  3072,    -1, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad)"  },
+	{  6,  7, -1, -1, 23,   4,  6144,    -1, QUAD_CORE         ,     0, "Yorkfield (Core 2 Quad)"  },
 	
 	/* Core microarchitecture-based Xeons: */
 	{  6, 14, -1, -1, 14,   1,    -1,    -1, XEON              ,     0, "Xeon LV"                  },
 	{  6, 15, -1, -1, 15,   2,  4096,    -1, XEON              , _5100, "Xeon (Woodcrest)"         },
-	{  6, 15, -1, -1, 15,   2,  2048,    -1, XEON              , _3000, "Xeon (Conroe/2M)"         },
-	{  6, 15, -1, -1, 15,   2,  4096,    -1, XEON              , _3000, "Xeon (Conroe/4M)"         },
+	{  6, 15, -1, -1, 15,   2,  2048,    -1, XEON              , _3000, "Xeon (Conroe)"            },
+	{  6, 15, -1, -1, 15,   2,  4096,    -1, XEON              , _3000, "Xeon (Conroe)"            },
 	{  6, 15, -1, -1, 15,   4,  4096,    -1, XEON              , X3200, "Xeon (Kentsfield)"        },
 	{  6, 15, -1, -1, 15,   4,  4096,    -1, XEON              , _5300, "Xeon (Clovertown)"        },
 	{  6,  7, -1, -1, 23,   2,  6144,    -1, XEON              , _3100, "Xeon (Wolfdale)"          },
 	{  6,  7, -1, -1, 23,   2,  6144,    -1, XEON              , _5200, "Xeon (Wolfdale DP)"       },
 	{  6,  7, -1, -1, 23,   4,  6144,    -1, XEON              , _5400, "Xeon (Harpertown)"        },
-	{  6,  7, -1, -1, 23,   4,  3072,    -1, XEON              , X3300, "Xeon (Yorkfield/3M)"      },
-	{  6,  7, -1, -1, 23,   4,  6144,    -1, XEON              , X3300, "Xeon (Yorkfield/6M)"      },
+	{  6,  7, -1, -1, 23,   4,  3072,    -1, XEON              , X3300, "Xeon (Yorkfield)"         },
+	{  6,  7, -1, -1, 23,   4,  6144,    -1, XEON              , X3300, "Xeon (Yorkfield)"         },
 
 	/* Nehalem CPUs (45nm): */
 	{  6, 10, -1, -1, 26,   4,    -1,    -1, XEON_GAINESTOWN   ,     0, "Gainestown (Xeon)"        },
-	{  6, 10, -1, -1, 26,   4,    -1,  4096, XEON_GAINESTOWN   ,     0, "Gainestown 4M (Xeon)"     },
-	{  6, 10, -1, -1, 26,   4,    -1,  8192, XEON_GAINESTOWN   ,     0, "Gainestown 8M (Xeon)"     },
+	{  6, 10, -1, -1, 26,   4,    -1,  4096, XEON_GAINESTOWN   ,     0, "Gainestown (Xeon)"        },
+	{  6, 10, -1, -1, 26,   4,    -1,  8192, XEON_GAINESTOWN   ,     0, "Gainestown (Xeon)"        },
 	{  6, 10, -1, -1, 26,   4,    -1,    -1, XEON_I7           ,     0, "Bloomfield (Xeon)"        },
 	{  6, 10, -1, -1, 26,   4,    -1,    -1, CORE_I7           ,     0, "Bloomfield (Core i7)"     },
 	{  6, 10, -1, -1, 30,   4,    -1,    -1, CORE_I7           ,     0, "Lynnfield (Core i7)"      },
