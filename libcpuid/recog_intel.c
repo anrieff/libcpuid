@@ -302,6 +302,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 12, -1, -1, 44,   4,    -1, 12288, CORE_I7           ,     0, "Gulftown (Core i7)"       },
 	{  6,  5, -1, -1, 37,   2,    -1,  4096, CORE_I5           ,     0, "Clarkdale (Core i5)"      },
 	{  6,  5, -1, -1, 37,   2,    -1,  4096, CORE_I3           ,     0, "Clarkdale (Core i3)"      },
+	{  6,  5, -1, -1, 37,   2,    -1,    -1, PENTIUM           ,     0, "Arrandale"                },
 	{  6,  5, -1, -1, 37,   2,    -1,  4096, CORE_I7           ,     0, "Arrandale (Core i7)"      },
 	{  6,  5, -1, -1, 37,   2,    -1,  3072, CORE_I5           ,     0, "Arrandale (Core i5)"      },
 	{  6,  5, -1, -1, 37,   2,    -1,  3072, CORE_I3           ,     0, "Arrandale (Core i3)"      },
