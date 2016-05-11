@@ -71,6 +71,45 @@ enum _amd_code_t {
 };
 typedef enum _amd_code_t amd_code_t;
 
+const struct amd_code_str { amd_code_t code; char *str; } amd_code_str[] = {
+	{ NO_CODE,             "NO_CODE",              },
+	{ OPTERON_GENERIC,     "OPTERON_GENERIC",      },
+	{ OPTERON_800,          "OPTERON_800",         },
+	{ ATHLON_XP,            "ATHLON_XP",           },
+	{ ATHLON_XP_M,          "ATHLON_XP_M",         },
+	{ ATHLON_XP_M_LV,       "ATHLON_XP_M_LV",      },
+	{ ATHLON,               "ATHLON",              },
+	{ ATHLON_MP,            "ATHLON_MP",           },
+	{ MOBILE_ATHLON64,      "MOBILE_ATHLON64",     },
+	{ ATHLON_FX,            "ATHLON_FX",           },
+	{ DURON,                "DURON",               },
+	{ DURON_MP,             "DURON_MP",            },
+	{ MOBILE_DURON,         "MOBILE_DURON",        },
+	{ MOBILE_SEMPRON,       "MOBILE_SEMPRON",      },
+	{ OPTERON_SINGLE,       "OPTERON_SINGLE",      },
+	{ OPTERON_DUALCORE,     "OPTERON_DUALCORE",    },
+	{ OPTERON_800_DUALCORE, "OPTERON_800_DUALCORE",},
+	{ MOBILE_TURION,        "MOBILE_TURION",       },
+	{ ATHLON_64,            "ATHLON_64",           },
+	{ ATHLON_64_FX,         "ATHLON_64_FX",        },
+	{ TURION_64,            "TURION_64",           },
+	{ TURION_X2,            "TURION_X2",           },
+	{ SEMPRON,              "SEMPRON",             },
+	{ M_SEMPRON,            "M_SEMPRON",           },
+	{ SEMPRON_DUALCORE,     "SEMPRON_DUALCORE",    },
+	{ PHENOM,               "PHENOM",              },
+	{ PHENOM2,              "PHENOM2",             },
+	{ ATHLON_64_X2,         "ATHLON_64_X2",        },
+	{ ATHLON_64_X3,         "ATHLON_64_X3",        },
+	{ ATHLON_64_X4,         "ATHLON_64_X4",        },
+	{ FUSION_C,             "FUSION_C",            },
+	{ FUSION_E,             "FUSION_E",            },
+	{ FUSION_EA,            "FUSION_EA",           },
+	{ FUSION_Z,             "FUSION_Z",            },
+	{ FUSION_A,             "FUSION_A",            },
+	{ NA,                   "NA",                  },
+};
+
 const struct match_entry_t cpudb_amd[] = {
 	{ -1, -1, -1, -1,   -1,   1,    -1,    -1, NO_CODE                 ,     0, "Unknown AMD CPU"               },
 	
@@ -238,10 +277,12 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  4, -1, 16,   10,   4,   512,    -1, PHENOM2                 ,     0, "Phenom II X4 (Zosma)"          },
 	{ 15,  4, -1, 16,   10,   6,   512,    -1, PHENOM2                 ,     0, "Phenom II X6 (Thuban)"         },
 	
-	{ 15,  4, -1, 16,   -1,   2,  1024,    -1, ATHLON_64_X2            ,     0, "Athlon II X2 (Regor)"          },
-	{ 15,  4, -1, 16,   -1,   2,   512,    -1, ATHLON_64_X2            ,     0, "Athlon II X2 (Regor)"          },
+	{ 15,  6, -1, 16,    6,   2,   512,    -1, ATHLON                  ,     0, "Athlon II (Champlain)"         },
+	{ 15,  6, -1, 16,    6,   2,   512,    -1, ATHLON_64_X2            ,     0, "Athlon II X2 (Regor)"          },
+	{ 15,  6, -1, 16,    6,   2,  1024,    -1, ATHLON_64_X2            ,     0, "Athlon II X2 (Regor)"          },
 	{ 15,  5, -1, 16,    5,   3,   512,    -1, ATHLON_64_X3            ,     0, "Athlon II X3 (Rana)"           },
 	{ 15,  5, -1, 16,    5,   4,   512,    -1, ATHLON_64_X4            ,     0, "Athlon II X4 (Propus)"         },
+
 	/* 2011 CPUs: K10 architecture: Llano */
 	{ 15,  1, -1, 18,    1,   2,   512,    -1, FUSION_EA               ,     0, "Llano X2"                      },
 	{ 15,  1, -1, 18,    1,   2,  1024,    -1, FUSION_EA               ,     0, "Llano X2"                      },
@@ -481,7 +522,20 @@ static amd_code_t decode_amd_codename_part1(const char *bs)
 static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
 	amd_code_t code = decode_amd_codename_part1(data->brand_str);
-	
+	int i = 0;
+	char* code_str = NULL;
+	while (amd_code_str[i].code != NA) {
+		if (code == amd_code_str[i].code) {
+			code_str = amd_code_str[i].str;
+			break;
+		}
+		i++;
+	}
+	if (code_str)
+		debugf(2, "Detected AMD brand code: %d (%s)\n", code, code_str);
+	else
+		debugf(2, "Detected AMD brand code: %d\n", code);
+
 	if (code == ATHLON_64_X2 && data->l2_cache < 512)
 		code = SEMPRON_DUALCORE;
 	match_cpu_codename(cpudb_amd, COUNT_OF(cpudb_amd), data, code, 0);
