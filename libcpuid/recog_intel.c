@@ -88,6 +88,62 @@ enum _intel_code_t {
 };
 typedef enum _intel_code_t intel_code_t;
 
+const struct intel_bcode_str { intel_code_t code; char *str; } intel_bcode_str[] = {
+	{ NO_CODE,            "NO_CODE",            },
+	{ PENTIUM,            "PENTIUM",            },
+	{ MOBILE_PENTIUM,     "MOBILE_PENTIUM",     },
+	
+	{ XEON,               "XEON",               },
+	{ XEON_IRWIN,         "XEON_IRWIN",         },
+	{ XEONMP,             "XEONMP",             },
+	{ XEON_POTOMAC,       "XEON_POTOMAC",       },
+	{ XEON_I7,            "XEON_I7",            },
+	{ XEON_GAINESTOWN,    "XEON_GAINESTOWN",    },
+	{ XEON_WESTMERE,      "XEON_WESTMERE",      },
+	
+	{ MOBILE_PENTIUM_M,   "MOBILE_PENTIUM_M",   },
+	{ CELERON,            "CELERON",            },
+	{ MOBILE_CELERON,     "MOBILE_CELERON",     },
+	{ NOT_CELERON,        "NOT_CELERON",        },
+	
+	{ CORE_SOLO,          "CORE_SOLO",          },
+	{ MOBILE_CORE_SOLO,   "MOBILE_CORE_SOLO",   },
+	{ CORE_DUO,           "CORE_DUO",           },
+	{ MOBILE_CORE_DUO,    "MOBILE_CORE_DUO",    },
+	
+	{ WOLFDALE,           "WOLFDALE",           },
+	{ MEROM,              "MEROM",              },
+	{ PENRYN,             "PENRYN",             },
+	{ QUAD_CORE,          "QUAD_CORE",          },
+	{ DUAL_CORE_HT,       "DUAL_CORE_HT",       },
+	{ QUAD_CORE_HT,       "QUAD_CORE_HT",       },
+	{ MORE_THAN_QUADCORE, "MORE_THAN_QUADCORE", },
+	{ PENTIUM_D,          "PENTIUM_D",          },
+	
+	{ ATOM,               "ATOM", },
+	{ ATOM_SILVERTHORNE,  "ATOM_SILVERTHORNE",  },
+	{ ATOM_DIAMONDVILLE,  "ATOM_DIAMONDVILLE",  },
+	{ ATOM_PINEVIEW,      "ATOM_PINEVIEW",      },
+	{ ATOM_CEDARVIEW,     "ATOM_CEDARVIEW",     },
+	
+	{ CORE_I3,            "CORE_I3",            },
+	{ CORE_I5,            "CORE_I5",            },
+	{ CORE_I7,            "CORE_I7",            },
+	{ CORE_IVY3,          "CORE_IVY3",          },
+	{ CORE_IVY5,          "CORE_IVY5",          },
+	{ CORE_IVY7,          "CORE_IVY7",          },
+	{ CORE_HASWELL3,      "CORE_HASWELL3",      },
+	{ CORE_HASWELL5,      "CORE_HASWELL5",      },
+	{ CORE_HASWELL7,      "CORE_HASWELL7",      },
+	{ CORE_BROADWELL3,    "CORE_BROADWELL3",    },
+	{ CORE_BROADWELL5,    "CORE_BROADWELL5",    },
+	{ CORE_BROADWELL7,    "CORE_BROADWELL7",    },
+	{ CORE_SKYLAKE3,      "CORE_SKYLAKE3",      },
+	{ CORE_SKYLAKE5,      "CORE_SKYLAKE5",      },
+	{ CORE_SKYLAKE7,      "CORE_SKYLAKE7",      },
+	{ NA,                 "NA",                 },
+};
+
 enum _intel_model_t {
 	UNKNOWN = -1,
 	_3000 = 100,
@@ -807,10 +863,24 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		decode_intel_oldstyle_cache_info(raw, data);
 	}
 	decode_intel_number_of_cores(raw, data);
+
 	intel_code_t brand_code  = get_brand_code(data);
 	intel_model_t model_code = get_model_code(data);
-	debugf(2, "Detected Intel brand code: %d\n", brand_code);
+	int i = 0;
+	char* brand_code_str = NULL;
+	while (intel_bcode_str[i].code != NA) {
+		if (brand_code == intel_bcode_str[i].code) {
+			brand_code_str = intel_bcode_str[i].str;
+			break;
+		}
+		i++;
+	}
+	if (brand_code_str)
+		debugf(2, "Detected Intel brand code: %d (%s)\n", brand_code, brand_code_str);
+	else
+		debugf(2, "Detected Intel brand code: %d\n", brand_code);
 	debugf(2, "Detected Intel model code: %d\n", model_code);
+
 	match_cpu_codename(cpudb_intel, COUNT_OF(cpudb_intel), data,
 		brand_code, model_code);
 	return 0;
