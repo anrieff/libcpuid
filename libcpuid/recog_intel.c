@@ -160,9 +160,9 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 11, -1, -1, -1,   1,    -1,    -1, XEON              ,     0, "P-III Xeon (Tualatin)"   },
 	
 	{  6,  7, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Katmai)"     },
-	{  6,  8, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Coppermine-128)" },
-	{  6, 10, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Coppermine-128)" },
-	{  6, 11, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Tualatin-256)"   },
+	{  6,  8, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Coppermine)" },
+	{  6, 10, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Coppermine)" },
+	{  6, 11, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "P-III Celeron (Tualatin)"   },
 	
 	/* Netburst based (Pentium 4 and later)
 	   classic P4s */
@@ -202,11 +202,11 @@ const struct match_entry_t cpudb_intel[] = {
 	{ 15,  6, -1, 15, -1,   1,    -1,    -1, PENTIUM_D         ,     0, "Pentium D (Presler)"     },
 
 	/* Celeron and Celeron Ds */
-	{ 15,  1, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron (Willamette-128)"   },
-	{ 15,  2, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron (Northwood-128)"    },
-	{ 15,  3, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Prescott-256)"   },
-	{ 15,  4, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Prescott-256)"   },
-	{ 15,  6, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Cedar Mill-512)" },
+	{ 15,  1, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron (Willamette)"   },
+	{ 15,  2, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron (Northwood)"    },
+	{ 15,  3, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Prescott)"   },
+	{ 15,  4, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Prescott)"   },
+	{ 15,  6, -1, 15, -1,   1,    -1,    -1, CELERON           ,     0, "P-4 Celeron D (Cedar Mill)" },
 	
 	/* -------------------------------------------------- */
 	/* Intel Core microarchitecture - P6-based */
