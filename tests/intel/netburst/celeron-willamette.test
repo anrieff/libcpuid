@@ -89,5 +89,5 @@ intel_fn11[3]=665b5001 00000000 00000000 00397040
 64
 -1
 64 (non-authoritative)
-P-4 Celeron (Willamette-128)
+P-4 Celeron (Willamette)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss tm
