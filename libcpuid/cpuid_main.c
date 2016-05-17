@@ -604,6 +604,16 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_AVX2, "avx2" },
 		{ CPU_FEATURE_BMI1, "bmi1" },
 		{ CPU_FEATURE_BMI2, "bmi2" },
+		{ CPU_FEATURE_HLE, "hle" },
+		{ CPU_FEATURE_RTM, "rtm" },
+		{ CPU_FEATURE_AVX512F, "avx512f" },
+		{ CPU_FEATURE_AVX512DQ, "avx512dq" },
+		{ CPU_FEATURE_AVX512PF, "avx512pf" },
+		{ CPU_FEATURE_AVX512ER, "avx512er" },
+		{ CPU_FEATURE_AVX512CD, "avx512cd" },
+		{ CPU_FEATURE_SHA_NI, "sha_ni" },
+		{ CPU_FEATURE_AVX512BW, "avx512bw" },
+		{ CPU_FEATURE_AVX512VL, "avx512vl" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {

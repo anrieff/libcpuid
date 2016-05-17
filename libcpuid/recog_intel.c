@@ -349,12 +349,28 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	const struct feature_map_t matchtable_edx81[] = {
 		{ 20, CPU_FEATURE_XD },
 	};
+	const struct feature_map_t matchtable_ebx7[] = {
+		{  4, CPU_FEATURE_HLE },
+		{ 11, CPU_FEATURE_RTM },
+		{ 16, CPU_FEATURE_AVX512F },
+		{ 17, CPU_FEATURE_AVX512DQ },
+		{ 26, CPU_FEATURE_AVX512PF },
+		{ 27, CPU_FEATURE_AVX512ER },
+		{ 28, CPU_FEATURE_AVX512CD },
+		{ 29, CPU_FEATURE_SHA_NI },
+		{ 30, CPU_FEATURE_AVX512BW },
+		{ 31, CPU_FEATURE_AVX512VL },
+	};
 	if (raw->basic_cpuid[0][0] >= 1) {
 		match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][3], data);
 		match_features(matchtable_ecx1, COUNT_OF(matchtable_ecx1), raw->basic_cpuid[1][2], data);
 	}
 	if (raw->ext_cpuid[0][0] >= 1) {
 		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][3], data);
+	}
+	// detect TSX/AVX512:
+	if (raw->basic_cpuid[0][0] >= 7) {
+		match_features(matchtable_ebx7, COUNT_OF(matchtable_ebx7), raw->basic_cpuid[7][1], data);
 	}
 }
 
@@ -618,6 +634,9 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 		/* if it has FMA, then it is at least Haswell */
 		if (data->flags[CPU_FEATURE_FMA3])
 			core_ix_base = CORE_HASWELL3;
+		/* if it has RTM, then it is at least Skylake */
+		if (data->flags[CPU_FEATURE_RTM])
+			core_ix_base = CORE_SKYLAKE3;
 		
 		switch (bs[i + 9]) {
 			case '3': code = core_ix_base + 0; break;

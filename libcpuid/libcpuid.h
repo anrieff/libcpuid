@@ -361,6 +361,16 @@ typedef enum {
 	CPU_FEATURE_AVX2,	/*!< AVX2 instructions */
 	CPU_FEATURE_BMI1,	/*!< BMI1 instructions */
 	CPU_FEATURE_BMI2,	/*!< BMI2 instructions */
+	CPU_FEATURE_HLE,	/*!< Hardware Lock Elision prefixes */
+	CPU_FEATURE_RTM,	/*!< Restricted Transactional Memory instructions */
+	CPU_FEATURE_AVX512F,	/*!< AVX-512 Foundation */
+	CPU_FEATURE_AVX512DQ,	/*!< AVX-512 Double/Quad granular insns */
+	CPU_FEATURE_AVX512PF,	/*!< AVX-512 Prefetch */
+	CPU_FEATURE_AVX512ER,	/*!< AVX-512 Exponential/Reciprocal */
+	CPU_FEATURE_AVX512CD,	/*!< AVX-512 Conflict detection */
+	CPU_FEATURE_SHA_NI,	/*!< SHA-1/SHA-256 instructions */
+	CPU_FEATURE_AVX512BW,	/*!< AVX-512 Byte/Word granular insns */
+	CPU_FEATURE_AVX512VL,	/*!< AVX-512 128/256 vector length extensions */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;
