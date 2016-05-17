@@ -32,82 +32,16 @@
 #include "libcpuid_util.h"
 
 enum _amd_code_t {
-	NA,
-	NO_CODE,
-	OPTERON_GENERIC,
-	OPTERON_800,
-	ATHLON_XP,
-	ATHLON_XP_M,
-	ATHLON_XP_M_LV,
-	ATHLON,
-	ATHLON_MP,
-	MOBILE_ATHLON64,
-	ATHLON_FX,
-	DURON,
-	DURON_MP,
-	MOBILE_DURON,
-	MOBILE_SEMPRON,
-	OPTERON_SINGLE,
-	OPTERON_DUALCORE,
-	OPTERON_800_DUALCORE,
-	MOBILE_TURION,
-	ATHLON_64,
-	ATHLON_64_FX,
-	TURION_64,
-	TURION_X2,
-	SEMPRON,
-	M_SEMPRON,
-	SEMPRON_DUALCORE,
-	PHENOM,
-	PHENOM2,
-	ATHLON_64_X2,
-	ATHLON_64_X3,
-	ATHLON_64_X4,
-	FUSION_C,
-	FUSION_E,
-	FUSION_EA,
-	FUSION_Z,
-	FUSION_A,
+	#define CODE(x) x
+	#include "amd_code_t.h"
+	#undef CODE
 };
 typedef enum _amd_code_t amd_code_t;
 
 const struct amd_code_str { amd_code_t code; char *str; } amd_code_str[] = {
-	{ NO_CODE,             "NO_CODE",              },
-	{ OPTERON_GENERIC,     "OPTERON_GENERIC",      },
-	{ OPTERON_800,          "OPTERON_800",         },
-	{ ATHLON_XP,            "ATHLON_XP",           },
-	{ ATHLON_XP_M,          "ATHLON_XP_M",         },
-	{ ATHLON_XP_M_LV,       "ATHLON_XP_M_LV",      },
-	{ ATHLON,               "ATHLON",              },
-	{ ATHLON_MP,            "ATHLON_MP",           },
-	{ MOBILE_ATHLON64,      "MOBILE_ATHLON64",     },
-	{ ATHLON_FX,            "ATHLON_FX",           },
-	{ DURON,                "DURON",               },
-	{ DURON_MP,             "DURON_MP",            },
-	{ MOBILE_DURON,         "MOBILE_DURON",        },
-	{ MOBILE_SEMPRON,       "MOBILE_SEMPRON",      },
-	{ OPTERON_SINGLE,       "OPTERON_SINGLE",      },
-	{ OPTERON_DUALCORE,     "OPTERON_DUALCORE",    },
-	{ OPTERON_800_DUALCORE, "OPTERON_800_DUALCORE",},
-	{ MOBILE_TURION,        "MOBILE_TURION",       },
-	{ ATHLON_64,            "ATHLON_64",           },
-	{ ATHLON_64_FX,         "ATHLON_64_FX",        },
-	{ TURION_64,            "TURION_64",           },
-	{ TURION_X2,            "TURION_X2",           },
-	{ SEMPRON,              "SEMPRON",             },
-	{ M_SEMPRON,            "M_SEMPRON",           },
-	{ SEMPRON_DUALCORE,     "SEMPRON_DUALCORE",    },
-	{ PHENOM,               "PHENOM",              },
-	{ PHENOM2,              "PHENOM2",             },
-	{ ATHLON_64_X2,         "ATHLON_64_X2",        },
-	{ ATHLON_64_X3,         "ATHLON_64_X3",        },
-	{ ATHLON_64_X4,         "ATHLON_64_X4",        },
-	{ FUSION_C,             "FUSION_C",            },
-	{ FUSION_E,             "FUSION_E",            },
-	{ FUSION_EA,            "FUSION_EA",           },
-	{ FUSION_Z,             "FUSION_Z",            },
-	{ FUSION_A,             "FUSION_A",            },
-	{ NA,                   "NA",                  },
+	#define CODE(x) { x, #x }
+	#include "amd_code_t.h"
+	#undef CODE
 };
 
 const struct match_entry_t cpudb_amd[] = {
@@ -524,12 +458,11 @@ static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	amd_code_t code = decode_amd_codename_part1(data->brand_str);
 	int i = 0;
 	char* code_str = NULL;
-	while (amd_code_str[i].code != NA) {
+	for (i = 0; i < COUNT_OF(amd_code_str); i++) {
 		if (code == amd_code_str[i].code) {
 			code_str = amd_code_str[i].str;
 			break;
 		}
-		i++;
 	}
 	if (code_str)
 		debugf(2, "Detected AMD brand code: %d (%s)\n", code, code_str);
