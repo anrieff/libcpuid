@@ -857,7 +857,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(int core_num);
  *          The error message can be obtained by calling \ref cpuid_error.
  *          @see cpu_error_t
  */
-int cpu_rdmsr(struct msr_driver_t* handle, int msr_index, uint64_t* result);
+int cpu_rdmsr(struct msr_driver_t* handle, uint32_t msr_index, uint64_t* result);
 
 
 typedef enum {

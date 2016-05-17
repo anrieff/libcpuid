@@ -105,7 +105,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
 	handle->fd = fd;
 	return handle;
 }
-int cpu_rdmsr(struct msr_driver_t* driver, int msr_index, uint64_t* result)
+int cpu_rdmsr(struct msr_driver_t* driver, uint32_t msr_index, uint64_t* result)
 {
 	ssize_t ret;
 
@@ -350,7 +350,7 @@ clean_up:
 #define IOCTL_UNKNOWN_BASE              FILE_DEVICE_UNKNOWN
 #define IOCTL_PROCVIEW_RDMSR			CTL_CODE(IOCTL_UNKNOWN_BASE, 0x0803, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
 
-int cpu_rdmsr(struct msr_driver_t* driver, int msr_index, uint64_t* result)
+int cpu_rdmsr(struct msr_driver_t* driver, uint32_t msr_index, uint64_t* result)
 {
 	DWORD dwBytesReturned;
 	__int64 msrdata;
