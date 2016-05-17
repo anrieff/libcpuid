@@ -295,6 +295,7 @@ static void load_amd_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		{ 12, CPU_FEATURE_SKINIT },
 		{ 13, CPU_FEATURE_WDT },
 		{ 16, CPU_FEATURE_FMA4 },
+		{ 21, CPU_FEATURE_TBM },
 	};
 	const struct feature_map_t matchtable_edx87[] = {
 		{  0, CPU_FEATURE_TS },
