@@ -456,11 +456,6 @@ int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t hig
 	return set_error(ERR_NOT_IMP);
 }
 
-uint64_t get_bits_value(uint64_t val, int highbit, int lowbit)
-{
-	return set_error(ERR_NOT_IMP);
-}
-
 int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
 {
 	return set_error(ERR_NOT_IMP);
@@ -506,28 +501,21 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
                     uint8_t lowbit, uint64_t* result)
 {
+	const uint8_t bits = highbit - lowbit + 1;
+
 	if(highbit > 63 || lowbit > highbit)
 		return set_error(ERR_INVRANGE);
 
 	if(cpu_rdmsr(handle, msr_index, result))
 		return set_error(ERR_HANDLE_R);
 
-	*result = get_bits_value(*result, highbit, lowbit);
-	return 0;
-}
-
-uint64_t get_bits_value(uint64_t val, int highbit, int lowbit)
-{
-	uint64_t data = val;
-	const uint8_t bits = highbit - lowbit + 1;
-
 	if(bits < 64 && highbit < 64 && lowbit < highbit) {
 		/* Show only part of register */
-		data >>= lowbit;
-		data &= (1ULL << bits) - 1;
+		*result >>= lowbit;
+		*result &= (1ULL << bits) - 1;
 	}
 
-	return data;
+	return 0;
 }
 
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
@@ -583,11 +571,9 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			{
 				// https://github.com/ajaiantilal/i7z/blob/5023138d7c35c4667c938b853e5ea89737334e92/helper_functions.c#L59
 				
-				cpu_rdmsr_range(handle, IA32_THERM_STATUS, 63, 0, &val);
-				digital_readout = get_bits_value(val, 23, 16);
-				thermal_status = get_bits_value(val, 32, 31);
-				cpu_rdmsr_range(handle, IA32_TEMPERATURE_TARGET, 63, 0, &val);
-				PROCHOT_temp = get_bits_value(val, 23, 16);
+				cpu_rdmsr_range(handle, IA32_THERM_STATUS, 23, 16, &digital_readout);
+				cpu_rdmsr_range(handle, IA32_THERM_STATUS, 32, 31, &thermal_status);
+				cpu_rdmsr_range(handle, IA32_TEMPERATURE_TARGET, 23, 16, &PROCHOT_temp);
 
 				// These bits are thermal status : 1 if supported, 0 else
 				if(thermal_status)
