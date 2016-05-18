@@ -883,6 +883,36 @@ typedef enum {
 } cpu_msrinfo_request_t;
 
 /**
+ * @brief Similar to \ref cpu_rdmsr, but extract a range of bits
+ *
+ * It is similar to use \ref cpu_rdmsr then \ref get_bits_value.
+ *
+ * @param handle - a handle to the MSR reader driver, as created by
+ *                 cpu_msr_driver_open
+ * @param msr_index - the numeric ID of the MSR you want to read
+ * @param highbit - the high bit in range, must be inferior to 64
+ * @param lowbit - the low bit in range, must be equal or superior to 0
+ * @param result - a pointer to a 64-bit integer, where the MSR value is stored
+ *
+ * @returns zero if successful, and some negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
+ */
+int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
+                    uint8_t lowbit, uint64_t* result);
+
+/**
+ * @brief Extract a range of bits from MSR value
+ *
+ * @param val - a 64-bit integer, where the MSR value is stored
+ * @param highbit - the high bit in range, must be inferior to 64
+ * @param lowbit - the low bit in range, must be equal or superior to 0
+ *
+ * @returns bits between highbit and lowbit
+ */
+uint64_t get_bits_value(uint64_t val, int highbit, int lowbit);
+
+/**
  * @brief Reads extended CPU information from Model-Specific Registers.
  * @param handle - a handle to an open MSR driver, @see cpu_msr_driver_open
  * @param which - which info field should be returned. A list of

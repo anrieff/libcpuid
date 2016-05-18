@@ -30,3 +30,5 @@ cpu_clock_by_ic @26
 cpuid_get_total_cpus @27
 cpu_msr_driver_open_core @28
 cpuid_get_vendor @29
+cpu_rdmsr_range @30
+get_bits_value @31

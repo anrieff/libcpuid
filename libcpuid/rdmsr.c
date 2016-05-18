@@ -420,7 +420,20 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 #define MSR_PSTATE_S 0xC0010063
 #define MSR_PSTATE_0 0xC0010064
 
-static uint64_t get_bits_value(uint64_t val, int highbit, int lowbit)
+int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
+                    uint8_t lowbit, uint64_t* result)
+{
+	if(highbit > 63 || lowbit > highbit)
+		return set_error(ERR_INVRANGE);
+
+	if(cpu_rdmsr(handle, msr_index, result))
+		return set_error(ERR_HANDLE_R);
+
+	*result = get_bits_value(*result, highbit, lowbit);
+	return 0;
+}
+
+uint64_t get_bits_value(uint64_t val, int highbit, int lowbit)
 {
 	uint64_t data = val;
 	const uint8_t bits = highbit - lowbit + 1;
@@ -432,19 +445,6 @@ static uint64_t get_bits_value(uint64_t val, int highbit, int lowbit)
 	}
 
 	return data;
-}
-
-static int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
-                    uint8_t lowbit, uint64_t* result)
-{
-	if(highbit > 63 || lowbit > highbit)
-		return set_error(ERR_INVRANGE);
-
-	if(cpu_rdmsr(handle, msr_index, result))
-		return set_error(ERR_HANDLE_R);
-
-	*result = get_bits_value(*result, highbit, lowbit);
-	return 0;
 }
 
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
