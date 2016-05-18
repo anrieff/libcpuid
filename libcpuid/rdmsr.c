@@ -46,12 +46,11 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 	return cpu_msr_driver_open_core(0);
 }
 
-struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
+struct msr_driver_t* cpu_msr_driver_open_core(uint8_t core_num)
 {
 	char msr[32];
 	struct msr_driver_t* handle;
-	if(core_num < 0 && cpuid_get_total_cpus() <= core_num)
-	{
+	if (core_num >= cpuid_get_total_cpus())	{
 		set_error(ERR_INVCNB);
 		return NULL;
 	}
@@ -112,12 +111,11 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 	return cpu_msr_driver_open_core(0);
 }
 
-struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
+struct msr_driver_t* cpu_msr_driver_open_core(uint8_t core_num)
 {
 	char msr[32];
 	struct msr_driver_t* handle;
-	if(core_num < 0 && cpuid_get_total_cpus() <= core_num)
-	{
+	if (core_num >= cpuid_get_total_cpus()) {
 		set_error(ERR_INVCNB);
 		return NULL;
 	}

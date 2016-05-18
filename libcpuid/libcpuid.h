@@ -822,7 +822,7 @@ struct msr_driver_t* cpu_msr_driver_open(void);
 /**
  * @brief Similar to \ref cpu_msr_driver_open, but accept one parameter
  *
- * This function works on Linux only
+ * This function works on certain operating system (GNU/Linux, FreeBSD)
  *
  * @param core_num specify the core number for MSR.
  *          The first core number is 0.
@@ -832,7 +832,7 @@ struct msr_driver_t* cpu_msr_driver_open(void);
  *          The error message can be obtained by calling \ref cpuid_error.
  *          @see cpu_error_t
  */
-struct msr_driver_t* cpu_msr_driver_open_core(int core_num);
+struct msr_driver_t* cpu_msr_driver_open_core(uint8_t core_num);
 
 /**
  * @brief Reads a Model-Specific Register (MSR)
