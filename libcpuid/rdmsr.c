@@ -417,6 +417,8 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 #define PLATFORM_INFO_MSR 206
 #define PLATFORM_INFO_MSR_low 8
 #define PLATFORM_INFO_MSR_high 15
+#define MSR_PSTATE_S 0xC0010063
+#define MSR_PSTATE_0 0xC0010064
 
 static int get_bits_value(uint64_t val, int highbit, int lowbit)
 {
@@ -533,6 +535,17 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 				uint64_t val = cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &error_indx);
 				double ret = (double) val / (1 << 13);
 				return (ret > 0) ? (int) (ret * 100) : CPU_INVALID_VALUE;
+			}
+			else if(cpuid_get_vendor() == VENDOR_AMD)
+			{
+				/* http://support.amd.com/TechDocs/42301_15h_Mod_00h-0Fh_BKDG.pdf
+				   MSRC001_0063[2:0] = CurPstate
+				   MSRC001_00[6B:64][15:9] = CpuVid */
+				uint64_t CurPstate = cpu_rdmsr_range(handle, MSR_PSTATE_S, 2, 0, &error_indx);
+				if(0 <= CurPstate && CurPstate <= 7) { // Support 8 P-states
+					uint64_t CpuVid = cpu_rdmsr_range(handle, MSR_PSTATE_0 + CurPstate, 15, 9, &error_indx);
+					return (int) (1.550 - 0.0125 * CpuVid) * 100; // 2.4.1.6.3 - Serial VID (SVI) Encodings
+				}
 			}
 			return CPU_INVALID_VALUE;
 		}
