@@ -97,6 +97,75 @@ int cpu_msr_driver_close(struct msr_driver_t* drv)
 
 /* #endif defined (__linux__) || defined (__gnu_linux__) */
 
+#elif defined (__FreeBSD__) || defined (__DragonFly__)
+/* Assuming FreeBSD with /dev/cpuctlX */
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/ioctl.h>
+#include <sys/cpuctl.h>
+
+struct msr_driver_t { int fd; };
+static int rdmsr_supported(void);
+struct msr_driver_t* cpu_msr_driver_open(void)
+{
+	return cpu_msr_driver_open_core(0);
+}
+
+struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
+{
+	char msr[32];
+	struct msr_driver_t* handle;
+	if(core_num < 0 && cpuid_get_total_cpus() <= core_num)
+	{
+		set_error(ERR_INVCNB);
+		return NULL;
+	}
+	if (!rdmsr_supported()) {
+		set_error(ERR_NO_RDMSR);
+		return NULL;
+	}
+	sprintf(msr, "/dev/cpuctl%i", core_num);
+	int fd = open(msr, O_RDONLY);
+	if (fd < 0) {
+		if (errno == EIO) {
+			set_error(ERR_NO_RDMSR);
+			return NULL;
+		}
+		set_error(ERR_NO_DRIVER);
+		return NULL;
+	}
+	handle = (struct msr_driver_t*) malloc(sizeof(struct msr_driver_t));
+	handle->fd = fd;
+	return handle;
+}
+
+int cpu_rdmsr(struct msr_driver_t* driver, uint32_t msr_index, uint64_t* result)
+{
+	cpuctl_msr_args_t args;
+	args.msr = msr_index;
+
+	if (!driver || driver->fd < 0)
+		return set_error(ERR_HANDLE);
+
+	if(ioctl(driver->fd, CPUCTL_RDMSR, &args))
+		return set_error(ERR_INVMSR);
+
+	*result = args.data; 
+	return 0;
+}
+
+int cpu_msr_driver_close(struct msr_driver_t* drv)
+{
+	if (drv && drv->fd >= 0) {
+		close(drv->fd);
+		free(drv);
+	}
+	return 0;
+}
+
+/* #endif defined (__FreeBSD__) || defined (__DragonFly__) */
+
 #elif defined (_WIN32)
 #include <windows.h>
 #include <winioctl.h>
