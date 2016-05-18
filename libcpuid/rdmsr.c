@@ -509,7 +509,7 @@ int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t hig
 	if(cpu_rdmsr(handle, msr_index, result))
 		return set_error(ERR_HANDLE_R);
 
-	if(bits < 64 && highbit < 64 && lowbit < highbit) {
+	if(bits < 64) {
 		/* Show only part of register */
 		*result >>= lowbit;
 		*result &= (1ULL << bits) - 1;
