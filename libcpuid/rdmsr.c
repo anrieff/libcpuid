@@ -431,43 +431,31 @@ static int get_bits_value(uint64_t val, int highbit, int lowbit)
 	return (int) data;
 }
 
-static uint64_t cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t reg, unsigned int highbit,
-                        unsigned int lowbit, int* error_indx)
+static int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
+                    uint8_t lowbit, uint64_t* result)
 {
-	uint64_t data;
-	int bits;
-	*error_indx =0;
+	const uint8_t bits = highbit - lowbit + 1;
 
-	if (cpu_rdmsr(handle, reg, &data)) {
-		*error_indx = 1;
+	if(highbit > 63 || lowbit > highbit)
+		return set_error(ERR_INVRANGE);
+
+	if(cpu_rdmsr(handle, msr_index, result))
 		return set_error(ERR_HANDLE_R);
-	}
 
-	bits = highbit - lowbit + 1;
-	if (bits < 64)
+	if(bits < 64)
 	{
 		/* Show only part of register */
-		data >>= lowbit;
-		data &= (1ULL << bits) - 1;
+		*result >>= lowbit;
+		*result &= (1ULL << bits) - 1;
 	}
 
-	/* Make sure we get sign correct */
-	if (data & (1ULL << (bits - 1)))
-	{
-		data &= ~(1ULL << (bits - 1));
-#pragma warning(disable: 4146)
-		data = -data;
-#pragma warning(default: 4146)
-	}
-
-	*error_indx = 0;
-	return (data);
+	return 0;
 }
 
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 {
 	uint64_t r;
-	int err, error_indx, cur_clock;
+	int err, cur_clock;
 	static int max_clock = 0, multiplier = 0;
 	static double bclk = 0.0;
 	uint64_t val;
@@ -502,9 +490,11 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			if(cpuid_get_vendor() == VENDOR_INTEL)
 			{
 				if(!multiplier)
-					multiplier = (int) cpu_rdmsr_range(handle, PLATFORM_INFO_MSR, PLATFORM_INFO_MSR_high, PLATFORM_INFO_MSR_low, &error_indx);
-				if(multiplier > 0)
+					cpu_rdmsr_range(handle, PLATFORM_INFO_MSR, PLATFORM_INFO_MSR_high, PLATFORM_INFO_MSR_low, &val);
+				if(val > 0) {
+					multiplier = (int) val;
 					return multiplier * 100;
+				}
 			}
 			err = cpu_rdmsr(handle, 0x198, &r);
 			if (err) return CPU_INVALID_VALUE;
@@ -515,10 +505,10 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			{
 				// https://github.com/ajaiantilal/i7z/blob/5023138d7c35c4667c938b853e5ea89737334e92/helper_functions.c#L59
 				
-				val = cpu_rdmsr_range(handle, IA32_THERM_STATUS, 63, 0, &error_indx);
+				cpu_rdmsr_range(handle, IA32_THERM_STATUS, 63, 0, &val);
 				digital_readout = get_bits_value(val, 23, 16);
 				thermal_status = get_bits_value(val, 32, 31);
-				val = cpu_rdmsr_range(handle, IA32_TEMPERATURE_TARGET, 63, 0, &error_indx);
+				cpu_rdmsr_range(handle, IA32_TEMPERATURE_TARGET, 63, 0, &val);
 				PROCHOT_temp = get_bits_value(val, 23, 16);
 
 				// These bits are thermal status : 1 if supported, 0 else
@@ -532,7 +522,7 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		{
 			if(cpuid_get_vendor() == VENDOR_INTEL)
 			{
-				uint64_t val = cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &error_indx);
+				cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &val);
 				double ret = (double) val / (1 << 13);
 				return (ret > 0) ? (int) (ret * 100) : CPU_INVALID_VALUE;
 			}
@@ -541,9 +531,10 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 				/* http://support.amd.com/TechDocs/42301_15h_Mod_00h-0Fh_BKDG.pdf
 				   MSRC001_0063[2:0] = CurPstate
 				   MSRC001_00[6B:64][15:9] = CpuVid */
-				uint64_t CurPstate = cpu_rdmsr_range(handle, MSR_PSTATE_S, 2, 0, &error_indx);
-				if(0 <= CurPstate && CurPstate <= 7) { // Support 8 P-states
-					uint64_t CpuVid = cpu_rdmsr_range(handle, MSR_PSTATE_0 + CurPstate, 15, 9, &error_indx);
+				uint64_t CpuVid;
+				cpu_rdmsr_range(handle, MSR_PSTATE_S, 2, 0, &val);
+				if(0 <= val && val <= 7) { // Support 8 P-states
+					cpu_rdmsr_range(handle, MSR_PSTATE_0 + val, 15, 9, &CpuVid);
 					return (int) (1.550 - 0.0125 * CpuVid) * 100; // 2.4.1.6.3 - Serial VID (SVI) Encodings
 				}
 			}

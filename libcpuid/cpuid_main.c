@@ -635,6 +635,7 @@ const char* cpuid_error(void)
 		{ ERR_INVMSR   , "Invalid MSR"},
 		{ ERR_INVCNB   , "Invalid core number"},
 		{ ERR_HANDLE_R , "Error on handle read"},
+		{ ERR_INVRANGE , "Invalid given range"},
 	};
 	unsigned i;
 	for (i = 0; i < COUNT_OF(matchtable); i++)
