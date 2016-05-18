@@ -31,39 +31,7 @@
 #include "libcpuid_util.h"
 #include "rdtsc.h"
 
-#ifndef _WIN32
-#  ifdef __APPLE__
-/* On Darwin, we still do not support RDMSR, so supply dummy struct
-   and functions */
-struct msr_driver_t { int dummy; };
-struct msr_driver_t* cpu_msr_driver_open(void)
-{
-	set_error(ERR_NOT_IMP);
-	return NULL;
-}
-
-struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
-{
-	set_error(ERR_NOT_IMP);
-	return NULL;
-}
-
-int cpu_rdmsr(struct msr_driver_t* driver, int msr_index, uint64_t* result)
-{
-	return set_error(ERR_NOT_IMP);
-}
-
-int cpu_msr_driver_close(struct msr_driver_t* driver)
-{
-	return set_error(ERR_NOT_IMP);
-}
-
-#define MSRINFO_DEFINED
-int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
-{
-	return set_error(ERR_NOT_IMP);
-}
-#  else /* __APPLE__ */
+#if defined (__linux__) || defined (__gnu_linux__)
 /* Assuming linux with /dev/cpu/x/msr: */
 #include <unistd.h>
 #include <stdio.h>
@@ -105,6 +73,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
 	handle->fd = fd;
 	return handle;
 }
+
 int cpu_rdmsr(struct msr_driver_t* driver, uint32_t msr_index, uint64_t* result)
 {
 	ssize_t ret;
@@ -125,8 +94,10 @@ int cpu_msr_driver_close(struct msr_driver_t* drv)
 	}
 	return 0;
 }
-#  endif /* __APPLE__ */
-#else /* _WIN32 */
+
+/* #endif defined (__linux__) || defined (__gnu_linux__) */
+
+#elif defined (_WIN32)
 #include <windows.h>
 #include <winioctl.h>
 #include <winerror.h>
@@ -240,7 +211,6 @@ static BOOL wait_for_service_state(SC_HANDLE hService, DWORD dwDesiredState, SER
 	return fOK;
 }
 
-
 static int load_driver(struct msr_driver_t* drv)
 {
 	LPTSTR		lpszInfo = __TEXT("RDMSR Executor Driver");
@@ -348,7 +318,7 @@ clean_up:
 
 #define FILE_DEVICE_UNKNOWN             0x00000022
 #define IOCTL_UNKNOWN_BASE              FILE_DEVICE_UNKNOWN
-#define IOCTL_PROCVIEW_RDMSR			CTL_CODE(IOCTL_UNKNOWN_BASE, 0x0803, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
+#define IOCTL_PROCVIEW_RDMSR		CTL_CODE(IOCTL_UNKNOWN_BASE, 0x0803, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
 
 int cpu_rdmsr(struct msr_driver_t* driver, uint32_t msr_index, uint64_t* result)
 {
@@ -384,7 +354,53 @@ int cpu_msr_driver_close(struct msr_driver_t* drv)
 	return 0;
 }
 
-#endif /* _WIN32 */
+/* endif defined (_WIN32) */
+
+#else /* Unsupported OS */
+/* On others OS (lie Darwin), we still do not support RDMSR, so supply dummy struct
+   and functions */
+struct msr_driver_t { int dummy; };
+struct msr_driver_t* cpu_msr_driver_open(void)
+{
+	set_error(ERR_NOT_IMP);
+	return NULL;
+}
+
+struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
+{
+	set_error(ERR_NOT_IMP);
+	return NULL;
+}
+
+int cpu_rdmsr(struct msr_driver_t* driver, int msr_index, uint64_t* result)
+{
+	return set_error(ERR_NOT_IMP);
+}
+
+int cpu_msr_driver_close(struct msr_driver_t* driver)
+{
+	return set_error(ERR_NOT_IMP);
+}
+
+#define MSRINFO_DEFINED
+int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
+                    uint8_t lowbit, uint64_t* result)
+{
+	return set_error(ERR_NOT_IMP);
+}
+
+uint64_t get_bits_value(uint64_t val, int highbit, int lowbit)
+{
+	return set_error(ERR_NOT_IMP);
+}
+
+int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
+{
+	return set_error(ERR_NOT_IMP);
+}
+
+#endif /* Unsupported OS */
+
 
 static int rdmsr_supported(void)
 {
