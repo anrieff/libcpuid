@@ -569,12 +569,12 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		{
 			if(cpuid_get_vendor() == VENDOR_INTEL)
 			{
-				if(!multiplier)
+				if(!multiplier) {
 					cpu_rdmsr_range(handle, PLATFORM_INFO_MSR, PLATFORM_INFO_MSR_high, PLATFORM_INFO_MSR_low, &val);
-				if(val > 0) {
 					multiplier = (int) val;
-					return multiplier * 100;
 				}
+				if(multiplier > 0)
+					return multiplier * 100;
 			}
 			err = cpu_rdmsr(handle, 0x198, &r);
 			if (err) return CPU_INVALID_VALUE;
@@ -613,7 +613,7 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 				   MSRC001_00[6B:64][15:9] = CpuVid */
 				uint64_t CpuVid;
 				cpu_rdmsr_range(handle, MSR_PSTATE_S, 2, 0, &val);
-				if(0 <= val && val <= 7) { // Support 8 P-states
+				if(val <= 7) { // Support 8 P-states
 					cpu_rdmsr_range(handle, MSR_PSTATE_0 + val, 15, 9, &CpuVid);
 					return (int) (1.550 - 0.0125 * CpuVid) * 100; // 2.4.1.6.3 - Serial VID (SVI) Encodings
 				}
