@@ -438,7 +438,7 @@ uint64_t get_bits_value(uint64_t val, int highbit, int lowbit)
 	uint64_t data = val;
 	const uint8_t bits = highbit - lowbit + 1;
 
-	if(bits < 64) {
+	if(bits < 64 && highbit < 64 && lowbit < highbit) {
 		/* Show only part of register */
 		data >>= lowbit;
 		data &= (1ULL << bits) - 1;
