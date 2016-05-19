@@ -832,7 +832,7 @@ struct msr_driver_t* cpu_msr_driver_open(void);
  *          The error message can be obtained by calling \ref cpuid_error.
  *          @see cpu_error_t
  */
-struct msr_driver_t* cpu_msr_driver_open_core(uint8_t core_num);
+struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num);
 
 /**
  * @brief Reads a Model-Specific Register (MSR)

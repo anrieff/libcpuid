@@ -46,7 +46,7 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 	return cpu_msr_driver_open_core(0);
 }
 
-struct msr_driver_t* cpu_msr_driver_open_core(uint8_t core_num)
+struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 {
 	char msr[32];
 	struct msr_driver_t* handle;
@@ -58,7 +58,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(uint8_t core_num)
 		set_error(ERR_NO_RDMSR);
 		return NULL;
 	}
-	sprintf(msr, "/dev/cpu/%i/msr", core_num);
+	sprintf(msr, "/dev/cpu/%u/msr", core_num);
 	int fd = open(msr, O_RDONLY);
 	if (fd < 0) {
 		if (errno == EIO) {
@@ -111,7 +111,7 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 	return cpu_msr_driver_open_core(0);
 }
 
-struct msr_driver_t* cpu_msr_driver_open_core(uint8_t core_num)
+struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 {
 	char msr[32];
 	struct msr_driver_t* handle;
@@ -123,7 +123,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(uint8_t core_num)
 		set_error(ERR_NO_RDMSR);
 		return NULL;
 	}
-	sprintf(msr, "/dev/cpuctl%i", core_num);
+	sprintf(msr, "/dev/cpuctl%u", core_num);
 	int fd = open(msr, O_RDONLY);
 	if (fd < 0) {
 		if (errno == EIO) {
@@ -220,7 +220,7 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 	return drv;
 }
 
-struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
+struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 {
 	warnf("cpu_msr_driver_open_core(): parameter ignored (function is the same as cpu_msr_driver_open)\n");
 	return cpu_msr_driver_open();
@@ -433,7 +433,7 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 	return NULL;
 }
 
-struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
+struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 {
 	set_error(ERR_NOT_IMP);
 	return NULL;
