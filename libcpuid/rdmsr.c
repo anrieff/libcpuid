@@ -31,39 +31,7 @@
 #include "libcpuid_util.h"
 #include "rdtsc.h"
 
-#ifndef _WIN32
-#  ifdef __APPLE__
-/* On Darwin, we still do not support RDMSR, so supply dummy struct
-   and functions */
-struct msr_driver_t { int dummy; };
-struct msr_driver_t* cpu_msr_driver_open(void)
-{
-	set_error(ERR_NOT_IMP);
-	return NULL;
-}
-
-struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
-{
-	set_error(ERR_NOT_IMP);
-	return NULL;
-}
-
-int cpu_rdmsr(struct msr_driver_t* driver, int msr_index, uint64_t* result)
-{
-	return set_error(ERR_NOT_IMP);
-}
-
-int cpu_msr_driver_close(struct msr_driver_t* driver)
-{
-	return set_error(ERR_NOT_IMP);
-}
-
-#define MSRINFO_DEFINED
-int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
-{
-	return set_error(ERR_NOT_IMP);
-}
-#  else /* __APPLE__ */
+#if defined (__linux__) || defined (__gnu_linux__)
 /* Assuming linux with /dev/cpu/x/msr: */
 #include <unistd.h>
 #include <stdio.h>
@@ -78,12 +46,11 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 	return cpu_msr_driver_open_core(0);
 }
 
-struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
+struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 {
 	char msr[32];
 	struct msr_driver_t* handle;
-	if(core_num < 0 && cpuid_get_total_cpus() <= core_num)
-	{
+	if (core_num >= cpuid_get_total_cpus())	{
 		set_error(ERR_INVCNB);
 		return NULL;
 	}
@@ -91,7 +58,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
 		set_error(ERR_NO_RDMSR);
 		return NULL;
 	}
-	sprintf(msr, "/dev/cpu/%i/msr", core_num);
+	sprintf(msr, "/dev/cpu/%u/msr", core_num);
 	int fd = open(msr, O_RDONLY);
 	if (fd < 0) {
 		if (errno == EIO) {
@@ -105,6 +72,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
 	handle->fd = fd;
 	return handle;
 }
+
 int cpu_rdmsr(struct msr_driver_t* driver, uint32_t msr_index, uint64_t* result)
 {
 	ssize_t ret;
@@ -125,8 +93,78 @@ int cpu_msr_driver_close(struct msr_driver_t* drv)
 	}
 	return 0;
 }
-#  endif /* __APPLE__ */
-#else /* _WIN32 */
+
+/* #endif defined (__linux__) || defined (__gnu_linux__) */
+
+#elif defined (__FreeBSD__) || defined (__DragonFly__)
+/* Assuming FreeBSD with /dev/cpuctlX */
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/ioctl.h>
+#include <sys/cpuctl.h>
+
+struct msr_driver_t { int fd; };
+static int rdmsr_supported(void);
+struct msr_driver_t* cpu_msr_driver_open(void)
+{
+	return cpu_msr_driver_open_core(0);
+}
+
+struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
+{
+	char msr[32];
+	struct msr_driver_t* handle;
+	if (core_num >= cpuid_get_total_cpus()) {
+		set_error(ERR_INVCNB);
+		return NULL;
+	}
+	if (!rdmsr_supported()) {
+		set_error(ERR_NO_RDMSR);
+		return NULL;
+	}
+	sprintf(msr, "/dev/cpuctl%u", core_num);
+	int fd = open(msr, O_RDONLY);
+	if (fd < 0) {
+		if (errno == EIO) {
+			set_error(ERR_NO_RDMSR);
+			return NULL;
+		}
+		set_error(ERR_NO_DRIVER);
+		return NULL;
+	}
+	handle = (struct msr_driver_t*) malloc(sizeof(struct msr_driver_t));
+	handle->fd = fd;
+	return handle;
+}
+
+int cpu_rdmsr(struct msr_driver_t* driver, uint32_t msr_index, uint64_t* result)
+{
+	cpuctl_msr_args_t args;
+	args.msr = msr_index;
+
+	if (!driver || driver->fd < 0)
+		return set_error(ERR_HANDLE);
+
+	if(ioctl(driver->fd, CPUCTL_RDMSR, &args))
+		return set_error(ERR_INVMSR);
+
+	*result = args.data; 
+	return 0;
+}
+
+int cpu_msr_driver_close(struct msr_driver_t* drv)
+{
+	if (drv && drv->fd >= 0) {
+		close(drv->fd);
+		free(drv);
+	}
+	return 0;
+}
+
+/* #endif defined (__FreeBSD__) || defined (__DragonFly__) */
+
+#elif defined (_WIN32)
 #include <windows.h>
 #include <winioctl.h>
 #include <winerror.h>
@@ -182,7 +220,7 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 	return drv;
 }
 
-struct msr_driver_t* cpu_msr_driver_open_core(int core_num)
+struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 {
 	warnf("cpu_msr_driver_open_core(): parameter ignored (function is the same as cpu_msr_driver_open)\n");
 	return cpu_msr_driver_open();
@@ -239,7 +277,6 @@ static BOOL wait_for_service_state(SC_HANDLE hService, DWORD dwDesiredState, SER
 
 	return fOK;
 }
-
 
 static int load_driver(struct msr_driver_t* drv)
 {
@@ -348,7 +385,7 @@ clean_up:
 
 #define FILE_DEVICE_UNKNOWN             0x00000022
 #define IOCTL_UNKNOWN_BASE              FILE_DEVICE_UNKNOWN
-#define IOCTL_PROCVIEW_RDMSR			CTL_CODE(IOCTL_UNKNOWN_BASE, 0x0803, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
+#define IOCTL_PROCVIEW_RDMSR		CTL_CODE(IOCTL_UNKNOWN_BASE, 0x0803, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
 
 int cpu_rdmsr(struct msr_driver_t* driver, uint32_t msr_index, uint64_t* result)
 {
@@ -384,7 +421,48 @@ int cpu_msr_driver_close(struct msr_driver_t* drv)
 	return 0;
 }
 
-#endif /* _WIN32 */
+/* endif defined (_WIN32) */
+
+#else /* Unsupported OS */
+/* On others OS (lie Darwin), we still do not support RDMSR, so supply dummy struct
+   and functions */
+struct msr_driver_t { int dummy; };
+struct msr_driver_t* cpu_msr_driver_open(void)
+{
+	set_error(ERR_NOT_IMP);
+	return NULL;
+}
+
+struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
+{
+	set_error(ERR_NOT_IMP);
+	return NULL;
+}
+
+int cpu_rdmsr(struct msr_driver_t* driver, int msr_index, uint64_t* result)
+{
+	return set_error(ERR_NOT_IMP);
+}
+
+int cpu_msr_driver_close(struct msr_driver_t* driver)
+{
+	return set_error(ERR_NOT_IMP);
+}
+
+#define MSRINFO_DEFINED
+int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
+                    uint8_t lowbit, uint64_t* result)
+{
+	return set_error(ERR_NOT_IMP);
+}
+
+int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
+{
+	return set_error(ERR_NOT_IMP);
+}
+
+#endif /* Unsupported OS */
+
 
 static int rdmsr_supported(void)
 {
@@ -417,55 +495,33 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 #define PLATFORM_INFO_MSR 206
 #define PLATFORM_INFO_MSR_low 8
 #define PLATFORM_INFO_MSR_high 15
+#define MSR_PSTATE_S 0xC0010063
+#define MSR_PSTATE_0 0xC0010064
 
-static int get_bits_value(uint64_t val, int highbit, int lowbit)
+int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
+                    uint8_t lowbit, uint64_t* result)
 {
-	uint64_t data = val;
-	int bits = highbit - lowbit + 1;
-	if(bits < 64){
-	    data >>= lowbit;
-	    data &= (1ULL<<bits) - 1;
-	}
-	return (int) data;
-}
+	const uint8_t bits = highbit - lowbit + 1;
 
-static uint64_t cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t reg, unsigned int highbit,
-                        unsigned int lowbit, int* error_indx)
-{
-	uint64_t data;
-	int bits;
-	*error_indx =0;
+	if(highbit > 63 || lowbit > highbit)
+		return set_error(ERR_INVRANGE);
 
-	if (cpu_rdmsr(handle, reg, &data)) {
-		*error_indx = 1;
+	if(cpu_rdmsr(handle, msr_index, result))
 		return set_error(ERR_HANDLE_R);
-	}
 
-	bits = highbit - lowbit + 1;
-	if (bits < 64)
-	{
+	if(bits < 64) {
 		/* Show only part of register */
-		data >>= lowbit;
-		data &= (1ULL << bits) - 1;
+		*result >>= lowbit;
+		*result &= (1ULL << bits) - 1;
 	}
 
-	/* Make sure we get sign correct */
-	if (data & (1ULL << (bits - 1)))
-	{
-		data &= ~(1ULL << (bits - 1));
-#pragma warning(disable: 4146)
-		data = -data;
-#pragma warning(default: 4146)
-	}
-
-	*error_indx = 0;
-	return (data);
+	return 0;
 }
 
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 {
 	uint64_t r;
-	int err, error_indx, cur_clock;
+	int err, cur_clock;
 	static int max_clock = 0, multiplier = 0;
 	static double bclk = 0.0;
 	uint64_t val;
@@ -499,8 +555,10 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		{
 			if(cpuid_get_vendor() == VENDOR_INTEL)
 			{
-				if(!multiplier)
-					multiplier = (int) cpu_rdmsr_range(handle, PLATFORM_INFO_MSR, PLATFORM_INFO_MSR_high, PLATFORM_INFO_MSR_low, &error_indx);
+				if(!multiplier) {
+					cpu_rdmsr_range(handle, PLATFORM_INFO_MSR, PLATFORM_INFO_MSR_high, PLATFORM_INFO_MSR_low, &val);
+					multiplier = (int) val;
+				}
 				if(multiplier > 0)
 					return multiplier * 100;
 			}
@@ -513,11 +571,9 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			{
 				// https://github.com/ajaiantilal/i7z/blob/5023138d7c35c4667c938b853e5ea89737334e92/helper_functions.c#L59
 				
-				val = cpu_rdmsr_range(handle, IA32_THERM_STATUS, 63, 0, &error_indx);
-				digital_readout = get_bits_value(val, 23, 16);
-				thermal_status = get_bits_value(val, 32, 31);
-				val = cpu_rdmsr_range(handle, IA32_TEMPERATURE_TARGET, 63, 0, &error_indx);
-				PROCHOT_temp = get_bits_value(val, 23, 16);
+				cpu_rdmsr_range(handle, IA32_THERM_STATUS, 23, 16, &digital_readout);
+				cpu_rdmsr_range(handle, IA32_THERM_STATUS, 32, 31, &thermal_status);
+				cpu_rdmsr_range(handle, IA32_TEMPERATURE_TARGET, 23, 16, &PROCHOT_temp);
 
 				// These bits are thermal status : 1 if supported, 0 else
 				if(thermal_status)
@@ -530,9 +586,21 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		{
 			if(cpuid_get_vendor() == VENDOR_INTEL)
 			{
-				uint64_t val = cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &error_indx);
+				cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &val);
 				double ret = (double) val / (1 << 13);
 				return (ret > 0) ? (int) (ret * 100) : CPU_INVALID_VALUE;
+			}
+			else if(cpuid_get_vendor() == VENDOR_AMD)
+			{
+				/* http://support.amd.com/TechDocs/42301_15h_Mod_00h-0Fh_BKDG.pdf
+				   MSRC001_0063[2:0] = CurPstate
+				   MSRC001_00[6B:64][15:9] = CpuVid */
+				uint64_t CpuVid;
+				cpu_rdmsr_range(handle, MSR_PSTATE_S, 2, 0, &val);
+				if(val <= 7) { // Support 8 P-states
+					cpu_rdmsr_range(handle, MSR_PSTATE_0 + val, 15, 9, &CpuVid);
+					return (int) (1.550 - 0.0125 * CpuVid) * 100; // 2.4.1.6.3 - Serial VID (SVI) Encodings
+				}
 			}
 			return CPU_INVALID_VALUE;
 		}

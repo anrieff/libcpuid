@@ -406,6 +406,7 @@ typedef enum {
 	ERR_INVMSR   = -13,     /*!< "Invalid MSR" */
 	ERR_INVCNB   = -14,     /*!< "Invalid core number" */
 	ERR_HANDLE_R = -15,     /*!< "Error on handle read" */
+	ERR_INVRANGE = -16,     /*!< "Invalid given range" */
 } cpu_error_t;
 
 /**
@@ -831,7 +832,7 @@ struct msr_driver_t* cpu_msr_driver_open(void);
 /**
  * @brief Similar to \ref cpu_msr_driver_open, but accept one parameter
  *
- * This function works on Linux only
+ * This function works on certain operating system (GNU/Linux, FreeBSD)
  *
  * @param core_num specify the core number for MSR.
  *          The first core number is 0.
@@ -841,7 +842,7 @@ struct msr_driver_t* cpu_msr_driver_open(void);
  *          The error message can be obtained by calling \ref cpuid_error.
  *          @see cpu_error_t
  */
-struct msr_driver_t* cpu_msr_driver_open_core(int core_num);
+struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num);
 
 /**
  * @brief Reads a Model-Specific Register (MSR)
@@ -890,6 +891,23 @@ typedef enum {
 	INFO_BCLK,                 /*!< The BCLK (base clock) in MHz,
 	                            multiplied by 100. */
 } cpu_msrinfo_request_t;
+
+/**
+ * @brief Similar to \ref cpu_rdmsr, but extract a range of bits
+ *
+ * @param handle - a handle to the MSR reader driver, as created by
+ *                 cpu_msr_driver_open
+ * @param msr_index - the numeric ID of the MSR you want to read
+ * @param highbit - the high bit in range, must be inferior to 64
+ * @param lowbit - the low bit in range, must be equal or superior to 0
+ * @param result - a pointer to a 64-bit integer, where the MSR value is stored
+ *
+ * @returns zero if successful, and some negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
+ */
+int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
+                    uint8_t lowbit, uint64_t* result);
 
 /**
  * @brief Reads extended CPU information from Model-Specific Registers.
