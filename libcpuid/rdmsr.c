@@ -439,7 +439,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 	return NULL;
 }
 
-int cpu_rdmsr(struct msr_driver_t* driver, int msr_index, uint64_t* result)
+int cpu_rdmsr(struct msr_driver_t* driver, uint32_t msr_index, uint64_t* result)
 {
 	return set_error(ERR_NOT_IMP);
 }
