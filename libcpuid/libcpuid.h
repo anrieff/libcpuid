@@ -49,6 +49,8 @@
  *                      Fix clock detection in cpu_clock_by_ic() for Bulldozer.
  *                      More entries supported in cpu_msrinfo().
  *                      *BSD and Solaris support (unofficial).
+ *  0.2.3             : Support for Skylake; MSR ops in FreeBSD; INFO_VOLTAGE
+ *                      for AMD CPUs.
  */
 
 /** @mainpage A simple libcpuid introduction
@@ -403,10 +405,10 @@ typedef enum {
 	ERR_NO_PERMS = -10,	/*!< "No permissions to install RDMSR driver" */
 	ERR_EXTRACT  = -11,	/*!< "Cannot extract RDMSR driver (read only media?)" */
 	ERR_HANDLE   = -12,	/*!< "Bad handle" */
-	ERR_INVMSR   = -13,     /*!< "Invalid MSR" */
-	ERR_INVCNB   = -14,     /*!< "Invalid core number" */
-	ERR_HANDLE_R = -15,     /*!< "Error on handle read" */
-	ERR_INVRANGE = -16,     /*!< "Invalid given range" */
+	ERR_INVMSR   = -13,	/*!< "Invalid MSR" */
+	ERR_INVCNB   = -14,	/*!< "Invalid core number" */
+	ERR_HANDLE_R = -15,	/*!< "Error on handle read" */
+	ERR_INVRANGE = -16,	/*!< "Invalid given range" */
 } cpu_error_t;
 
 /**
@@ -832,7 +834,7 @@ struct msr_driver_t* cpu_msr_driver_open(void);
 /**
  * @brief Similar to \ref cpu_msr_driver_open, but accept one parameter
  *
- * This function works on certain operating system (GNU/Linux, FreeBSD)
+ * This function works on certain operating systems (GNU/Linux, FreeBSD)
  *
  * @param core_num specify the core number for MSR.
  *          The first core number is 0.
