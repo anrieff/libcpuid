@@ -57,6 +57,7 @@ AC_CONFIG_FILES([
   libcpuid/Makefile
   cpuid_tool/Makefile
   tests/Makefile
+  libcpuid/Doxyfile
 ])
 AC_OUTPUT
 

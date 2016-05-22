@@ -33,24 +33,24 @@
  *
  * Version history:
  *
- *  0.1.0 (2008-10-15): initial adaptation from wxfractgui sources
- *  0.1.1 (2009-07-06): Added intel_fn11 fields to cpu_raw_data_t to handle
- *                      new processor topology enumeration required on Core i7
- *  0.1.2 (2009-09-26): Added support for MSR reading through self-extracting
- *                      kernel driver on Win32.
- *  0.1.3 (2010-04-20): Added support for greater more accurate CPU clock
- *                      measurements with cpu_clock_by_ic()
- *  0.2.0 (2011-10-11): Support for AMD Bulldozer CPUs, 128-bit SSE unit size
- *                      checking. A backwards-incompatible change, since the
- *                      sizeof cpu_id_t is now different.
- *  0.2.1 (2012-05-26): Support for Ivy Bridge, and detecting the presence of
- *                      the RdRand instruction.
- *  0.2.2 (2015-11-04): Support for newer processors up to Haswell and Vishera.
- *                      Fix clock detection in cpu_clock_by_ic() for Bulldozer.
- *                      More entries supported in cpu_msrinfo().
- *                      *BSD and Solaris support (unofficial).
- *  0.2.3             : Support for Skylake; MSR ops in FreeBSD; INFO_VOLTAGE
- *                      for AMD CPUs.
+ * * 0.1.0 (2008-10-15): initial adaptation from wxfractgui sources
+ * * 0.1.1 (2009-07-06): Added intel_fn11 fields to cpu_raw_data_t to handle
+ *                       new processor topology enumeration required on Core i7
+ * * 0.1.2 (2009-09-26): Added support for MSR reading through self-extracting
+ *                       kernel driver on Win32.
+ * * 0.1.3 (2010-04-20): Added support for greater more accurate CPU clock
+ *                       measurements with cpu_clock_by_ic()
+ * * 0.2.0 (2011-10-11): Support for AMD Bulldozer CPUs, 128-bit SSE unit size
+ *                       checking. A backwards-incompatible change, since the
+ *                       sizeof cpu_id_t is now different.
+ * * 0.2.1 (2012-05-26): Support for Ivy Bridge, and detecting the presence of
+ *                       the RdRand instruction.
+ * * 0.2.2 (2015-11-04): Support for newer processors up to Haswell and Vishera.
+ *                       Fix clock detection in cpu_clock_by_ic() for Bulldozer.
+ *                       More entries supported in cpu_msrinfo().
+ *                       *BSD and Solaris support (unofficial).
+ * * 0.2.3             : Support for Skylake; MSR ops in FreeBSD; INFO_VOLTAGE
+ *                       for AMD CPUs.
  */
 
 /** @mainpage A simple libcpuid introduction
@@ -63,6 +63,15 @@
  * To fetch the CPUID info needed for CPU identification, use
  *   \ref cpuid_get_raw_data <br>
  * To make sense of that data (decode, extract features), use \ref cpu_identify <br>
+ * To detect the CPU speed, use either \ref cpu_clock, \ref cpu_clock_by_os,
+ * \ref cpu_tsc_mark + \ref cpu_tsc_unmark + \ref cpu_clock_by_mark,
+ * \ref cpu_clock_measure or \ref cpu_clock_by_ic.
+ * Read carefully for pros/cons of each method. <br>
+ * 
+ * To read MSRs, use \ref cpu_msr_driver_open to get a handle, and then
+ * \ref cpu_rdmsr for querying abilities. Some MSR decoding is available on recent
+ * CPUs, and can be queried through \ref cpu_msrinfo; the various types of queries
+ * are described in \ref cpu_msrinfo_request_t.
  * </p>
  */
 
@@ -139,7 +148,8 @@ struct cpu_id_t {
 	
 	/**
 	 * contain CPU flags. Used to test for features. See
-	 * the CPU_FEATURE_* macros below. @see Features
+	 * the \ref cpu_feature_t "CPU_FEATURE_*" macros below.
+	 * @see Features
 	 */
 	uint8_t flags[CPU_FLAGS_MAX];
 	
@@ -240,7 +250,8 @@ struct cpu_id_t {
 	
 	/**
 	 * contain miscellaneous detection information. Used to test about specifics of
-	 * certain detected features. See CPU_HINT_* macros below. @see Hints
+	 * certain detected features. See \ref cpu_hint_t "CPU_HINT_*" macros below.
+	 * @see Hints
 	 */
 	uint8_t detection_hints[CPU_HINTS_MAX];
 };
@@ -817,6 +828,7 @@ void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list);
  */
 void cpuid_free_cpu_list(struct cpu_list_t* list);
 
+struct msr_driver_t;
 /**
  * @brief Starts/opens a driver, needed to read MSRs (Model Specific Registers)
  *
@@ -828,7 +840,6 @@ void cpuid_free_cpu_list(struct cpu_list_t* list);
  *          The error message can be obtained by calling \ref cpuid_error.
  *          @see cpu_error_t
  */
-struct msr_driver_t;
 struct msr_driver_t* cpu_msr_driver_open(void);
 
 /**
@@ -876,22 +887,22 @@ int cpu_rdmsr(struct msr_driver_t* handle, uint32_t msr_index, uint64_t* result)
 typedef enum {
 	INFO_MPERF,                /*!< Maximum performance frequency clock. This
                                     is a counter, which increments as a
-                                    proportion of the actual processor speed */
+                                    proportion of the actual processor speed. */
 	INFO_APERF,                /*!< Actual performance frequency clock. This
                                     accumulates the core clock counts when the
                                     core is active. */
 	INFO_CUR_MULTIPLIER,       /*!< Current CPU:FSB ratio, multiplied by 100.
                                     e.g., a CPU:FSB value of 18.5 reads as
-                                    1850. */
+                                    "1850". */
 	INFO_MAX_MULTIPLIER,       /*!< Maxumum CPU:FSB ratio for this CPU,
-                                    multiplied by 100 */
-	INFO_TEMPERATURE,          /*!< The current core temperature in Celsius */
+                                    multiplied by 100. */
+	INFO_TEMPERATURE,          /*!< The current core temperature in Celsius. */
 	INFO_THROTTLING,           /*!< 1 if the current logical processor is
                                     throttling. 0 if it is running normally. */
 	INFO_VOLTAGE,              /*!< The current core voltage in Volt,
-	                            multiplied by 100. */
+	                                multiplied by 100. */
 	INFO_BCLK,                 /*!< The BCLK (base clock) in MHz,
-	                            multiplied by 100. */
+	                                multiplied by 100. */
 } cpu_msrinfo_request_t;
 
 /**
