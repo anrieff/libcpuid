@@ -25,5 +25,6 @@ depcomp
 install-sh
 libcpuid.pc
 libcpuid/docs
+libcpuid/Doxyfile
 ar-lib
 compile
