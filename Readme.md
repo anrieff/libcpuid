@@ -2,8 +2,11 @@ libcpuid
 ========
 
 libcpuid provides CPU identification for the x86 (and x86_64).
-For details about the programming API, please see the docs
-on the project's site (http://libcpuid.sourceforge.net/)
+For details about the programming API, you might want to 
+take a look at the project's website on sourceforge
+(http://libcpuid.sourceforge.net/). There you'd find a short
+[tutorial](http://libcpuid.sf.net/documentation.html), as well
+as the full [API reference](http://libcpuid.sf.net/doxy).
 
 Configuring after checkout
 --------------------------
