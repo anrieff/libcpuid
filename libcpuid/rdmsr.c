@@ -485,18 +485,115 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 	return (int) ((y - x) / (b - a));
 }
 
-#ifndef MSRINFO_DEFINED
+static double get_info_cur_multiplier(struct msr_driver_t* handle)
+{
+	int err, cur_clock;
+	uint64_t r;
+	static double bclk = 0.0;
 
-#define IA32_THERM_STATUS 0x19C
-#define IA32_TEMPERATURE_TARGET 0x1a2
-#define IA32_PACKAGE_THERM_STATUS 0x1b1
-#define MSR_PERF_STATUS 0x198
-#define MSR_TURBO_RATIO_LIMIT 429
+	if(cpuid_get_vendor() == VENDOR_INTEL) {
+		if(!bclk)
+			bclk = (double) cpu_msrinfo(handle, INFO_BCLK) / 100;
+		if(bclk > 0) {
+			cur_clock = cpu_clock_by_ic(10, 4);
+			if(cur_clock > 0)
+				return cur_clock / bclk;
+		}
+	}
+
+	err = cpu_rdmsr(handle, 0x2a, &r);
+	if (err) return CPU_INVALID_VALUE;
+	return (r>>22) & 0x1f;
+}
+
+static double get_info_max_multiplier(struct msr_driver_t* handle)
+{
 #define PLATFORM_INFO_MSR 206
 #define PLATFORM_INFO_MSR_low 8
 #define PLATFORM_INFO_MSR_high 15
+	int err;
+	uint64_t val, r;
+	static int multiplier = 0;
+
+	if(cpuid_get_vendor() == VENDOR_INTEL) {
+		if(!multiplier) {
+			cpu_rdmsr_range(handle, PLATFORM_INFO_MSR, PLATFORM_INFO_MSR_high, PLATFORM_INFO_MSR_low, &val);
+			multiplier = (int) val;
+		}
+		if(multiplier > 0)
+			return multiplier;
+	}
+
+	err = cpu_rdmsr(handle, 0x198, &r);
+	if (err) return CPU_INVALID_VALUE;
+	return (r >> 40) & 0x1f;
+}
+
+static int get_info_temperature(struct msr_driver_t* handle)
+{
+#define IA32_THERM_STATUS 0x19C
+#define IA32_TEMPERATURE_TARGET 0x1a2
+	uint64_t digital_readout, thermal_status, PROCHOT_temp;
+
+	if(cpuid_get_vendor() == VENDOR_INTEL) {
+		// https://github.com/ajaiantilal/i7z/blob/5023138d7c35c4667c938b853e5ea89737334e92/helper_functions.c#L59
+		cpu_rdmsr_range(handle, IA32_THERM_STATUS, 23, 16, &digital_readout);
+		cpu_rdmsr_range(handle, IA32_THERM_STATUS, 32, 31, &thermal_status);
+		cpu_rdmsr_range(handle, IA32_TEMPERATURE_TARGET, 23, 16, &PROCHOT_temp);
+
+		// These bits are thermal status : 1 if supported, 0 else
+		if(thermal_status)
+			return(PROCHOT_temp - digital_readout); // Temperature is prochot - digital readout
+	}
+
+	return CPU_INVALID_VALUE;
+}
+
+static double get_info_voltage(struct msr_driver_t* handle)
+{
+#define MSR_PERF_STATUS 0x198
 #define MSR_PSTATE_S 0xC0010063
 #define MSR_PSTATE_0 0xC0010064
+	uint64_t val;
+
+	if(cpuid_get_vendor() == VENDOR_INTEL) {
+		cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &val);
+		double ret = (double) val / (1 << 13);
+		return (ret > 0) ? ret : CPU_INVALID_VALUE;
+	}
+	else if(cpuid_get_vendor() == VENDOR_AMD) {
+		/* http://support.amd.com/TechDocs/42301_15h_Mod_00h-0Fh_BKDG.pdf
+		   MSRC001_0063[2:0] = CurPstate
+		   MSRC001_00[6B:64][15:9] = CpuVid */
+		uint64_t CpuVid;
+		cpu_rdmsr_range(handle, MSR_PSTATE_S, 2, 0, &val);
+		if(val <= 7) { // Support 8 P-states
+			cpu_rdmsr_range(handle, MSR_PSTATE_0 + val, 15, 9, &CpuVid);
+			return 1.550 - 0.0125 * CpuVid; // 2.4.1.6.3 - Serial VID (SVI) Encodings
+		}
+	}
+
+	return CPU_INVALID_VALUE;
+}
+
+static double get_info_bclk(struct msr_driver_t* handle)
+{
+	static int max_clock = 0, multiplier = 0;
+
+	if(!max_clock)
+		max_clock = cpu_clock_measure(100, 1); // Return the non-Turbo clock
+	if(!multiplier)
+		multiplier = cpu_msrinfo(handle, INFO_MAX_MULTIPLIER) / 100;
+	if(max_clock > 0 && multiplier > 0)
+		return (double) max_clock / multiplier;
+
+	return CPU_INVALID_VALUE;
+}
+
+#ifndef MSRINFO_DEFINED
+
+#define IA32_PACKAGE_THERM_STATUS 0x1b1
+#define MSR_TURBO_RATIO_LIMIT 429
 
 int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
                     uint8_t lowbit, uint64_t* result)
@@ -520,13 +617,6 @@ int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t hig
 
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 {
-	uint64_t r;
-	int err, cur_clock;
-	static int max_clock = 0, multiplier = 0;
-	static double bclk = 0.0;
-	uint64_t val;
-	int digital_readout, thermal_status, PROCHOT_temp;
-
 	if (handle == NULL)
 		return set_error(ERR_HANDLE);
 	switch (which) {
@@ -535,86 +625,17 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		case INFO_APERF:
 			return perfmsr_measure(handle, 0xe8);
 		case INFO_CUR_MULTIPLIER:
-		{
-			if(cpuid_get_vendor() == VENDOR_INTEL)
-			{
-				if(!bclk)
-					bclk = (double) cpu_msrinfo(handle, INFO_BCLK) / 100;
-				if(bclk > 0)
-				{
-					cur_clock = cpu_clock_by_ic(10, 4);
-					if(cur_clock > 0)
-						return (int) (cur_clock / bclk * 100);
-				}
-			}
-			err = cpu_rdmsr(handle, 0x2a, &r);
-			if (err) return CPU_INVALID_VALUE;
-			return (int) ((r>>22) & 0x1f) * 100;
-		}
+			return (int) get_info_cur_multiplier(handle) * 100;
 		case INFO_MAX_MULTIPLIER:
-		{
-			if(cpuid_get_vendor() == VENDOR_INTEL)
-			{
-				if(!multiplier) {
-					cpu_rdmsr_range(handle, PLATFORM_INFO_MSR, PLATFORM_INFO_MSR_high, PLATFORM_INFO_MSR_low, &val);
-					multiplier = (int) val;
-				}
-				if(multiplier > 0)
-					return multiplier * 100;
-			}
-			err = cpu_rdmsr(handle, 0x198, &r);
-			if (err) return CPU_INVALID_VALUE;
-			return (int) ((r >> 40) & 0x1f) * 100;
-		}
+			return (int) get_info_max_multiplier(handle) * 100;
 		case INFO_TEMPERATURE:
-			if(cpuid_get_vendor() == VENDOR_INTEL)
-			{
-				// https://github.com/ajaiantilal/i7z/blob/5023138d7c35c4667c938b853e5ea89737334e92/helper_functions.c#L59
-				
-				cpu_rdmsr_range(handle, IA32_THERM_STATUS, 23, 16, &digital_readout);
-				cpu_rdmsr_range(handle, IA32_THERM_STATUS, 32, 31, &thermal_status);
-				cpu_rdmsr_range(handle, IA32_TEMPERATURE_TARGET, 23, 16, &PROCHOT_temp);
-
-				// These bits are thermal status : 1 if supported, 0 else
-				if(thermal_status)
-					return(PROCHOT_temp - digital_readout); // Temperature is prochot - digital readout
-			}
-			return CPU_INVALID_VALUE;
+			return get_info_temperature(handle);
 		case INFO_THROTTLING:
 			return CPU_INVALID_VALUE;
 		case INFO_VOLTAGE:
-		{
-			if(cpuid_get_vendor() == VENDOR_INTEL)
-			{
-				cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &val);
-				double ret = (double) val / (1 << 13);
-				return (ret > 0) ? (int) (ret * 100) : CPU_INVALID_VALUE;
-			}
-			else if(cpuid_get_vendor() == VENDOR_AMD)
-			{
-				/* http://support.amd.com/TechDocs/42301_15h_Mod_00h-0Fh_BKDG.pdf
-				   MSRC001_0063[2:0] = CurPstate
-				   MSRC001_00[6B:64][15:9] = CpuVid */
-				uint64_t CpuVid;
-				cpu_rdmsr_range(handle, MSR_PSTATE_S, 2, 0, &val);
-				if(val <= 7) { // Support 8 P-states
-					cpu_rdmsr_range(handle, MSR_PSTATE_0 + val, 15, 9, &CpuVid);
-					return (int) (1.550 - 0.0125 * CpuVid) * 100; // 2.4.1.6.3 - Serial VID (SVI) Encodings
-				}
-			}
-			return CPU_INVALID_VALUE;
-		}
+			return (int) get_info_voltage(handle) * 100;
 		case INFO_BCLK:
-		{
-			if(!max_clock)
-				max_clock = cpu_clock_measure(100, 1); // Return the non-Turbo clock
-			if(!multiplier)
-				multiplier = cpu_msrinfo(handle, INFO_MAX_MULTIPLIER) / 100;
-			if(max_clock > 0 && multiplier > 0)
-				return (int) ((double) max_clock / multiplier * 100);
-
-			return CPU_INVALID_VALUE;
-		}
+			return (int) get_info_bclk(handle) * 100;
 		default:
 			return CPU_INVALID_VALUE;
 	}
