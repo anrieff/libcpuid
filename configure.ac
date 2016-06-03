@@ -1,4 +1,4 @@
-AC_INIT([libcpuid CPU Identification library], [0.2.2], [libcpuid-devel@lists.sourceforge.net], [libcpuid])
+AC_INIT([libcpuid CPU Identification library], [0.3.0], [libcpuid-devel@lists.sourceforge.net], [libcpuid])
 AC_CONFIG_SRCDIR([libcpuid/libcpuid.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -19,9 +19,10 @@ dnl 11:0:3   Version 0.1.4: just an identification change, to reflect the detect
 dnl 12:1:0   Version 0.2.0: two more fields to cpu_id_t
 dnl 12:1:1   Version 0.2.1: more processors support
 dnl 12:1:2   Version 0.2.2: more processors support, *BSD/Solaris support, updates to MSR stuff
-LIBCPUID_CURRENT=12
-LIBCPUID_AGE=1
-LIBCPUID_REVISION=2
+dnl 13:2:0   Version 0.3.0: increment max Intel leaf 04 entries to 8
+LIBCPUID_CURRENT=13
+LIBCPUID_AGE=2
+LIBCPUID_REVISION=0
 AC_SUBST([LIBCPUID_AGE])
 AC_SUBST([LIBCPUID_REVISION])
 AC_SUBST([LIBCPUID_CURRENT])

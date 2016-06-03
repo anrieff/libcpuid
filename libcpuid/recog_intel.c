@@ -26,19 +26,13 @@
 #include <string.h>
 #include <ctype.h>
 #include "libcpuid.h"
-#include "recog_intel.h"
 #include "libcpuid_util.h"
-
-
-enum _intel_code_t {
-	#define CODE(x) x
-	#include "intel_code_t.h"
-	#undef CODE
-};
-typedef enum _intel_code_t intel_code_t;
+#include "libcpuid_internal.h"
+#include "recog_intel.h"
 
 const struct intel_bcode_str { intel_code_t code; char *str; } intel_bcode_str[] = {
 	#define CODE(x) { x, #x }
+	#define CODE2(x, y) CODE(x)
 	#include "intel_code_t.h"
 	#undef CODE
 };
@@ -771,7 +765,7 @@ static intel_model_t get_model_code(struct cpu_id_t* data)
 #undef HAVE
 }
 
-int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal)
 {
 	load_intel_features(raw, data);
 	if (raw->basic_cpuid[0][0] >= 4) {
@@ -797,8 +791,10 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	else
 		debugf(2, "Detected Intel brand code: %d\n", brand_code);
 	debugf(2, "Detected Intel model code: %d\n", model_code);
+	
+	internal->code.intel = brand_code;
 
-	match_cpu_codename(cpudb_intel, COUNT_OF(cpudb_intel), data,
+	internal->score = match_cpu_codename(cpudb_intel, COUNT_OF(cpudb_intel), data,
 		brand_code, model_code);
 	return 0;
 }

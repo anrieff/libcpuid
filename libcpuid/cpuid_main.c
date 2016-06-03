@@ -24,6 +24,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "libcpuid.h"
+#include "libcpuid_internal.h"
 #include "recog_intel.h"
 #include "recog_amd.h"
 #include "asm-bits.h"
@@ -372,7 +373,7 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 		cpu_exec_cpuid(i, data->basic_cpuid[i]);
 	for (i = 0; i < 32; i++)
 		cpu_exec_cpuid(0x80000000 + i, data->ext_cpuid[i]);
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < MAX_INTELFN4_LEVEL; i++) {
 		memset(data->intel_fn4[i], 0, sizeof(data->intel_fn4[i]));
 		data->intel_fn4[i][0] = 4;
 		data->intel_fn4[i][2] = i;
@@ -478,7 +479,7 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
 	return set_error(ERR_OK);
 }
 
-int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal)
 {
 	int r;
 	struct cpu_raw_data_t myraw;
@@ -492,15 +493,21 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		return set_error(r);
 	switch (data->vendor) {
 		case VENDOR_INTEL:
-			r = cpuid_identify_intel(raw, data);
+			r = cpuid_identify_intel(raw, data, internal);
 			break;
 		case VENDOR_AMD:
-			r = cpuid_identify_amd(raw, data);
+			r = cpuid_identify_amd(raw, data, internal);
 			break;
 		default:
 			break;
 	}
 	return set_error(r);
+}
+
+int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+{
+	struct internal_id_info_t throwaway;
+	return cpu_ident_internal(raw, data, &throwaway);
 }
 
 const char* cpu_feature_str(cpu_feature_t feature)
