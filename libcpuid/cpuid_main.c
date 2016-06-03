@@ -373,7 +373,7 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 		cpu_exec_cpuid(i, data->basic_cpuid[i]);
 	for (i = 0; i < 32; i++)
 		cpu_exec_cpuid(0x80000000 + i, data->ext_cpuid[i]);
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < MAX_INTELFN4_LEVEL; i++) {
 		memset(data->intel_fn4[i], 0, sizeof(data->intel_fn4[i]));
 		data->intel_fn4[i][0] = 4;
 		data->intel_fn4[i][2] = i;
