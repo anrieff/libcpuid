@@ -525,7 +525,7 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 	static int max_clock = 0, multiplier = 0;
 	static double bclk = 0.0;
 	uint64_t val;
-	int digital_readout, thermal_status, PROCHOT_temp;
+	uint64_t digital_readout, thermal_status, PROCHOT_temp;
 
 	if (handle == NULL)
 		return set_error(ERR_HANDLE);
