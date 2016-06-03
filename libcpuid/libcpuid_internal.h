@@ -23,43 +23,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+#ifndef __LIBCPUID_INTERNAL_H__
+#define __LIBCPUID_INTERNAL_H__
 /*
- * This file contains a list of internal codes we use in detection. It is
- * of no external use and isn't a complete list of AMD products.
+ * This file contains internal undocumented declarations and function prototypes
+ * for the workings of the internal library infrastructure.
  */
-	CODE2(OPTERON_GENERIC, 1000),
-	CODE(OPTERON_800),
-	CODE(ATHLON_XP),
-	CODE(ATHLON_XP_M),
-	CODE(ATHLON_XP_M_LV),
-	CODE(ATHLON),
-	CODE(ATHLON_MP),
-	CODE(MOBILE_ATHLON64),
-	CODE(ATHLON_FX),
-	CODE(DURON),
-	CODE(DURON_MP),
-	CODE(MOBILE_DURON),
-	CODE(MOBILE_SEMPRON),
-	CODE(OPTERON_SINGLE),
-	CODE(OPTERON_DUALCORE),
-	CODE(OPTERON_800_DUALCORE),
-	CODE(MOBILE_TURION),
-	CODE(ATHLON_64),
-	CODE(ATHLON_64_FX),
-	CODE(TURION_64),
-	CODE(TURION_X2),
-	CODE(SEMPRON),
-	CODE(M_SEMPRON),
-	CODE(SEMPRON_DUALCORE),
-	CODE(PHENOM),
-	CODE(PHENOM2),
-	CODE(ATHLON_64_X2),
-	CODE(ATHLON_64_X3),
-	CODE(ATHLON_64_X4),
-	CODE(FUSION_C),
-	CODE(FUSION_E),
-	CODE(FUSION_EA),
-	CODE(FUSION_Z),
-	CODE(FUSION_A),
-	
+
+enum _common_codes_t {
+	NA = 0,
+	NO_CODE,
+};
+
+#define CODE(x) x
+#define CODE2(x, y) x = y
+enum _amd_code_t {
+	#include "amd_code_t.h"
+};
+typedef enum _amd_code_t amd_code_t;
+
+enum _intel_code_t {
+	#include "intel_code_t.h"
+};
+typedef enum _intel_code_t intel_code_t;
+#undef CODE
+#undef CODE2
+
+struct internal_id_info_t {
+	union {
+		amd_code_t   amd;
+		intel_code_t intel;
+	} code;
+	int score; // detection (matchtable) score
+};
+
+int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, 
+		       struct internal_id_info_t* internal);
+
+#endif /* __LIBCPUID_INTERNAL_H__ */

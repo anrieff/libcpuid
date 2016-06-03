@@ -28,18 +28,13 @@
 #include <string.h>
 #include <ctype.h>
 #include "libcpuid.h"
-#include "recog_amd.h"
 #include "libcpuid_util.h"
-
-enum _amd_code_t {
-	#define CODE(x) x
-	#include "amd_code_t.h"
-	#undef CODE
-};
-typedef enum _amd_code_t amd_code_t;
+#include "libcpuid_internal.h"
+#include "recog_amd.h"
 
 const struct amd_code_str { amd_code_t code; char *str; } amd_code_str[] = {
 	#define CODE(x) { x, #x }
+	#define CODE2(x, y) CODE(x)
 	#include "amd_code_t.h"
 	#undef CODE
 };
@@ -454,7 +449,7 @@ static amd_code_t decode_amd_codename_part1(const char *bs)
 	return NO_CODE;
 }
 
-static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal)
 {
 	amd_code_t code = decode_amd_codename_part1(data->brand_str);
 	int i = 0;
@@ -465,22 +460,22 @@ static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 			break;
 		}
 	}
+	if (code == ATHLON_64_X2 && data->l2_cache < 512)
+		code = SEMPRON_DUALCORE;
 	if (code_str)
 		debugf(2, "Detected AMD brand code: %d (%s)\n", code, code_str);
 	else
 		debugf(2, "Detected AMD brand code: %d\n", code);
-
-	if (code == ATHLON_64_X2 && data->l2_cache < 512)
-		code = SEMPRON_DUALCORE;
-	match_cpu_codename(cpudb_amd, COUNT_OF(cpudb_amd), data, code, 0);
+	internal->code.amd = code;
+	internal->score = match_cpu_codename(cpudb_amd, COUNT_OF(cpudb_amd), data, code, 0);
 }
 
-int cpuid_identify_amd(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+int cpuid_identify_amd(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal)
 {
 	load_amd_features(raw, data);
 	decode_amd_cache_info(raw, data);
 	decode_amd_number_of_cores(raw, data);
-	decode_amd_codename(raw, data);
+	decode_amd_codename(raw, data, internal);
 	return 0;
 }
 

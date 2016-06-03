@@ -91,7 +91,7 @@ static int score(const struct match_entry_t* entry, const struct cpu_id_t* data,
 	return res;
 }
 
-void match_cpu_codename(const struct match_entry_t* matchtable, int count,
+int match_cpu_codename(const struct match_entry_t* matchtable, int count,
                         struct cpu_id_t* data, int brand_code, int model_code)
 {
 	int bestscore = -1;
@@ -112,6 +112,7 @@ void match_cpu_codename(const struct match_entry_t* matchtable, int count,
 		}
 	}
 	strcpy(data->cpu_codename, matchtable[bestindex].name);
+	return bestscore;
 }
 
 void generic_get_cpu_list(const struct match_entry_t* matchtable, int count,

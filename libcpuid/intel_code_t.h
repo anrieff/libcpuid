@@ -28,9 +28,7 @@
  * This file contains a list of internal codes we use in detection. It is
  * of no external use and isn't a complete list of intel products.
  */
-	CODE(NA),
-	CODE(NO_CODE),
-	CODE(PENTIUM),
+	CODE2(PENTIUM, 2000),
 	CODE(MOBILE_PENTIUM),
 	
 	CODE(XEON),
