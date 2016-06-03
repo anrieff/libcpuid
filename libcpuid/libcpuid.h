@@ -49,8 +49,10 @@
  *                       Fix clock detection in cpu_clock_by_ic() for Bulldozer.
  *                       More entries supported in cpu_msrinfo().
  *                       *BSD and Solaris support (unofficial).
- * * 0.2.3             : Support for Skylake; MSR ops in FreeBSD; INFO_VOLTAGE
- *                       for AMD CPUs.
+ * * 0.3.0             : Support for Skylake; MSR ops in FreeBSD; INFO_VOLTAGE
+ *                       for AMD CPUs. Level 4 cache support for Crystalwell
+ *                       (a backwards-incompatible change since the sizeof
+ *                        cpu_raw_data_t is now different).
  */
 
 /** @mainpage A simple libcpuid introduction

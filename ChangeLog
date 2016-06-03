@@ -30,3 +30,13 @@ Version 0.2.2 (2015-11-04):
 	* More entries supported in cpu_msrinfo()
 	* Rename of some CPU codenames, made more consistent
 	* *BSD and Solaris support (unofficial)
+
+Version 0.3.0 (2016-06):
+	* A backwards-incompatible change, since the sizeof cpu_raw_data_t and
+	  cpu_id_t are now different.
+	* Support for processors up to Skylake.
+	* Fix clock detection in cpu_clock_by_ic() for Skylake.
+	* Support up to 8 subleaf entries for CPUID leaf 04 and detection
+	  of L4 cache.
+	* MSR functions supported on FreeBSD.
+	* INFO_VOLTAGE request supported by cpu_msrinfo().
