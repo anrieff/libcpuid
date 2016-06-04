@@ -3,6 +3,7 @@ AC_CONFIG_SRCDIR([libcpuid/libcpuid.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([-Wall dist-bzip2 dist-zip foreign])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 dnl Versioning scheme shamelessly copied from libexif.
 dnl Short walkthrough. C means CURRENT, A mean AGE, R means REVISION
