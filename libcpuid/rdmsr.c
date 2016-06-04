@@ -481,6 +481,20 @@ int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
   http://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-system-programming-manual-325384.pdf
 */
 
+/* AMD MSRs addresses */
+#define MSR_PSTATE_L           0xC0010061
+#define MSR_PSTATE_S           0xC0010063
+#define MSR_PSTATE_0           0xC0010064
+#define MSR_PSTATE_7           0xC001006B
+
+/* Intel MSRs addresses */
+#define IA32_PERF_STATUS       0x198
+#define IA32_THERM_STATUS      0x19C
+#define MSR_TURBO_RATIO_LIMIT  0x1AD
+#define MSR_TEMPERATURE_TARGET 0x1A2
+#define MSR_PERF_STATUS        0x198
+#define MSR_PLATFORM_INFO      0xCE
+
 
 static int rdmsr_supported(void)
 {
@@ -503,10 +517,34 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 	return (int) ((y - x) / (b - a));
 }
 
+static int get_amd_multipliers(struct msr_driver_t* handle, struct internal_id_info_t *internal,
+                               uint32_t pstate, uint64_t *multiplier)
+{
+	int err;
+	uint64_t CpuFid, CpuDid;
+	double factor = 2.0;
+
+	if (pstate < MSR_PSTATE_0 || MSR_PSTATE_7 < pstate)
+		return 1;
+
+	/* Refer links above
+	Table 299: P-state Definitions
+	MSRC001_00[6B:64][8:6] is CpuDid
+	MSRC001_00[6B:64][5:0] is CpuFid
+	APUs -> 100MHz REFCLK
+	CPUs -> 200MHz REFCLK */
+	if (FUSION_C <= internal->code.amd && internal->code.amd <= FUSION_A)
+		factor = 1.0;
+	err  = cpu_rdmsr_range(handle, pstate, 5, 0, &CpuFid);
+	err += cpu_rdmsr_range(handle, pstate, 8, 6, &CpuDid);
+	*multiplier = ((CpuFid + 0x10) / (1 << CpuDid)) / factor;
+
+	return err;
+}
+
 static double get_info_cur_multiplier(struct msr_driver_t* handle, struct cpu_id_t *id,
                                       struct internal_id_info_t *internal)
 {
-#define IA32_PERF_STATUS 0x198
 	int err;
 	uint64_t reg;
 
@@ -522,15 +560,20 @@ static double get_info_cur_multiplier(struct msr_driver_t* handle, struct cpu_id
 		err = cpu_rdmsr_range(handle, IA32_PERF_STATUS, 15, 8, &reg);
 		if (!err) return reg;
 	}
+	else if(id->vendor == VENDOR_AMD) {
+		/* Refer links above
+		MSRC001_0063[2:0] is CurPstate */
+		err  = cpu_rdmsr_range(handle, MSR_PSTATE_S, 2, 0, &reg);
+		err += get_amd_multipliers(handle, internal, MSR_PSTATE_0 + reg, &reg);
+		if (!err) return reg;
+	}
 
 	return CPU_INVALID_VALUE;
-#undef IA32_PERF_STATUS
 }
 
 static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id_t *id,
                                       struct internal_id_info_t *internal)
 {
-#define MSR_TURBO_RATIO_LIMIT 0x1ad
 	int err;
 	uint64_t reg;
 
@@ -557,16 +600,21 @@ static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id
 		err = cpu_rdmsr_range(handle, MSR_TURBO_RATIO_LIMIT, 7, 0, &reg);
 		if (!err) return reg;
 	}
+	else if(id->vendor == VENDOR_AMD) {
+		/* Refer links above
+		MSRC001_0064 is Pb0
+		Pb0 is highest-performance boosted P-state */
+		err = get_amd_multipliers(handle, internal, MSR_PSTATE_0, &reg);
+		if (!err) return reg;
+	}
+
 
 	return CPU_INVALID_VALUE;
-#undef MSR_TURBO_RATIO_LIMIT
 }
 
 static int get_info_temperature(struct msr_driver_t* handle, struct cpu_id_t *id,
                                 struct internal_id_info_t *internal)
 {
-#define IA32_THERM_STATUS      0x19C
-#define MSR_TEMPERATURE_TARGET 0x1a2
 	int err;
 	uint64_t DigitalReadout, ReadingValid, TemperatureTarget;
 
@@ -590,16 +638,11 @@ static int get_info_temperature(struct msr_driver_t* handle, struct cpu_id_t *id
 	}
 
 	return CPU_INVALID_VALUE;
-#undef IA32_THERM_STATUS
-#undef MSR_TEMPERATURE_TARGET
 }
 
 static double get_info_voltage(struct msr_driver_t* handle, struct cpu_id_t *id,
                                struct internal_id_info_t *internal)
 {
-#define MSR_PERF_STATUS 0x198
-#define MSR_PSTATE_S    0xC0010063
-#define MSR_PSTATE_0    0xC0010064
 	int err;
 	uint64_t reg, CpuVid;
 
@@ -622,15 +665,11 @@ static double get_info_voltage(struct msr_driver_t* handle, struct cpu_id_t *id,
 	}
 
 	return CPU_INVALID_VALUE;
-#undef MSR_PERF_STATUS
-#undef MSR_PSTATE_S
-#undef MSR_PSTATE_0
 }
 
 static double get_info_bclk(struct msr_driver_t* handle, struct cpu_id_t *id,
                             struct internal_id_info_t *internal)
 {
-#define MSR_PLATFORM_INFO 0xce
 	int err;
 	static int clock = 0;
 	uint64_t reg;
@@ -651,9 +690,16 @@ static double get_info_bclk(struct msr_driver_t* handle, struct cpu_id_t *id,
 		err = cpu_rdmsr_range(handle, MSR_PLATFORM_INFO, 15, 8, &reg);
 		if (!err) return (double) clock / reg;
 	}
+	else if(id->vendor == VENDOR_AMD) {
+		/* Refer links above
+		MSRC001_0061[2:0] is CurPstateLimit
+		CurPstateLimit is highest-performance non-boosted P-state */
+		err  = cpu_rdmsr_range(handle, MSR_PSTATE_L, 2, 0, &reg);
+		err += get_amd_multipliers(handle, internal, MSR_PSTATE_0 + reg, &reg);
+		if (!err) return (double) clock / reg;
+	}
 
 	return CPU_INVALID_VALUE;
-#undef MSR_PLATFORM_INFO
 }
 
 #ifndef MSRINFO_DEFINED
