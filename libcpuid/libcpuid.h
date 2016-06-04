@@ -891,10 +891,12 @@ typedef enum {
 	INFO_APERF,                /*!< Actual performance frequency clock. This
                                     accumulates the core clock counts when the
                                     core is active. */
+	INFO_MIN_MULTIPLIER,       /*!< Minimum CPU:FSB ratio for this CPU,
+                                    multiplied by 100. */
 	INFO_CUR_MULTIPLIER,       /*!< Current CPU:FSB ratio, multiplied by 100.
                                     e.g., a CPU:FSB value of 18.5 reads as
                                     "1850". */
-	INFO_MAX_MULTIPLIER,       /*!< Maxumum CPU:FSB ratio for this CPU,
+	INFO_MAX_MULTIPLIER,       /*!< Maximum CPU:FSB ratio for this CPU,
                                     multiplied by 100. */
 	INFO_TEMPERATURE,          /*!< The current core temperature in Celsius. */
 	INFO_THROTTLING,           /*!< 1 if the current logical processor is

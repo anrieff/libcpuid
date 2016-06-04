@@ -542,6 +542,39 @@ static int get_amd_multipliers(struct msr_driver_t* handle, struct internal_id_i
 	return err;
 }
 
+static double get_info_min_multiplier(struct msr_driver_t* handle, struct cpu_id_t *id,
+                                      struct internal_id_info_t *internal)
+{
+	int err;
+	uint64_t reg;
+
+	if(id->vendor == VENDOR_INTEL && internal->code.intel) {
+		/* Refer links above
+		Table 35-12.  MSRs in Next Generation Intel Atom Processors Based on the Goldmont Microarchitecture
+		Table 35-13.  MSRs in Processors Based on Intel® Microarchitecture Code Name Nehalem
+		Table 35-18.  MSRs Supported by Intel® Processors based on Intel® microarchitecture code name Sandy Bridge (Contd.)
+		Table 35-23.  Additional MSRs Supported by 3rd Generation Intel® Core™ Processors (based on Intel® microarchitecture code name Ivy Bridge)
+		Table 35-24.  MSRs Supported by Intel® Xeon® Processors E5 v2 Product Family (based on Ivy Bridge-E microarchitecture)
+		Table 35-27.  Additional MSRs Supported by Processors based on the Haswell or Haswell-E microarchitectures
+		Table 35-34.  Additional MSRs Common to Intel® Xeon® Processor D and Intel Xeon Processors E5 v4 Family Based on the Broadwell Microarchitecture
+		Table 35-40.  Selected MSRs Supported by Next Generation Intel® Xeon Phi™ Processors with DisplayFamily_DisplayModel Signature 06_57H
+		MSR_PLATFORM_INFO[47:40] is Maximum Efficiency Ratio
+		Maximum Efficiency Ratio is the minimum ratio that the processor can operates */
+		err = cpu_rdmsr_range(handle, MSR_PLATFORM_INFO, 47, 40, &reg);
+		if (!err) return reg;
+	}
+	else if(id->vendor == VENDOR_AMD) {
+		/* Refer links above
+		MSRC001_0061[6:4] is PstateMaxVal
+		PstateMaxVal is the lowest-performance non-boosted P-state */
+		err  = cpu_rdmsr_range(handle, MSR_PSTATE_L, 6, 4, &reg);
+		err += get_amd_multipliers(handle, internal, MSR_PSTATE_0 + reg, &reg);
+		if (!err) return reg;
+	}
+
+	return CPU_INVALID_VALUE;
+}
+
 static double get_info_cur_multiplier(struct msr_driver_t* handle, struct cpu_id_t *id,
                                       struct internal_id_info_t *internal)
 {
@@ -603,7 +636,7 @@ static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id
 	else if(id->vendor == VENDOR_AMD) {
 		/* Refer links above
 		MSRC001_0064 is Pb0
-		Pb0 is highest-performance boosted P-state */
+		Pb0 is the highest-performance boosted P-state */
 		err = get_amd_multipliers(handle, internal, MSR_PSTATE_0, &reg);
 		if (!err) return reg;
 	}
@@ -693,7 +726,7 @@ static double get_info_bclk(struct msr_driver_t* handle, struct cpu_id_t *id,
 	else if(id->vendor == VENDOR_AMD) {
 		/* Refer links above
 		MSRC001_0061[2:0] is CurPstateLimit
-		CurPstateLimit is highest-performance non-boosted P-state */
+		CurPstateLimit is the highest-performance non-boosted P-state */
 		err  = cpu_rdmsr_range(handle, MSR_PSTATE_L, 2, 0, &reg);
 		err += get_amd_multipliers(handle, internal, MSR_PSTATE_0 + reg, &reg);
 		if (!err) return (double) clock / reg;
@@ -743,6 +776,8 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			return perfmsr_measure(handle, 0xe7);
 		case INFO_APERF:
 			return perfmsr_measure(handle, 0xe8);
+		case INFO_MIN_MULTIPLIER:
+			return get_info_min_multiplier(handle, &id, &internal) * 100;
 		case INFO_CUR_MULTIPLIER:
 			return get_info_cur_multiplier(handle, &id, &internal) * 100;
 		case INFO_MAX_MULTIPLIER:
