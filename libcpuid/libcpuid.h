@@ -902,9 +902,11 @@ typedef enum {
 	INFO_THROTTLING,           /*!< 1 if the current logical processor is
                                     throttling. 0 if it is running normally. */
 	INFO_VOLTAGE,              /*!< The current core voltage in Volt,
-	                                multiplied by 100. */
-	INFO_BCLK,                 /*!< The BCLK (base clock) in MHz,
-	                                multiplied by 100. */
+	                            multiplied by 100. */
+	INFO_BCLK,                 /*!< See \ref INFO_BUS_CLOCK. */
+	INFO_BUS_CLOCK,            /*!< The main bus clock in MHz,
+	                            e.g., FSB/QPI/DMI/HT base clock,
+	                            multiplied by 100. */
 } cpu_msrinfo_request_t;
 
 /**

@@ -700,8 +700,8 @@ static double get_info_voltage(struct msr_driver_t* handle, struct cpu_id_t *id,
 	return CPU_INVALID_VALUE;
 }
 
-static double get_info_bclk(struct msr_driver_t* handle, struct cpu_id_t *id,
-                            struct internal_id_info_t *internal)
+static double get_info_bus_clock(struct msr_driver_t* handle, struct cpu_id_t *id,
+                                 struct internal_id_info_t *internal)
 {
 	int err;
 	static int clock = 0;
@@ -789,7 +789,8 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		case INFO_VOLTAGE:
 			return get_info_voltage(handle, &id, &internal) * 100;
 		case INFO_BCLK:
-			return get_info_bclk(handle, &id, &internal) * 100;
+		case INFO_BUS_CLOCK:
+			return get_info_bus_clock(handle, &id, &internal) * 100;
 		default:
 			return CPU_INVALID_VALUE;
 	}
