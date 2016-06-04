@@ -486,7 +486,8 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 	return (int) ((y - x) / (b - a));
 }
 
-static double get_info_cur_multiplier(struct msr_driver_t* handle, struct internal_id_info_t *internal)
+static double get_info_cur_multiplier(struct msr_driver_t* handle, struct cpu_id_t *id,
+                                      struct internal_id_info_t *internal)
 {
 	int err, cur_clock;
 	uint64_t r;
@@ -507,7 +508,8 @@ static double get_info_cur_multiplier(struct msr_driver_t* handle, struct intern
 	return (r>>22) & 0x1f;
 }
 
-static double get_info_max_multiplier(struct msr_driver_t* handle, struct internal_id_info_t *internal)
+static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id_t *id,
+                                      struct internal_id_info_t *internal)
 {
 #define PLATFORM_INFO_MSR 206
 #define PLATFORM_INFO_MSR_low 8
@@ -530,7 +532,8 @@ static double get_info_max_multiplier(struct msr_driver_t* handle, struct intern
 	return (r >> 40) & 0x1f;
 }
 
-static int get_info_temperature(struct msr_driver_t* handle, struct internal_id_info_t *internal)
+static int get_info_temperature(struct msr_driver_t* handle, struct cpu_id_t *id,
+                                struct internal_id_info_t *internal)
 {
 #define IA32_THERM_STATUS 0x19C
 #define IA32_TEMPERATURE_TARGET 0x1a2
@@ -550,7 +553,8 @@ static int get_info_temperature(struct msr_driver_t* handle, struct internal_id_
 	return CPU_INVALID_VALUE;
 }
 
-static double get_info_voltage(struct msr_driver_t* handle, struct internal_id_info_t *internal)
+static double get_info_voltage(struct msr_driver_t* handle, struct cpu_id_t *id,
+                               struct internal_id_info_t *internal)
 {
 #define MSR_PERF_STATUS 0x198
 #define MSR_PSTATE_S 0xC0010063
@@ -577,7 +581,8 @@ static double get_info_voltage(struct msr_driver_t* handle, struct internal_id_i
 	return CPU_INVALID_VALUE;
 }
 
-static double get_info_bclk(struct msr_driver_t* handle, struct internal_id_info_t *internal)
+static double get_info_bclk(struct msr_driver_t* handle, struct cpu_id_t *id,
+                            struct internal_id_info_t *internal)
 {
 	static int max_clock = 0, multiplier = 0;
 
@@ -619,33 +624,34 @@ int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t hig
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 {
 	struct cpu_raw_data_t raw;
-	struct cpu_id_t id;
+	static struct cpu_id_t id;
 	static struct internal_id_info_t internal = { .score = -1 };
 
-	if(internal.score == -1) {
+	if (handle == NULL)
+		return set_error(ERR_HANDLE);
+
+	if (internal.score == -1) {
 		cpuid_get_raw_data(&raw);
 		cpu_ident_internal(&raw, &id, &internal);
 	}
 
-	if (handle == NULL)
-		return set_error(ERR_HANDLE);
 	switch (which) {
 		case INFO_MPERF:
 			return perfmsr_measure(handle, 0xe7);
 		case INFO_APERF:
 			return perfmsr_measure(handle, 0xe8);
 		case INFO_CUR_MULTIPLIER:
-			return (int) get_info_cur_multiplier(handle, &internal) * 100;
+			return (int) get_info_cur_multiplier(handle, &id, &internal) * 100;
 		case INFO_MAX_MULTIPLIER:
-			return (int) get_info_max_multiplier(handle, &internal) * 100;
+			return (int) get_info_max_multiplier(handle, &id, &internal) * 100;
 		case INFO_TEMPERATURE:
-			return get_info_temperature(handle, &internal);
+			return get_info_temperature(handle, &id, &internal);
 		case INFO_THROTTLING:
 			return CPU_INVALID_VALUE;
 		case INFO_VOLTAGE:
-			return (int) get_info_voltage(handle, &internal) * 100;
+			return (int) get_info_voltage(handle, &id, &internal) * 100;
 		case INFO_BCLK:
-			return (int) get_info_bclk(handle, &internal) * 100;
+			return (int) get_info_bclk(handle, &id, &internal) * 100;
 		default:
 			return CPU_INVALID_VALUE;
 	}
