@@ -493,7 +493,12 @@ static double get_info_cur_multiplier(struct msr_driver_t* handle, struct cpu_id
 	uint64_t r;
 	static double bclk = 0.0;
 
-	if(cpuid_get_vendor() == VENDOR_INTEL) {
+	if(id->vendor == VENDOR_INTEL && internal->code.intel == PENTIUM) {
+		err = cpu_rdmsr(handle, 0x2a, &r);
+		if (err) return CPU_INVALID_VALUE;
+		return (r>>22) & 0x1f;
+	}
+	else if(id->vendor == VENDOR_INTEL && internal->code.intel != PENTIUM) {
 		if(!bclk)
 			bclk = (double) cpu_msrinfo(handle, INFO_BCLK) / 100;
 		if(bclk > 0) {
@@ -503,9 +508,7 @@ static double get_info_cur_multiplier(struct msr_driver_t* handle, struct cpu_id
 		}
 	}
 
-	err = cpu_rdmsr(handle, 0x2a, &r);
-	if (err) return CPU_INVALID_VALUE;
-	return (r>>22) & 0x1f;
+	return CPU_INVALID_VALUE;
 }
 
 static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id_t *id,
@@ -518,7 +521,12 @@ static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id
 	uint64_t val, r;
 	static int multiplier = 0;
 
-	if(cpuid_get_vendor() == VENDOR_INTEL) {
+	if(id->vendor == VENDOR_INTEL && internal->code.intel == PENTIUM) {
+		err = cpu_rdmsr(handle, 0x198, &r);
+		if (err) return CPU_INVALID_VALUE;
+		return (r >> 40) & 0x1f;
+	}
+	else if(id->vendor == VENDOR_INTEL && internal->code.intel != PENTIUM) {
 		if(!multiplier) {
 			cpu_rdmsr_range(handle, PLATFORM_INFO_MSR, PLATFORM_INFO_MSR_high, PLATFORM_INFO_MSR_low, &val);
 			multiplier = (int) val;
@@ -527,9 +535,7 @@ static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id
 			return multiplier;
 	}
 
-	err = cpu_rdmsr(handle, 0x198, &r);
-	if (err) return CPU_INVALID_VALUE;
-	return (r >> 40) & 0x1f;
+	return CPU_INVALID_VALUE;
 }
 
 static int get_info_temperature(struct msr_driver_t* handle, struct cpu_id_t *id,
@@ -539,7 +545,7 @@ static int get_info_temperature(struct msr_driver_t* handle, struct cpu_id_t *id
 #define IA32_TEMPERATURE_TARGET 0x1a2
 	uint64_t digital_readout, thermal_status, PROCHOT_temp;
 
-	if(cpuid_get_vendor() == VENDOR_INTEL) {
+	if(id->vendor == VENDOR_INTEL && internal->code.intel != PENTIUM) {
 		// https://github.com/ajaiantilal/i7z/blob/5023138d7c35c4667c938b853e5ea89737334e92/helper_functions.c#L59
 		cpu_rdmsr_range(handle, IA32_THERM_STATUS, 23, 16, &digital_readout);
 		cpu_rdmsr_range(handle, IA32_THERM_STATUS, 32, 31, &thermal_status);
@@ -561,12 +567,12 @@ static double get_info_voltage(struct msr_driver_t* handle, struct cpu_id_t *id,
 #define MSR_PSTATE_0 0xC0010064
 	uint64_t val;
 
-	if(cpuid_get_vendor() == VENDOR_INTEL) {
+	if(id->vendor == VENDOR_INTEL) {
 		cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &val);
 		double ret = (double) val / (1 << 13);
 		return (ret > 0) ? ret : CPU_INVALID_VALUE;
 	}
-	else if(cpuid_get_vendor() == VENDOR_AMD) {
+	else if(id->vendor == VENDOR_AMD) {
 		/* http://support.amd.com/TechDocs/42301_15h_Mod_00h-0Fh_BKDG.pdf
 		   MSRC001_0063[2:0] = CurPstate
 		   MSRC001_00[6B:64][15:9] = CpuVid */
