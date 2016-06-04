@@ -488,8 +488,11 @@ int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
 #define MSR_PSTATE_7           0xC001006B
 
 /* Intel MSRs addresses */
+#define IA32_MPERF             0xE7
+#define IA32_APERF             0xE8
 #define IA32_PERF_STATUS       0x198
 #define IA32_THERM_STATUS      0x19C
+#define MSR_EBL_CR_POWERON     0x2A
 #define MSR_TURBO_RATIO_LIMIT  0x1AD
 #define MSR_TEMPERATURE_TARGET 0x1A2
 #define MSR_PERF_STATUS        0x198
@@ -582,7 +585,7 @@ static double get_info_cur_multiplier(struct msr_driver_t* handle, struct cpu_id
 	uint64_t reg;
 
 	if(id->vendor == VENDOR_INTEL && internal->code.intel == PENTIUM) {
-		err = cpu_rdmsr(handle, 0x2a, &reg);
+		err = cpu_rdmsr(handle, MSR_EBL_CR_POWERON, &reg);
 		if (!err) return (reg>>22) & 0x1f;
 	}
 	else if(id->vendor == VENDOR_INTEL && internal->code.intel != PENTIUM) {
@@ -611,7 +614,7 @@ static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id
 	uint64_t reg;
 
 	if(id->vendor == VENDOR_INTEL && internal->code.intel == PENTIUM) {
-		err = cpu_rdmsr(handle, 0x198, &reg);
+		err = cpu_rdmsr(handle, IA32_PERF_STATUS, &reg);
 		if (!err) return (reg >> 40) & 0x1f;
 	}
 	else if(id->vendor == VENDOR_INTEL && internal->code.intel != PENTIUM) {
@@ -640,7 +643,6 @@ static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id
 		err = get_amd_multipliers(handle, internal, MSR_PSTATE_0, &reg);
 		if (!err) return reg;
 	}
-
 
 	return CPU_INVALID_VALUE;
 }
@@ -773,9 +775,9 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 
 	switch (which) {
 		case INFO_MPERF:
-			return perfmsr_measure(handle, 0xe7);
+			return perfmsr_measure(handle, IA32_MPERF);
 		case INFO_APERF:
-			return perfmsr_measure(handle, 0xe8);
+			return perfmsr_measure(handle, IA32_APERF);
 		case INFO_MIN_MULTIPLIER:
 			return get_info_min_multiplier(handle, &id, &internal) * 100;
 		case INFO_CUR_MULTIPLIER:
