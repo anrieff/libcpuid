@@ -33,3 +33,29 @@ noinst_HEADERS = 		\
 	rdtsc.h
 
 EXTRA_DIST += libcpuid.sym libcpuid_vc71.vcproj libcpuid_vc9.vcproj
+
+if HAVE_DOXYGEN
+directory = $(top_srcdir)/libcpuid/docs/man/man3
+
+dist_man_MANS = $(directory)/cpu_id_t.3		\
+	$(directory)/cpu_list_t.3		\
+	$(directory)/cpu_mark_t.3		\
+	$(directory)/cpu_raw_data_t.3		\
+	$(directory)/libcpuid.3
+$(directory)/cpu_id_t.3: doxyfile.stamp
+$(directory)/cpu_list_t.3: doxyfile.stamp
+$(directory)/cpu_mark_t.3: doxyfile.stamp
+$(directory)/cpu_raw_data_t.3: doxyfile.stamp
+$(directory)/libcpuid.3: doxyfile.stamp
+
+doxyfile.stamp:
+	$(DOXYGEN) Doxyfile
+	echo Timestamp > doxyfile.stamp
+
+CLEANFILES = doxyfile.stamp
+
+all-local: doxyfile.stamp
+
+clean-local:
+	rm -rf $(top_srcdir)/libcpuid/docs
+endif

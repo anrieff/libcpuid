@@ -39,6 +39,8 @@ AM_PROG_LIBTOOL
 AM_CPPFLAGS="$CPPFLAGS"
 
 AC_CHECK_HEADERS([stdint.h])
+AC_CHECK_PROGS([DOXYGEN], [doxygen])
+AM_CONDITIONAL([HAVE_DOXYGEN], [test -n "$DOXYGEN"])
 
 AM_LDFLAGS="$LDFLAGS"
 if test "x$GCC" = "xyes"; then
