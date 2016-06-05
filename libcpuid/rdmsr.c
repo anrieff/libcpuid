@@ -551,7 +551,7 @@ static double get_info_min_multiplier(struct msr_driver_t* handle, struct cpu_id
 	int err;
 	uint64_t reg;
 
-	if(id->vendor == VENDOR_INTEL && internal->code.intel) {
+	if(id->vendor == VENDOR_INTEL) {
 		/* Refer links above
 		Table 35-12.  MSRs in Next Generation Intel Atom Processors Based on the Goldmont Microarchitecture
 		Table 35-13.  MSRs in Processors Based on Intel® Microarchitecture Code Name Nehalem
@@ -653,7 +653,7 @@ static int get_info_temperature(struct msr_driver_t* handle, struct cpu_id_t *id
 	int err;
 	uint64_t DigitalReadout, ReadingValid, TemperatureTarget;
 
-	if(id->vendor == VENDOR_INTEL && internal->code.intel != PENTIUM) {
+	if(id->vendor == VENDOR_INTEL) {
 		/* Refer links above
 		Table 35-2.   IA-32 Architectural MSRs
 		IA32_THERM_STATUS[22:16] is Digital Readout
@@ -696,7 +696,7 @@ static double get_info_voltage(struct msr_driver_t* handle, struct cpu_id_t *id,
 		2.4.1.6.3 Serial VID (SVI) Encodings: voltage = 1.550V - 0.0125V * SviVid[6:0] */
 		err  = cpu_rdmsr_range(handle, MSR_PSTATE_S,        2, 0, &reg);
 		err += cpu_rdmsr_range(handle, MSR_PSTATE_0 + reg, 15, 9, &CpuVid);
-		if (!err && reg <= 7) return 1.550 - 0.0125 * CpuVid;
+		if (!err && MSR_PSTATE_0 + reg <= MSR_PSTATE_7) return 1.550 - 0.0125 * CpuVid;
 	}
 
 	return CPU_INVALID_VALUE;
