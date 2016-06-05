@@ -463,8 +463,11 @@ int cpu_msr_driver_close(struct msr_driver_t* drv)
 /* endif defined (_WIN32) */
 
 #else /* Unsupported OS */
-/* On others OS (lie Darwin), we still do not support RDMSR, so supply dummy struct
+/* On others OS (i.e., Darwin), we still do not support RDMSR, so supply dummy struct
    and functions */
+
+#define RDMSR_UNSUPPORTED_OS
+
 struct msr_driver_t { int dummy; };
 struct msr_driver_t* cpu_msr_driver_open(void)
 {
@@ -502,6 +505,7 @@ int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
 
 #endif /* Unsupported OS */
 
+#ifndef RDMSR_UNSUPPORTED_OS
 
 /* Useful links for hackers:
 - AMD MSRs:
@@ -837,3 +841,4 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 }
 #endif // MSRINFO_DEFINED
 
+#endif // RDMSR_UNSUPPORTED_OS

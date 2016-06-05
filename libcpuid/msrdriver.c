@@ -589,3 +589,5 @@ uint8_t cc_x64driver_code[5120] = {
 };
 //} end
 #endif // _WIN32
+
+int msrdriver_dummy; // a dummy to avoid a linker warning on OS X.
