@@ -586,7 +586,7 @@ static void decode_intel_number_of_cores(struct cpu_raw_data_t* raw,
 
 static intel_code_t get_brand_code(struct cpu_id_t* data)
 {
-	intel_code_t code = NO_CODE;
+	intel_code_t code = (intel_code_t) NO_CODE;
 	int i, need_matchtable = 1, core_ix_base = 0;
 	const char* bs = data->brand_str;
 	const char* s;

@@ -446,7 +446,7 @@ static amd_code_t decode_amd_codename_part1(const char *bs)
 	if (match_pattern(bs, "Z-##")) return FUSION_Z;
 	if (match_pattern(bs, "E#-####") || match_pattern(bs, "A#-####")) return FUSION_EA;
 	
-	return NO_CODE;
+	return (amd_code_t) NO_CODE;
 }
 
 static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal)

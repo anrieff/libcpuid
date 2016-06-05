@@ -26,10 +26,10 @@
 #ifndef __LIBCPUID_H__
 #define __LIBCPUID_H__
 /**
- * @File     libcpuid.h
- * @Author   Veselin Georgiev
- * @Date     Oct 2008
- * @Version  0.2.2
+ * \file     libcpuid.h
+ * \author   Veselin Georgiev
+ * \date     Oct 2008
+ * \version  0.2.2
  *
  * Version history:
  *
@@ -893,18 +893,22 @@ typedef enum {
 	INFO_APERF,                /*!< Actual performance frequency clock. This
                                     accumulates the core clock counts when the
                                     core is active. */
+	INFO_MIN_MULTIPLIER,       /*!< Minimum CPU:FSB ratio for this CPU,
+                                    multiplied by 100. */
 	INFO_CUR_MULTIPLIER,       /*!< Current CPU:FSB ratio, multiplied by 100.
                                     e.g., a CPU:FSB value of 18.5 reads as
                                     "1850". */
-	INFO_MAX_MULTIPLIER,       /*!< Maxumum CPU:FSB ratio for this CPU,
+	INFO_MAX_MULTIPLIER,       /*!< Maximum CPU:FSB ratio for this CPU,
                                     multiplied by 100. */
 	INFO_TEMPERATURE,          /*!< The current core temperature in Celsius. */
 	INFO_THROTTLING,           /*!< 1 if the current logical processor is
                                     throttling. 0 if it is running normally. */
 	INFO_VOLTAGE,              /*!< The current core voltage in Volt,
-	                                multiplied by 100. */
-	INFO_BCLK,                 /*!< The BCLK (base clock) in MHz,
-	                                multiplied by 100. */
+	                            multiplied by 100. */
+	INFO_BCLK,                 /*!< See \ref INFO_BUS_CLOCK. */
+	INFO_BUS_CLOCK,            /*!< The main bus clock in MHz,
+	                            e.g., FSB/QPI/DMI/HT base clock,
+	                            multiplied by 100. */
 } cpu_msrinfo_request_t;
 
 /**
