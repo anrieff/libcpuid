@@ -42,6 +42,21 @@
 #include <errno.h>
 struct msr_driver_t { int fd; };
 static int rdmsr_supported(void);
+static int load_driver(char *msr_path)
+{
+	const int file_exists   = !access(msr_path, F_OK);
+	const int file_readable = !access(msr_path, R_OK);
+
+	if (file_exists && file_readable)
+		return 1;
+	else if (file_exists && !file_readable)
+		return 0;
+	else if (getuid() != 0)
+		return 0;
+	else
+		return !system("modprobe msr 2> /dev/null");
+}
+
 struct msr_driver_t* cpu_msr_driver_open(void)
 {
 	return cpu_msr_driver_open_core(0);
@@ -51,7 +66,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 {
 	char msr[32];
 	struct msr_driver_t* handle;
-	if (core_num >= cpuid_get_total_cpus())	{
+	if (core_num >= cpuid_get_total_cpus()) {
 		set_error(ERR_INVCNB);
 		return NULL;
 	}
@@ -60,6 +75,10 @@ struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 		return NULL;
 	}
 	sprintf(msr, "/dev/cpu/%u/msr", core_num);
+	if(!load_driver(msr)) {
+		set_error(ERR_NO_DRIVER);
+		return NULL;
+	}
 	int fd = open(msr, O_RDONLY);
 	if (fd < 0) {
 		if (errno == EIO) {
@@ -107,6 +126,21 @@ int cpu_msr_driver_close(struct msr_driver_t* drv)
 
 struct msr_driver_t { int fd; };
 static int rdmsr_supported(void);
+static int load_driver(char *msr_path)
+{
+	const int file_exists   = !access(msr_path, F_OK);
+	const int file_readable = !access(msr_path, R_OK);
+
+	if (file_exists && file_readable)
+		return 1;
+	else if (file_exists && !file_readable)
+		return 0;
+	else if (getuid() != 0)
+		return 0;
+	else
+		return !system("kldload -n cpuctl 2> /dev/null");
+}
+
 struct msr_driver_t* cpu_msr_driver_open(void)
 {
 	return cpu_msr_driver_open_core(0);
@@ -125,6 +159,10 @@ struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 		return NULL;
 	}
 	sprintf(msr, "/dev/cpuctl%u", core_num);
+	if(!load_driver(msr)) {
+		set_error(ERR_NO_DRIVER);
+		return NULL;
+	}
 	int fd = open(msr, O_RDONLY);
 	if (fd < 0) {
 		if (errno == EIO) {
