@@ -7,7 +7,7 @@ AM_INIT_AUTOMAKE([-Wall dist-bzip2 dist-zip foreign])
 dnl Versioning scheme shamelessly copied from libexif.
 dnl Short walkthrough. C means CURRENT, A mean AGE, R means REVISION
 dnl 1) When you make a change that breaks binary compatibility, increment CURRENT, reset REVISION to 0 and:
-dnl   1.1) If the change doesn't remove interfaces, increment AGE, otherwise reset to 0.
+dnl   1.1) If the change doesn't remove or change interfaces, increment AGE, otherwise reset to 0.
 dnl 2) When you make just a source change that doesn't break binary compatibility, increment REVISION.
 dnl When you make a change that adds features, increment AGE, and set REVISION to 0
 dnl C:A:R
@@ -19,9 +19,9 @@ dnl 11:0:3   Version 0.1.4: just an identification change, to reflect the detect
 dnl 12:1:0   Version 0.2.0: two more fields to cpu_id_t
 dnl 12:1:1   Version 0.2.1: more processors support
 dnl 12:1:2   Version 0.2.2: more processors support, *BSD/Solaris support, updates to MSR stuff
-dnl 13:2:0   Version 0.3.0: increment max Intel leaf 04 entries to 8
+dnl 13:0:0   Version 0.3.0: increment max Intel leaf 04 entries to 8
 LIBCPUID_CURRENT=13
-LIBCPUID_AGE=2
+LIBCPUID_AGE=0
 LIBCPUID_REVISION=0
 AC_SUBST([LIBCPUID_AGE])
 AC_SUBST([LIBCPUID_REVISION])
