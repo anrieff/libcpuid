@@ -26,10 +26,10 @@
 #ifndef __LIBCPUID_H__
 #define __LIBCPUID_H__
 /**
- * @File     libcpuid.h
- * @Author   Veselin Georgiev
- * @Date     Oct 2008
- * @Version  0.2.2
+ * \file     libcpuid.h
+ * \author   Veselin Georgiev
+ * \date     Oct 2008
+ * \version  0.2.2
  *
  * Version history:
  *
