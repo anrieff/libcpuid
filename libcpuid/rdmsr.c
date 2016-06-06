@@ -491,7 +491,6 @@ int cpu_msr_driver_close(struct msr_driver_t* driver)
 	return set_error(ERR_NOT_IMP);
 }
 
-#define MSRINFO_DEFINED
 int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
                     uint8_t lowbit, uint64_t* result)
 {
@@ -779,8 +778,6 @@ static double get_info_bus_clock(struct msr_driver_t* handle, struct cpu_id_t *i
 	return CPU_INVALID_VALUE;
 }
 
-#ifndef MSRINFO_DEFINED
-
 int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
                     uint8_t lowbit, uint64_t* result)
 {
@@ -839,6 +836,5 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 			return CPU_INVALID_VALUE;
 	}
 }
-#endif // MSRINFO_DEFINED
 
 #endif // RDMSR_UNSUPPORTED_OS
