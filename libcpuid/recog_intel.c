@@ -372,7 +372,8 @@ enum _cache_type_t {
 	L1I,
 	L1D,
 	L2,
-	L3
+	L3,
+	L4
 };
 typedef enum _cache_type_t cache_type_t;
 
@@ -397,6 +398,12 @@ static void check_case(uint8_t on, cache_type_t cache, int size, int assoc, int 
 			data->l3_cache = size;
 			data->l3_assoc = assoc;
 			data->l3_cacheline = linesize;
+			break;
+		case L4:
+			data->l4_cache = size;
+			data->l4_assoc = assoc;
+			data->l4_cacheline = linesize;
+			break;
 		default:
 			break;
 	}
@@ -517,6 +524,8 @@ static void decode_intel_deterministic_cache_info(struct cpu_raw_data_t* raw,
 			type = L2;
 		else if (level == 3 && typenumber == 3)
 			type = L3;
+		else if (level == 4 && typenumber == 3)
+			type = L4;
 		else {
 			warnf("deterministic_cache: unknown level/typenumber combo (%d/%d), cannot\n", level, typenumber);
 			warnf("deterministic_cache: recognize cache type\n");

@@ -212,6 +212,9 @@ struct cpu_id_t {
 	
 	/** L3 cache size in KB. Zero on most systems */
 	int32_t l3_cache;
+
+	/** L4 cache size in KB. Zero on most systems */
+	int32_t l4_cache;
 	
 	/** Cache associativity for the L1 data cache. -1 if undetermined */
 	int32_t l1_assoc;
@@ -221,6 +224,9 @@ struct cpu_id_t {
 	
 	/** Cache associativity for the L3 cache. -1 if undetermined */
 	int32_t l3_assoc;
+
+	/** Cache associativity for the L4 cache. -1 if undetermined */
+	int32_t l4_assoc;
 	
 	/** Cache-line size for L1 data cache. -1 if undetermined */
 	int32_t l1_cacheline;
@@ -231,6 +237,9 @@ struct cpu_id_t {
 	/** Cache-line size for L3 cache. -1 if undetermined */
 	int32_t l3_cacheline;
 	
+	/** Cache-line size for L4 cache. -1 if undetermined */
+	int32_t l4_cacheline;
+
 	/**
 	 * The brief and human-friendly CPU codename, which was recognized.<br>
 	 * Examples:

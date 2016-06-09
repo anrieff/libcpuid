@@ -72,12 +72,15 @@ typedef enum {
 	NEED_L1I_SIZE,
 	NEED_L2_SIZE,
 	NEED_L3_SIZE,
+	NEED_L4_SIZE,
 	NEED_L1D_ASSOC,
 	NEED_L2_ASSOC,
 	NEED_L3_ASSOC,
+	NEED_L4_ASSOC,
 	NEED_L1D_CACHELINE,
 	NEED_L2_CACHELINE,
 	NEED_L3_CACHELINE,
+	NEED_L4_CACHELINE,
 	NEED_CODENAME,
 	NEED_FEATURES,
 	NEED_CLOCK,
@@ -124,12 +127,15 @@ matchtable[] = {
 	{ NEED_L2_SIZE      , "--cache"        , 1},
 	{ NEED_L2_SIZE      , "--l2-cache"     , 1},
 	{ NEED_L3_SIZE      , "--l3-cache"     , 1},
+	{ NEED_L4_SIZE      , "--l4-cache"     , 1},
 	{ NEED_L1D_ASSOC    , "--l1d-assoc"    , 1},
 	{ NEED_L2_ASSOC     , "--l2-assoc"     , 1},
 	{ NEED_L3_ASSOC     , "--l3-assoc"     , 1},
+	{ NEED_L4_ASSOC     , "--l4-assoc"     , 1},
 	{ NEED_L1D_CACHELINE, "--l1d-cacheline", 1},
 	{ NEED_L2_CACHELINE , "--l2-cacheline" , 1},
 	{ NEED_L3_CACHELINE , "--l3-cacheline" , 1},
+	{ NEED_L4_CACHELINE , "--l4-cacheline" , 1},
 	{ NEED_CODENAME     , "--codename"     , 1},
 	{ NEED_FEATURES     , "--flags"        , 1},
 	{ NEED_CLOCK        , "--clock"        , 0},
@@ -370,6 +376,9 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 		case NEED_L3_SIZE:
 			fprintf(fout, "%d\n", data->l3_cache);
 			break;
+		case NEED_L4_SIZE:
+			fprintf(fout, "%d\n", data->l4_cache);
+			break;
 		case NEED_L1D_ASSOC:
 			fprintf(fout, "%d\n", data->l1_assoc);
 			break;
@@ -379,6 +388,9 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 		case NEED_L3_ASSOC:
 			fprintf(fout, "%d\n", data->l3_assoc);
 			break;
+		case NEED_L4_ASSOC:
+			fprintf(fout, "%d\n", data->l4_assoc);
+			break;
 		case NEED_L1D_CACHELINE:
 			fprintf(fout, "%d\n", data->l1_cacheline);
 			break;
@@ -387,6 +399,9 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 			break;
 		case NEED_L3_CACHELINE:
 			fprintf(fout, "%d\n", data->l3_cacheline);
+			break;
+		case NEED_L4_CACHELINE:
+			fprintf(fout, "%d\n", data->l4_cacheline);
 			break;
 		case NEED_CODENAME:
 			fprintf(fout, "%s\n", data->cpu_codename);
@@ -594,12 +609,15 @@ int main(int argc, char** argv)
 		fprintf(fout, "  L1 I cache : %d KB\n", data.l1_instruction_cache);
 		fprintf(fout, "  L2 cache   : %d KB\n", data.l2_cache);
 		fprintf(fout, "  L3 cache   : %d KB\n", data.l3_cache);
+		fprintf(fout, "  L4 cache   : %d KB\n", data.l4_cache);
 		fprintf(fout, "  L1D assoc. : %d-way\n", data.l1_assoc);
 		fprintf(fout, "  L2 assoc.  : %d-way\n", data.l2_assoc);
 		fprintf(fout, "  L3 assoc.  : %d-way\n", data.l3_assoc);
+		fprintf(fout, "  L4 assoc.  : %d-way\n", data.l4_assoc);
 		fprintf(fout, "  L1D line sz: %d bytes\n", data.l1_cacheline);
 		fprintf(fout, "  L2 line sz : %d bytes\n", data.l2_cacheline);
 		fprintf(fout, "  L3 line sz : %d bytes\n", data.l3_cacheline);
+		fprintf(fout, "  L4 line sz : %d bytes\n", data.l4_cacheline);
 		fprintf(fout, "  SSE units  : %d bits (%s)\n", data.sse_size, data.detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
 		fprintf(fout, "  code name  : `%s'\n", data.cpu_codename);
 		fprintf(fout, "  features   :");

@@ -54,9 +54,9 @@ static void raw_data_t_constructor(struct cpu_raw_data_t* raw)
 static void cpu_id_t_constructor(struct cpu_id_t* id)
 {
 	memset(id, 0, sizeof(struct cpu_id_t));
-	id->l1_data_cache = id->l1_instruction_cache = id->l2_cache = id->l3_cache = -1;
-	id->l1_assoc = id->l2_assoc = id->l3_assoc = -1;
-	id->l1_cacheline = id->l2_cacheline = id->l3_cacheline = -1;
+	id->l1_data_cache = id->l1_instruction_cache = id->l2_cache = id->l3_cache = id->l4_cache = -1;
+	id->l1_assoc = id->l2_assoc = id->l3_assoc = id->l4_assoc = -1;
+	id->l1_cacheline = id->l2_cacheline = id->l3_cacheline = id->l4_cacheline = -1;
 	id->sse_size = -1;
 }
 
@@ -460,10 +460,10 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
 			recognized = 1;
 		}
 		syntax = 1;
-		syntax = syntax && parse_token("basic_cpuid", token, value, data->basic_cpuid, 32, &recognized);
-		syntax = syntax && parse_token("ext_cpuid", token, value, data->ext_cpuid, 32, &recognized);
-		syntax = syntax && parse_token("intel_fn4", token, value, data->intel_fn4,  4, &recognized);
-		syntax = syntax && parse_token("intel_fn11", token, value, data->intel_fn11,  4, &recognized);
+		syntax = syntax && parse_token("basic_cpuid", token, value, data->basic_cpuid,   MAX_CPUID_LEVEL, &recognized);
+		syntax = syntax && parse_token("ext_cpuid", token, value, data->ext_cpuid,   MAX_EXT_CPUID_LEVEL, &recognized);
+		syntax = syntax && parse_token("intel_fn4", token, value, data->intel_fn4,    MAX_INTELFN4_LEVEL, &recognized);
+		syntax = syntax && parse_token("intel_fn11", token, value, data->intel_fn11, MAX_INTELFN11_LEVEL, &recognized);
 		if (!syntax) {
 			warnf("Error: %s:%d: Syntax error\n", filename, cur_line);
 			fclose(f);
