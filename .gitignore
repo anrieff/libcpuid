@@ -1,3 +1,4 @@
+*~
 *.lo
 *.la
 *.o
@@ -26,5 +27,6 @@ install-sh
 libcpuid.pc
 libcpuid/docs
 libcpuid/Doxyfile
+libcpuid/doxyfile.stamp
 ar-lib
 compile
