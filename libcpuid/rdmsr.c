@@ -616,7 +616,7 @@ static double get_info_min_multiplier(struct msr_driver_t* handle, struct cpu_id
 		if (!err) return reg;
 	}
 
-	return CPU_INVALID_VALUE;
+	return (double) CPU_INVALID_VALUE / 100;
 }
 
 static double get_info_cur_multiplier(struct msr_driver_t* handle, struct cpu_id_t *id,
@@ -645,7 +645,7 @@ static double get_info_cur_multiplier(struct msr_driver_t* handle, struct cpu_id
 		if (!err) return reg;
 	}
 
-	return CPU_INVALID_VALUE;
+	return (double) CPU_INVALID_VALUE / 100;
 }
 
 static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id_t *id,
@@ -685,7 +685,7 @@ static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id
 		if (!err) return reg;
 	}
 
-	return CPU_INVALID_VALUE;
+	return (double) CPU_INVALID_VALUE / 100;
 }
 
 static int get_info_temperature(struct msr_driver_t* handle, struct cpu_id_t *id,
@@ -740,7 +740,7 @@ static double get_info_voltage(struct msr_driver_t* handle, struct cpu_id_t *id,
 		if (!err && MSR_PSTATE_0 + reg <= MSR_PSTATE_7) return 1.550 - 0.0125 * CpuVid;
 	}
 
-	return CPU_INVALID_VALUE;
+	return (double) CPU_INVALID_VALUE / 100;
 }
 
 static double get_info_bus_clock(struct msr_driver_t* handle, struct cpu_id_t *id,
@@ -775,7 +775,7 @@ static double get_info_bus_clock(struct msr_driver_t* handle, struct cpu_id_t *i
 		if (!err) return (double) clock / reg;
 	}
 
-	return CPU_INVALID_VALUE;
+	return (double) CPU_INVALID_VALUE / 100;
 }
 
 int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
