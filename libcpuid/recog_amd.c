@@ -115,6 +115,7 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 15,   -1,   1,  1024,    -1, ATHLON_64               ,     0, "Athlon 64 (1024K)"             },
 	{ 15, -1, -1, 15,   -1,   1,    -1,    -1, ATHLON_FX               ,     0, "Athlon FX"                     },
 	{ 15, -1, -1, 15,   -1,   1,    -1,    -1, ATHLON_64_FX            ,     0, "Athlon 64 FX"                  },
+	{ 15,  3, -1, 15,   35,   2,    -1,    -1, ATHLON_64_FX            ,     0, "Athlon 64 FX X2 (Toledo)"      },
 	{ 15, -1, -1, 15,   -1,   2,   512,    -1, ATHLON_64_X2            ,     0, "Athlon 64 X2 (512K)"           },
 	{ 15, -1, -1, 15,   -1,   2,  1024,    -1, ATHLON_64_X2            ,     0, "Athlon 64 X2 (1024K)"          },
 	{ 15, -1, -1, 15,   -1,   1,   512,    -1, TURION_64               ,     0, "Turion 64 (512K)"              },
