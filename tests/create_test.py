@@ -31,8 +31,9 @@ def readResultFile():
 			continue
 		numeric = ["family", "model", "stepping", "ext_family", "ext_model",
 				"num_cores", "num_logical", "L1 D cache", "L1 I cache",
-				"L2 cache", "L3 cache", "L1D assoc.", "L2 assoc.",
-				"L3 assoc.", "L1D line sz", "L2 line sz", "L3 line sz"]
+				"L2 cache", "L3 cache", "L4 cache", "L1D assoc.",
+				"L2 assoc.", "L3 assoc.", "L4 assoc.", "L1D line sz",
+				"L2 line sz", "L3 line sz", "L4 line sz"]
 		field = s[:s.find(":")].strip()
 		if field in numeric:
 			value = s[s.find(":")+1:].strip()
