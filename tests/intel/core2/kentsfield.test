@@ -82,11 +82,14 @@ intel_fn11[3]=07280202 00000000 00000000 00000503
 32
 4096
 -1
+-1
 8
 16
 -1
+-1
 64
 64
+-1
 -1
 128 (non-authoritative)
 Kentsfield (Core 2 Quad)

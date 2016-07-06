@@ -82,12 +82,15 @@ intel_fn11[3]=00000000 00000000 00000003 00000003
 32
 256
 8192
+-1
 8
 8
 16
+-1
 64
 64
 64
+-1
 128 (non-authoritative)
 Bloomfield (Core i7)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 xd popcnt rdtscp lm lahf_lm constant_tsc
