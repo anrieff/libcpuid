@@ -581,7 +581,7 @@ static int get_amd_multipliers(struct msr_driver_t* handle, struct internal_id_i
 		factor = 1.0;
 	err  = cpu_rdmsr_range(handle, pstate, 5, 0, &CpuFid);
 	err += cpu_rdmsr_range(handle, pstate, 8, 6, &CpuDid);
-	*multiplier = ((CpuFid + 0x10) / (1 << CpuDid)) / factor;
+	*multiplier = (uint64_t) (((CpuFid + 0x10) / (1ull << CpuDid)) / factor);
 
 	return err;
 }
@@ -605,15 +605,15 @@ static double get_info_min_multiplier(struct msr_driver_t* handle, struct cpu_id
 		MSR_PLATFORM_INFO[47:40] is Maximum Efficiency Ratio
 		Maximum Efficiency Ratio is the minimum ratio that the processor can operates */
 		err = cpu_rdmsr_range(handle, MSR_PLATFORM_INFO, 47, 40, &reg);
-		if (!err) return reg;
+		if (!err) return (double) reg;
 	}
 	else if(id->vendor == VENDOR_AMD) {
 		/* Refer links above
 		MSRC001_0061[6:4] is PstateMaxVal
 		PstateMaxVal is the lowest-performance non-boosted P-state */
 		err  = cpu_rdmsr_range(handle, MSR_PSTATE_L, 6, 4, &reg);
-		err += get_amd_multipliers(handle, internal, MSR_PSTATE_0 + reg, &reg);
-		if (!err) return reg;
+		err += get_amd_multipliers(handle, internal, MSR_PSTATE_0 + (uint32_t) reg, &reg);
+		if (!err) return (double) reg;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
@@ -627,7 +627,7 @@ static double get_info_cur_multiplier(struct msr_driver_t* handle, struct cpu_id
 
 	if(id->vendor == VENDOR_INTEL && internal->code.intel == PENTIUM) {
 		err = cpu_rdmsr(handle, MSR_EBL_CR_POWERON, &reg);
-		if (!err) return (reg>>22) & 0x1f;
+		if (!err) return (double) ((reg>>22) & 0x1f);
 	}
 	else if(id->vendor == VENDOR_INTEL && internal->code.intel != PENTIUM) {
 		/* Refer links above
@@ -635,14 +635,14 @@ static double get_info_cur_multiplier(struct msr_driver_t* handle, struct cpu_id
 		IA32_PERF_STATUS[15:0] is Current performance State Value
 		[7:0] is 0x0, [15:8] looks like current ratio */
 		err = cpu_rdmsr_range(handle, IA32_PERF_STATUS, 15, 8, &reg);
-		if (!err) return reg;
+		if (!err) return (double) reg;
 	}
 	else if(id->vendor == VENDOR_AMD) {
 		/* Refer links above
 		MSRC001_0063[2:0] is CurPstate */
 		err  = cpu_rdmsr_range(handle, MSR_PSTATE_S, 2, 0, &reg);
-		err += get_amd_multipliers(handle, internal, MSR_PSTATE_0 + reg, &reg);
-		if (!err) return reg;
+		err += get_amd_multipliers(handle, internal, MSR_PSTATE_0 + (uint32_t) reg, &reg);
+		if (!err) return (double) reg;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
@@ -656,7 +656,7 @@ static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id
 
 	if(id->vendor == VENDOR_INTEL && internal->code.intel == PENTIUM) {
 		err = cpu_rdmsr(handle, IA32_PERF_STATUS, &reg);
-		if (!err) return (reg >> 40) & 0x1f;
+		if (!err) return (double) ((reg >> 40) & 0x1f);
 	}
 	else if(id->vendor == VENDOR_INTEL && internal->code.intel != PENTIUM) {
 		/* Refer links above
@@ -675,14 +675,14 @@ static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id
 		Table 35-40.  Selected MSRs Supported by Next Generation Intel® Xeon Phi™ Processors with DisplayFamily_DisplayModel Signature 06_57H
 		MSR_TURBO_RATIO_LIMIT[7:0] is Maximum Ratio Limit for 1C */
 		err = cpu_rdmsr_range(handle, MSR_TURBO_RATIO_LIMIT, 7, 0, &reg);
-		if (!err) return reg;
+		if (!err) return (double) reg;
 	}
 	else if(id->vendor == VENDOR_AMD) {
 		/* Refer links above
 		MSRC001_0064 is Pb0
 		Pb0 is the highest-performance boosted P-state */
 		err = get_amd_multipliers(handle, internal, MSR_PSTATE_0, &reg);
-		if (!err) return reg;
+		if (!err) return (double) reg;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
@@ -710,7 +710,7 @@ static int get_info_temperature(struct msr_driver_t* handle, struct cpu_id_t *id
 		err  = cpu_rdmsr_range(handle, IA32_THERM_STATUS,      22, 16, &DigitalReadout);
 		err += cpu_rdmsr_range(handle, IA32_THERM_STATUS,      31, 31, &ReadingValid);
 		err += cpu_rdmsr_range(handle, MSR_TEMPERATURE_TARGET, 23, 16, &TemperatureTarget);
-		if(!err && ReadingValid) return TemperatureTarget - DigitalReadout;
+		if(!err && ReadingValid) return (int) (TemperatureTarget - DigitalReadout);
 	}
 
 	return CPU_INVALID_VALUE;
@@ -735,9 +735,9 @@ static double get_info_voltage(struct msr_driver_t* handle, struct cpu_id_t *id,
 		MSRC001_00[6B:64][15:9] is CpuVid
 		MSRC001_0063[2:0] is P-state Status
 		2.4.1.6.3 Serial VID (SVI) Encodings: voltage = 1.550V - 0.0125V * SviVid[6:0] */
-		err  = cpu_rdmsr_range(handle, MSR_PSTATE_S,        2, 0, &reg);
-		err += cpu_rdmsr_range(handle, MSR_PSTATE_0 + reg, 15, 9, &CpuVid);
-		if (!err && MSR_PSTATE_0 + reg <= MSR_PSTATE_7) return 1.550 - 0.0125 * CpuVid;
+		err  = cpu_rdmsr_range(handle, MSR_PSTATE_S,                   2, 0, &reg);
+		err += cpu_rdmsr_range(handle, MSR_PSTATE_0 + (uint32_t) reg, 15, 9, &CpuVid);
+		if (!err && MSR_PSTATE_0 + (uint32_t) reg <= MSR_PSTATE_7) return 1.550 - 0.0125 * CpuVid;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
@@ -771,7 +771,7 @@ static double get_info_bus_clock(struct msr_driver_t* handle, struct cpu_id_t *i
 		MSRC001_0061[2:0] is CurPstateLimit
 		CurPstateLimit is the highest-performance non-boosted P-state */
 		err  = cpu_rdmsr_range(handle, MSR_PSTATE_L, 2, 0, &reg);
-		err += get_amd_multipliers(handle, internal, MSR_PSTATE_0 + reg, &reg);
+		err += get_amd_multipliers(handle, internal, MSR_PSTATE_0 + (uint32_t) reg, &reg);
 		if (!err) return (double) clock / reg;
 	}
 
@@ -818,20 +818,20 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		case INFO_APERF:
 			return perfmsr_measure(handle, IA32_APERF);
 		case INFO_MIN_MULTIPLIER:
-			return get_info_min_multiplier(handle, &id, &internal) * 100;
+			return (int) (get_info_min_multiplier(handle, &id, &internal) * 100);
 		case INFO_CUR_MULTIPLIER:
-			return get_info_cur_multiplier(handle, &id, &internal) * 100;
+			return (int) (get_info_cur_multiplier(handle, &id, &internal) * 100);
 		case INFO_MAX_MULTIPLIER:
-			return get_info_max_multiplier(handle, &id, &internal) * 100;
+			return (int) (get_info_max_multiplier(handle, &id, &internal) * 100);
 		case INFO_TEMPERATURE:
 			return get_info_temperature(handle, &id, &internal);
 		case INFO_THROTTLING:
 			return CPU_INVALID_VALUE;
 		case INFO_VOLTAGE:
-			return get_info_voltage(handle, &id, &internal) * 100;
+			return (int) (get_info_voltage(handle, &id, &internal) * 100);
 		case INFO_BCLK:
 		case INFO_BUS_CLOCK:
-			return get_info_bus_clock(handle, &id, &internal) * 100;
+			return (int) (get_info_bus_clock(handle, &id, &internal) * 100);
 		default:
 			return CPU_INVALID_VALUE;
 	}
