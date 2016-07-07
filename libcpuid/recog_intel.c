@@ -169,7 +169,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 13, -1, -1, -1,   1,    -1,    -1, MOBILE_PENTIUM_M  ,     0, "Pentium M (Dothan)"         },
 	{  6, 13, -1, -1, -1,   1,    -1,    -1, CELERON           ,     0, "Celeron M"                  },
 	
-	{  6, 12, -1, -1, -1,  -1,    -1,    -1, ATOM              ,     0, "Unknown Atom"               },
+	{  6, 12, -1, -1, -1,  -1,    -1,    -1, ATOM_UNKNOWN      ,     0, "Unknown Atom"               },
 	{  6, 12, -1, -1, -1,  -1,    -1,    -1, ATOM_DIAMONDVILLE ,     0, "Atom (Diamondville)"        },
 	{  6, 12, -1, -1, -1,  -1,    -1,    -1, ATOM_SILVERTHORNE ,     0, "Atom (Silverthorne)"        },
 	{  6, 12, -1, -1, -1,  -1,    -1,    -1, ATOM_CEDARVIEW    ,     0, "Atom (Cedarview)"           },
@@ -615,7 +615,7 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 		{ ATOM_SILVERTHORNE, "Atom(TM) CPU Z" },
 		{ ATOM_PINEVIEW, "Atom(TM) CPU D" },
 		{ ATOM_CEDARVIEW, "Atom(TM) CPU N####" },
-		{ ATOM,              "Atom(TM) CPU" },
+		{ ATOM_UNKNOWN,   "Atom(TM) CPU" },
 	};
 
 	if (strstr(bs, "Mobile")) {
