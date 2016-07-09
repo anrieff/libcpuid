@@ -29,7 +29,7 @@
  * \file     libcpuid.h
  * \author   Veselin Georgiev
  * \date     Oct 2008
- * \version  0.2.2
+ * \version  0.3.0
  *
  * Version history:
  *
@@ -49,7 +49,7 @@
  *                       Fix clock detection in cpu_clock_by_ic() for Bulldozer.
  *                       More entries supported in cpu_msrinfo().
  *                       *BSD and Solaris support (unofficial).
- * * 0.3.0             : Support for Skylake; MSR ops in FreeBSD; INFO_VOLTAGE
+ * * 0.3.0 (2016-07-09): Support for Skylake; MSR ops in FreeBSD; INFO_VOLTAGE
  *                       for AMD CPUs. Level 4 cache support for Crystalwell
  *                       (a backwards-incompatible change since the sizeof
  *                        cpu_raw_data_t is now different).
