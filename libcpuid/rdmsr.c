@@ -802,7 +802,8 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 {
 	struct cpu_raw_data_t raw;
 	static struct cpu_id_t id;
-	static struct internal_id_info_t internal = { .score = -1 };
+	static struct internal_id_info_t internal;
+	internal.score = -1;
 
 	if (handle == NULL)
 		return set_error(ERR_HANDLE);

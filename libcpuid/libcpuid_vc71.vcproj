@@ -179,13 +179,22 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath=".\amd_code_t.h">
+			</File>
+			<File
 				RelativePath=".\asm-bits.h">
+			</File>
+			<File
+				RelativePath=".\intel_code_t.h">
 			</File>
 			<File
 				RelativePath=".\libcpuid.h">
 			</File>
 			<File
 				RelativePath=".\libcpuid_constants.h">
+			</File>
+			<File
+				RelativePath=".\libcpuid_internal.h">
 			</File>
 			<File
 				RelativePath=".\libcpuid_types.h">

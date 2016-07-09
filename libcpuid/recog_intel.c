@@ -776,6 +776,11 @@ static intel_model_t get_model_code(struct cpu_id_t* data)
 
 int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal)
 {
+	intel_code_t brand_code;
+	intel_model_t model_code;
+	int i;
+	char* brand_code_str = NULL;
+
 	load_intel_features(raw, data);
 	if (raw->basic_cpuid[0][0] >= 4) {
 		/* Deterministic way is preferred, being more generic */
@@ -785,10 +790,8 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data, stru
 	}
 	decode_intel_number_of_cores(raw, data);
 
-	intel_code_t brand_code  = get_brand_code(data);
-	intel_model_t model_code = get_model_code(data);
-	int i;
-	char* brand_code_str = NULL;
+	brand_code  = get_brand_code(data);
+	model_code = get_model_code(data);
 	for (i = 0; i < COUNT_OF(intel_bcode_str); i++) {
 		if (brand_code == intel_bcode_str[i].code) {
 			brand_code_str = intel_bcode_str[i].str;
