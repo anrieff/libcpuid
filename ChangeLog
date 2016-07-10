@@ -31,7 +31,7 @@ Version 0.2.2 (2015-11-04):
 	* Rename of some CPU codenames, made more consistent
 	* *BSD and Solaris support (unofficial)
 
-Version 0.3.0 (2016-06):
+Version 0.3.0 (2016-07-09):
 	* A backwards-incompatible change, since the sizeof cpu_raw_data_t and
 	  cpu_id_t are now different.
 	* Support for processors up to Skylake.
