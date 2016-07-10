@@ -30,3 +30,7 @@ libcpuid/Doxyfile
 libcpuid/doxyfile.stamp
 ar-lib
 compile
+ipch
+*.opensdf
+*.sdf
+*.suo
