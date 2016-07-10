@@ -7,4 +7,4 @@ AM_CPPFLAGS = $(all_includes) $(EXTRA_INCLUDE_PATHS)
 
 cpuid_tool_LDADD = $(top_builddir)/libcpuid/libcpuid.la
 
-EXTRA_DIST = cpuid_tool_vc71.vcproj cpuid_tool_vc9.vcproj
+EXTRA_DIST = cpuid_tool_vc71.vcproj cpuid_tool_vc10.vcxproj cpuid_tool_vc10.vcxproj.filters
