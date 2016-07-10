@@ -26,7 +26,10 @@ libcpuidinclude_HEADERS = 	\
 	libcpuid_types.h
 
 noinst_HEADERS = 		\
+	amd_code_t.h		\
 	asm-bits.h		\
+	intel_code_t.h		\
+	libcpuid_internal.h	\
 	libcpuid_util.h		\
 	recog_intel.h		\
 	recog_amd.h		\
