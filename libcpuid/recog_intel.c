@@ -558,8 +558,12 @@ static int decode_intel_extended_topology(struct cpu_raw_data_t* raw,
 		}
 	}
 	if (num_smt == -1 || num_core == -1) return 0;
-	data->num_cores = num_core / num_smt;
 	data->num_logical_cpus = num_core;
+	data->num_cores = num_core / num_smt;
+	// make sure num_cores is at least 1. In VMs, the CPUID instruction
+	// is rigged and may give nonsensical results, but we should at least
+	// avoid outputs like data->num_cores == 0.
+	if (data->num_cores <= 0) data->num_cores = 1;
 	return 1;
 }
 
