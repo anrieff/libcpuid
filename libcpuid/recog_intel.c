@@ -302,11 +302,16 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 13, -1, -1, 61,   2,    -1,    -1, PENTIUM           ,     0, "Broadwell-U (Pentium)"    },
 	{  6, 13, -1, -1, 61,   2,    -1,    -1, CELERON           ,     0, "Broadwell-U (Celeron)"    },
 	{  6, 13, -1, -1, 61,   2,    -1,    -1, NA                ,     0, "Broadwell-U (Core M)"     },
+	{  6, 15, -1, -1, 79,   2,    -1,    -1, CORE_BROADWELL3   ,     0, "Broadwell-E (Core i3)"    },
+	{  6, 15, -1, -1, 79,   2,    -1,    -1, CORE_BROADWELL5   ,     0, "Broadwell-E (Core i5)"    },
+	{  6, 15, -1, -1, 79,   4,    -1,    -1, CORE_BROADWELL5   ,     0, "Broadwell-E (Core i5)"    },
+	{  6, 15, -1, -1, 79,   2,    -1,    -1, CORE_BROADWELL7   ,     0, "Broadwell-E (Core i7)"    },
+	{  6, 15, -1, -1, 79,   4,    -1,    -1, CORE_BROADWELL7   ,     0, "Broadwell-E (Core i7)"    },
 	
 	/* Skylake CPUs (14nm): */
-	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_SKYLAKE7     ,     0, "Skylake (Core i7)"        },
-	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_SKYLAKE5     ,     0, "Skylake (Core i5)"        },
-	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_SKYLAKE3     ,     0, "Skylake (Core i3)"        },
+	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_BROADWELL7   ,     0, "Skylake (Core i7)"        },
+	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_BROADWELL5   ,     0, "Skylake (Core i5)"        },
+	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_BROADWELL3   ,     0, "Skylake (Core i3)"        },
 	{  6, 14, -1, -1, 94,   4,    -1,    -1, PENTIUM           ,     0, "Skylake (Pentium)"        },
 
 	/* Itaniums */
@@ -641,9 +646,9 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 		/* if it has FMA, then it is at least Haswell */
 		if (data->flags[CPU_FEATURE_FMA3])
 			core_ix_base = CORE_HASWELL3;
-		/* if it has RTM, then it is at least Skylake */
+		/* if it has RTM, then it is at least a Broadwell-E or Skylake */
 		if (data->flags[CPU_FEATURE_RTM])
-			core_ix_base = CORE_SKYLAKE3;
+			core_ix_base = CORE_BROADWELL3;
 		
 		switch (bs[i + 9]) {
 			case '3': code = core_ix_base + 0; break;
