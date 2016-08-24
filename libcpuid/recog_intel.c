@@ -622,8 +622,8 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 		{ CORE_SOLO, "Intel(R) Core(TM)" },
 		{ ATOM_DIAMONDVILLE, "Atom(TM) CPU [N ][23]## " },
 		{ ATOM_SILVERTHORNE, "Atom(TM) CPU Z" },
-		{ ATOM_PINEVIEW, "Atom(TM) CPU D" },
-		{ ATOM_CEDARVIEW, "Atom(TM) CPU N####" },
+		{ ATOM_PINEVIEW, "Atom(TM) CPU [ND][45]## " },
+		{ ATOM_CEDARVIEW, "Atom(TM) CPU [ND]#### " },
 		{ ATOM_UNKNOWN,   "Atom(TM) CPU" },
 	};
 
