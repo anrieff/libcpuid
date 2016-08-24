@@ -1,3 +1,16 @@
+libcpuid (0.3.0) unstable; urgency=low
+
+  * A backwards-incompatible change, since the sizeof cpu_raw_data_t and
+	  cpu_id_t are now different.
+  * Support for processors up to Skylake.
+  * Fix clock detection in cpu_clock_by_ic() for Skylake.
+  * Support up to 8 subleaf entries for CPUID leaf 04 and detection
+	  of L4 cache.
+  * MSR functions supported on FreeBSD.
+  * INFO_VOLTAGE request supported by cpu_msrinfo(). 
+
+ -- eloaders <eloaders@linux.pl>  Mon, 22 Aug 2016 17:45:21 +0200
+
 libcpuid (0.21) unstable; urgency=low
 
   * Initial release add debian directory for libcpuid.
