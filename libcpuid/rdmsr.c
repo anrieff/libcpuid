@@ -832,7 +832,7 @@ static double get_info_bus_clock(struct msr_driver_t* handle, struct cpu_id_t *i
 	uint64_t reg;
 
 	if(clock == 0)
-		clock = cpu_clock_measure(50, 1);
+		clock = cpu_clock_measure(100, 1);
 
 	if(id->vendor == VENDOR_INTEL) {
 		/* Refer links above
