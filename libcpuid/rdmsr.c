@@ -511,10 +511,21 @@ int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
   AMD BIOS and Kernel Developer’s Guide (BKDG)
   * AMD Family 10h Processors
   http://support.amd.com/TechDocs/31116.pdf
-  * AMD Family 15h Models 00h-0Fh Processors
+  * AMD Family 11h Processors
+  http://support.amd.com/TechDocs/41256.pdf
+  * AMD Family 12h Processors
+  http://support.amd.com/TechDocs/41131.pdf
+  * AMD Family 14h Processors
+  http://support.amd.com/TechDocs/43170_14h_Mod_00h-0Fh_BKDG.pdf
+  * AMD Family 15h Processors
   http://support.amd.com/TechDocs/42301_15h_Mod_00h-0Fh_BKDG.pdf
-  * AMD Family 15h Models 30h-3Fh
+  http://support.amd.com/TechDocs/42300_15h_Mod_10h-1Fh_BKDG.pdf
   http://support.amd.com/TechDocs/49125_15h_Models_30h-3Fh_BKDG.pdf
+  http://support.amd.com/TechDocs/50742_15h_Models_60h-6Fh_BKDG.pdf
+  http://support.amd.com/TechDocs/49125_15h_Models_30h-3Fh_BKDG.pdf
+  * AMD Family 16h Processors
+  http://support.amd.com/TechDocs/48751_16h_bkdg.pdf
+  http://support.amd.com/TechDocs/52740_16h_Models_30h-3Fh_BKDG.pdf
 
 - Intel MSRs:
   Intel® 64 and IA-32 Architectures Software Developer’s Manual
@@ -561,27 +572,97 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 	return (int) ((y - x) / (b - a));
 }
 
-static int get_amd_multipliers(struct msr_driver_t* handle, struct internal_id_info_t *internal,
+static int get_amd_multipliers(struct msr_driver_t* handle, struct cpu_id_t *id,
+                               struct internal_id_info_t *internal,
                                uint32_t pstate, uint64_t *multiplier)
 {
 	int err;
-	uint64_t CpuFid, CpuDid;
-	double factor = 2.0;
+	static int clock = 0;
+	uint64_t CpuFid, CpuDid, CpuDidLSD;
+	double divisor;
 
 	if (pstate < MSR_PSTATE_0 || MSR_PSTATE_7 < pstate)
 		return 1;
 
-	/* Refer links above
-	Table 299: P-state Definitions
-	MSRC001_00[6B:64][8:6] is CpuDid
-	MSRC001_00[6B:64][5:0] is CpuFid
-	APUs -> 100MHz REFCLK
-	CPUs -> 200MHz REFCLK */
-	if (FUSION_C <= internal->code.amd && internal->code.amd <= FUSION_A)
-		factor = 1.0;
-	err  = cpu_rdmsr_range(handle, pstate, 5, 0, &CpuFid);
-	err += cpu_rdmsr_range(handle, pstate, 8, 6, &CpuDid);
-	*multiplier = (uint64_t) (((CpuFid + 0x10) / (1ull << CpuDid)) / factor);
+	switch (id->ext_family) {
+		case 0x11:
+			/* BKDG 11h, page 236
+			MSRC001_00[6B:64][8:6] is CpuDid
+			MSRC001_00[6B:64][5:0] is CpuFid
+			CPU COF is ((100 MHz * (CpuFid + 08h)) / (2^CpuDid)) */
+			err  = cpu_rdmsr_range(handle, pstate, 8, 6, &CpuDid);
+			err += cpu_rdmsr_range(handle, pstate, 5, 0, &CpuFid);
+			*multiplier = (uint64_t) ((CpuFid + 0x8) / (1ull << CpuDid));
+			break;
+		case 0x12:
+			/* BKDG 12h, page 469
+			MSRC001_00[6B:64][8:4] is CpuFid
+			MSRC001_00[6B:64][3:0] is CpuDid
+			CPU COF is (100MHz * (CpuFid + 10h) / (divisor specified by CpuDid)) */
+			err  = cpu_rdmsr_range(handle, pstate, 8, 4, &CpuFid);
+			err += cpu_rdmsr_range(handle, pstate, 3, 0, &CpuDid);
+			if (CpuDid == 0b0000)
+				divisor = 1;
+			else if (CpuDid == 0b0001)
+				divisor = 1.5;
+			else if (CpuDid == 0b0010)
+				divisor = 2;
+			else if (CpuDid == 0b0011)
+				divisor = 3;
+			else if (CpuDid == 0b0100)
+				divisor = 4;
+			else if (CpuDid == 0b0101)
+				divisor = 6;
+			else if (CpuDid == 0b0110)
+				divisor = 8;
+			else if (CpuDid == 0b0111)
+				divisor = 12;
+			else if (CpuDid == 0b1000)
+				divisor = 16;
+			else
+				divisor = 0;
+
+			if (divisor > 0)
+				*multiplier = (uint64_t) ((CpuFid + 0x10) / divisor);
+			else
+				err++;
+			break;
+		case 0x14:
+			/* BKDG 14h, page 430
+			MSRC001_00[6B:64][8:4] is CpuDidMSD
+			MSRC001_00[6B:64][3:0] is CpuDidLSD
+			PLL COF is (100 MHz * (D18F3xD4[MainPllOpFreqId] + 10h))
+			Divisor is (CpuDidMSD + (CpuDidLSD * 0.25) + 1)
+			CPU COF is (main PLL frequency specified by D18F3xD4[MainPllOpFreqId]) / (core clock divisor specified by CpuDidMSD and CpuDidLSD) */
+			err  = cpu_rdmsr_range(handle, pstate, 8, 4, &CpuDid);
+			err += cpu_rdmsr_range(handle, pstate, 3, 0, &CpuDidLSD);
+			if (clock == 0)
+				clock = cpu_clock_measure(100, 1) + 5; // Fake round
+			*multiplier = (uint64_t) ((clock / 100 + 0x10) / (CpuDid + CpuDidLSD * 0.25 + 1));
+			break;
+		case 0x10:
+			/* BKDG 10h, page 429
+			MSRC001_00[6B:64][8:6] is CpuDid
+			MSRC001_00[6B:64][5:0] is CpuFid
+			CPU COF is (100 MHz * (CpuFid + 10h) / (2^CpuDid)) */
+		case 0x15:
+			/* BKDG 15h, page 570/580/635/692 (00h-0Fh/10h-1Fh/30h-3Fh/60h-6Fh)
+			MSRC001_00[6B:64][8:6] is CpuDid
+			MSRC001_00[6B:64][5:0] is CpuFid
+			CoreCOF is (100 * (MSRC001_00[6B:64][CpuFid] + 10h) / (2^MSRC001_00[6B:64][CpuDid])) */
+		case 0x16:
+			/* BKDG 16h, page 549/611 (00h-0Fh/30h-3Fh)
+			MSRC001_00[6B:64][8:6] is CpuDid
+			MSRC001_00[6B:64][5:0] is CpuFid
+			CoreCOF is (100 * (MSRC001_00[6B:64][CpuFid] + 10h) / (2^MSRC001_00[6B:64][CpuDid])) */
+			err  = cpu_rdmsr_range(handle, pstate, 8, 6, &CpuDid);
+			err += cpu_rdmsr_range(handle, pstate, 5, 0, &CpuFid);
+			*multiplier = (uint64_t) ((CpuFid + 0x10) / (1ull << CpuDid));
+			break;
+		default:
+			err = 1;
+			break;
+	}
 
 	return err;
 }
@@ -612,7 +693,7 @@ static double get_info_min_multiplier(struct msr_driver_t* handle, struct cpu_id
 		MSRC001_0061[6:4] is PstateMaxVal
 		PstateMaxVal is the lowest-performance non-boosted P-state */
 		err  = cpu_rdmsr_range(handle, MSR_PSTATE_L, 6, 4, &reg);
-		err += get_amd_multipliers(handle, internal, MSR_PSTATE_0 + (uint32_t) reg, &reg);
+		err += get_amd_multipliers(handle, id, internal, MSR_PSTATE_0 + (uint32_t) reg, &reg);
 		if (!err) return (double) reg;
 	}
 
@@ -641,7 +722,7 @@ static double get_info_cur_multiplier(struct msr_driver_t* handle, struct cpu_id
 		/* Refer links above
 		MSRC001_0063[2:0] is CurPstate */
 		err  = cpu_rdmsr_range(handle, MSR_PSTATE_S, 2, 0, &reg);
-		err += get_amd_multipliers(handle, internal, MSR_PSTATE_0 + (uint32_t) reg, &reg);
+		err += get_amd_multipliers(handle, id, internal, MSR_PSTATE_0 + (uint32_t) reg, &reg);
 		if (!err) return (double) reg;
 	}
 
@@ -681,7 +762,7 @@ static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id
 		/* Refer links above
 		MSRC001_0064 is Pb0
 		Pb0 is the highest-performance boosted P-state */
-		err = get_amd_multipliers(handle, internal, MSR_PSTATE_0, &reg);
+		err = get_amd_multipliers(handle, id, internal, MSR_PSTATE_0, &reg);
 		if (!err) return (double) reg;
 	}
 
@@ -771,7 +852,7 @@ static double get_info_bus_clock(struct msr_driver_t* handle, struct cpu_id_t *i
 		MSRC001_0061[2:0] is CurPstateLimit
 		CurPstateLimit is the highest-performance non-boosted P-state */
 		err  = cpu_rdmsr_range(handle, MSR_PSTATE_L, 2, 0, &reg);
-		err += get_amd_multipliers(handle, internal, MSR_PSTATE_0 + (uint32_t) reg, &reg);
+		err += get_amd_multipliers(handle, id, internal, MSR_PSTATE_0 + (uint32_t) reg, &reg);
 		if (!err) return (double) clock / reg;
 	}
 
