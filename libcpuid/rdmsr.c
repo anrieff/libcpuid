@@ -601,23 +601,23 @@ static int get_amd_multipliers(struct msr_driver_t* handle, struct cpu_id_t *id,
 			CPU COF is (100MHz * (CpuFid + 10h) / (divisor specified by CpuDid)) */
 			err  = cpu_rdmsr_range(handle, pstate, 8, 4, &CpuFid);
 			err += cpu_rdmsr_range(handle, pstate, 3, 0, &CpuDid);
-			if (CpuDid == 0b0000)
+			if (CpuDid == 0x0)
 				divisor = 1;
-			else if (CpuDid == 0b0001)
+			else if (CpuDid == 0x1)
 				divisor = 1.5;
-			else if (CpuDid == 0b0010)
+			else if (CpuDid == 0x2)
 				divisor = 2;
-			else if (CpuDid == 0b0011)
+			else if (CpuDid == 0x3)
 				divisor = 3;
-			else if (CpuDid == 0b0100)
+			else if (CpuDid == 0x4)
 				divisor = 4;
-			else if (CpuDid == 0b0101)
+			else if (CpuDid == 0x5)
 				divisor = 6;
-			else if (CpuDid == 0b0110)
+			else if (CpuDid == 0x6)
 				divisor = 8;
-			else if (CpuDid == 0b0111)
+			else if (CpuDid == 0x7)
 				divisor = 12;
-			else if (CpuDid == 0b1000)
+			else if (CpuDid == 0x8)
 				divisor = 16;
 			else
 				divisor = 0;
