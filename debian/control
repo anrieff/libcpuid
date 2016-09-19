@@ -9,6 +9,7 @@ Homepage: https://github.com/anrieff/libcpuid
 Package: libcpuid13
 Architecture: amd64 i386
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${misc:Pre-Depends}
+Replaces: libcpuid11
 Description: small C library for x86/x86_64 CPU detection and feature extraction
  For details about the programming API, please see the docs
  on the project's site (http://libcpuid.sourceforge.net/)
@@ -17,6 +18,7 @@ Package: libcpuid13-dev
 Architecture: amd64 i386
 Section: libdevel
 Depends: ${misc:Depends}
+Replaces: libcpuid11-dev
 Description: Development files for libcpuid
  For details about the programming API, please see the docs
  on the project's site (http://libcpuid.sourceforge.net/)
@@ -24,6 +26,7 @@ Description: Development files for libcpuid
 Package: cpuidtool
 Architecture: amd64 i386
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${misc:Pre-Depends}
+Replaces: cpuidtool
 Description: small C library for x86/x86_64 CPU detection and feature extraction
  For details about the programming API, please see the docs
  on the project's site (http://libcpuid.sourceforge.net/)
