@@ -436,7 +436,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = @top_srcdir@/libcpuid
+INPUT                  = @top_srcdir@/libcpuid @top_srcdir@/cpuid_tool/cpuid_tool.c
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 

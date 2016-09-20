@@ -44,12 +44,14 @@ dist_man_MANS = $(directory)/cpu_id_t.3		\
 	$(directory)/cpu_list_t.3		\
 	$(directory)/cpu_mark_t.3		\
 	$(directory)/cpu_raw_data_t.3		\
-	$(directory)/libcpuid.3
+	$(directory)/libcpuid.3			\
+	$(directory)/cpuid_tool.3
 $(directory)/cpu_id_t.3: doxyfile.stamp
 $(directory)/cpu_list_t.3: doxyfile.stamp
 $(directory)/cpu_mark_t.3: doxyfile.stamp
 $(directory)/cpu_raw_data_t.3: doxyfile.stamp
 $(directory)/libcpuid.3: doxyfile.stamp
+$(directory)/cpuid_tool.3: doxyfile.stamp
 
 doxyfile.stamp:
 	$(DOXYGEN) Doxyfile

@@ -25,27 +25,28 @@
  */
 
 /**
- * @File cpuid_tool.c
- * @Date 2008-11-19
- * @Author Veselin Georgiev
- * @Brief Command line interface to libcpuid
+ * @page cpuid_tool
+ * @date 2008-11-19
+ * @author Veselin Georgiev
+ * @brief Command line interface to libcpuid
  *
+ * @details
  * This file is provides a direct interface to libcpuid. See the usage()
  * function (or just run the program with the `--help' switch) for a short
  * command line options reference.
  *
  * This file has several purposes:
  *
- * 1) When started with no arguments, the program outputs the RAW and decoded
+ * 1. When started with no arguments, the program outputs the RAW and decoded
  *    CPU data to files (`raw.txt' and `report.txt', respectively) - this is
  *    intended to be a dumb, doubleclicky tool for non-developer
  *    users, that can provide debug info about unrecognized processors to
  *    libcpuid developers.
- * 2) When operated from the terminal with the `--report' option, it is a
+ * 2. When operated from the terminal with the `--report' option, it is a
  *    generic CPU-info utility.
- * 3) Can be used in shell scripts, e.g. to get the name of the CPU, cache
+ * 3. Can be used in shell scripts, e.g. to get the name of the CPU, cache
  *    sizes, features, with query options like `--cache', `--brandstr', etc.
- * 4) Finally, it serves to self-document libcpiud itself :)
+ * 4. Finally, it serves to self-document libcpiud itself :)
  */
 #include <stdio.h>
 #include <string.h>
