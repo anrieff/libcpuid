@@ -11,7 +11,7 @@ libcpuid (0.3.0) unstable; urgency=low
 
  -- eloaders <eloaders@linux.pl>  Mon, 22 Aug 2016 17:45:21 +0200
 
-libcpuid (0.21) unstable; urgency=low
+libcpuid (0.2.1) unstable; urgency=low
 
   * Initial release add debian directory for libcpuid.
 
