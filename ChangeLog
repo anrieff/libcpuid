@@ -40,3 +40,9 @@ Version 0.3.0 (2016-07-09):
 	  of L4 cache.
 	* MSR functions supported on FreeBSD.
 	* INFO_VOLTAGE request supported by cpu_msrinfo().
+
+Version 0.4.0 (2016-09-30):
+	* A backwards-incompatible change, since the sizeof cpu_raw_data_t and
+	  cpu_id_t are now different.
+	* Better detection of AMD clock multiplier with msrinfo.
+	* Support for Intel SGX detection

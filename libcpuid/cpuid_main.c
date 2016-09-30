@@ -386,6 +386,18 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 		data->intel_fn11[i][2] = i;
 		cpu_exec_cpuid_ext(data->intel_fn11[i]);
 	}
+	for (i = 0; i < MAX_INTELFN12H_LEVEL; i++) {
+		memset(data->intel_fn12h[i], 0, sizeof(data->intel_fn12h[i]));
+		data->intel_fn12h[i][0] = 0x12;
+		data->intel_fn12h[i][2] = i;
+		cpu_exec_cpuid_ext(data->intel_fn12h[i]);
+	}
+	for (i = 0; i < MAX_INTELFN14H_LEVEL; i++) {
+		memset(data->intel_fn14h[i], 0, sizeof(data->intel_fn14h[i]));
+		data->intel_fn14h[i][0] = 0x14;
+		data->intel_fn14h[i][2] = i;
+		cpu_exec_cpuid_ext(data->intel_fn14h[i]);
+	}
 	return set_error(ERR_OK);
 }
 
@@ -417,6 +429,14 @@ int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 		fprintf(f, "intel_fn11[%d]=%08x %08x %08x %08x\n", i,
 			data->intel_fn11[i][0], data->intel_fn11[i][1],
 			data->intel_fn11[i][2], data->intel_fn11[i][3]);
+	for (i = 0; i < MAX_INTELFN12H_LEVEL; i++)
+		fprintf(f, "intel_fn12h[%d]=%08x %08x %08x %08x\n", i,
+			data->intel_fn12h[i][0], data->intel_fn12h[i][1],
+			data->intel_fn12h[i][2], data->intel_fn12h[i][3]);
+	for (i = 0; i < MAX_INTELFN14H_LEVEL; i++)
+		fprintf(f, "intel_fn14h[%d]=%08x %08x %08x %08x\n", i,
+			data->intel_fn14h[i][0], data->intel_fn14h[i][1],
+			data->intel_fn14h[i][2], data->intel_fn14h[i][3]);
 	
 	if (strcmp(filename, ""))
 		fclose(f);
@@ -462,9 +482,11 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
 		}
 		syntax = 1;
 		syntax = syntax && parse_token("basic_cpuid", token, value, data->basic_cpuid,   MAX_CPUID_LEVEL, &recognized);
-		syntax = syntax && parse_token("ext_cpuid", token, value, data->ext_cpuid,   MAX_EXT_CPUID_LEVEL, &recognized);
-		syntax = syntax && parse_token("intel_fn4", token, value, data->intel_fn4,    MAX_INTELFN4_LEVEL, &recognized);
-		syntax = syntax && parse_token("intel_fn11", token, value, data->intel_fn11, MAX_INTELFN11_LEVEL, &recognized);
+		syntax = syntax && parse_token("ext_cpuid", token, value, data->ext_cpuid,       MAX_EXT_CPUID_LEVEL, &recognized);
+		syntax = syntax && parse_token("intel_fn4", token, value, data->intel_fn4,       MAX_INTELFN4_LEVEL, &recognized);
+		syntax = syntax && parse_token("intel_fn11", token, value, data->intel_fn11,     MAX_INTELFN11_LEVEL, &recognized);
+		syntax = syntax && parse_token("intel_fn12h", token, value, data->intel_fn12h,   MAX_INTELFN12H_LEVEL, &recognized);
+		syntax = syntax && parse_token("intel_fn14h", token, value, data->intel_fn14h,   MAX_INTELFN14H_LEVEL, &recognized);
 		if (!syntax) {
 			warnf("Error: %s:%d: Syntax error\n", filename, cur_line);
 			fclose(f);
@@ -622,6 +644,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SHA_NI, "sha_ni" },
 		{ CPU_FEATURE_AVX512BW, "avx512bw" },
 		{ CPU_FEATURE_AVX512VL, "avx512vl" },
+		{ CPU_FEATURE_SGX, "sgx" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {

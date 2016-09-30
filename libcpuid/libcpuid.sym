@@ -28,3 +28,4 @@ cpuid_get_total_cpus
 cpu_msr_driver_open_core
 cpuid_get_vendor
 cpu_rdmsr_range
+cpuid_get_epc

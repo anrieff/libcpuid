@@ -349,6 +349,7 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		{ 20, CPU_FEATURE_XD },
 	};
 	const struct feature_map_t matchtable_ebx7[] = {
+		{  2, CPU_FEATURE_SGX },
 		{  4, CPU_FEATURE_HLE },
 		{ 11, CPU_FEATURE_RTM },
 		{ 16, CPU_FEATURE_AVX512F },
@@ -783,6 +784,68 @@ static intel_model_t get_model_code(struct cpu_id_t* data)
 #undef HAVE
 }
 
+static void decode_intel_sgx_features(const struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+{
+	struct cpu_epc_t epc;
+	int i;
+	
+	if (raw->basic_cpuid[0][0] < 0x12) return; // no 12h leaf
+	if (raw->basic_cpuid[0x12][0] == 0) return; // no sub-leafs available, probably it's disabled by BIOS
+	
+	// decode sub-leaf 0:
+	if (raw->basic_cpuid[0x12][0] & 1) data->sgx.flags[INTEL_SGX1] = 1;
+	if (raw->basic_cpuid[0x12][0] & 2) data->sgx.flags[INTEL_SGX2] = 1;
+	if (data->sgx.flags[INTEL_SGX1] || data->sgx.flags[INTEL_SGX2])
+		data->sgx.present = 1;
+	data->sgx.misc_select = raw->basic_cpuid[0x12][1];
+	data->sgx.max_enclave_32bit = (raw->basic_cpuid[0x12][3]     ) & 0xff;
+	data->sgx.max_enclave_64bit = (raw->basic_cpuid[0x12][3] >> 8) & 0xff;
+	
+	// decode sub-leaf 1:
+	data->sgx.secs_attributes = raw->intel_fn12h[1][0] | (((uint64_t) raw->intel_fn12h[1][1]) << 32);
+	data->sgx.secs_xfrm       = raw->intel_fn12h[1][2] | (((uint64_t) raw->intel_fn12h[1][3]) << 32);
+	
+	// decode higher-order subleafs, whenever present:
+	data->sgx.num_epc_sections = -1;
+	for (i = 0; i < 1000000; i++) {
+		epc = cpuid_get_epc(i, raw);
+		if (epc.length == 0) {
+			debugf(2, "SGX: epc section request for %d returned null, no more EPC sections.\n", i);
+			data->sgx.num_epc_sections = i;
+			break;
+		}
+	}
+	if (data->sgx.num_epc_sections == -1) {
+		debugf(1, "SGX: warning: seems to be infinitude of EPC sections.\n");
+		data->sgx.num_epc_sections = 1000000;
+	}
+}
+
+struct cpu_epc_t cpuid_get_epc(int index, const struct cpu_raw_data_t* raw)
+{
+	uint32_t regs[4];
+	if (raw && index < MAX_INTELFN12H_LEVEL - 2) {
+		// this was queried already, use the data:
+		memcpy(regs, raw->intel_fn12h[2 + index], sizeof(regs));
+	} else {
+		// query this ourselves:
+		regs[0] = 0x12;
+		regs[2] = 2 + index;
+		regs[1] = regs[3] = 0;
+		cpu_exec_cpuid_ext(regs);
+	}
+	
+	// decode values:
+	struct cpu_epc_t retval = {0, 0};
+	if ((regs[0] & 0xf) == 0x1) {
+		retval.start_addr |= (regs[0] & 0xfffff000); // bits [12, 32) -> bits [12, 32)
+		retval.start_addr |= ((uint64_t) (regs[1] & 0x000fffff)) << 32; // bits [0, 20) -> bits [32, 52)
+		retval.length     |= (regs[2] & 0xfffff000); // bits [12, 32) -> bits [12, 32)
+		retval.length     |= ((uint64_t) (regs[3] & 0x000fffff)) << 32; // bits [0, 20) -> bits [32, 52)
+	}
+	return retval;
+}
+
 int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal)
 {
 	intel_code_t brand_code;
@@ -814,6 +877,12 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data, stru
 	debugf(2, "Detected Intel model code: %d\n", model_code);
 	
 	internal->code.intel = brand_code;
+	
+	if (data->flags[CPU_FEATURE_SGX]) {
+		debugf(2, "SGX seems to be present, decoding...\n");
+		// if SGX is indicated by the CPU, verify its presence:
+		decode_intel_sgx_features(raw, data);
+	}
 
 	internal->score = match_cpu_codename(cpudb_intel, COUNT_OF(cpudb_intel), data,
 		brand_code, model_code);

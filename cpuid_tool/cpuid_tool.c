@@ -90,6 +90,7 @@ typedef enum {
 	NEED_CLOCK_IC,
 	NEED_RDMSR,
 	NEED_SSE_UNIT_SIZE,
+	NEED_SGX,
 } output_data_switch;
 
 int need_input = 0,
@@ -100,7 +101,8 @@ int need_input = 0,
     need_timed_clockreport = 0,
     verbose_level = 0,
     need_version = 0,
-    need_cpulist = 0;
+    need_cpulist = 0,
+    need_sgx = 0;
 
 #define MAX_REQUESTS 32
 int num_requests = 0;
@@ -145,6 +147,7 @@ matchtable[] = {
 	{ NEED_CLOCK_IC     , "--clock-ic"     , 1},
 	{ NEED_RDMSR        , "--rdmsr"        , 0},
 	{ NEED_SSE_UNIT_SIZE, "--sse-size"     , 1},
+	{ NEED_SGX          , "--sgx"          , 1},
 };
 
 const int sz_match = (sizeof(matchtable) / sizeof(matchtable[0]));
@@ -456,6 +459,25 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 		{
 			fprintf(fout, "%d (%s)\n", data->sse_size, 
 				data->detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
+			break;
+		}
+		case NEED_SGX:
+		{
+			fprintf(fout, "SGX: %d (%s)\n", data->sgx.present, data->sgx.present ? "present" : "absent");
+			if (data->sgx.present) {
+				fprintf(fout, "SGX max enclave size (32-bit): 2^%d\n", data->sgx.max_enclave_32bit);
+				fprintf(fout, "SGX max enclave size (64-bit): 2^%d\n", data->sgx.max_enclave_64bit);
+				fprintf(fout, "SGX1 extensions              : %d (%s)\n", data->sgx.flags[INTEL_SGX1], data->sgx.flags[INTEL_SGX1] ? "present" : "absent");
+				fprintf(fout, "SGX2 extensions              : %d (%s)\n", data->sgx.flags[INTEL_SGX2], data->sgx.flags[INTEL_SGX2] ? "present" : "absent");
+				fprintf(fout, "SGX MISCSELECT               : %08x\n", data->sgx.misc_select);
+				fprintf(fout, "SGX SECS.ATTRIBUTES mask     : %016llx\n", data->sgx.secs_attributes);
+				fprintf(fout, "SGX SECS.XSAVE feature mask  : %016llx\n", data->sgx.secs_xfrm);
+				fprintf(fout, "SGX EPC sections count       : %d\n", data->sgx.num_epc_sections);
+				for (i = 0; i < data->sgx.num_epc_sections; i++) {
+					struct cpu_epc_t epc = cpuid_get_epc(i, raw);
+					fprintf(fout, "SGX EPC section #%-8d: start = %llx, size = %llu\n", epc.start_addr, epc.length);
+				}
+			}
 			break;
 		}
 		default:

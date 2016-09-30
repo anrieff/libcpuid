@@ -6,6 +6,52 @@ if len(sys.argv) != 2:
 	print "Usage: check-consistency <path>"
 	sys.exit(0)
 
+
+def getEnumElements(enumName):
+	f = open("%s/libcpuid.h" % sys.argv[1], "r")
+	l = []
+	on = False
+	rexp = re.compile(r'^\s*([A-Z0-9_]+)(\s*=\s*[A-Z0-9_]+)?\s*,.*$')
+	for line in f:
+		line = line.strip()
+		if line.startswith("typedef enum {"):
+			l = []
+			on = True
+		if on and rexp.match(line):
+			l.append(rexp.findall(line)[0][0])
+		if on and line.startswith("} "):
+			on = False
+			if line.find(enumName) != -1:
+				return l
+	f.close()
+	return []
+
+def getConstant(constantName):
+	f = open("%s/libcpuid_constants.h" % sys.argv[1], "r")
+	value = 0
+	for line in f:
+		items = line.strip().split()
+		if len(items) >= 3 and items[0] == "#define" and items[1] == constantName:
+			value = int(items[2])
+	f.close()
+	return value
+
+def checkEnumSize(enumName, constantName):
+	print "Checking enum `%s':" % enumName,
+	count = len(getEnumElements(enumName)) - 1
+	themax = getConstant(constantName)
+	print "%d elements; max size (%s=%d)..." % (count, constantName, themax),
+	if count > themax:
+		print "FAILED"
+		global firstError
+		firstError = False
+	else:
+		print "OK"
+
+checkEnumSize("cpu_feature_t", "CPU_FLAGS_MAX")
+checkEnumSize("cpu_hint_t", "CPU_HINTS_MAX")
+checkEnumSize("cpu_sgx_feature_t", "SGX_FLAGS_MAX")
+
 rexp = re.compile('.*{ CPU_FEATURE_([^,]+), "([^"]+)".*}.*')
 print "Finding features:"
 for fn in glob.glob("%s/*.c" % sys.argv[1]):
