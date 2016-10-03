@@ -470,12 +470,13 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 				fprintf(fout, "SGX1 extensions              : %d (%s)\n", data->sgx.flags[INTEL_SGX1], data->sgx.flags[INTEL_SGX1] ? "present" : "absent");
 				fprintf(fout, "SGX2 extensions              : %d (%s)\n", data->sgx.flags[INTEL_SGX2], data->sgx.flags[INTEL_SGX2] ? "present" : "absent");
 				fprintf(fout, "SGX MISCSELECT               : %08x\n", data->sgx.misc_select);
-				fprintf(fout, "SGX SECS.ATTRIBUTES mask     : %016llx\n", data->sgx.secs_attributes);
-				fprintf(fout, "SGX SECS.XSAVE feature mask  : %016llx\n", data->sgx.secs_xfrm);
+				fprintf(fout, "SGX SECS.ATTRIBUTES mask     : %016llx\n", (unsigned long long) data->sgx.secs_attributes);
+				fprintf(fout, "SGX SECS.XSAVE feature mask  : %016llx\n", (unsigned long long) data->sgx.secs_xfrm);
 				fprintf(fout, "SGX EPC sections count       : %d\n", data->sgx.num_epc_sections);
 				for (i = 0; i < data->sgx.num_epc_sections; i++) {
 					struct cpu_epc_t epc = cpuid_get_epc(i, raw);
-					fprintf(fout, "SGX EPC section #%-8d: start = %llx, size = %llu\n", epc.start_addr, epc.length);
+					fprintf(fout, "SGX EPC section #%-8d: start = %llx, size = %llu\n", i,
+						(unsigned long long) epc.start_addr, (unsigned long long) epc.length);
 				}
 			}
 			break;
