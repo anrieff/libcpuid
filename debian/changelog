@@ -1,8 +1,8 @@
-libcpuid (0.4.0) unstable; urgency=log
+libcpuid (0.4.0) unstable; urgency=low
 
- * Better detection of AMD clock multiplier with msrinfo.
- * Support for Intel SGX detection
-   (a backwards-incompatible change since the sizeof
+  * Better detection of AMD clock multiplier with msrinfo.
+  * Support for Intel SGX detection
+  (a backwards-incompatible change since the sizeof
    cpu_raw_data_t and cpu_id_t is now different).
 
  -- Georgiev, Veselin <anrieff@gmail.com>  Thu, 30 Sep 2016 22:39:37 +0300
