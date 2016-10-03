@@ -512,7 +512,7 @@ static void print_sgx_data(const struct cpu_raw_data_t* raw, const struct cpu_id
 		fprintf(fout, "SGX EPC sections count       : %d\n", data->sgx.num_epc_sections);
 		for (i = 0; i < data->sgx.num_epc_sections; i++) {
 			struct cpu_epc_t epc = cpuid_get_epc(i, raw);
-			fprintf(fout, "SGX EPC section #%-8d: start = %llx, size = %llu\n", i,
+			fprintf(fout, "    SGX EPC section #%-8d: start = %llx, size = %llu\n", i,
 				(unsigned long long) epc.start_addr, (unsigned long long) epc.length);
 		}
 	}
