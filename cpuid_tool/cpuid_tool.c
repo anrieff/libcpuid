@@ -90,7 +90,6 @@ typedef enum {
 	NEED_CLOCK_IC,
 	NEED_RDMSR,
 	NEED_SSE_UNIT_SIZE,
-	NEED_SGX,
 } output_data_switch;
 
 int need_input = 0,
@@ -102,7 +101,8 @@ int need_input = 0,
     verbose_level = 0,
     need_version = 0,
     need_cpulist = 0,
-    need_sgx = 0;
+    need_sgx = 0,
+    need_identify = 0;
 
 #define MAX_REQUESTS 32
 int num_requests = 0;
@@ -147,7 +147,6 @@ matchtable[] = {
 	{ NEED_CLOCK_IC     , "--clock-ic"     , 1},
 	{ NEED_RDMSR        , "--rdmsr"        , 0},
 	{ NEED_SSE_UNIT_SIZE, "--sse-size"     , 1},
-	{ NEED_SGX          , "--sgx"          , 1},
 };
 
 const int sz_match = (sizeof(matchtable) / sizeof(matchtable[0]));
@@ -166,6 +165,7 @@ static void usage(void)
 	printf("  --clock          - in conjunction to --report: print CPU clock as well\n");
 	printf("  --clock-rdtsc    - same as --clock, but use RDTSC for clock detection\n");
 	printf("  --cpulist        - list all known CPUs\n");
+	printf("  --sgx            - list SGX leaf data, if SGX is supported.\n");
 	printf("  --quiet          - disable warnings\n");
 	printf("  --outfile=<file> - redirect all output to this file, instead of stdout\n");
 	printf("  --verbose, -v    - be extra verbose (more keys increase verbosiness level)\n");
@@ -280,6 +280,11 @@ static int parse_cmdline(int argc, char** argv)
 			need_cpulist = 1;
 			recog = 1;
 		}
+		if (!strcmp(arg, "--sgx")) {
+			need_sgx = 1;
+			need_identify = 1;
+			recog = 1;
+		}
 		if (arg[0] == '-' && arg[1] == 'v') {
 			num_vs = 1;
 			while (arg[num_vs] == 'v')
@@ -317,7 +322,7 @@ static int check_need_raw_data(void)
 {
 	int i, j;
 	
-	if (need_output || need_report) return 1;
+	if (need_output || need_report || need_identify) return 1;
 	for (i = 0; i < num_requests; i++) {
 		for (j = 0; j < sz_match; j++)
 			if (requests[i] == matchtable[j].sw &&
@@ -461,26 +466,6 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 				data->detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
 			break;
 		}
-		case NEED_SGX:
-		{
-			fprintf(fout, "SGX: %d (%s)\n", data->sgx.present, data->sgx.present ? "present" : "absent");
-			if (data->sgx.present) {
-				fprintf(fout, "SGX max enclave size (32-bit): 2^%d\n", data->sgx.max_enclave_32bit);
-				fprintf(fout, "SGX max enclave size (64-bit): 2^%d\n", data->sgx.max_enclave_64bit);
-				fprintf(fout, "SGX1 extensions              : %d (%s)\n", data->sgx.flags[INTEL_SGX1], data->sgx.flags[INTEL_SGX1] ? "present" : "absent");
-				fprintf(fout, "SGX2 extensions              : %d (%s)\n", data->sgx.flags[INTEL_SGX2], data->sgx.flags[INTEL_SGX2] ? "present" : "absent");
-				fprintf(fout, "SGX MISCSELECT               : %08x\n", data->sgx.misc_select);
-				fprintf(fout, "SGX SECS.ATTRIBUTES mask     : %016llx\n", (unsigned long long) data->sgx.secs_attributes);
-				fprintf(fout, "SGX SECS.XSAVE feature mask  : %016llx\n", (unsigned long long) data->sgx.secs_xfrm);
-				fprintf(fout, "SGX EPC sections count       : %d\n", data->sgx.num_epc_sections);
-				for (i = 0; i < data->sgx.num_epc_sections; i++) {
-					struct cpu_epc_t epc = cpuid_get_epc(i, raw);
-					fprintf(fout, "SGX EPC section #%-8d: start = %llx, size = %llu\n", i,
-						(unsigned long long) epc.start_addr, (unsigned long long) epc.length);
-				}
-			}
-			break;
-		}
 		default:
 			fprintf(fout, "How did you get here?!?\n");
 			break;
@@ -509,6 +494,27 @@ static void print_cpulist(void)
 		for (j = 0; j < list.num_entries; j++)
 			fprintf(fout, "%s\n", list.names[j]);
 		cpuid_free_cpu_list(&list);
+	}
+}
+
+static void print_sgx_data(const struct cpu_raw_data_t* raw, const struct cpu_id_t* data)
+{
+	int i;
+	fprintf(fout, "SGX: %d (%s)\n", data->sgx.present, data->sgx.present ? "present" : "absent");
+	if (data->sgx.present) {
+		fprintf(fout, "SGX max enclave size (32-bit): 2^%d\n", data->sgx.max_enclave_32bit);
+		fprintf(fout, "SGX max enclave size (64-bit): 2^%d\n", data->sgx.max_enclave_64bit);
+		fprintf(fout, "SGX1 extensions              : %d (%s)\n", data->sgx.flags[INTEL_SGX1], data->sgx.flags[INTEL_SGX1] ? "present" : "absent");
+		fprintf(fout, "SGX2 extensions              : %d (%s)\n", data->sgx.flags[INTEL_SGX2], data->sgx.flags[INTEL_SGX2] ? "present" : "absent");
+		fprintf(fout, "SGX MISCSELECT               : %08x\n", data->sgx.misc_select);
+		fprintf(fout, "SGX SECS.ATTRIBUTES mask     : %016llx\n", (unsigned long long) data->sgx.secs_attributes);
+		fprintf(fout, "SGX SECS.XSAVE feature mask  : %016llx\n", (unsigned long long) data->sgx.secs_xfrm);
+		fprintf(fout, "SGX EPC sections count       : %d\n", data->sgx.num_epc_sections);
+		for (i = 0; i < data->sgx.num_epc_sections; i++) {
+			struct cpu_epc_t epc = cpuid_get_epc(i, raw);
+			fprintf(fout, "SGX EPC section #%-8d: start = %llx, size = %llu\n", i,
+				(unsigned long long) epc.start_addr, (unsigned long long) epc.length);
+		}
 	}
 }
 
@@ -681,7 +687,7 @@ int main(int argc, char** argv)
 			break;
 		}
 	/* OK, process all queries. */
-	if ((!need_report || !only_clock_queries) && num_requests > 0) {
+	if (((!need_report || !only_clock_queries) && num_requests > 0) || need_identify) {
 		/* Identify the CPU. Make it do cpuid_get_raw_data() itself */
 		if (check_need_raw_data() && cpu_identify(&raw, &data) < 0) {
 			if (!need_quiet)
@@ -695,6 +701,9 @@ int main(int argc, char** argv)
 	}
 	if (need_cpulist) {
 		print_cpulist();
+	}
+	if (need_sgx) {
+		print_sgx_data(&raw, &data);
 	}
 	
 	return 0;
