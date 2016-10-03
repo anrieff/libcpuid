@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 9), autotools-dev, libtool, automake, autoconf, pyt
 Standards-Version: 3.9.5
 Homepage: https://github.com/anrieff/libcpuid
 
-Package: libcpuid13
+Package: libcpuid14
 Architecture: amd64 i386
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${misc:Pre-Depends}
 Replaces: libcpuid11
@@ -14,7 +14,7 @@ Description: small C library for x86/x86_64 CPU detection and feature extraction
  For details about the programming API, please see the docs
  on the project's site (http://libcpuid.sourceforge.net/)
 
-Package: libcpuid13-dev
+Package: libcpuid14-dev
 Architecture: amd64 i386
 Section: libdevel
 Depends: ${misc:Depends}
