@@ -261,11 +261,17 @@ struct cpu_id_t {
 	
 	/**
 	 * The total number of logical processors.
+	 * The same value is availabe through \ref cpuid_get_total_cpus.
 	 *
 	 * This is num_logical_cpus * {total physical processors in the system}
+	 * (but only on a real system, under a VM this number may be lower).
 	 *
 	 * If you're writing a multithreaded program and you want to run it on
 	 * all CPUs, this is the number of threads you need.
+	 *
+	 * @note in a VM, this will exactly match the number of CPUs set in
+	 *       the VM's configuration.
+	 *
 	 */
 	int32_t total_logical_cpus;
 	
@@ -556,8 +562,14 @@ struct cpu_mark_t {
 };
 
 /**
- * @brief Returns the total number of CPUs even if CPUID is not present
- * @retval Number of CPUs available
+ * @brief Returns the total number of logical CPU threads (even if CPUID is not present).
+ *
+ * Under VM, this number (and total_logical_cpus, since they are fetched with the same code)
+ * may be nonsensical, i.e. might not equal NumPhysicalCPUs*NumCoresPerCPU*HyperThreading.
+ * This is because no matter how many logical threads the host machine has, you may limit them
+ * in the VM to any number you like. **This** is the number returned by cpuid_get_total_cpus().
+ *
+ * @returns Number of logical CPU threads available. Equals the \ref cpu_id_t::total_logical_cpus.
  */
 int cpuid_get_total_cpus(void);
 
