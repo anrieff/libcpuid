@@ -824,6 +824,7 @@ static void decode_intel_sgx_features(const struct cpu_raw_data_t* raw, struct c
 struct cpu_epc_t cpuid_get_epc(int index, const struct cpu_raw_data_t* raw)
 {
 	uint32_t regs[4];
+	struct cpu_epc_t retval = {0, 0};
 	if (raw && index < MAX_INTELFN12H_LEVEL - 2) {
 		// this was queried already, use the data:
 		memcpy(regs, raw->intel_fn12h[2 + index], sizeof(regs));
@@ -836,7 +837,6 @@ struct cpu_epc_t cpuid_get_epc(int index, const struct cpu_raw_data_t* raw)
 	}
 	
 	// decode values:
-	struct cpu_epc_t retval = {0, 0};
 	if ((regs[0] & 0xf) == 0x1) {
 		retval.start_addr |= (regs[0] & 0xfffff000); // bits [12, 32) -> bits [12, 32)
 		retval.start_addr |= ((uint64_t) (regs[1] & 0x000fffff)) << 32; // bits [0, 20) -> bits [32, 52)
