@@ -354,6 +354,8 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		{ 11, CPU_FEATURE_RTM },
 		{ 16, CPU_FEATURE_AVX512F },
 		{ 17, CPU_FEATURE_AVX512DQ },
+		{ 18, CPU_FEATURE_RDSEED },
+		{ 19, CPU_FEATURE_ADX },
 		{ 26, CPU_FEATURE_AVX512PF },
 		{ 27, CPU_FEATURE_AVX512ER },
 		{ 28, CPU_FEATURE_AVX512CD },
@@ -648,7 +650,7 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 		if (data->flags[CPU_FEATURE_FMA3])
 			core_ix_base = CORE_HASWELL3;
 		/* if it has RTM, then it is at least a Broadwell-E or Skylake */
-		if (data->flags[CPU_FEATURE_RTM])
+		if (data->flags[CPU_FEATURE_RDSEED])
 			core_ix_base = CORE_BROADWELL3;
 		
 		switch (bs[i + 9]) {

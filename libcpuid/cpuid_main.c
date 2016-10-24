@@ -645,6 +645,8 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_AVX512BW, "avx512bw" },
 		{ CPU_FEATURE_AVX512VL, "avx512vl" },
 		{ CPU_FEATURE_SGX, "sgx" },
+		{ CPU_FEATURE_RDSEED, "rdseed" },
+		{ CPU_FEATURE_ADX, "adx" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {
