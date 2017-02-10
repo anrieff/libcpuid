@@ -26,6 +26,7 @@
 #define _XOPEN_SOURCE 500
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "libcpuid.h"
 #include "asm-bits.h"
 #include "libcpuid_util.h"
@@ -502,6 +503,11 @@ int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
 	return set_error(ERR_NOT_IMP);
 }
 
+int msr_serialize_raw_data(struct msr_driver_t* handle, const char* filename)
+{
+	return set_error(ERR_NOT_IMP);
+}
+
 #endif /* Unsupported OS */
 
 #ifndef RDMSR_UNSUPPORTED_OS
@@ -537,7 +543,26 @@ int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
 #define MSR_PSTATE_L           0xC0010061
 #define MSR_PSTATE_S           0xC0010063
 #define MSR_PSTATE_0           0xC0010064
+#define MSR_PSTATE_1           0xC0010065
+#define MSR_PSTATE_2           0xC0010066
+#define MSR_PSTATE_3           0xC0010067
+#define MSR_PSTATE_4           0xC0010068
+#define MSR_PSTATE_5           0xC0010069
+#define MSR_PSTATE_6           0xC001006A
 #define MSR_PSTATE_7           0xC001006B
+static const uint32_t amd_msr[] = {
+	MSR_PSTATE_L,
+	MSR_PSTATE_S,
+	MSR_PSTATE_0,
+	MSR_PSTATE_1,
+	MSR_PSTATE_2,
+	MSR_PSTATE_3,
+	MSR_PSTATE_4,
+	MSR_PSTATE_5,
+	MSR_PSTATE_6,
+	MSR_PSTATE_7,
+	CPU_INVALID_VALUE
+};
 
 /* Intel MSRs addresses */
 #define IA32_MPERF             0xE7
@@ -549,7 +574,18 @@ int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
 #define MSR_TEMPERATURE_TARGET 0x1A2
 #define MSR_PERF_STATUS        0x198
 #define MSR_PLATFORM_INFO      0xCE
-
+static const uint32_t intel_msr[] = {
+	IA32_MPERF,
+	IA32_APERF,
+	IA32_PERF_STATUS,
+	IA32_THERM_STATUS,
+	MSR_EBL_CR_POWERON,
+	MSR_TURBO_RATIO_LIMIT,
+	MSR_TEMPERATURE_TARGET,
+	MSR_PERF_STATUS,
+	MSR_PLATFORM_INFO,
+	CPU_INVALID_VALUE
+};
 
 static int rdmsr_supported(void)
 {
@@ -917,6 +953,49 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		default:
 			return CPU_INVALID_VALUE;
 	}
+}
+
+int msr_serialize_raw_data(struct msr_driver_t* handle, const char* filename)
+{
+	int i, j;
+	FILE *f;
+	uint64_t reg;
+	const uint32_t *msr;
+	struct cpu_raw_data_t raw;
+	struct cpu_id_t id;
+	struct internal_id_info_t internal;
+
+	if (handle == NULL)
+		return set_error(ERR_HANDLE);
+
+	if (!strcmp(filename, ""))
+		f = stdout;
+	else
+		f = fopen(filename, "wt");
+	if (!f) return set_error(ERR_OPEN);
+
+	if (cpuid_get_raw_data(&raw) || cpu_ident_internal(&raw, &id, &internal))
+		return -1;
+
+	fprintf(f, "CPU is %s %s, stock clock is %dMHz.\n", id.vendor_str, id.brand_str, cpu_clock_measure(100, 1));
+	if (id.vendor == VENDOR_INTEL)
+		msr = intel_msr;
+	else if (id.vendor == VENDOR_AMD)
+		msr = amd_msr;
+	else
+		return set_error(ERR_CPU_UNKN);
+
+	for (i = 0; msr[i] != CPU_INVALID_VALUE; i++) {
+		cpu_rdmsr(handle, msr[i], &reg);
+		fprintf(f, "msr[%#08x]=", msr[i]);
+		for (j = 56; j >= 0; j -= 8)
+			fprintf(f, "%02x ", (int) (reg >> j) & 0xff);
+		printf("\n");
+	}
+
+	if (strcmp(filename, ""))
+		fclose(f);
+	return set_error(ERR_OK);
 }
 
 #endif // RDMSR_UNSUPPORTED_OS

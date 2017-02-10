@@ -89,6 +89,7 @@ typedef enum {
 	NEED_CLOCK_RDTSC,
 	NEED_CLOCK_IC,
 	NEED_RDMSR,
+	NEED_RDMSR_RAW,
 	NEED_SSE_UNIT_SIZE,
 } output_data_switch;
 
@@ -146,6 +147,7 @@ matchtable[] = {
 	{ NEED_CLOCK_RDTSC  , "--clock-rdtsc"  , 1},
 	{ NEED_CLOCK_IC     , "--clock-ic"     , 1},
 	{ NEED_RDMSR        , "--rdmsr"        , 0},
+	{ NEED_RDMSR_RAW    , "--rdmsr-raw"    , 0},
 	{ NEED_SSE_UNIT_SIZE, "--sse-size"     , 1},
 };
 
@@ -456,6 +458,16 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 					fprintf(fout, "  core volt. : %.2lf Volts\n", value / 100.0);
 				if ((value = cpu_msrinfo(handle, INFO_BCLK)) != CPU_INVALID_VALUE)
 					fprintf(fout, "  base clock : %.2lf MHz\n", value / 100.0);
+				cpu_msr_driver_close(handle);
+			}
+			break;
+		}
+		case NEED_RDMSR_RAW:
+		{
+			if ((handle = cpu_msr_driver_open()) == NULL) {
+				fprintf(fout, "Cannot open MSR driver: %s\n", cpuid_error());
+			} else {
+				msr_serialize_raw_data(handle, "");
 				cpu_msr_driver_close(handle);
 			}
 			break;

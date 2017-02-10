@@ -29,3 +29,4 @@ cpu_msr_driver_open_core
 cpuid_get_vendor
 cpu_rdmsr_range
 cpuid_get_epc
+msr_serialize_raw_data
