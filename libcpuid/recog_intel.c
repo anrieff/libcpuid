@@ -644,7 +644,9 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 		core_ix_base = CORE_I3;
 		
 		/* if it has RdRand, then it is at least Ivy Bridge */
-		if (data->flags[CPU_FEATURE_RDRAND])
+		/* the second check is to catch a weird case, where an "Core(TM) i3-3220T" apparently
+		 * didn't have RdRand, see issue #81 */
+		if (data->flags[CPU_FEATURE_RDRAND] || (data->ext_family == 6 && data->ext_model == 58))
 			core_ix_base = CORE_IVY3;
 		/* if it has FMA, then it is at least Haswell */
 		if (data->flags[CPU_FEATURE_FMA3])
