@@ -913,8 +913,10 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 	static struct internal_id_info_t internal;
 	static struct msr_info_t info;
 
-	if (handle == NULL)
-		return set_error(ERR_HANDLE);
+	if (handle == NULL) {
+		set_error(ERR_HANDLE);
+		return CPU_INVALID_VALUE;
+	}
 
 	if (!init) {
 		err  = cpuid_get_raw_data(&raw);
