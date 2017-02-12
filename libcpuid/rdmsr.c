@@ -587,6 +587,13 @@ static const uint32_t intel_msr[] = {
 	CPU_INVALID_VALUE
 };
 
+struct msr_info_t {
+	int cpu_clock;
+	struct msr_driver_t *handle;
+	struct cpu_id_t *id;
+	struct internal_id_info_t *internal;
+};
+
 static int rdmsr_supported(void)
 {
 	struct cpu_id_t* id = get_cached_cpuid();
@@ -608,27 +615,24 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 	return (int) ((y - x) / (b - a));
 }
 
-static int get_amd_multipliers(struct msr_driver_t* handle, struct cpu_id_t *id,
-                               struct internal_id_info_t *internal,
-                               uint32_t pstate, uint64_t *multiplier)
+static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_t *multiplier)
 {
 	int i, err;
 	int divisor = 1;
 	int magic_constant = 0x10;
-	static int clock = 0;
 	uint64_t CpuFid, CpuDid, CpuDidLSD;
 
 	if (pstate < MSR_PSTATE_0 || MSR_PSTATE_7 < pstate)
 		return 1;
 
-	switch (id->ext_family) {
+	switch (info->id->ext_family) {
 		case 0x12:
 			/* BKDG 12h, page 469
 			MSRC001_00[6B:64][8:4] is CpuFid
 			MSRC001_00[6B:64][3:0] is CpuDid
 			CPU COF is (100MHz * (CpuFid + 10h) / (divisor specified by CpuDid)) */
-			err  = cpu_rdmsr_range(handle, pstate, 8, 4, &CpuFid);
-			err += cpu_rdmsr_range(handle, pstate, 3, 0, &CpuDid);
+			err  = cpu_rdmsr_range(info->handle, pstate, 8, 4, &CpuFid);
+			err += cpu_rdmsr_range(info->handle, pstate, 3, 0, &CpuDid);
 			const struct { uint64_t did; double divisor; } divisor_t[] = {
 				{ 0x0,    1   },
 				{ 0x1,    1.5 },
@@ -656,11 +660,9 @@ static int get_amd_multipliers(struct msr_driver_t* handle, struct cpu_id_t *id,
 			PLL COF is (100 MHz * (D18F3xD4[MainPllOpFreqId] + 10h))
 			Divisor is (CpuDidMSD + (CpuDidLSD * 0.25) + 1)
 			CPU COF is (main PLL frequency specified by D18F3xD4[MainPllOpFreqId]) / (core clock divisor specified by CpuDidMSD and CpuDidLSD) */
-			err  = cpu_rdmsr_range(handle, pstate, 8, 4, &CpuDid);
-			err += cpu_rdmsr_range(handle, pstate, 3, 0, &CpuDidLSD);
-			if (clock == 0)
-				clock = cpu_clock_measure(100, 1) + 5; // Fake round
-			*multiplier = (uint64_t) ((clock / 100 + 0x10) / (CpuDid + CpuDidLSD * 0.25 + 1));
+			err  = cpu_rdmsr_range(info->handle, pstate, 8, 4, &CpuDid);
+			err += cpu_rdmsr_range(info->handle, pstate, 3, 0, &CpuDidLSD);
+			*multiplier = (uint64_t) (((info->cpu_clock + 5) / 100 + 0x10) / (CpuDid + CpuDidLSD * 0.25 + 1));
 			break;
 		case 0x11:
 			/* BKDG 11h, page 236
@@ -685,8 +687,8 @@ static int get_amd_multipliers(struct msr_driver_t* handle, struct cpu_id_t *id,
 			MSRC001_00[6B:64][8:6] is CpuDid
 			MSRC001_00[6B:64][5:0] is CpuFid
 			CoreCOF is (100 * (MSRC001_00[6B:64][CpuFid] + 10h) / (2^MSRC001_00[6B:64][CpuDid])) */
-			err  = cpu_rdmsr_range(handle, pstate, 8, 6, &CpuDid);
-			err += cpu_rdmsr_range(handle, pstate, 5, 0, &CpuFid);
+			err  = cpu_rdmsr_range(info->handle, pstate, 8, 6, &CpuDid);
+			err += cpu_rdmsr_range(info->handle, pstate, 5, 0, &CpuFid);
 			*multiplier = (uint64_t) ((CpuFid + magic_constant) / (1ull << CpuDid)) / divisor;
 			break;
 		default:
@@ -697,14 +699,13 @@ static int get_amd_multipliers(struct msr_driver_t* handle, struct cpu_id_t *id,
 	return err;
 }
 
-static double get_info_min_multiplier(struct msr_driver_t* handle, struct cpu_id_t *id,
-                                      struct internal_id_info_t *internal)
+static double get_info_min_multiplier(struct msr_info_t *info)
 {
 	int err;
 	uint32_t addr = MSR_PSTATE_7 + 1;
 	uint64_t reg;
 
-	if(id->vendor == VENDOR_INTEL) {
+	if(info->id->vendor == VENDOR_INTEL) {
 		/* Refer links above
 		Table 35-12.  MSRs in Next Generation Intel Atom Processors Based on the Goldmont Microarchitecture
 		Table 35-13.  MSRs in Processors Based on Intel® Microarchitecture Code Name Nehalem
@@ -716,64 +717,62 @@ static double get_info_min_multiplier(struct msr_driver_t* handle, struct cpu_id
 		Table 35-40.  Selected MSRs Supported by Next Generation Intel® Xeon Phi™ Processors with DisplayFamily_DisplayModel Signature 06_57H
 		MSR_PLATFORM_INFO[47:40] is Maximum Efficiency Ratio
 		Maximum Efficiency Ratio is the minimum ratio that the processor can operates */
-		err = cpu_rdmsr_range(handle, MSR_PLATFORM_INFO, 47, 40, &reg);
+		err = cpu_rdmsr_range(info->handle, MSR_PLATFORM_INFO, 47, 40, &reg);
 		if (!err) return (double) reg;
 	}
-	else if(id->vendor == VENDOR_AMD) {
+	else if(info->id->vendor == VENDOR_AMD) {
 		/* N.B.: Find the last P-state
 		MSRC001_00[6B:64][8:0] is { CpuDid, CpuFid }
 		If all bits are 0 in a given P-state, we can consider the P-state is unused */
 		do {
 			addr--;
-			cpu_rdmsr_range(handle, addr, 8, 0, &reg);
+			cpu_rdmsr_range(info->handle, addr, 8, 0, &reg);
 		} while((reg == 0x0) && (addr > MSR_PSTATE_0));
-		err = get_amd_multipliers(handle, id, internal, addr, &reg);
+		err = get_amd_multipliers(info, addr, &reg);
 		if (!err) return (double) reg;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
 }
 
-static double get_info_cur_multiplier(struct msr_driver_t* handle, struct cpu_id_t *id,
-                                      struct internal_id_info_t *internal)
+static double get_info_cur_multiplier(struct msr_info_t *info)
 {
 	int err;
 	uint64_t reg;
 
-	if(id->vendor == VENDOR_INTEL && internal->code.intel == PENTIUM) {
-		err = cpu_rdmsr(handle, MSR_EBL_CR_POWERON, &reg);
+	if(info->id->vendor == VENDOR_INTEL && info->internal->code.intel == PENTIUM) {
+		err = cpu_rdmsr(info->handle, MSR_EBL_CR_POWERON, &reg);
 		if (!err) return (double) ((reg>>22) & 0x1f);
 	}
-	else if(id->vendor == VENDOR_INTEL && internal->code.intel != PENTIUM) {
+	else if(info->id->vendor == VENDOR_INTEL && info->internal->code.intel != PENTIUM) {
 		/* Refer links above
 		Table 35-2.  IA-32 Architectural MSRs (Contd.)
 		IA32_PERF_STATUS[15:0] is Current performance State Value
 		[7:0] is 0x0, [15:8] looks like current ratio */
-		err = cpu_rdmsr_range(handle, IA32_PERF_STATUS, 15, 8, &reg);
+		err = cpu_rdmsr_range(info->handle, IA32_PERF_STATUS, 15, 8, &reg);
 		if (!err) return (double) reg;
 	}
-	else if(id->vendor == VENDOR_AMD) {
+	else if(info->id->vendor == VENDOR_AMD) {
 		/* Refer links above
 		MSRC001_0063[2:0] is CurPstate */
-		err  = cpu_rdmsr_range(handle, MSR_PSTATE_S, 2, 0, &reg);
-		err += get_amd_multipliers(handle, id, internal, MSR_PSTATE_0 + (uint32_t) reg, &reg);
+		err  = cpu_rdmsr_range(info->handle, MSR_PSTATE_S, 2, 0, &reg);
+		err += get_amd_multipliers(info, MSR_PSTATE_0 + (uint32_t) reg, &reg);
 		if (!err) return (double) reg;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
 }
 
-static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id_t *id,
-                                      struct internal_id_info_t *internal)
+static double get_info_max_multiplier(struct msr_info_t *info)
 {
 	int err;
 	uint64_t reg;
 
-	if(id->vendor == VENDOR_INTEL && internal->code.intel == PENTIUM) {
-		err = cpu_rdmsr(handle, IA32_PERF_STATUS, &reg);
+	if(info->id->vendor == VENDOR_INTEL && info->internal->code.intel == PENTIUM) {
+		err = cpu_rdmsr(info->handle, IA32_PERF_STATUS, &reg);
 		if (!err) return (double) ((reg >> 40) & 0x1f);
 	}
-	else if(id->vendor == VENDOR_INTEL && internal->code.intel != PENTIUM) {
+	else if(info->id->vendor == VENDOR_INTEL && info->internal->code.intel != PENTIUM) {
 		/* Refer links above
 		Table 35-10.  Specific MSRs Supported by Intel® Atom™ Processor C2000 Series with CPUID Signature 06_4DH
 		Table 35-12.  MSRs in Next Generation Intel Atom Processors Based on the Goldmont Microarchitecture (Contd.)
@@ -789,27 +788,26 @@ static double get_info_max_multiplier(struct msr_driver_t* handle, struct cpu_id
 		Table 35-37.  Additional MSRs Supported by 6th Generation Intel® Core™ Processors Based on Skylake Microarchitecture
 		Table 35-40.  Selected MSRs Supported by Next Generation Intel® Xeon Phi™ Processors with DisplayFamily_DisplayModel Signature 06_57H
 		MSR_TURBO_RATIO_LIMIT[7:0] is Maximum Ratio Limit for 1C */
-		err = cpu_rdmsr_range(handle, MSR_TURBO_RATIO_LIMIT, 7, 0, &reg);
+		err = cpu_rdmsr_range(info->handle, MSR_TURBO_RATIO_LIMIT, 7, 0, &reg);
 		if (!err) return (double) reg;
 	}
-	else if(id->vendor == VENDOR_AMD) {
+	else if(info->id->vendor == VENDOR_AMD) {
 		/* Refer links above
 		MSRC001_0064 is Pb0
 		Pb0 is the highest-performance boosted P-state */
-		err = get_amd_multipliers(handle, id, internal, MSR_PSTATE_0, &reg);
+		err = get_amd_multipliers(info, MSR_PSTATE_0, &reg);
 		if (!err) return (double) reg;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
 }
 
-static int get_info_temperature(struct msr_driver_t* handle, struct cpu_id_t *id,
-                                struct internal_id_info_t *internal)
+static int get_info_temperature(struct msr_info_t *info)
 {
 	int err;
 	uint64_t DigitalReadout, ReadingValid, TemperatureTarget;
 
-	if(id->vendor == VENDOR_INTEL) {
+	if(info->id->vendor == VENDOR_INTEL) {
 		/* Refer links above
 		Table 35-2.   IA-32 Architectural MSRs
 		IA32_THERM_STATUS[22:16] is Digital Readout
@@ -822,53 +820,47 @@ static int get_info_temperature(struct msr_driver_t* handle, struct cpu_id_t *id
 		Table 35-34.  Additional MSRs Common to Intel® Xeon® Processor D and Intel Xeon Processors E5 v4 Family Based on the Broadwell Microarchitecture
 		Table 35-40.  Selected MSRs Supported by Next Generation Intel® Xeon Phi™ Processors with DisplayFamily_DisplayModel Signature 06_57H
 		MSR_TEMPERATURE_TARGET[23:16] is Temperature Target */
-		err  = cpu_rdmsr_range(handle, IA32_THERM_STATUS,      22, 16, &DigitalReadout);
-		err += cpu_rdmsr_range(handle, IA32_THERM_STATUS,      31, 31, &ReadingValid);
-		err += cpu_rdmsr_range(handle, MSR_TEMPERATURE_TARGET, 23, 16, &TemperatureTarget);
+		err  = cpu_rdmsr_range(info->handle, IA32_THERM_STATUS,      22, 16, &DigitalReadout);
+		err += cpu_rdmsr_range(info->handle, IA32_THERM_STATUS,      31, 31, &ReadingValid);
+		err += cpu_rdmsr_range(info->handle, MSR_TEMPERATURE_TARGET, 23, 16, &TemperatureTarget);
 		if(!err && ReadingValid) return (int) (TemperatureTarget - DigitalReadout);
 	}
 
 	return CPU_INVALID_VALUE;
 }
 
-static double get_info_voltage(struct msr_driver_t* handle, struct cpu_id_t *id,
-                               struct internal_id_info_t *internal)
+static double get_info_voltage(struct msr_info_t *info)
 {
 	int err;
 	uint64_t reg, CpuVid;
 
-	if(id->vendor == VENDOR_INTEL) {
+	if(info->id->vendor == VENDOR_INTEL) {
 		/* Refer links above
 		Table 35-18.  MSRs Supported by Intel® Processors based on Intel® microarchitecture code name Sandy Bridge (Contd.)
 		MSR_PERF_STATUS[47:32] is Core Voltage
 		P-state core voltage can be computed by MSR_PERF_STATUS[37:32] * (float) 1/(2^13). */
-		err = cpu_rdmsr_range(handle, MSR_PERF_STATUS, 47, 32, &reg);
+		err = cpu_rdmsr_range(info->handle, MSR_PERF_STATUS, 47, 32, &reg);
 		if (!err) return (double) reg / (1 << 13);
 	}
-	else if(id->vendor == VENDOR_AMD) {
+	else if(info->id->vendor == VENDOR_AMD) {
 		/* Refer links above
 		MSRC001_00[6B:64][15:9] is CpuVid
 		MSRC001_0063[2:0] is P-state Status
 		2.4.1.6.3 Serial VID (SVI) Encodings: voltage = 1.550V - 0.0125V * SviVid[6:0] */
-		err  = cpu_rdmsr_range(handle, MSR_PSTATE_S,                   2, 0, &reg);
-		err += cpu_rdmsr_range(handle, MSR_PSTATE_0 + (uint32_t) reg, 15, 9, &CpuVid);
+		err  = cpu_rdmsr_range(info->handle, MSR_PSTATE_S,                   2, 0, &reg);
+		err += cpu_rdmsr_range(info->handle, MSR_PSTATE_0 + (uint32_t) reg, 15, 9, &CpuVid);
 		if (!err && MSR_PSTATE_0 + (uint32_t) reg <= MSR_PSTATE_7) return 1.550 - 0.0125 * CpuVid;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
 }
 
-static double get_info_bus_clock(struct msr_driver_t* handle, struct cpu_id_t *id,
-                                 struct internal_id_info_t *internal)
+static double get_info_bus_clock(struct msr_info_t *info)
 {
 	int err;
-	static int clock = 0;
 	uint64_t reg;
 
-	if(clock == 0)
-		clock = cpu_clock_measure(100, 1);
-
-	if(id->vendor == VENDOR_INTEL) {
+	if(info->id->vendor == VENDOR_INTEL) {
 		/* Refer links above
 		Table 35-12.  MSRs in Next Generation Intel Atom Processors Based on the Goldmont Microarchitecture
 		Table 35-13.  MSRs in Processors Based on Intel® Microarchitecture Code Name Nehalem
@@ -878,16 +870,16 @@ static double get_info_bus_clock(struct msr_driver_t* handle, struct cpu_id_t *i
 		Table 35-27.  Additional MSRs Supported by Processors based on the Haswell or Haswell-E microarchitectures
 		Table 35-40.  Selected MSRs Supported by Next Generation Intel® Xeon Phi™ Processors with DisplayFamily_DisplayModel Signature 06_57H
 		MSR_PLATFORM_INFO[15:8] is Maximum Non-Turbo Ratio */
-		err = cpu_rdmsr_range(handle, MSR_PLATFORM_INFO, 15, 8, &reg);
-		if (!err) return (double) clock / reg;
+		err = cpu_rdmsr_range(info->handle, MSR_PLATFORM_INFO, 15, 8, &reg);
+		if (!err) return (double) info->cpu_clock / reg;
 	}
-	else if(id->vendor == VENDOR_AMD) {
+	else if(info->id->vendor == VENDOR_AMD) {
 		/* Refer links above
 		MSRC001_0061[6:4] is PstateMaxVal
 		PstateMaxVal is the the lowest-performance non-boosted P-state */
-		err  = cpu_rdmsr_range(handle, MSR_PSTATE_L, 6, 4, &reg);
-		err += get_amd_multipliers(handle, id, internal, MSR_PSTATE_0 + (uint32_t) reg, &reg);
-		if (!err) return (double) clock / reg;
+		err  = cpu_rdmsr_range(info->handle, MSR_PSTATE_L, 6, 4, &reg);
+		err += get_amd_multipliers(info, MSR_PSTATE_0 + (uint32_t) reg, &reg);
+		if (!err) return (double) info->cpu_clock / reg;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
@@ -915,18 +907,27 @@ int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t hig
 
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 {
+	static int err = 0, init = 0;
 	struct cpu_raw_data_t raw;
 	static struct cpu_id_t id;
 	static struct internal_id_info_t internal;
-	internal.score = -1;
+	static struct msr_info_t info;
 
 	if (handle == NULL)
 		return set_error(ERR_HANDLE);
 
-	if (internal.score == -1) {
-		cpuid_get_raw_data(&raw);
-		cpu_ident_internal(&raw, &id, &internal);
+	if (!init) {
+		err  = cpuid_get_raw_data(&raw);
+		err += cpu_ident_internal(&raw, &id, &internal);
+		info.cpu_clock = cpu_clock_measure(250, 1);
+		info.handle = handle;
+		info.id = &id;
+		info.internal = &internal;
+		init = 1;
 	}
+
+	if (err)
+		return CPU_INVALID_VALUE;
 
 	switch (which) {
 		case INFO_MPERF:
@@ -934,20 +935,20 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		case INFO_APERF:
 			return perfmsr_measure(handle, IA32_APERF);
 		case INFO_MIN_MULTIPLIER:
-			return (int) (get_info_min_multiplier(handle, &id, &internal) * 100);
+			return (int) (get_info_min_multiplier(&info) * 100);
 		case INFO_CUR_MULTIPLIER:
-			return (int) (get_info_cur_multiplier(handle, &id, &internal) * 100);
+			return (int) (get_info_cur_multiplier(&info) * 100);
 		case INFO_MAX_MULTIPLIER:
-			return (int) (get_info_max_multiplier(handle, &id, &internal) * 100);
+			return (int) (get_info_max_multiplier(&info) * 100);
 		case INFO_TEMPERATURE:
-			return get_info_temperature(handle, &id, &internal);
+			return get_info_temperature(&info);
 		case INFO_THROTTLING:
 			return CPU_INVALID_VALUE;
 		case INFO_VOLTAGE:
-			return (int) (get_info_voltage(handle, &id, &internal) * 100);
+			return (int) (get_info_voltage(&info) * 100);
 		case INFO_BCLK:
 		case INFO_BUS_CLOCK:
-			return (int) (get_info_bus_clock(handle, &id, &internal) * 100);
+			return (int) (get_info_bus_clock(&info) * 100);
 		default:
 			return CPU_INVALID_VALUE;
 	}
@@ -975,7 +976,7 @@ int msr_serialize_raw_data(struct msr_driver_t* handle, const char* filename)
 	if (cpuid_get_raw_data(&raw) || cpu_ident_internal(&raw, &id, &internal))
 		return -1;
 
-	fprintf(f, "CPU is %s %s, stock clock is %dMHz.\n", id.vendor_str, id.brand_str, cpu_clock_measure(100, 1));
+	fprintf(f, "CPU is %s %s, stock clock is %dMHz.\n", id.vendor_str, id.brand_str, cpu_clock_measure(250, 1));
 	if (id.vendor == VENDOR_INTEL)
 		msr = intel_msr;
 	else if (id.vendor == VENDOR_AMD)
