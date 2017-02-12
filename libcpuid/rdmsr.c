@@ -858,6 +858,7 @@ static double get_info_voltage(struct msr_info_t *info)
 static double get_info_bus_clock(struct msr_info_t *info)
 {
 	int err;
+	uint32_t addr = MSR_PSTATE_7 + 1;
 	uint64_t reg;
 
 	if(info->id->vendor == VENDOR_INTEL) {
@@ -877,8 +878,12 @@ static double get_info_bus_clock(struct msr_info_t *info)
 		/* Refer links above
 		MSRC001_0061[6:4] is PstateMaxVal
 		PstateMaxVal is the the lowest-performance non-boosted P-state */
+		do {
+			addr--;
+			cpu_rdmsr_range(info->handle, addr, 8, 0, &reg);
+		} while((reg == 0x0) && (addr > MSR_PSTATE_0));
 		err  = cpu_rdmsr_range(info->handle, MSR_PSTATE_L, 6, 4, &reg);
-		err += get_amd_multipliers(info, MSR_PSTATE_0 + (uint32_t) reg, &reg);
+		err += get_amd_multipliers(info, MSR_PSTATE_0 + (addr - MSR_PSTATE_0 - (uint32_t) reg), &reg);
 		if (!err) return (double) info->cpu_clock / reg;
 	}
 
