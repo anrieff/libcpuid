@@ -1100,6 +1100,8 @@ int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t hig
  *           processor model, the respective value is returned.
  *           if no information is available, or the CPU doesn't support
  *           the query, the special value CPU_INVALID_VALUE is returned
+ * @note This function is not MT-safe. If you intend to call it from multiple
+ *       threads, guard it through a mutex or a similar primitive.
  */
 int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which);
 #define CPU_INVALID_VALUE 0x3fffffff
