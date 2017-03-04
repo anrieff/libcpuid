@@ -446,18 +446,20 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 					fprintf(fout, "  MSR.mperf  : %d MHz\n", value);
 				if ((value = cpu_msrinfo(handle, INFO_APERF)) != CPU_INVALID_VALUE)
 					fprintf(fout, "  MSR.aperf  : %d MHz\n", value);
+				if ((value = cpu_msrinfo(handle, INFO_MIN_MULTIPLIER)) != CPU_INVALID_VALUE)
+					fprintf(fout, "  min. multi.: %d\n", value / 100.0);
 				if ((value = cpu_msrinfo(handle, INFO_CUR_MULTIPLIER)) != CPU_INVALID_VALUE)
-					fprintf(fout, "  cur. multi.: %d MHz\n", value);
+					fprintf(fout, "  cur. multi.: %d\n", value / 100.0);
 				if ((value = cpu_msrinfo(handle, INFO_MAX_MULTIPLIER)) != CPU_INVALID_VALUE)
-					fprintf(fout, "  max. multi.: %d MHz\n", value);
+					fprintf(fout, "  max. multi.: %d\n", value / 100.0);
 				if ((value = cpu_msrinfo(handle, INFO_TEMPERATURE)) != CPU_INVALID_VALUE)
 					fprintf(fout, "  temperature: %d degrees Celsius\n", value);
 				if ((value = cpu_msrinfo(handle, INFO_THROTTLING)) != CPU_INVALID_VALUE)
 					fprintf(fout, "  throttling : %s\n", value ? "yes" : "no");
 				if ((value = cpu_msrinfo(handle, INFO_VOLTAGE)) != CPU_INVALID_VALUE)
 					fprintf(fout, "  core volt. : %.2lf Volts\n", value / 100.0);
-				if ((value = cpu_msrinfo(handle, INFO_BCLK)) != CPU_INVALID_VALUE)
-					fprintf(fout, "  base clock : %.2lf MHz\n", value / 100.0);
+				if ((value = cpu_msrinfo(handle, INFO_BUS_CLOCK)) != CPU_INVALID_VALUE)
+					fprintf(fout, "  bus clock  : %.2lf MHz\n", value / 100.0);
 				cpu_msr_driver_close(handle);
 			}
 			break;

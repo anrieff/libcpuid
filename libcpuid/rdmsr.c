@@ -699,10 +699,30 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_
 	return err;
 }
 
+static uint32_t get_amd_last_pstate_addr(struct msr_info_t *info)
+{
+	static uint32_t last_addr = 0x0;
+	uint64_t reg = 0x0;
+
+	/* The result is cached, need to be computed once */
+	if(last_addr != 0x0)
+		return last_addr;
+
+	/* Refer links above
+	MSRC001_00[6B:64][63] is PstateEn
+	PstateEn indicates if the rest of the P-state information in the register is valid after a reset */
+	last_addr = MSR_PSTATE_7 + 1;
+	while((reg == 0x0) && (last_addr > MSR_PSTATE_0)) {
+		last_addr--;
+		cpu_rdmsr_range(info->handle, last_addr, 63, 63, &reg);
+	}
+	return last_addr;
+}
+
 static double get_info_min_multiplier(struct msr_info_t *info)
 {
 	int err;
-	uint32_t addr = MSR_PSTATE_7 + 1;
+	uint32_t addr;
 	uint64_t reg;
 
 	if(info->id->vendor == VENDOR_INTEL) {
@@ -722,13 +742,9 @@ static double get_info_min_multiplier(struct msr_info_t *info)
 	}
 	else if(info->id->vendor == VENDOR_AMD) {
 		/* N.B.: Find the last P-state
-		MSRC001_00[6B:64][8:0] is { CpuDid, CpuFid }
-		If all bits are 0 in a given P-state, we can consider the P-state is unused */
-		do {
-			addr--;
-			cpu_rdmsr_range(info->handle, addr, 8, 0, &reg);
-		} while((reg == 0x0) && (addr > MSR_PSTATE_0));
-		err = get_amd_multipliers(info, addr, &reg);
+		get_amd_last_pstate_addr() returns the last P-state, MSR_PSTATE_0 <= addr <= MSR_PSTATE_7 */
+		addr = get_amd_last_pstate_addr(info);
+		err  = get_amd_multipliers(info, addr, &reg);
 		if (!err) return (double) reg;
 	}
 
@@ -858,7 +874,7 @@ static double get_info_voltage(struct msr_info_t *info)
 static double get_info_bus_clock(struct msr_info_t *info)
 {
 	int err;
-	uint32_t addr = MSR_PSTATE_7 + 1;
+	uint32_t addr;
 	uint64_t reg;
 
 	if(info->id->vendor == VENDOR_INTEL) {
@@ -878,12 +894,9 @@ static double get_info_bus_clock(struct msr_info_t *info)
 		/* Refer links above
 		MSRC001_0061[6:4] is PstateMaxVal
 		PstateMaxVal is the the lowest-performance non-boosted P-state */
-		do {
-			addr--;
-			cpu_rdmsr_range(info->handle, addr, 8, 0, &reg);
-		} while((reg == 0x0) && (addr > MSR_PSTATE_0));
+		addr = get_amd_last_pstate_addr(info);
 		err  = cpu_rdmsr_range(info->handle, MSR_PSTATE_L, 6, 4, &reg);
-		err += get_amd_multipliers(info, MSR_PSTATE_0 + (addr - MSR_PSTATE_0 - (uint32_t) reg), &reg);
+		err += get_amd_multipliers(info, addr - reg, &reg);
 		if (!err) return (double) info->cpu_clock / reg;
 	}
 
