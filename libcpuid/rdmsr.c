@@ -936,11 +936,11 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which)
 		return CPU_INVALID_VALUE;
 	}
 
+	info.handle = handle;
 	if (!init) {
 		err  = cpuid_get_raw_data(&raw);
 		err += cpu_ident_internal(&raw, &id, &internal);
 		info.cpu_clock = cpu_clock_measure(250, 1);
-		info.handle = handle;
 		info.id = &id;
 		info.internal = &internal;
 		init = 1;
