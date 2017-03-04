@@ -447,11 +447,11 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 				if ((value = cpu_msrinfo(handle, INFO_APERF)) != CPU_INVALID_VALUE)
 					fprintf(fout, "  MSR.aperf  : %d MHz\n", value);
 				if ((value = cpu_msrinfo(handle, INFO_MIN_MULTIPLIER)) != CPU_INVALID_VALUE)
-					fprintf(fout, "  min. multi.: %d\n", value / 100.0);
+					fprintf(fout, "  min. multi.: %.2lf\n", value / 100.0);
 				if ((value = cpu_msrinfo(handle, INFO_CUR_MULTIPLIER)) != CPU_INVALID_VALUE)
-					fprintf(fout, "  cur. multi.: %d\n", value / 100.0);
+					fprintf(fout, "  cur. multi.: %.2lf\n", value / 100.0);
 				if ((value = cpu_msrinfo(handle, INFO_MAX_MULTIPLIER)) != CPU_INVALID_VALUE)
-					fprintf(fout, "  max. multi.: %d\n", value / 100.0);
+					fprintf(fout, "  max. multi.: %.2lf\n", value / 100.0);
 				if ((value = cpu_msrinfo(handle, INFO_TEMPERATURE)) != CPU_INVALID_VALUE)
 					fprintf(fout, "  temperature: %d degrees Celsius\n", value);
 				if ((value = cpu_msrinfo(handle, INFO_THROTTLING)) != CPU_INVALID_VALUE)
