@@ -238,11 +238,11 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  0, -1, 21,   30,   2,  1024,    -1, FUSION_A                ,     0, "Kaveri X2"                     },
 	{ 15,  0, -1, 21,   30,   4,  1024,    -1, FUSION_A                ,     0, "Kaveri X4"                     },
 	/* 2014 CPUs: Puma architecture: Beema and Mullins */
-	{ 15,  0, -1, 22,   30,   2,  1024,    -1, FUSION_E                ,     0, "Mullins X2"                     },
-	{ 15,  0, -1, 22,   30,   4,  1024,    -1, FUSION_A                ,     0, "Mullins X4"                     },
+	{ 15,  0, -1, 22,   30,   2,  1024,    -1, FUSION_E                ,     0, "Mullins X2"                    },
+	{ 15,  0, -1, 22,   30,   4,  1024,    -1, FUSION_A                ,     0, "Mullins X4"                    },
 	/* 2015 CPUs: Excavator architecture: Carrizo */
-	{ 15,  1, -1, 21,   60,   2,  1024,    -1, FUSION_A                ,     0, "Carrizo X2"                     },
-	{ 15,  1, -1, 21,   60,   4,  1024,    -1, FUSION_A                ,     0, "Carrizo X4"                     },
+	{ 15,  1, -1, 21,   60,   2,  1024,    -1, FUSION_A                ,     0, "Carrizo X2"                    },
+	{ 15,  1, -1, 21,   60,   4,  1024,    -1, FUSION_A                ,     0, "Carrizo X4"                    },
 	/* 2015 CPUs: Steamroller architecture: Godavari */
 	//TODO
 	/* 2016 CPUs: Excavator architecture: Bristol Ridge */

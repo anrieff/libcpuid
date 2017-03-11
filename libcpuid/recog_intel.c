@@ -210,7 +210,7 @@ const struct match_entry_t cpudb_intel[] = {
 	
 	{  6,  7, -1, -1, 23,   1,    -1,    -1, CORE_SOLO         ,     0, "Unknown Core 45nm"        },
 	{  6,  7, -1, -1, 23,   1,    -1,    -1, CORE_DUO          ,     0, "Unknown Core 45nm"        },
-	{  6,  7, -1, -1, 23,   2,  1024,    -1, WOLFDALE          ,     0, "Celeron Wolfdale 1M" },
+	{  6,  7, -1, -1, 23,   2,  1024,    -1, WOLFDALE          ,     0, "Celeron Wolfdale 1M"      },
 	{  6,  7, -1, -1, 23,   2,  2048,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo) 2M" },
 	{  6,  7, -1, -1, 23,   2,  3072,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo) 3M" },
 	{  6,  7, -1, -1, 23,   2,  6144,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo) 6M" },
@@ -271,9 +271,9 @@ const struct match_entry_t cpudb_intel[] = {
 
 	/* Ivy Bridge CPUs (22nm): */
 	{  6, 10, -1, -1, 58,  -1,    -1,    -1, XEON              ,     0, "Ivy Bridge (Xeon)"        },
-	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY7         ,     0, "Ivy Bridge (Core i7)"   },
-	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY5         ,     0, "Ivy Bridge (Core i5)"   },
-	{  6, 10, -1, -1, 58,   2,    -1,    -1, CORE_IVY3         ,     0, "Ivy Bridge (Core i3)"   },
+	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY7         ,     0, "Ivy Bridge (Core i7)"     },
+	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY5         ,     0, "Ivy Bridge (Core i5)"     },
+	{  6, 10, -1, -1, 58,   2,    -1,    -1, CORE_IVY3         ,     0, "Ivy Bridge (Core i3)"     },
 	{  6, 10, -1, -1, 58,   2,    -1,    -1, PENTIUM           ,     0, "Ivy Bridge (Pentium)"     },
 	{  6, 10, -1, -1, 58,   1,    -1,    -1, CELERON           ,     0, "Ivy Bridge (Celeron)"     },
 	{  6, 10, -1, -1, 58,   2,    -1,    -1, CELERON           ,     0, "Ivy Bridge (Celeron)"     },
@@ -281,12 +281,12 @@ const struct match_entry_t cpudb_intel[] = {
 	
 	/* Haswell CPUs (22nm): */
 	{  6, 12, -1, -1, 60,  -1,    -1,    -1, XEON              ,     0, "Haswell (Xeon)"           },
-	{  6, 12, -1, -1, 60,   4,    -1,    -1, CORE_HASWELL7     ,     0, "Haswell (Core i7)"   },
-	{  6,  5, -1, -1, 69,   4,    -1,    -1, CORE_HASWELL7     ,     0, "Haswell (Core i7)"   },
+	{  6, 12, -1, -1, 60,   4,    -1,    -1, CORE_HASWELL7     ,     0, "Haswell (Core i7)"        },
+	{  6,  5, -1, -1, 69,   4,    -1,    -1, CORE_HASWELL7     ,     0, "Haswell (Core i7)"        },
 	{  6, 12, -1, -1, 60,   4,    -1,    -1, CORE_HASWELL5     ,     0, "Haswell (Core i5)"        },
 	{  6,  5, -1, -1, 69,   4,    -1,    -1, CORE_HASWELL5     ,     0, "Haswell (Core i5)"        },
 	{  6, 12, -1, -1, 60,   2,    -1,    -1, CORE_HASWELL3     ,     0, "Haswell (Core i3)"        },
-	{  6,  5, -1, -1, 69,   2,    -1,    -1, CORE_HASWELL3     ,     0, "Haswell (Core i3)"   },
+	{  6,  5, -1, -1, 69,   2,    -1,    -1, CORE_HASWELL3     ,     0, "Haswell (Core i3)"        },
 	{  6, 12, -1, -1, 60,   2,    -1,    -1, PENTIUM           ,     0, "Haswell (Pentium)"        },
 	{  6, 12, -1, -1, 60,   2,    -1,    -1, CELERON           ,     0, "Haswell (Celeron)"        },
 	{  6, 12, -1, -1, 60,   1,    -1,    -1, CELERON           ,     0, "Haswell (Celeron)"        },
@@ -315,9 +315,8 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 94,   4,    -1,    -1, PENTIUM           ,     0, "Skylake (Pentium)"        },
 
 	/* Itaniums */
-	{  7, -1, -1, -1, -1,   1,    -1,    -1, NO_CODE           ,     0, "Itanium"                 },
-	{ 15, -1, -1, 16, -1,   1,    -1,    -1, NO_CODE           ,     0, "Itanium 2"               },
-	
+	{  7, -1, -1, -1, -1,   1,    -1,    -1, NO_CODE           ,     0, "Itanium"                  },
+	{ 15, -1, -1, 16, -1,   1,    -1,    -1, NO_CODE           ,     0, "Itanium 2"                },
 };
 
 
