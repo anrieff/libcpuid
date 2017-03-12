@@ -311,9 +311,9 @@ const struct match_entry_t cpudb_intel[] = {
 
 	/* Skylake CPUs (14nm): */
 	{  6, 14, -1, -1, 94,  -1,    -1,    -1, XEON              ,     0, "Skylake (Xeon)"           },
-	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_SKYLAKEI7    ,     0, "Skylake (Core i7)"        },
-	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_SKYLAKEI5    ,     0, "Skylake (Core i5)"        },
-	{  6, 14, -1, -1, 94,   2,    -1,    -1, CORE_SKYLAKEI3    ,     0, "Skylake (Core i3)"        },
+	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_BROADWELL7   ,     0, "Skylake (Core i7)"        },
+	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_BROADWELL5   ,     0, "Skylake (Core i5)"        },
+	{  6, 14, -1, -1, 94,   2,    -1,    -1, CORE_BROADWELL3   ,     0, "Skylake (Core i3)"        },
 	{  6, 14, -1, -1, 94,   2,    -1,    -1, PENTIUM           ,     0, "Skylake (Pentium)"        },
 	{  6, 14, -1, -1, 78,   2,    -1,    -1, PENTIUM           ,     0, "Skylake (Pentium)"        },
 	{  6, 14, -1, -1, 94,   2,    -1,    -1, CELERON           ,     0, "Skylake (Celeron)"        },
@@ -323,9 +323,9 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 78,   2,    -1,    -1, CORE_SKYLAKEM3    ,     0, "Skylake (Core m3)"        },
 
 	/* Kaby Lake CPUs (14nm): */
-	{  6, 14, -1, -1, 158,  4,    -1,    -1, CORE_SKYLAKEI7    ,     0, "Kaby Lake (Core i7)"      },
-	{  6, 14, -1, -1, 158,  4,    -1,    -1, CORE_SKYLAKEI5    ,     0, "Kaby Lake (Core i5)"      },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, CORE_SKYLAKEI3    ,     0, "Kaby Lake (Core i3)"      },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, CORE_BROADWELL7   ,     0, "Kaby Lake (Core i7)"      },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, CORE_BROADWELL5   ,     0, "Kaby Lake (Core i5)"      },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, CORE_BROADWELL3   ,     0, "Kaby Lake (Core i3)"      },
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, PENTIUM           ,     0, "Kaby Lake (Pentium)"      },
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, CELERON           ,     0, "Kaby Lake (Celeron)"      },
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, CORE_SKYLAKEM3    ,     0, "Kaby Lake (Core m3)"      },
@@ -669,9 +669,6 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 		/* if it has RTM, then it is at least a Broadwell-E or Skylake */
 		if (data->flags[CPU_FEATURE_RDSEED])
 			core_ix_base = CORE_BROADWELL3;
-		/* if it has SGX, then it is at least Skylake */
-		if (data->sgx.present)
-			core_ix_base = CORE_SKYLAKEI3;
 
 		switch (bs[i + 9]) {
 			case '3': code = core_ix_base + 0; break;
