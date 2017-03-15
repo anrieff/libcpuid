@@ -184,8 +184,8 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 15, 0x68,   2,   512,    -1, TURION_X2               ,     0, "Turion X2 (Tyler/512K)"        },
 	{ 15, -1, -1, 17,    3,   2,   512,    -1, TURION_X2               ,     0, "Turion X2 (Griffin/512K)"      },
 	{ 15, -1, -1, 17,    3,   2,  1024,    -1, TURION_X2               ,     0, "Turion X2 (Griffin/1024K)"     },
-	
-	/* K9 Architecture */
+
+	/* K10 Architecture (2007) */
 	{ 15, -1, -1, 16,   -1,   1,    -1,    -1, PHENOM                  ,     0, "Unknown AMD Phenom"            },
 	{ 15,  2, -1, 16,   -1,   1,    -1,    -1, PHENOM                  ,     0, "Phenom"                        },
 	{ 15,  2, -1, 16,   -1,   3,    -1,    -1, PHENOM                  ,     0, "Phenom X3 (Toliman)"           },
@@ -206,66 +206,65 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  5, -1, 16,    5,   4,   512,    -1, PHENOM2                 ,     0, "Phenom II X4 (Deneb)"          },
 	{ 15,  4, -1, 16,   10,   4,   512,    -1, PHENOM2                 ,     0, "Phenom II X4 (Zosma)"          },
 	{ 15,  4, -1, 16,   10,   6,   512,    -1, PHENOM2                 ,     0, "Phenom II X6 (Thuban)"         },
-	
+	/* Athlon II derivates: */
 	{ 15,  6, -1, 16,    6,   2,   512,    -1, ATHLON                  ,     0, "Athlon II (Champlain)"         },
 	{ 15,  6, -1, 16,    6,   2,   512,    -1, ATHLON_64_X2            ,     0, "Athlon II X2 (Regor)"          },
 	{ 15,  6, -1, 16,    6,   2,  1024,    -1, ATHLON_64_X2            ,     0, "Athlon II X2 (Regor)"          },
 	{ 15,  5, -1, 16,    5,   3,   512,    -1, ATHLON_64_X3            ,     0, "Athlon II X3 (Rana)"           },
 	{ 15,  5, -1, 16,    5,   4,   512,    -1, ATHLON_64_X4            ,     0, "Athlon II X4 (Propus)"         },
+	/* Llano APUs (2011): */
+	{ 15,  1, -1, 18,    1,   2,    -1,    -1, FUSION_EA               ,     0, "Llano X2"                      },
+	{ 15,  1, -1, 18,    1,   3,    -1,    -1, FUSION_EA               ,     0, "Llano X3"                      },
+	{ 15,  1, -1, 18,    1,   4,    -1,    -1, FUSION_EA               ,     0, "Llano X4"                      },
 
-	/* 2011 CPUs: K10 architecture: Llano */
-	{ 15,  1, -1, 18,    1,   2,   512,    -1, FUSION_EA               ,     0, "Llano X2"                      },
-	{ 15,  1, -1, 18,    1,   2,  1024,    -1, FUSION_EA               ,     0, "Llano X2"                      },
-	{ 15,  1, -1, 18,    1,   3,  1024,    -1, FUSION_EA               ,     0, "Llano X3"                      },
-	{ 15,  1, -1, 18,    1,   4,  1024,    -1, FUSION_EA               ,     0, "Llano X4"                      },
-	/* 2011 CPUs: Bobcat architecture: Ontario, Zacate, Desna, Hondo */
-	{ 15,  2, -1, 20,   -1,   1,   512,    -1, FUSION_C                ,     0, "Brazos Ontario"                },
-	{ 15,  2, -1, 20,   -1,   2,   512,    -1, FUSION_C                ,     0, "Brazos Ontario (Dual-core)"    },
-	{ 15,  1, -1, 20,   -1,   1,   512,    -1, FUSION_E                ,     0, "Brazos Zacate"                 },
-	{ 15,  1, -1, 20,   -1,   2,   512,    -1, FUSION_E                ,     0, "Brazos Zacate (Dual-core)"     },
-	{ 15,  2, -1, 20,   -1,   2,   512,    -1, FUSION_Z                ,     0, "Brazos Desna (Dual-core)"      },
-	/* 2012 CPUs: Piledriver architecture: Trinity and Richland */
-	{ 15,  0, -1, 21,   10,   2,  1024,    -1, FUSION_A                ,     0, "Trinity X2"                    },
-	{ 15,  0, -1, 21,   16,   2,  1024,    -1, FUSION_A                ,     0, "Trinity X2"                    },
-	{ 15,  0, -1, 21,   10,   4,  1024,    -1, FUSION_A                ,     0, "Trinity X4"                    },
-	{ 15,  0, -1, 21,   16,   4,  1024,    -1, FUSION_A                ,     0, "Trinity X4"                    },
-	{ 15,  3, -1, 21,   13,   2,  1024,    -1, FUSION_A                ,     0, "Richland X2"                   },
-	{ 15,  3, -1, 21,   13,   4,  1024,    -1, FUSION_A                ,     0, "Richland X4"                   },
-	/* 2013 CPUs: Jaguar architecture: Kabini and Temash */
-	{ 15,  0, -1, 22,    0,   2,  1024,    -1, FUSION_A                ,     0, "Kabini X2"                     },
-	{ 15,  0, -1, 22,    0,   4,  1024,    -1, FUSION_A                ,     0, "Kabini X4"                     },
-	/* 2014 CPUs: Steamroller architecture: Kaveri */
-	{ 15,  0, -1, 21,   30,   2,  1024,    -1, FUSION_A                ,     0, "Kaveri X2"                     },
-	{ 15,  0, -1, 21,   30,   4,  1024,    -1, FUSION_A                ,     0, "Kaveri X4"                     },
-	/* 2014 CPUs: Puma architecture: Beema and Mullins */
-	{ 15,  0, -1, 22,   30,   2,  1024,    -1, FUSION_E                ,     0, "Mullins X2"                     },
-	{ 15,  0, -1, 22,   30,   4,  1024,    -1, FUSION_A                ,     0, "Mullins X4"                     },
-	/* 2015 CPUs: Excavator architecture: Carrizo */
-	{ 15,  1, -1, 21,   60,   2,  1024,    -1, FUSION_A                ,     0, "Carrizo X2"                     },
-	{ 15,  1, -1, 21,   60,   4,  1024,    -1, FUSION_A                ,     0, "Carrizo X4"                     },
-	/* 2015 CPUs: Steamroller architecture: Godavari */
-	//TODO
-	/* 2016 CPUs: Excavator architecture: Bristol Ridge */
-	//TODO
-	
+	/* Family 14h: Bobcat Architecture (2011) */
+	{ 15,  2, -1, 20,   -1,   1,    -1,    -1, FUSION_C                ,     0, "Brazos Ontario"                },
+	{ 15,  2, -1, 20,   -1,   2,    -1,    -1, FUSION_C                ,     0, "Brazos Ontario (Dual-core)"    },
+	{ 15,  1, -1, 20,   -1,   1,    -1,    -1, FUSION_E                ,     0, "Brazos Zacate"                 },
+	{ 15,  1, -1, 20,   -1,   2,    -1,    -1, FUSION_E                ,     0, "Brazos Zacate (Dual-core)"     },
+	{ 15,  2, -1, 20,   -1,   2,    -1,    -1, FUSION_Z                ,     0, "Brazos Desna (Dual-core)"      },
+
+	/* Family 15h: Bulldozer Architecture (2011) */
+	{ 15, -1, -1, 21,    0,   4,    -1,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
+	{ 15, -1, -1, 21,    1,   4,    -1,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
+	{ 15, -1, -1, 21,    1,   6,    -1,    -1, NO_CODE                 ,     0, "Bulldozer X3"                  },
+	{ 15, -1, -1, 21,    1,   8,    -1,    -1, NO_CODE                 ,     0, "Bulldozer X4"                  },
+	/* 2nd-gen, Piledriver core (2012): */
+	{ 15, -1, -1, 21,    2,   4,    -1,    -1, NO_CODE                 ,     0, "Vishera X2"                    },
+	{ 15, -1, -1, 21,    2,   6,    -1,    -1, NO_CODE                 ,     0, "Vishera X3"                    },
+	{ 15, -1, -1, 21,    2,   8,    -1,    -1, NO_CODE                 ,     0, "Vishera X4"                    },
+	{ 15,  0, -1, 21,   16,   2,    -1,    -1, FUSION_A                ,     0, "Trinity X2"                    },
+	{ 15,  0, -1, 21,   16,   4,    -1,    -1, FUSION_A                ,     0, "Trinity X4"                    },
+	{ 15,  3, -1, 21,   19,   2,    -1,    -1, FUSION_A                ,     0, "Richland X2"                   },
+	{ 15,  3, -1, 21,   19,   4,    -1,    -1, FUSION_A                ,     0, "Richland X4"                   },
+	/* 3rd-gen, Steamroller core (2014): */
+	{ 15,  0, -1, 21,   48,   2,    -1,    -1, FUSION_A                ,     0, "Kaveri X2"                     },
+	{ 15,  0, -1, 21,   48,   4,    -1,    -1, FUSION_A                ,     0, "Kaveri X4"                     },
+	{ 15,  8, -1, 21,   56,   4,    -1,    -1, FUSION_A                ,     0, "Godavari X4"                   },
+	/* 4th-gen, Excavator core (2015): */
+	{ 15,  1, -1, 21,   96,   2,    -1,    -1, FUSION_A                ,     0, "Carrizo X2"                    },
+	{ 15,  1, -1, 21,   96,   4,    -1,    -1, FUSION_A                ,     0, "Carrizo X4"                    },
+	{ 15,  5, -1, 21,  101,   2,    -1,    -1, FUSION_A                ,     0, "Bristol Ridge X2"              },
+	{ 15,  5, -1, 21,  101,   4,    -1,    -1, FUSION_A                ,     0, "Bristol Ridge X4"              },
+	{ 15,  0, -1, 21,  112,   2,    -1,    -1, FUSION_A                ,     0, "Stoney Ridge X2"               },
+	{ 15,  0, -1, 21,  112,   2,    -1,    -1, FUSION_E                ,     0, "Stoney Ridge X2"               },
+
+	/* Family 16h: Jaguar Architecture (2013) */
+	{ 15,  0, -1, 22,    0,   2,    -1,    -1, FUSION_A                ,     0, "Kabini X2"                     },
+	{ 15,  0, -1, 22,    0,   4,    -1,    -1, FUSION_A                ,     0, "Kabini X4"                     },
+	/* 2nd-gen, Puma core (2013): */
+	{ 15,  0, -1, 22,   48,   2,    -1,    -1, FUSION_E                ,     0, "Mullins X2"                    },
+	{ 15,  0, -1, 22,   48,   4,    -1,    -1, FUSION_A                ,     0, "Mullins X4"                    },
+
+	/* Family 17h: Zen Architecture (2017) */
+	//{ 15, -1, -1, 23,    1,   8,    -1,    -1, NO_CODE                 ,     0, "Ryzen 7"                       }, //FIXME
+	//{ 15, -1, -1, 23,    1,   6,    -1,    -1, NO_CODE                 ,     0, "Ryzen 5"                       }, //TBA
+	//{ 15, -1, -1, 23,    1,   4,    -1,    -1, NO_CODE                 ,     0, "Ryzen 5"                       }, //TBA
+	//{ 15, -1, -1, 23,    1,   4,    -1,    -1, NO_CODE                 ,     0, "Ryzen 3"                       }, //TBA
+	//{ 15, -1, -1, 23,    1,   4,    -1,    -1, NO_CODE                 ,     0, "Raven Ridge"                   }, //TBA
+
 	/* Newer Opterons: */
 	{ 15,  9, -1, 22,    9,   8,    -1,    -1, OPTERON_GENERIC         ,     0, "Magny-Cours Opteron"           },
-	
-	/* Bulldozer CPUs: */
-	{ 15, -1, -1, 21,    0,   4,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
-	{ 15, -1, -1, 21,    1,   4,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X2"                  },
-	{ 15, -1, -1, 21,    1,   6,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X3"                  },
-	{ 15, -1, -1, 21,    1,   8,  2048,    -1, NO_CODE                 ,     0, "Bulldozer X4"                  },
-	/* Piledriver CPUs: */
-	{ 15, -1, -1, 21,    2,   4,  2048,    -1, NO_CODE                 ,     0, "Vishera X2"                    },
-	{ 15, -1, -1, 21,    2,   6,  2048,    -1, NO_CODE                 ,     0, "Vishera X3"                    },
-	{ 15, -1, -1, 21,    2,   8,  2048,    -1, NO_CODE                 ,     0, "Vishera X4"                    },
-	/* Steamroller CPUs: */
-	//TODO
-	/* Excavator CPUs: */
-	//TODO
-	/* Zen CPUs: */
-	//TODO
 };
 
 

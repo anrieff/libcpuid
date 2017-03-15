@@ -210,7 +210,7 @@ const struct match_entry_t cpudb_intel[] = {
 	
 	{  6,  7, -1, -1, 23,   1,    -1,    -1, CORE_SOLO         ,     0, "Unknown Core 45nm"        },
 	{  6,  7, -1, -1, 23,   1,    -1,    -1, CORE_DUO          ,     0, "Unknown Core 45nm"        },
-	{  6,  7, -1, -1, 23,   2,  1024,    -1, WOLFDALE          ,     0, "Celeron Wolfdale 1M" },
+	{  6,  7, -1, -1, 23,   2,  1024,    -1, WOLFDALE          ,     0, "Celeron Wolfdale 1M"      },
 	{  6,  7, -1, -1, 23,   2,  2048,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo) 2M" },
 	{  6,  7, -1, -1, 23,   2,  3072,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo) 3M" },
 	{  6,  7, -1, -1, 23,   2,  6144,    -1, WOLFDALE          ,     0, "Wolfdale (Core 2 Duo) 6M" },
@@ -271,9 +271,9 @@ const struct match_entry_t cpudb_intel[] = {
 
 	/* Ivy Bridge CPUs (22nm): */
 	{  6, 10, -1, -1, 58,  -1,    -1,    -1, XEON              ,     0, "Ivy Bridge (Xeon)"        },
-	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY7         ,     0, "Ivy Bridge (Core i7)"   },
-	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY5         ,     0, "Ivy Bridge (Core i5)"   },
-	{  6, 10, -1, -1, 58,   2,    -1,    -1, CORE_IVY3         ,     0, "Ivy Bridge (Core i3)"   },
+	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY7         ,     0, "Ivy Bridge (Core i7)"     },
+	{  6, 10, -1, -1, 58,   4,    -1,    -1, CORE_IVY5         ,     0, "Ivy Bridge (Core i5)"     },
+	{  6, 10, -1, -1, 58,   2,    -1,    -1, CORE_IVY3         ,     0, "Ivy Bridge (Core i3)"     },
 	{  6, 10, -1, -1, 58,   2,    -1,    -1, PENTIUM           ,     0, "Ivy Bridge (Pentium)"     },
 	{  6, 10, -1, -1, 58,   1,    -1,    -1, CELERON           ,     0, "Ivy Bridge (Celeron)"     },
 	{  6, 10, -1, -1, 58,   2,    -1,    -1, CELERON           ,     0, "Ivy Bridge (Celeron)"     },
@@ -281,12 +281,12 @@ const struct match_entry_t cpudb_intel[] = {
 	
 	/* Haswell CPUs (22nm): */
 	{  6, 12, -1, -1, 60,  -1,    -1,    -1, XEON              ,     0, "Haswell (Xeon)"           },
-	{  6, 12, -1, -1, 60,   4,    -1,    -1, CORE_HASWELL7     ,     0, "Haswell (Core i7)"   },
-	{  6,  5, -1, -1, 69,   4,    -1,    -1, CORE_HASWELL7     ,     0, "Haswell (Core i7)"   },
+	{  6, 12, -1, -1, 60,   4,    -1,    -1, CORE_HASWELL7     ,     0, "Haswell (Core i7)"        },
+	{  6,  5, -1, -1, 69,   4,    -1,    -1, CORE_HASWELL7     ,     0, "Haswell (Core i7)"        },
 	{  6, 12, -1, -1, 60,   4,    -1,    -1, CORE_HASWELL5     ,     0, "Haswell (Core i5)"        },
 	{  6,  5, -1, -1, 69,   4,    -1,    -1, CORE_HASWELL5     ,     0, "Haswell (Core i5)"        },
 	{  6, 12, -1, -1, 60,   2,    -1,    -1, CORE_HASWELL3     ,     0, "Haswell (Core i3)"        },
-	{  6,  5, -1, -1, 69,   2,    -1,    -1, CORE_HASWELL3     ,     0, "Haswell (Core i3)"   },
+	{  6,  5, -1, -1, 69,   2,    -1,    -1, CORE_HASWELL3     ,     0, "Haswell (Core i3)"        },
 	{  6, 12, -1, -1, 60,   2,    -1,    -1, PENTIUM           ,     0, "Haswell (Pentium)"        },
 	{  6, 12, -1, -1, 60,   2,    -1,    -1, CELERON           ,     0, "Haswell (Celeron)"        },
 	{  6, 12, -1, -1, 60,   1,    -1,    -1, CELERON           ,     0, "Haswell (Celeron)"        },
@@ -302,22 +302,37 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 13, -1, -1, 61,   2,    -1,    -1, PENTIUM           ,     0, "Broadwell-U (Pentium)"    },
 	{  6, 13, -1, -1, 61,   2,    -1,    -1, CELERON           ,     0, "Broadwell-U (Celeron)"    },
 	{  6, 13, -1, -1, 61,   2,    -1,    -1, NA                ,     0, "Broadwell-U (Core M)"     },
+	{  6, 15, -1, -1, 79,  -1,    -1,    -1, XEON              ,     0, "Broadwell-E (Xeon)"       },
 	{  6, 15, -1, -1, 79,   2,    -1,    -1, CORE_BROADWELL3   ,     0, "Broadwell-E (Core i3)"    },
 	{  6, 15, -1, -1, 79,   2,    -1,    -1, CORE_BROADWELL5   ,     0, "Broadwell-E (Core i5)"    },
 	{  6, 15, -1, -1, 79,   4,    -1,    -1, CORE_BROADWELL5   ,     0, "Broadwell-E (Core i5)"    },
 	{  6, 15, -1, -1, 79,   2,    -1,    -1, CORE_BROADWELL7   ,     0, "Broadwell-E (Core i7)"    },
 	{  6, 15, -1, -1, 79,   4,    -1,    -1, CORE_BROADWELL7   ,     0, "Broadwell-E (Core i7)"    },
-	
+
 	/* Skylake CPUs (14nm): */
+	{  6, 14, -1, -1, 94,  -1,    -1,    -1, XEON              ,     0, "Skylake (Xeon)"           },
 	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_BROADWELL7   ,     0, "Skylake (Core i7)"        },
 	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_BROADWELL5   ,     0, "Skylake (Core i5)"        },
-	{  6, 14, -1, -1, 94,   4,    -1,    -1, CORE_BROADWELL3   ,     0, "Skylake (Core i3)"        },
-	{  6, 14, -1, -1, 94,   4,    -1,    -1, PENTIUM           ,     0, "Skylake (Pentium)"        },
+	{  6, 14, -1, -1, 94,   2,    -1,    -1, CORE_BROADWELL3   ,     0, "Skylake (Core i3)"        },
+	{  6, 14, -1, -1, 94,   2,    -1,    -1, PENTIUM           ,     0, "Skylake (Pentium)"        },
+	{  6, 14, -1, -1, 78,   2,    -1,    -1, PENTIUM           ,     0, "Skylake (Pentium)"        },
+	{  6, 14, -1, -1, 94,   2,    -1,    -1, CELERON           ,     0, "Skylake (Celeron)"        },
+	{  6, 14, -1, -1, 78,   2,    -1,    -1, CELERON           ,     0, "Skylake (Celeron)"        },
+	{  6, 14, -1, -1, 78,   2,    -1,    -1, CORE_SKYLAKEM7    ,     0, "Skylake (Core m7)"        },
+	{  6, 14, -1, -1, 78,   2,    -1,    -1, CORE_SKYLAKEM5    ,     0, "Skylake (Core m5)"        },
+	{  6, 14, -1, -1, 78,   2,    -1,    -1, CORE_SKYLAKEM3    ,     0, "Skylake (Core m3)"        },
+
+	/* Kaby Lake CPUs (14nm): */
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, CORE_BROADWELL7   ,     0, "Kaby Lake (Core i7)"      },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, CORE_BROADWELL5   ,     0, "Kaby Lake (Core i5)"      },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, CORE_BROADWELL3   ,     0, "Kaby Lake (Core i3)"      },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, PENTIUM           ,     0, "Kaby Lake (Pentium)"      },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, CELERON           ,     0, "Kaby Lake (Celeron)"      },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, CORE_SKYLAKEM3    ,     0, "Kaby Lake (Core m3)"      },
 
 	/* Itaniums */
-	{  7, -1, -1, -1, -1,   1,    -1,    -1, NO_CODE           ,     0, "Itanium"                 },
-	{ 15, -1, -1, 16, -1,   1,    -1,    -1, NO_CODE           ,     0, "Itanium 2"               },
-	
+	{  7, -1, -1, -1, -1,   1,    -1,    -1, NO_CODE           ,     0, "Itanium"                  },
+	{ 15, -1, -1, 16, -1,   1,    -1,    -1, NO_CODE           ,     0, "Itanium 2"                },
 };
 
 
@@ -654,7 +669,20 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 		/* if it has RTM, then it is at least a Broadwell-E or Skylake */
 		if (data->flags[CPU_FEATURE_RDSEED])
 			core_ix_base = CORE_BROADWELL3;
-		
+
+		switch (bs[i + 9]) {
+			case '3': code = core_ix_base + 0; break;
+			case '5': code = core_ix_base + 1; break;
+			case '7': code = core_ix_base + 2; break;
+		}
+	}
+	if ((i = match_pattern(bs, "Core(TM) m[357]")) != 0) {
+		/* Core m3, Core m5 or Core m7 */
+		need_matchtable = 0;
+
+		/* introduced in Skylake: Core m3 6Y30, Core m5 6Y54, Core m5 6Y57 and Core m7 6Y75 */
+		core_ix_base = CORE_SKYLAKEM3;
+
 		switch (bs[i + 9]) {
 			case '3': code = core_ix_base + 0; break;
 			case '5': code = core_ix_base + 1; break;
