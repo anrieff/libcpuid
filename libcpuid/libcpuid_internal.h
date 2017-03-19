@@ -32,7 +32,7 @@
 
 enum _common_codes_t {
 	NA = 0,
-	NO_CODE,
+	NC, /* No code */
 };
 
 #define CODE(x) x
@@ -54,6 +54,7 @@ struct internal_id_info_t {
 		amd_code_t   amd;
 		intel_code_t intel;
 	} code;
+	uint64_t bits;
 	int score; // detection (matchtable) score
 };
 
