@@ -64,6 +64,13 @@ enum _amd_bits_t {
 };
 typedef enum _amd_bits_t amd_bits_t;
 
+enum _amd_model_codes_t {
+	// Only for Ryzen CPUs:
+	_1400,
+	_1500,
+	_1600,
+};
+
 
 const struct match_entry_t cpudb_amd[] = {
 	{ -1, -1, -1, -1,   -1,   1,    -1,    -1, NC, 0                   ,     0, "Unknown AMD CPU"               },
@@ -283,10 +290,11 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  0, -1, 22,   48,   4,    -1,    -1, FUSION_A, 0             ,     0, "Mullins X4"                    },
 
 	/* Family 17h: Zen Architecture (2017) */
-	//{ 15, -1, -1, 23,    1,   8,    -1,    -1, NC, 0                   ,     0, "Ryzen 7"                       }, //FIXME
-	//{ 15, -1, -1, 23,    1,   6,    -1,    -1, NC, 0                   ,     0, "Ryzen 5"                       }, //TBA
-	//{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   ,     0, "Ryzen 5"                       }, //TBA
-	//{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   ,     0, "Ryzen 3"                       }, //TBA
+	{ 15, -1, -1, 23,    1,   8,    -1,    -1, NC, 0                   ,     0, "Ryzen 7"                       },
+	{ 15, -1, -1, 23,    1,   6,    -1,    -1, NC, 0                   , _1600, "Ryzen 5"                       },
+	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   , _1500, "Ryzen 5"                       },
+	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   , _1400, "Ryzen 5"                       },
+	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   ,     0, "Ryzen 3"                       },
 	//{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   ,     0, "Raven Ridge"                   }, //TBA
 
 	/* Newer Opterons: */
@@ -390,6 +398,8 @@ static void decode_amd_number_of_cores(struct cpu_raw_data_t* raw, struct cpu_id
 	}
 	if (data->flags[CPU_FEATURE_HT]) {
 		if (num_cores > 1) {
+			if (data->ext_family >= 23)
+				num_cores /= 2; // e.g., Ryzen 7 reports 16 "real" cores, but they are really just 8.
 			data->num_cores = num_cores;
 			data->num_logical_cpus = logical_cpus;
 		} else {
@@ -467,6 +477,25 @@ static struct amd_code_and_bits_t decode_amd_codename_part1(const char *bs)
 	return result;
 }
 
+static int decode_amd_ryzen_model_code(const char* bs)
+{
+	const struct {
+		int model_code;
+		const char* match_str;
+	} patterns[] = {
+		{ _1600, "1600" },
+		{ _1500, "1500" },
+		{ _1400, "1400" },
+	};
+	int i;
+
+	for (i = 0; i < COUNT_OF(patterns); i++)
+		if (strstr(bs, patterns[i].match_str))
+			return patterns[i].model_code;
+	//
+	return 0;
+}
+
 static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal)
 {
 	struct amd_code_and_bits_t code_and_bits = decode_amd_codename_part1(data->brand_str);
@@ -486,9 +515,14 @@ static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		debugf(2, "Detected AMD brand code: %d (%s)\n", code_and_bits.code, code_str);
 	else
 		debugf(2, "Detected AMD brand code: %d\n", code_and_bits.code);
+
+	// is it Ryzen? if so, we need to detect discern between the four-core 1400/1500 (Ryzen 5) and the four-core Ryzen 3:
+	int model_code = (data->ext_family == 23) ? decode_amd_ryzen_model_code(data->brand_str) : 0;
+
 	internal->code.amd = code_and_bits.code;
 	internal->bits = code_and_bits.bits;
-	internal->score = match_cpu_codename(cpudb_amd, COUNT_OF(cpudb_amd), data, code_and_bits.code, code_and_bits.bits, 0);
+	internal->score = match_cpu_codename(cpudb_amd, COUNT_OF(cpudb_amd), data, code_and_bits.code,
+	                                     code_and_bits.bits, model_code);
 }
 
 int cpuid_identify_amd(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal)
