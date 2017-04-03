@@ -621,6 +621,18 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_
 	int divisor = 1;
 	int magic_constant = 0x10;
 	uint64_t CpuFid, CpuDid, CpuDidLSD;
+	const struct { uint64_t did; double divisor; } divisor_t[] = {
+		{ 0x0,    1   },
+		{ 0x1,    1.5 },
+		{ 0x2,    2   },
+		{ 0x3,    3   },
+		{ 0x4,    4   },
+		{ 0x5,    6   },
+		{ 0x6,    8   },
+		{ 0x7,    12  },
+		{ 0x8,    16  },
+		{ CpuDid, 0   },
+	};
 
 	if (pstate < MSR_PSTATE_0 || MSR_PSTATE_7 < pstate)
 		return 1;
@@ -633,18 +645,6 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_
 			CPU COF is (100MHz * (CpuFid + 10h) / (divisor specified by CpuDid)) */
 			err  = cpu_rdmsr_range(info->handle, pstate, 8, 4, &CpuFid);
 			err += cpu_rdmsr_range(info->handle, pstate, 3, 0, &CpuDid);
-			const struct { uint64_t did; double divisor; } divisor_t[] = {
-				{ 0x0,    1   },
-				{ 0x1,    1.5 },
-				{ 0x2,    2   },
-				{ 0x3,    3   },
-				{ 0x4,    4   },
-				{ 0x5,    6   },
-				{ 0x6,    8   },
-				{ 0x7,    12  },
-				{ 0x8,    16  },
-				{ CpuDid, 0   },
-			};
 			i = 0;
 			while(divisor_t[i].did != CpuDid)
 				i++;

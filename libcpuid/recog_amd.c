@@ -436,6 +436,8 @@ static struct amd_code_and_bits_t decode_amd_codename_part1(const char *bs)
 {
 	amd_code_t code = NC;
 	uint64_t bits = 0;
+	struct amd_code_and_bits_t result;
+
 	if (strstr(bs, "Dual Core") ||
 	    strstr(bs, "Dual-Core") ||
 	    strstr(bs, " X2 "))
@@ -473,7 +475,8 @@ static struct amd_code_and_bits_t decode_amd_codename_part1(const char *bs)
 	if (match_pattern(bs, "Z-##")) code = FUSION_Z;
 	if (match_pattern(bs, "E#-####") || match_pattern(bs, "A#-####")) code = FUSION_EA;
 
-	struct amd_code_and_bits_t result = { code, bits };
+	result.code = code;
+	result.bits = bits;
 	return result;
 }
 
@@ -501,6 +504,8 @@ static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	struct amd_code_and_bits_t code_and_bits = decode_amd_codename_part1(data->brand_str);
 	int i = 0;
 	char* code_str = NULL;
+	int model_code;
+
 	for (i = 0; i < COUNT_OF(amd_code_str); i++) {
 		if (code_and_bits.code == amd_code_str[i].code) {
 			code_str = amd_code_str[i].str;
@@ -516,8 +521,12 @@ static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	else
 		debugf(2, "Detected AMD brand code: %d\n", code_and_bits.code);
 
+	if (code_and_bits.bits) {
+		debugf(2, "Detected AMD bits: ");
+		debug_print_lbits(2, code_and_bits.bits);
+	}
 	// is it Ryzen? if so, we need to detect discern between the four-core 1400/1500 (Ryzen 5) and the four-core Ryzen 3:
-	int model_code = (data->ext_family == 23) ? decode_amd_ryzen_model_code(data->brand_str) : 0;
+	model_code = (data->ext_family == 23) ? decode_amd_ryzen_model_code(data->brand_str) : 0;
 
 	internal->code.amd = code_and_bits.code;
 	internal->bits = code_and_bits.bits;

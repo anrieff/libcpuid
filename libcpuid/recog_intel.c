@@ -648,6 +648,7 @@ static void decode_intel_number_of_cores(struct cpu_raw_data_t* raw,
 static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 {
 	intel_code_t code = (intel_code_t) NC;
+	intel_code_and_bits_t result;
 	uint64_t bits = 0;
 	int i = 0;
 	const char* bs = data->brand_str;
@@ -753,7 +754,9 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 		(code == CORE_DUO || code == PENTIUM_D || (bits & CELERON_))) {
 		code = WOLFDALE;
 	}
-	intel_code_and_bits_t result = { code, bits };
+
+	result.code = code;
+	result.bits = bits;
 	return result;
 }
 
@@ -908,7 +911,7 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data, stru
 		debugf(2, "Detected Intel brand code: %d\n", brand.code);
 	if (brand.bits) {
 		debugf(2, "Detected Intel bits: ");
-		debug_print_lbits(brand.bits, 2);
+		debug_print_lbits(2, brand.bits);
 	}
 	debugf(2, "Detected Intel model code: %d\n", model_code);
 	
