@@ -631,8 +631,8 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_
 		{ 0x6,    8   },
 		{ 0x7,    12  },
 		{ 0x8,    16  },
-		{ CpuDid, 0   },
 	};
+	int num_dids = (int) COUNT_OF(divisor_t);
 
 	if (pstate < MSR_PSTATE_0 || MSR_PSTATE_7 < pstate)
 		return 1;
@@ -646,9 +646,9 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_
 			err  = cpu_rdmsr_range(info->handle, pstate, 8, 4, &CpuFid);
 			err += cpu_rdmsr_range(info->handle, pstate, 3, 0, &CpuDid);
 			i = 0;
-			while(divisor_t[i].did != CpuDid)
+			while (i < num_dids && divisor_t[i].did != CpuDid)
 				i++;
-			if (divisor_t[i].divisor > 0)
+			if (i < num_dids)
 				*multiplier = (uint64_t) ((CpuFid + 0x10) / divisor_t[i].divisor);
 			else
 				err++;
