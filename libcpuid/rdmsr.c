@@ -528,10 +528,13 @@ int msr_serialize_raw_data(struct msr_driver_t* handle, const char* filename)
   http://support.amd.com/TechDocs/42300_15h_Mod_10h-1Fh_BKDG.pdf
   http://support.amd.com/TechDocs/49125_15h_Models_30h-3Fh_BKDG.pdf
   http://support.amd.com/TechDocs/50742_15h_Models_60h-6Fh_BKDG.pdf
-  http://support.amd.com/TechDocs/49125_15h_Models_30h-3Fh_BKDG.pdf
   * AMD Family 16h Processors
   http://support.amd.com/TechDocs/48751_16h_bkdg.pdf
   http://support.amd.com/TechDocs/52740_16h_Models_30h-3Fh_BKDG.pdf
+
+  AMD Processor Programming Reference (PPR)
+  * AMD Family 17h Processors
+  https://support.amd.com/TechDocs/54945_PPR_Family_17h_Models_00h-0Fh.pdf
 
 - Intel MSRs:
   Intel® 64 and IA-32 Architectures Software Developer’s Manual
@@ -690,6 +693,15 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_
 			err  = cpu_rdmsr_range(info->handle, pstate, 8, 6, &CpuDid);
 			err += cpu_rdmsr_range(info->handle, pstate, 5, 0, &CpuFid);
 			*multiplier = (uint64_t) ((CpuFid + magic_constant) / (1ull << CpuDid)) / divisor;
+			break;
+		case 0x17:
+			/* PPR 17h, pages 30 and 138-139
+			MSRC001_00[6B:64][13:8] is CpuDfsId
+			MSRC001_00[6B:64][7:0]  is CpuFid
+			CoreCOF is (Core::X86::Msr::PStateDef[CpuFid[7:0]] / Core::X86::Msr::PStateDef[CpuDfsId]) * 200 */
+			err  = cpu_rdmsr_range(info->handle, pstate, 13, 8, &CpuDid);
+			err += cpu_rdmsr_range(info->handle, pstate,  7, 0, &CpuFid);
+			*multiplier = (uint64_t) (CpuFid / CpuDid) * 2;
 			break;
 		default:
 			err = 1;
@@ -860,11 +872,15 @@ static double get_info_voltage(struct msr_info_t *info)
 	}
 	else if(info->id->vendor == VENDOR_AMD) {
 		/* Refer links above
-		MSRC001_00[6B:64][15:9] is CpuVid
+		MSRC001_00[6B:64][15:9]  is CpuVid (Jaguar and before)
+		MSRC001_00[6B:64][21:14] is CpuVid (Zen)
 		MSRC001_0063[2:0] is P-state Status
 		2.4.1.6.3 Serial VID (SVI) Encodings: voltage = 1.550V - 0.0125V * SviVid[6:0] */
 		err  = cpu_rdmsr_range(info->handle, MSR_PSTATE_S,                   2, 0, &reg);
-		err += cpu_rdmsr_range(info->handle, MSR_PSTATE_0 + (uint32_t) reg, 15, 9, &CpuVid);
+		if(info->id->ext_family < 0x17)
+			err += cpu_rdmsr_range(info->handle, MSR_PSTATE_0 + (uint32_t) reg, 15, 9, &CpuVid);
+		else
+			err += cpu_rdmsr_range(info->handle, MSR_PSTATE_0 + (uint32_t) reg, 21, 14, &CpuVid);
 		if (!err && MSR_PSTATE_0 + (uint32_t) reg <= MSR_PSTATE_7) return 1.550 - 0.0125 * CpuVid;
 	}
 
