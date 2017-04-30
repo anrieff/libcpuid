@@ -621,9 +621,9 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_t *multiplier)
 {
 	int i, err;
-	int divisor = 1;
-	int magic_constant = 0x10;
 	uint64_t CpuFid, CpuDid, CpuDidLSD;
+
+	/* Constant values needed for 12h family */
 	const struct { uint64_t did; double divisor; } divisor_t[] = {
 		{ 0x0,    1   },
 		{ 0x1,    1.5 },
@@ -635,8 +635,13 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_
 		{ 0x7,    12  },
 		{ 0x8,    16  },
 	};
-	int num_dids = (int) COUNT_OF(divisor_t);
+	const int num_dids = (int) COUNT_OF(divisor_t);
 
+	/* Constant values for common families */
+	const int magic_constant = (info->id->ext_family == 0x11) ? 0x8 : 0x10;
+	const int divisor = ((FUSION_C <= info->internal->code.amd) && (info->internal->code.amd <= FUSION_A)) ? 1 : 2;
+
+	/* Check if P-state is valid */
 	if (pstate < MSR_PSTATE_0 || MSR_PSTATE_7 < pstate)
 		return 1;
 
@@ -645,7 +650,8 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_
 			/* BKDG 12h, page 469
 			MSRC001_00[6B:64][8:4] is CpuFid
 			MSRC001_00[6B:64][3:0] is CpuDid
-			CPU COF is (100MHz * (CpuFid + 10h) / (divisor specified by CpuDid)) */
+			CPU COF is (100MHz * (CpuFid + 10h) / (divisor specified by CpuDid))
+			Note: This family contains only APUs */
 			err  = cpu_rdmsr_range(info->handle, pstate, 8, 4, &CpuFid);
 			err += cpu_rdmsr_range(info->handle, pstate, 3, 0, &CpuDid);
 			i = 0;
@@ -662,34 +668,36 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_
 			MSRC001_00[6B:64][3:0] is CpuDidLSD
 			PLL COF is (100 MHz * (D18F3xD4[MainPllOpFreqId] + 10h))
 			Divisor is (CpuDidMSD + (CpuDidLSD * 0.25) + 1)
-			CPU COF is (main PLL frequency specified by D18F3xD4[MainPllOpFreqId]) / (core clock divisor specified by CpuDidMSD and CpuDidLSD) */
+			CPU COF is (main PLL frequency specified by D18F3xD4[MainPllOpFreqId]) / (core clock divisor specified by CpuDidMSD and CpuDidLSD)
+			Note: This family contains only APUs */
 			err  = cpu_rdmsr_range(info->handle, pstate, 8, 4, &CpuDid);
 			err += cpu_rdmsr_range(info->handle, pstate, 3, 0, &CpuDidLSD);
 			*multiplier = (uint64_t) (((info->cpu_clock + 5) / 100 + 0x10) / (CpuDid + CpuDidLSD * 0.25 + 1));
 			break;
-		case 0x11:
-			/* BKDG 11h, page 236
-			MSRC001_00[6B:64][8:6] is CpuDid
-			MSRC001_00[6B:64][5:0] is CpuFid
-			CPU COF is ((100 MHz * (CpuFid + 08h)) / (2^CpuDid)) */
-			magic_constant = 0x8;
 		case 0x10:
 			/* BKDG 10h, page 429
 			MSRC001_00[6B:64][8:6] is CpuDid
 			MSRC001_00[6B:64][5:0] is CpuFid
 			CPU COF is (100 MHz * (CpuFid + 10h) / (2^CpuDid))
-			N.B.: The (stock) bus speed is 200MHz on AMD 10h & 11h families, we need to divid by 2 */
-			divisor = 2;
+			Note: This family contains only CPUs */
+		case 0x11:
+			/* BKDG 11h, page 236
+			MSRC001_00[6B:64][8:6] is CpuDid
+			MSRC001_00[6B:64][5:0] is CpuFid
+			CPU COF is ((100 MHz * (CpuFid + 08h)) / (2^CpuDid))
+			Note: This family contains only CPUs */
 		case 0x15:
 			/* BKDG 15h, page 570/580/635/692 (00h-0Fh/10h-1Fh/30h-3Fh/60h-6Fh)
 			MSRC001_00[6B:64][8:6] is CpuDid
 			MSRC001_00[6B:64][5:0] is CpuFid
-			CoreCOF is (100 * (MSRC001_00[6B:64][CpuFid] + 10h) / (2^MSRC001_00[6B:64][CpuDid])) */
+			CoreCOF is (100 * (MSRC001_00[6B:64][CpuFid] + 10h) / (2^MSRC001_00[6B:64][CpuDid]))
+			Note: This family contains BOTH CPUs and APUs */
 		case 0x16:
 			/* BKDG 16h, page 549/611 (00h-0Fh/30h-3Fh)
 			MSRC001_00[6B:64][8:6] is CpuDid
 			MSRC001_00[6B:64][5:0] is CpuFid
-			CoreCOF is (100 * (MSRC001_00[6B:64][CpuFid] + 10h) / (2^MSRC001_00[6B:64][CpuDid])) */
+			CoreCOF is (100 * (MSRC001_00[6B:64][CpuFid] + 10h) / (2^MSRC001_00[6B:64][CpuDid]))
+			Note: This family contains only APUs */
 			err  = cpu_rdmsr_range(info->handle, pstate, 8, 6, &CpuDid);
 			err += cpu_rdmsr_range(info->handle, pstate, 5, 0, &CpuFid);
 			*multiplier = (uint64_t) ((CpuFid + magic_constant) / (1ull << CpuDid)) / divisor;
