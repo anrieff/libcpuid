@@ -44,27 +44,6 @@ struct amd_code_and_bits_t {
 	uint64_t bits;
 };
 
-enum _amd_bits_t {
-	ATHLON_      = LBIT(  0 ),
-	_XP_         = LBIT(  1 ),
-	_M_          = LBIT(  2 ),
-	_MP_         = LBIT(  3 ),
-	MOBILE_      = LBIT(  4 ),
-	DURON_       = LBIT(  5 ),
-	SEMPRON_     = LBIT(  6 ),
-	OPTERON_     = LBIT(  7 ),
-	TURION_      = LBIT(  8 ),
-	_LV_         = LBIT(  9 ),
-	_64_         = LBIT( 10 ),
-	_X2          = LBIT( 11 ),
-	_X3          = LBIT( 12 ),
-	_X4          = LBIT( 13 ),
-	_X6          = LBIT( 14 ),
-	_FX          = LBIT( 15 ),
-	_APU_        = LBIT( 16 ),
-};
-typedef enum _amd_bits_t amd_bits_t;
-
 enum _amd_model_codes_t {
 	// Only for Ryzen CPUs:
 	_1400,
