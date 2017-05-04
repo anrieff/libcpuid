@@ -640,7 +640,8 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, double 
 
 	/* Constant values for common families */
 	const int magic_constant = (info->id->ext_family == 0x11) ? 0x8 : 0x10;
-	const double divisor = ((FUSION_C <= info->internal->code.amd) && (info->internal->code.amd <= FUSION_A)) ? 1.0 : 2.0;
+	const int is_apu = ((FUSION_C <= info->internal->code.amd) && (info->internal->code.amd <= FUSION_A)) || (info->internal->bits & _APU_);
+	const double divisor = is_apu ? 1.0 : 2.0;
 
 	/* Check if P-state is valid */
 	if (pstate < MSR_PSTATE_0 || MSR_PSTATE_7 < pstate)
