@@ -889,13 +889,14 @@ static double get_info_voltage(struct msr_info_t *info)
 		MSRC001_00[6B:64][21:14] is CpuVid (Zen)
 		MSRC001_0063[2:0] is P-state Status
 		BKDG 10h, page 49: voltage = 1.550V - 0.0125V * SviVid (SVI1)
-		BKDG 15h, page 50: Voltage = 1.5500 - 0.00625 * Vid[7:0] (SVI2) */
+		BKDG 15h, page 50: Voltage = 1.5500 - 0.00625 * Vid[7:0] (SVI2)
+		SVI2 since Piledriver (Family 15h, 2nd-gen): Models 10h-1Fh Processors */
+		VIDStep = ((info->id->ext_family < 0x15) || ((info->id->ext_family == 0x15) && (info->id->ext_model < 0x10))) ? 0.0125 : 0.00625;
 		err = cpu_rdmsr_range(info->handle, MSR_PSTATE_S, 2, 0, &reg);
 		if(info->id->ext_family < 0x17)
 			err += cpu_rdmsr_range(info->handle, MSR_PSTATE_0 + (uint32_t) reg, 15, 9, &CpuVid);
 		else
 			err += cpu_rdmsr_range(info->handle, MSR_PSTATE_0 + (uint32_t) reg, 21, 14, &CpuVid);
-		VIDStep = (info->id->ext_family < 0x15) ? 0.0125 : 0.00625;
 		if (!err && MSR_PSTATE_0 + (uint32_t) reg <= MSR_PSTATE_7) return 1.550 - VIDStep * CpuVid;
 	}
 
