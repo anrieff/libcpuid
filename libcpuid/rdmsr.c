@@ -528,6 +528,7 @@ int msr_serialize_raw_data(struct msr_driver_t* handle, const char* filename)
   http://support.amd.com/TechDocs/42300_15h_Mod_10h-1Fh_BKDG.pdf
   http://support.amd.com/TechDocs/49125_15h_Models_30h-3Fh_BKDG.pdf
   http://support.amd.com/TechDocs/50742_15h_Models_60h-6Fh_BKDG.pdf
+  http://support.amd.com/TechDocs/55072_AMD_Family_15h_Models_70h-7Fh_BKDG.pdf
   * AMD Family 16h Processors
   http://support.amd.com/TechDocs/48751_16h_bkdg.pdf
   http://support.amd.com/TechDocs/52740_16h_Models_30h-3Fh_BKDG.pdf
@@ -618,12 +619,12 @@ static int perfmsr_measure(struct msr_driver_t* handle, int msr)
 	return (int) ((y - x) / (b - a));
 }
 
-static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_t *multiplier)
+static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, double *multiplier)
 {
 	int i, err;
-	int divisor = 1;
-	int magic_constant = 0x10;
 	uint64_t CpuFid, CpuDid, CpuDidLSD;
+
+	/* Constant values needed for 12h family */
 	const struct { uint64_t did; double divisor; } divisor_t[] = {
 		{ 0x0,    1   },
 		{ 0x1,    1.5 },
@@ -635,8 +636,14 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_
 		{ 0x7,    12  },
 		{ 0x8,    16  },
 	};
-	int num_dids = (int) COUNT_OF(divisor_t);
+	const int num_dids = (int) COUNT_OF(divisor_t);
 
+	/* Constant values for common families */
+	const int magic_constant = (info->id->ext_family == 0x11) ? 0x8 : 0x10;
+	const int is_apu = ((FUSION_C <= info->internal->code.amd) && (info->internal->code.amd <= FUSION_A)) || (info->internal->bits & _APU_);
+	const double divisor = is_apu ? 1.0 : 2.0;
+
+	/* Check if P-state is valid */
 	if (pstate < MSR_PSTATE_0 || MSR_PSTATE_7 < pstate)
 		return 1;
 
@@ -645,14 +652,15 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_
 			/* BKDG 12h, page 469
 			MSRC001_00[6B:64][8:4] is CpuFid
 			MSRC001_00[6B:64][3:0] is CpuDid
-			CPU COF is (100MHz * (CpuFid + 10h) / (divisor specified by CpuDid)) */
+			CPU COF is (100MHz * (CpuFid + 10h) / (divisor specified by CpuDid))
+			Note: This family contains only APUs */
 			err  = cpu_rdmsr_range(info->handle, pstate, 8, 4, &CpuFid);
 			err += cpu_rdmsr_range(info->handle, pstate, 3, 0, &CpuDid);
 			i = 0;
 			while (i < num_dids && divisor_t[i].did != CpuDid)
 				i++;
 			if (i < num_dids)
-				*multiplier = (uint64_t) ((CpuFid + 0x10) / divisor_t[i].divisor);
+				*multiplier = (double) ((CpuFid + magic_constant) / divisor_t[i].divisor);
 			else
 				err++;
 			break;
@@ -662,37 +670,39 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_
 			MSRC001_00[6B:64][3:0] is CpuDidLSD
 			PLL COF is (100 MHz * (D18F3xD4[MainPllOpFreqId] + 10h))
 			Divisor is (CpuDidMSD + (CpuDidLSD * 0.25) + 1)
-			CPU COF is (main PLL frequency specified by D18F3xD4[MainPllOpFreqId]) / (core clock divisor specified by CpuDidMSD and CpuDidLSD) */
+			CPU COF is (main PLL frequency specified by D18F3xD4[MainPllOpFreqId]) / (core clock divisor specified by CpuDidMSD and CpuDidLSD)
+			Note: This family contains only APUs */
 			err  = cpu_rdmsr_range(info->handle, pstate, 8, 4, &CpuDid);
 			err += cpu_rdmsr_range(info->handle, pstate, 3, 0, &CpuDidLSD);
-			*multiplier = (uint64_t) (((info->cpu_clock + 5) / 100 + 0x10) / (CpuDid + CpuDidLSD * 0.25 + 1));
+			*multiplier = (double) (((info->cpu_clock + 5) / 100 + magic_constant) / (CpuDid + CpuDidLSD * 0.25 + 1));
 			break;
-		case 0x11:
-			/* BKDG 11h, page 236
-			MSRC001_00[6B:64][8:6] is CpuDid
-			MSRC001_00[6B:64][5:0] is CpuFid
-			CPU COF is ((100 MHz * (CpuFid + 08h)) / (2^CpuDid)) */
-			magic_constant = 0x8;
 		case 0x10:
 			/* BKDG 10h, page 429
 			MSRC001_00[6B:64][8:6] is CpuDid
 			MSRC001_00[6B:64][5:0] is CpuFid
 			CPU COF is (100 MHz * (CpuFid + 10h) / (2^CpuDid))
-			N.B.: The (stock) bus speed is 200MHz on AMD 10h & 11h families, we need to divid by 2 */
-			divisor = 2;
+			Note: This family contains only CPUs */
+		case 0x11:
+			/* BKDG 11h, page 236
+			MSRC001_00[6B:64][8:6] is CpuDid
+			MSRC001_00[6B:64][5:0] is CpuFid
+			CPU COF is ((100 MHz * (CpuFid + 08h)) / (2^CpuDid))
+			Note: This family contains only CPUs */
 		case 0x15:
 			/* BKDG 15h, page 570/580/635/692 (00h-0Fh/10h-1Fh/30h-3Fh/60h-6Fh)
 			MSRC001_00[6B:64][8:6] is CpuDid
 			MSRC001_00[6B:64][5:0] is CpuFid
-			CoreCOF is (100 * (MSRC001_00[6B:64][CpuFid] + 10h) / (2^MSRC001_00[6B:64][CpuDid])) */
+			CoreCOF is (100 * (MSRC001_00[6B:64][CpuFid] + 10h) / (2^MSRC001_00[6B:64][CpuDid]))
+			Note: This family contains BOTH CPUs and APUs */
 		case 0x16:
 			/* BKDG 16h, page 549/611 (00h-0Fh/30h-3Fh)
 			MSRC001_00[6B:64][8:6] is CpuDid
 			MSRC001_00[6B:64][5:0] is CpuFid
-			CoreCOF is (100 * (MSRC001_00[6B:64][CpuFid] + 10h) / (2^MSRC001_00[6B:64][CpuDid])) */
+			CoreCOF is (100 * (MSRC001_00[6B:64][CpuFid] + 10h) / (2^MSRC001_00[6B:64][CpuDid]))
+			Note: This family contains only APUs */
 			err  = cpu_rdmsr_range(info->handle, pstate, 8, 6, &CpuDid);
 			err += cpu_rdmsr_range(info->handle, pstate, 5, 0, &CpuFid);
-			*multiplier = (uint64_t) ((CpuFid + magic_constant) / (1ull << CpuDid)) / divisor;
+			*multiplier = (double) ((CpuFid + magic_constant) / (1ull << CpuDid)) / divisor;
 			break;
 		case 0x17:
 			/* PPR 17h, pages 30 and 138-139
@@ -701,7 +711,7 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, uint64_
 			CoreCOF is (Core::X86::Msr::PStateDef[CpuFid[7:0]] / Core::X86::Msr::PStateDef[CpuDfsId]) * 200 */
 			err  = cpu_rdmsr_range(info->handle, pstate, 13, 8, &CpuDid);
 			err += cpu_rdmsr_range(info->handle, pstate,  7, 0, &CpuFid);
-			*multiplier = (uint64_t) (CpuFid / CpuDid) * 2;
+			*multiplier = (double) (CpuFid / CpuDid) * 2;
 			break;
 		default:
 			err = 1;
@@ -734,6 +744,7 @@ static uint32_t get_amd_last_pstate_addr(struct msr_info_t *info)
 static double get_info_min_multiplier(struct msr_info_t *info)
 {
 	int err;
+	double mult;
 	uint32_t addr;
 	uint64_t reg;
 
@@ -756,8 +767,8 @@ static double get_info_min_multiplier(struct msr_info_t *info)
 		/* N.B.: Find the last P-state
 		get_amd_last_pstate_addr() returns the last P-state, MSR_PSTATE_0 <= addr <= MSR_PSTATE_7 */
 		addr = get_amd_last_pstate_addr(info);
-		err  = get_amd_multipliers(info, addr, &reg);
-		if (!err) return (double) reg;
+		err  = get_amd_multipliers(info, addr, &mult);
+		if (!err) return mult;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
@@ -766,6 +777,7 @@ static double get_info_min_multiplier(struct msr_info_t *info)
 static double get_info_cur_multiplier(struct msr_info_t *info)
 {
 	int err;
+	double mult;
 	uint64_t reg;
 
 	if(info->id->vendor == VENDOR_INTEL && info->internal->code.intel == PENTIUM) {
@@ -784,8 +796,8 @@ static double get_info_cur_multiplier(struct msr_info_t *info)
 		/* Refer links above
 		MSRC001_0063[2:0] is CurPstate */
 		err  = cpu_rdmsr_range(info->handle, MSR_PSTATE_S, 2, 0, &reg);
-		err += get_amd_multipliers(info, MSR_PSTATE_0 + (uint32_t) reg, &reg);
-		if (!err) return (double) reg;
+		err += get_amd_multipliers(info, MSR_PSTATE_0 + (uint32_t) reg, &mult);
+		if (!err) return mult;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
@@ -794,6 +806,7 @@ static double get_info_cur_multiplier(struct msr_info_t *info)
 static double get_info_max_multiplier(struct msr_info_t *info)
 {
 	int err;
+	double mult;
 	uint64_t reg;
 
 	if(info->id->vendor == VENDOR_INTEL && info->internal->code.intel == PENTIUM) {
@@ -823,8 +836,8 @@ static double get_info_max_multiplier(struct msr_info_t *info)
 		/* Refer links above
 		MSRC001_0064 is Pb0
 		Pb0 is the highest-performance boosted P-state */
-		err = get_amd_multipliers(info, MSR_PSTATE_0, &reg);
-		if (!err) return (double) reg;
+		err = get_amd_multipliers(info, MSR_PSTATE_0, &mult);
+		if (!err) return mult;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
@@ -860,6 +873,7 @@ static int get_info_temperature(struct msr_info_t *info)
 static double get_info_voltage(struct msr_info_t *info)
 {
 	int err;
+	double VIDStep;
 	uint64_t reg, CpuVid;
 
 	if(info->id->vendor == VENDOR_INTEL) {
@@ -875,13 +889,16 @@ static double get_info_voltage(struct msr_info_t *info)
 		MSRC001_00[6B:64][15:9]  is CpuVid (Jaguar and before)
 		MSRC001_00[6B:64][21:14] is CpuVid (Zen)
 		MSRC001_0063[2:0] is P-state Status
-		2.4.1.6.3 Serial VID (SVI) Encodings: voltage = 1.550V - 0.0125V * SviVid[6:0] */
-		err  = cpu_rdmsr_range(info->handle, MSR_PSTATE_S,                   2, 0, &reg);
+		BKDG 10h, page 49: voltage = 1.550V - 0.0125V * SviVid (SVI1)
+		BKDG 15h, page 50: Voltage = 1.5500 - 0.00625 * Vid[7:0] (SVI2)
+		SVI2 since Piledriver (Family 15h, 2nd-gen): Models 10h-1Fh Processors */
+		VIDStep = ((info->id->ext_family < 0x15) || ((info->id->ext_family == 0x15) && (info->id->ext_model < 0x10))) ? 0.0125 : 0.00625;
+		err = cpu_rdmsr_range(info->handle, MSR_PSTATE_S, 2, 0, &reg);
 		if(info->id->ext_family < 0x17)
 			err += cpu_rdmsr_range(info->handle, MSR_PSTATE_0 + (uint32_t) reg, 15, 9, &CpuVid);
 		else
 			err += cpu_rdmsr_range(info->handle, MSR_PSTATE_0 + (uint32_t) reg, 21, 14, &CpuVid);
-		if (!err && MSR_PSTATE_0 + (uint32_t) reg <= MSR_PSTATE_7) return 1.550 - 0.0125 * CpuVid;
+		if (!err && MSR_PSTATE_0 + (uint32_t) reg <= MSR_PSTATE_7) return 1.550 - VIDStep * CpuVid;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
@@ -890,6 +907,7 @@ static double get_info_voltage(struct msr_info_t *info)
 static double get_info_bus_clock(struct msr_info_t *info)
 {
 	int err;
+	double mult;
 	uint32_t addr;
 	uint64_t reg;
 
@@ -912,8 +930,8 @@ static double get_info_bus_clock(struct msr_info_t *info)
 		PstateMaxVal is the the lowest-performance non-boosted P-state */
 		addr = get_amd_last_pstate_addr(info);
 		err  = cpu_rdmsr_range(info->handle, MSR_PSTATE_L, 6, 4, &reg);
-		err += get_amd_multipliers(info, addr - reg, &reg);
-		if (!err) return (double) info->cpu_clock / reg;
+		err += get_amd_multipliers(info, addr - reg, &mult);
+		if (!err) return (double) info->cpu_clock / mult;
 	}
 
 	return (double) CPU_INVALID_VALUE / 100;
