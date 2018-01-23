@@ -58,8 +58,12 @@ typedef unsigned short		uint16_t;
 	typedef unsigned __int64	uint64_t;
 #else
 	/* all other sane compilers: */
-	typedef signed long long   int64_t;
-	typedef unsigned long long uint64_t;
+	#if __WORDSIZE == 64
+	typedef unsigned long int   uint64_t;
+	#else
+	__extension__
+	typedef unsigned long long int  uint64_t;
+	#endif
 #endif
 
 #endif
