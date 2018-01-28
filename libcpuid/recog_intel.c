@@ -329,6 +329,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 78,   2,    -1,    -1, NC, CORE_|_M_|_7  ,     0, "Skylake (Core m7)"        },
 	{  6, 14, -1, -1, 78,   2,    -1,    -1, NC, CORE_|_M_|_5  ,     0, "Skylake (Core m5)"        },
 	{  6, 14, -1, -1, 78,   2,    -1,    -1, NC, CORE_|_M_|_3  ,     0, "Skylake (Core m3)"        },
+	{  6,  5, -1, -1, 85,   8,    -1,    -1, NC, XEON_,              0, "Skylake (Xeon Scalable)"  },
 
 	/* Kaby Lake CPUs (14nm): */
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Kaby Lake (Core i7)"      },
