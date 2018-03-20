@@ -49,6 +49,10 @@ enum _amd_model_codes_t {
 	_1400,
 	_1500,
 	_1600,
+	_1900,
+	_2400,
+	_2500,
+	_2700,
 };
 
 
@@ -270,12 +274,24 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  0, -1, 22,   48,   4,    -1,    -1, FUSION_A, 0             ,     0, "Mullins X4"                    },
 
 	/* Family 17h: Zen Architecture (2017) */
-	{ 15, -1, -1, 23,    1,   8,    -1,    -1, NC, 0                   ,     0, "Ryzen 7"                       },
-	{ 15, -1, -1, 23,    1,   6,    -1,    -1, NC, 0                   , _1600, "Ryzen 5"                       },
-	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   , _1500, "Ryzen 5"                       },
-	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   , _1400, "Ryzen 5"                       },
-	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   ,     0, "Ryzen 3"                       },
-	//{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   ,     0, "Raven Ridge"                   }, //TBA
+	{ 15, -1, -1, 23,    1,  16,    -1,    -1, NC, 0                   ,     0, "Threadripper (Summit Ridge)"   },
+	{ 15, -1, -1, 23,    1,  12,    -1,    -1, NC, 0                   ,     0, "Threadripper (Summit Ridge)"   },
+	{ 15, -1, -1, 23,    1,   8,    -1,    -1, NC, 0                   , _1900, "Threadripper (Summit Ridge)"   },
+	{ 15, -1, -1, 23,    1,   8,    -1,    -1, NC, 0                   ,     0, "Ryzen 7 (Summit Ridge)"        },
+	{ 15, -1, -1, 23,    1,   6,    -1,    -1, NC, 0                   , _1600, "Ryzen 5 (Summit Ridge)"        },
+	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   , _1500, "Ryzen 5 (Summit Ridge)"        },
+	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   , _1400, "Ryzen 5 (Summit Ridge)"        },
+	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   ,     0, "Ryzen 3 (Summit Ridge)"        },
+	/* APUs */
+	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   , _2700, "Ryzen 7 (Raven Ridge)"         },
+	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   , _2500, "Ryzen 5 (Raven Ridge)"         },
+	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   , _2400, "Ryzen 5 (Raven Ridge)"         },
+	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   ,     0, "Ryzen 3 (Raven Ridge)"         },
+	{ 15, -1, -1, 23,   17,   2,    -1,    -1, NC, 0                   ,     0, "Ryzen 3 (Raven Ridge)"         },
+	/* 2nd-gen, Zen+ (2018): TBA */
+	//{ 15, -1, -1, ??,   ??,   8,    -1,    -1, NC, 0                   ,     0, "Ryzen 7 (???)"                 },
+	//{ 15, -1, -1, ??,   ??,   6,    -1,    -1, NC, 0                   ,     0, "Ryzen 5 (???)"                 },
+
 
 	/* Newer Opterons: */
 	{ 15,  9, -1, 22,    9,   8,    -1,    -1, NC, OPTERON_            ,     0, "Magny-Cours Opteron"           },
@@ -467,6 +483,10 @@ static int decode_amd_ryzen_model_code(const char* bs)
 		int model_code;
 		const char* match_str;
 	} patterns[] = {
+		{ _2700, "2700" },
+		{ _2500, "2500" },
+		{ _2400, "2400" },
+		{ _1900, "1900" },
 		{ _1600, "1600" },
 		{ _1500, "1500" },
 		{ _1400, "1400" },
