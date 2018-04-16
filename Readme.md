@@ -11,7 +11,7 @@ as the full [API reference](http://libcpuid.sf.net/doxy).
 Configuring after checkout
 --------------------------
 
-Under linux, where you download the sources, there's no
+Under Linux, where you download the sources, there's no
 configure script to run. This is because it isn't a good practice to keep
 such scripts in a source control system. To create it, you need to run the
 following commands once, after you checkout the libcpuid sources
@@ -27,6 +27,22 @@ the library.
 
 `make dist` will create a tarball (with "configure" inside) with the
 sources.
+
+Prerequisites
+-------------
+
+Using libcpuid requires no dependencies on any of the supported OSes.
+Building it requires the aforementioned libtool and autotools commands
+to be available, which is a matter of installing a few common packages
+with related names (e.g. automake, autoconf, libtool).
+It also requires a POSIX-compatible shell. On NetBSD, you may need
+to install one (credits to @brucelilly):
+
+1. Install a POSIX-compatible shell such as ksh93
+   (pkg_add ast-ksh || pkgin in ast-ksh)
+2. export CONFIG_SHELL=/usr/pkg/bin/ksh93 (substitute the
+   correct path if required)
+3. Follow the regular Linux instructions
 
 Testing
 -------
