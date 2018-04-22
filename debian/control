@@ -1,5 +1,5 @@
 Source: libcpuid
-Section: utils
+Section: libs
 Priority: optional
 Maintainer: Zhang, Guodong <gdzhang@linx-info.com>
 Build-Depends: debhelper (>= 9), autotools-dev, libtool, automake, autoconf, python, doxygen
