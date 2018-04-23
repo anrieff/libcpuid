@@ -60,7 +60,7 @@
  */
 
 /** @mainpage A simple libcpuid introduction
- *
+ * 
  * LibCPUID provides CPU identification and access to the CPUID and RDTSC
  * instructions on the x86.
  * <p>
@@ -82,6 +82,7 @@
  */
 
 /** @defgroup libcpuid LibCPUID
+ * @brief LibCPUID provides CPU identification
  @{ */
 
 /* Include some integer type specifications: */
@@ -535,23 +536,23 @@ typedef enum {
  * @brief Describes common library error codes
  */
 typedef enum {
-	ERR_OK       =  0,	/*!< "No error" */
-	ERR_NO_CPUID = -1,	/*!< "CPUID instruction is not supported" */
-	ERR_NO_RDTSC = -2,	/*!< "RDTSC instruction is not supported" */
-	ERR_NO_MEM   = -3,	/*!< "Memory allocation failed" */
-	ERR_OPEN     = -4,	/*!< "File open operation failed" */
-	ERR_BADFMT   = -5,	/*!< "Bad file format" */
-	ERR_NOT_IMP  = -6,	/*!< "Not implemented" */
-	ERR_CPU_UNKN = -7,	/*!< "Unsupported processor" */
-	ERR_NO_RDMSR = -8,	/*!< "RDMSR instruction is not supported" */
-	ERR_NO_DRIVER= -9,	/*!< "RDMSR driver error (generic)" */
-	ERR_NO_PERMS = -10,	/*!< "No permissions to install RDMSR driver" */
-	ERR_EXTRACT  = -11,	/*!< "Cannot extract RDMSR driver (read only media?)" */
-	ERR_HANDLE   = -12,	/*!< "Bad handle" */
-	ERR_INVMSR   = -13,	/*!< "Invalid MSR" */
-	ERR_INVCNB   = -14,	/*!< "Invalid core number" */
-	ERR_HANDLE_R = -15,	/*!< "Error on handle read" */
-	ERR_INVRANGE = -16,	/*!< "Invalid given range" */
+	ERR_OK       =  0,	/*!< No error */
+	ERR_NO_CPUID = -1,	/*!< CPUID instruction is not supported */
+	ERR_NO_RDTSC = -2,	/*!< RDTSC instruction is not supported */
+	ERR_NO_MEM   = -3,	/*!< Memory allocation failed */
+	ERR_OPEN     = -4,	/*!< File open operation failed */
+	ERR_BADFMT   = -5,	/*!< Bad file format */
+	ERR_NOT_IMP  = -6,	/*!< Not implemented */
+	ERR_CPU_UNKN = -7,	/*!< Unsupported processor */
+	ERR_NO_RDMSR = -8,	/*!< RDMSR instruction is not supported */
+	ERR_NO_DRIVER= -9,	/*!< RDMSR driver error (generic) */
+	ERR_NO_PERMS = -10,	/*!< No permissions to install RDMSR driver */
+	ERR_EXTRACT  = -11,	/*!< Cannot extract RDMSR driver (read only media?) */
+	ERR_HANDLE   = -12,	/*!< Bad handle */
+	ERR_INVMSR   = -13,	/*!< Invalid MSR */
+	ERR_INVCNB   = -14,	/*!< Invalid core number */
+	ERR_HANDLE_R = -15,	/*!< Error on handle read */
+	ERR_INVRANGE = -16,	/*!< Invalid given range */
 } cpu_error_t;
 
 /**
@@ -1108,7 +1109,7 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which);
 
 /**
  * @brief Writes the raw MSR data to a text file
- * @param data - a pointer to msr_driver_t structure
+ * @param handle -  a handle to the MSR reader driver, as created by cpu_msr_driver_open
  * @param filename - the path of the file, where the serialized data should be
  *                   written. If empty, stdout will be used.
  * @note This is intended primarily for debugging. On some processor, which is
@@ -1131,8 +1132,7 @@ int msr_serialize_raw_data(struct msr_driver_t* handle, const char* filename);
  * This function unloads the MSR driver opened by cpu_msr_driver_open and
  * frees any resources associated with it.
  *
- * @param handle - a handle to the MSR reader driver, as created by
- *                 cpu_msr_driver_open
+ * @param handle - a handle to the MSR reader driver, as created by cpu_msr_driver_open
  *
  * @returns zero if successful, and some negative number on error.
  *          The error message can be obtained by calling \ref cpuid_error.

@@ -1,3 +1,10 @@
+libcpuid (0.4.0+ubuntu1~1) artful; urgency=low
+
+  * built for artful
+  * got rid of lintian errors
+
+ -- Jeffrey Cliff <jeffrey.cliff@gmail.com>  Fri, 20 Apr 2018 15:39:37 +0600
+
 libcpuid (0.4.0) unstable; urgency=low
 
   * Better detection of AMD clock multiplier with msrinfo.
