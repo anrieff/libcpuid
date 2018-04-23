@@ -1109,9 +1109,9 @@ int cpu_msrinfo(struct msr_driver_t* handle, cpu_msrinfo_request_t which);
 
 /**
  * @brief Writes the raw MSR data to a text file
+ * @param handle -  a handle to the MSR reader driver, as created by cpu_msr_driver_open
  * @param filename - the path of the file, where the serialized data should be
  *                   written. If empty, stdout will be used.
- * @param handle -  a handle to the MSR reader driver, as created by cpu_msr_driver_open ?
  * @note This is intended primarily for debugging. On some processor, which is
  *       not currently supported or not completely recognized by cpu_identify,
  *       one can still successfully get the raw data and write it to a file.
