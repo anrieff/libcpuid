@@ -60,6 +60,7 @@ enum _intel_model_t {
 typedef enum _intel_model_t intel_model_t;
 
 const struct match_entry_t cpudb_intel[] = {
+//     F   M   S  EF  EM  #cores  L2$   L3$  BC  ModelBits     ModelCode  Name
 	{ -1, -1, -1, -1, -1,   1,    -1,    -1, NC, 0             ,     0, "Unknown Intel CPU"       },
 	
 	/* i486 */
@@ -107,17 +108,18 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  8, -1, -1, -1,   1,    -1,    -1, NC, 0             ,     0, "Pentium III (Coppermine)"},
 	{  6, 10, -1, -1, -1,   1,    -1,    -1, NC, 0             ,     0, "Pentium III (Coppermine)"},
 	{  6, 11, -1, -1, -1,   1,    -1,    -1, NC, 0             ,     0, "Pentium III (Tualatin)"  },
+	{  6, 11, -1, -1, -1,   1,   512,    -1, NC, 0             ,     0, "Pentium III (Tualatin)"  },
 	
 	{  6,  7, -1, -1, -1,   1,    -1,    -1, NC, XEON_         ,     0, "P-III Xeon (Tanner)"     },
 	{  6,  8, -1, -1, -1,   1,    -1,    -1, NC, XEON_         ,     0, "P-III Xeon (Cascades)"   },
 	{  6, 10, -1, -1, -1,   1,    -1,    -1, NC, XEON_         ,     0, "P-III Xeon (Cascades)"   },
 	{  6, 11, -1, -1, -1,   1,    -1,    -1, NC, XEON_         ,     0, "P-III Xeon (Tualatin)"   },
 	
-	{  6,  7, -1, -1, -1,   1,    -1,    -1, NC, CELERON_      ,     0, "P-III Celeron (Katmai)"     },
-	{  6,  8, -1, -1, -1,   1,    -1,    -1, NC, CELERON_      ,     0, "P-III Celeron (Coppermine)" },
-	{  6, 10, -1, -1, -1,   1,    -1,    -1, NC, CELERON_      ,     0, "P-III Celeron (Coppermine)" },
-	{  6, 11, -1, -1, -1,   1,    -1,    -1, NC, CELERON_      ,     0, "P-III Celeron (Tualatin)"   },
-	
+	{  6,  7, -1, -1, -1,   1,   128,    -1, NC, CELERON_      ,     0, "P-III Celeron (Katmai)"     },
+	{  6,  8, -1, -1, -1,   1,   128,    -1, NC, CELERON_      ,     0, "P-III Celeron (Coppermine)" },
+	{  6, 10, -1, -1, -1,   1,   128,    -1, NC, CELERON_      ,     0, "P-III Celeron (Coppermine)" },
+	{  6, 11, -1, -1, -1,   1,   256,    -1, NC, CELERON_      ,     0, "P-III Celeron (Tualatin)"   },
+
 	/* Netburst based (Pentium 4 and later)
 	   classic P4s */
 	{ 15, -1, -1, -1, -1,   1,    -1,    -1, NC, 0             ,     0, "Unknown Pentium 4"       },
