@@ -32,6 +32,8 @@
 #	define COMPILER_MICROSOFT
 #elif defined(__GNUC__)
 #	define COMPILER_GCC
+#elif defined(__clang__)
+#	define COMPILER_CLANG
 #endif
 
 /* Determine Platform */
@@ -39,10 +41,12 @@
 #	define PLATFORM_X64
 #elif defined(__i386__) || defined(_M_IX86)
 #	define PLATFORM_X86
+#elif defined(__ARMEL__)
+#	define PLATFORM_ARM
 #endif
 
 /* Under Windows/AMD64 with MSVC, inline assembly isn't supported */
-#if (defined(COMPILER_GCC) && defined(PLATFORM_X64)) || defined(PLATFORM_X86)
+#if ((defined(COMPILER_GCC) || defined(COMPILER_CLANG))) && defined(PLATFORM_X64)) || defined(PLATFORM_X86) || defined(PLATFORM_ARM)
 #	define INLINE_ASM_SUPPORTED
 #endif
 
