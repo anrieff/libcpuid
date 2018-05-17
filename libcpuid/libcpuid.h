@@ -1141,7 +1141,7 @@ int msr_serialize_raw_data(struct msr_driver_t* handle, const char* filename);
 int cpu_msr_driver_close(struct msr_driver_t* handle);
 
 #ifdef __cplusplus
-}; /* extern "C" */
+} /* extern "C" */
 #endif
 
 
