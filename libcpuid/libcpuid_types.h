@@ -32,19 +32,15 @@
 #ifndef __LIBCPUID_TYPES_H__
 #define __LIBCPUID_TYPES_H__
 
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
-
-#if defined(HAVE_STDINT_H)
+#if !defined(_MSC_VER) || _MSC_VER >= 1600
 #  include <stdint.h>
 #else
 /* we have to provide our own: */
-#  if !defined(HAVE_INT32_T) && !defined(__int32_t_defined)
+#  if !defined(__int32_t_defined)
 typedef int int32_t;
 #  endif
 
-#  if !defined(HAVE_UINT32_T) && !defined(__uint32_t_defined)
+#  if !defined(__uint32_t_defined)
 typedef unsigned uint32_t;
 #  endif
 
