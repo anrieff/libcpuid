@@ -341,7 +341,13 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Kaby Lake (Core i3)"      },
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, NC, PENTIUM_      ,     0, "Kaby Lake (Pentium)"      },
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, NC, CELERON_      ,     0, "Kaby Lake (Celeron)"      },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, NC, CORE_|_M_|_3  ,     0, "Kaby Lake (Core m3)"      },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Kaby Lake-U (Core i7)"    },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Kaby Lake-U (Core i5)"    },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Kaby Lake-U (Core i3)"    },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, NC, PENTIUM_      ,     0, "Kaby Lake-U (Pentium)"    },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, NC, CELERON_      ,     0, "Kaby Lake-U (Celeron)"    },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, NC, CORE_|_M_|_3  ,     0, "Kaby Lake-U (Core m3)"    },
+
 
 	/* Coffee Lake CPUs (14nm): */
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Coffee Lake (Core i7)"    },
