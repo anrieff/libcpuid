@@ -297,6 +297,8 @@ const struct match_entry_t cpudb_amd[] = {
 	/* 2nd-gen, Zen+ (2018): */
 	{ 15, -1, -1, 23,    8,   8,    -1,    -1, NC, 0                   ,     0, "Ryzen 7 (Pinnacle Ridge)"      },
 	{ 15, -1, -1, 23,    8,   6,    -1,    -1, NC, 0                   ,     0, "Ryzen 5 (Pinnacle Ridge)"      },
+	{ 15, -1, -1, 23,    8,   4,    -1,    -1, NC, 0                   , _2500, "Ryzen 5 (Pinnacle Ridge)"      },
+	{ 15, -1, -1, 23,    8,   4,    -1,    -1, NC, 0                   ,     0, "Ryzen 3 (Pinnacle Ridge)"      },
 
 
 	/* Newer Opterons: */
