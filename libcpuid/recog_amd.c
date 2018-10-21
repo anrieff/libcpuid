@@ -50,9 +50,12 @@ enum _amd_model_codes_t {
 	_1500,
 	_1600,
 	_1900,
+	_2200,
 	_2400,
 	_2500,
+	_2600,
 	_2700,
+	_2800,
 };
 
 
@@ -283,11 +286,14 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   , _1400, "Ryzen 5 (Summit Ridge)"        },
 	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   ,     0, "Ryzen 3 (Summit Ridge)"        },
 	/* APUs */
+	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   , _2800, "Ryzen 7 (Raven Ridge)"         },
 	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   , _2700, "Ryzen 7 (Raven Ridge)"         },
+	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   , _2600, "Ryzen 5 (Raven Ridge)"         },
 	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   , _2500, "Ryzen 5 (Raven Ridge)"         },
 	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   , _2400, "Ryzen 5 (Raven Ridge)"         },
 	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   ,     0, "Ryzen 3 (Raven Ridge)"         },
-	{ 15, -1, -1, 23,   17,   2,    -1,    -1, NC, 0                   ,     0, "Ryzen 3 (Raven Ridge)"         },
+	{ 15, -1, -1, 23,   17,   2,    -1,    -1, NC, 0                   , _2200, "Ryzen 3 (Raven Ridge)"         },
+	{ 15, -1, -1, 23,   17,   2,    -1,    -1, NC, 0                   ,     0, "Athlon (Raven Ridge)"          },
 	/* 2nd-gen, Zen+ (2018): */
 	{ 15, -1, -1, 23,    8,   8,    -1,    -1, NC, 0                   ,     0, "Ryzen 7 (Pinnacle Ridge)"      },
 	{ 15, -1, -1, 23,    8,   6,    -1,    -1, NC, 0                   ,     0, "Ryzen 5 (Pinnacle Ridge)"      },
