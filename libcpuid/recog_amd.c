@@ -495,9 +495,12 @@ static int decode_amd_ryzen_model_code(const char* bs)
 		int model_code;
 		const char* match_str;
 	} patterns[] = {
+		{ _2800, "2800" },
 		{ _2700, "2700" },
+		{ _2600, "2600" },
 		{ _2500, "2500" },
 		{ _2400, "2400" },
+		{ _2200, "2200" },
 		{ _1900, "1900" },
 		{ _1600, "1600" },
 		{ _1500, "1500" },
