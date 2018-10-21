@@ -277,9 +277,9 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  0, -1, 22,   48,   4,    -1,    -1, FUSION_A, 0             ,     0, "Mullins X4"                    },
 
 	/* Family 17h: Zen Architecture (2017) */
-	{ 15, -1, -1, 23,    1,  16,    -1,    -1, NC, 0                   ,     0, "Threadripper (Summit Ridge)"   },
-	{ 15, -1, -1, 23,    1,  12,    -1,    -1, NC, 0                   ,     0, "Threadripper (Summit Ridge)"   },
-	{ 15, -1, -1, 23,    1,   8,    -1,    -1, NC, 0                   , _1900, "Threadripper (Summit Ridge)"   },
+	{ 15, -1, -1, 23,    1,  16,    -1,    -1, NC, 0                   ,     0, "Threadripper (Whitehaven)"     },
+	{ 15, -1, -1, 23,    1,  12,    -1,    -1, NC, 0                   ,     0, "Threadripper (Whitehaven)"     },
+	{ 15, -1, -1, 23,    1,   8,    -1,    -1, NC, 0                   , _1900, "Threadripper (Whitehaven)"     },
 	{ 15, -1, -1, 23,    1,   8,    -1,    -1, NC, 0                   ,     0, "Ryzen 7 (Summit Ridge)"        },
 	{ 15, -1, -1, 23,    1,   6,    -1,    -1, NC, 0                   , _1600, "Ryzen 5 (Summit Ridge)"        },
 	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   , _1500, "Ryzen 5 (Summit Ridge)"        },
