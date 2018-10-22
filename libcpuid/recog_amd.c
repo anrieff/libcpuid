@@ -44,20 +44,6 @@ struct amd_code_and_bits_t {
 	uint64_t bits;
 };
 
-enum _amd_model_codes_t {
-	// Only for Ryzen CPUs:
-	_1400,
-	_1500,
-	_1600,
-	_1900,
-	_2200,
-	_2400,
-	_2500,
-	_2600,
-	_2700,
-	_2800,
-};
-
 
 const struct match_entry_t cpudb_amd[] = {
 	{ -1, -1, -1, -1,   -1,   1,    -1,    -1, NC, 0                   ,     0, "Unknown AMD CPU"               },
@@ -277,32 +263,21 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  0, -1, 22,   48,   4,    -1,    -1, FUSION_A, 0             ,     0, "Mullins X4"                    },
 
 	/* Family 17h: Zen Architecture (2017) */
-	{ 15, -1, -1, 23,    1,  16,    -1,    -1, NC, 0                   ,     0, "Threadripper (Whitehaven)"     },
-	{ 15, -1, -1, 23,    1,  12,    -1,    -1, NC, 0                   ,     0, "Threadripper (Whitehaven)"     },
-	{ 15, -1, -1, 23,    1,   8,    -1,    -1, NC, 0                   , _1900, "Threadripper (Whitehaven)"     },
-	{ 15, -1, -1, 23,    1,   8,    -1,    -1, NC, 0                   ,     0, "Ryzen 7 (Summit Ridge)"        },
-	{ 15, -1, -1, 23,    1,   6,    -1,    -1, NC, 0                   , _1600, "Ryzen 5 (Summit Ridge)"        },
-	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   , _1500, "Ryzen 5 (Summit Ridge)"        },
-	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   , _1400, "Ryzen 5 (Summit Ridge)"        },
-	{ 15, -1, -1, 23,    1,   4,    -1,    -1, NC, 0                   ,     0, "Ryzen 3 (Summit Ridge)"        },
+	{ 15, -1, -1, 23,    1,  -1,    -1,    -1, NC, EPYC_               ,     0, "EPYC (Naples)"                 },
+	{ 15, -1, -1, 23,    1,  -1,    -1,    -1, NC, RYZEN_TR_           ,     0, "Threadripper (Whitehaven)"     },
+	{ 15, -1, -1, 23,    1,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Summit Ridge)"        },
+	{ 15, -1, -1, 23,    1,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Summit Ridge)"        },
+	{ 15, -1, -1, 23,    1,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Summit Ridge)"        },
 	/* APUs */
-	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   , _2800, "Ryzen 7 (Raven Ridge)"         },
-	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   , _2700, "Ryzen 7 (Raven Ridge)"         },
-	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   , _2600, "Ryzen 5 (Raven Ridge)"         },
-	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   , _2500, "Ryzen 5 (Raven Ridge)"         },
-	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   , _2400, "Ryzen 5 (Raven Ridge)"         },
-	{ 15, -1, -1, 23,   17,   4,    -1,    -1, NC, 0                   ,     0, "Ryzen 3 (Raven Ridge)"         },
-	{ 15, -1, -1, 23,   17,   2,    -1,    -1, NC, 0                   , _2200, "Ryzen 3 (Raven Ridge)"         },
-	{ 15, -1, -1, 23,   17,   2,    -1,    -1, NC, 0                   ,     0, "Athlon (Raven Ridge)"          },
+	{ 15, -1, -1, 23,   17,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Raven Ridge)"         },
+	{ 15, -1, -1, 23,   17,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Raven Ridge)"         },
+	{ 15, -1, -1, 23,   17,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Raven Ridge)"         },
+	{ 15, -1, -1, 23,   17,  -1,    -1,    -1, NC, ATHLON_             ,     0, "Athlon (Raven Ridge)"          },
 	/* 2nd-gen, Zen+ (2018): */
-	{ 15, -1, -1, 23,    8,  32,    -1,    -1, NC, 0                   ,     0, "Threadripper (Colfax)"         },
-	{ 15, -1, -1, 23,    8,  24,    -1,    -1, NC, 0                   ,     0, "Threadripper (Colfax)"         },
-	{ 15, -1, -1, 23,    8,  16,    -1,    -1, NC, 0                   ,     0, "Threadripper (Colfax)"         },
-	{ 15, -1, -1, 23,    8,  12,    -1,    -1, NC, 0                   ,     0, "Threadripper (Colfax)"         },
-	{ 15, -1, -1, 23,    8,   8,    -1,    -1, NC, 0                   ,     0, "Ryzen 7 (Pinnacle Ridge)"      },
-	{ 15, -1, -1, 23,    8,   6,    -1,    -1, NC, 0                   ,     0, "Ryzen 5 (Pinnacle Ridge)"      },
-	{ 15, -1, -1, 23,    8,   4,    -1,    -1, NC, 0                   , _2500, "Ryzen 5 (Pinnacle Ridge)"      },
-	{ 15, -1, -1, 23,    8,   4,    -1,    -1, NC, 0                   ,     0, "Ryzen 3 (Pinnacle Ridge)"      },
+	{ 15, -1, -1, 23,    8,  -1,    -1,    -1, NC, RYZEN_TR_           ,     0, "Threadripper (Colfax)"         },
+	{ 15, -1, -1, 23,    8,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Pinnacle Ridge)"      },
+	{ 15, -1, -1, 23,    8,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Pinnacle Ridge)"      },
+	{ 15, -1, -1, 23,    8,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Pinnacle Ridge)"      },
 
 
 	/* Newer Opterons: */
@@ -442,77 +417,71 @@ static int amd_has_turion_modelname(const char *bs)
 
 static struct amd_code_and_bits_t decode_amd_codename_part1(const char *bs)
 {
-	amd_code_t code = NC;
-	uint64_t bits = 0;
+	amd_code_t code = (amd_code_t) NC;
 	struct amd_code_and_bits_t result;
+	uint64_t bits = 0;
+	int i = 0;
 
-	if (strstr(bs, "Dual Core") ||
-	    strstr(bs, "Dual-Core") ||
-	    strstr(bs, " X2 "))
-		bits |= _X2;
-	if (strstr(bs, " X4 ")) bits |= _X4;
-	if (strstr(bs, " X3 ")) bits |= _X3;
-	if (strstr(bs, "Opteron")) bits |= OPTERON_;
-	if (strstr(bs, "Phenom")) {
-		code = (strstr(bs, "II")) ? PHENOM2 : PHENOM;
+	const struct { amd_code_t c; const char *search; } code_matchtable[] = {
+		{ PHENOM2, "Phenom(tm) II" },
+		{ PHENOM, "Phenom(tm)" },
+		{ FUSION_C, "C-##" },
+		{ FUSION_E, "E-###" },
+		{ FUSION_Z, "Z-##" },
+		{ FUSION_EA, "[EA]#-####" },
+	};
+
+	const struct { uint64_t bit; const char *search; } bit_matchtable[] = {
+		{ _X2, "Dual[- ]Core" },
+		{ _X2, " X2 " },
+		{ _X3, " X3 " },
+		{ _X4, " X4 " },
+		{ OPTERON_, "Opteron" },
+		{ ATHLON_, "Athlon" },
+		{ SEMPRON_, "Sempron(tm)" },
+		{ DURON_, "Duron" },
+		{ _64_, " 64 " },
+		{ _FX, " FX" },
+		{ _MP_, " MP" },
+		{ ATHLON_|_64_, "Athlon(tm) 64" },
+		{ ATHLON_|_64_, "Athlon(tm) II X" },
+		{ ATHLON_|_64_, "Athlon(tm) X#" },
+		{ TURION_, "Turion" },
+		{ MOBILE_, "[mM]obile" },
+		{ _XP_, "XP" },
+		{ _M_, "XP-M" },
+		{ _LV_, "(LV)" },
+		{ _APU_, " APU " },
+		{ EPYC_, "EPYC" },
+		{ RYZEN_TR_, "Ryzen Threadripper" },
+	};
+
+	for (i = 0; i < COUNT_OF(bit_matchtable); i++) {
+		if (match_pattern(bs, bit_matchtable[i].search))
+			bits |= bit_matchtable[i].bit;
 	}
 	if (amd_has_turion_modelname(bs)) {
 		bits |= TURION_;
 	}
-	if (strstr(bs, "Athlon(tm)")) bits |= ATHLON_;
-	if (strstr(bs, "Sempron(tm)")) bits |= SEMPRON_;
-	if (strstr(bs, "Duron")) bits |= DURON_;
-	if (strstr(bs, " 64 ")) bits |= _64_;
-	if (strstr(bs, " FX")) bits |= _FX;
-	if (strstr(bs, " MP")) bits |= _MP_;
-	if (strstr(bs, "Athlon(tm) 64") || strstr(bs, "Athlon(tm) II X") || match_pattern(bs, "Athlon(tm) X#")) {
-		bits |= ATHLON_ | _64_;
+	if ((i = match_pattern(bs, "Ryzen [357]")) != 0) {
+		bits |= RYZEN_;
+		i--;
+		switch (bs[i + 6]) {
+			case '3': bits |= _3; break;
+			case '5': bits |= _5; break;
+			case '7': bits |= _7; break;
+		}
 	}
-	if (strstr(bs, "Turion")) bits |= TURION_;
-	
-	if (strstr(bs, "mobile") || strstr(bs, "Mobile")) {
-		bits |= MOBILE_;
-	}
-	
-	if (strstr(bs, "XP")) bits |= _XP_;
-	if (strstr(bs, "XP-M")) bits |= _M_;
-	if (strstr(bs, "(LV)")) bits |= _LV_;
-	if (strstr(bs, " APU ")) bits |= _APU_;
 
-	if (match_pattern(bs, "C-##")) code = FUSION_C;
-	if (match_pattern(bs, "E-###")) code = FUSION_E;
-	if (match_pattern(bs, "Z-##")) code = FUSION_Z;
-	if (match_pattern(bs, "[EA]#-####")) code = FUSION_EA;
+	for (i = 0; i < COUNT_OF(code_matchtable); i++)
+		if (match_pattern(bs, code_matchtable[i].search)) {
+			code = code_matchtable[i].c;
+			break;
+		}
 
 	result.code = code;
 	result.bits = bits;
 	return result;
-}
-
-static int decode_amd_ryzen_model_code(const char* bs)
-{
-	const struct {
-		int model_code;
-		const char* match_str;
-	} patterns[] = {
-		{ _2800, "2800" },
-		{ _2700, "2700" },
-		{ _2600, "2600" },
-		{ _2500, "2500" },
-		{ _2400, "2400" },
-		{ _2200, "2200" },
-		{ _1900, "1900" },
-		{ _1600, "1600" },
-		{ _1500, "1500" },
-		{ _1400, "1400" },
-	};
-	int i;
-
-	for (i = 0; i < COUNT_OF(patterns); i++)
-		if (strstr(bs, patterns[i].match_str))
-			return patterns[i].model_code;
-	//
-	return 0;
 }
 
 static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal)
@@ -520,7 +489,7 @@ static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	struct amd_code_and_bits_t code_and_bits = decode_amd_codename_part1(data->brand_str);
 	int i = 0;
 	char* code_str = NULL;
-	int model_code;
+	int model_code = 0;
 
 	for (i = 0; i < COUNT_OF(amd_code_str); i++) {
 		if (code_and_bits.code == amd_code_str[i].code) {
@@ -541,8 +510,6 @@ static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		debugf(2, "Detected AMD bits: ");
 		debug_print_lbits(2, code_and_bits.bits);
 	}
-	// is it Ryzen? if so, we need to detect discern between the four-core 1400/1500 (Ryzen 5) and the four-core Ryzen 3:
-	model_code = (data->ext_family == 23) ? decode_amd_ryzen_model_code(data->brand_str) : 0;
 
 	internal->code.amd = code_and_bits.code;
 	internal->bits = code_and_bits.bits;
