@@ -702,7 +702,7 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, double 
 			Note: This family contains only APUs */
 			err  = cpu_rdmsr_range(info->handle, pstate, 8, 6, &CpuDid);
 			err += cpu_rdmsr_range(info->handle, pstate, 5, 0, &CpuFid);
-			*multiplier = (double) ((CpuFid + magic_constant) / (1ull << CpuDid)) / divisor;
+			*multiplier = ((double) (CpuFid + magic_constant) / (1ull << CpuDid)) / divisor;
 			break;
 		case 0x17:
 			/* PPR 17h, pages 30 and 138-139
@@ -711,7 +711,7 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, double 
 			CoreCOF is (Core::X86::Msr::PStateDef[CpuFid[7:0]] / Core::X86::Msr::PStateDef[CpuDfsId]) * 200 */
 			err  = cpu_rdmsr_range(info->handle, pstate, 13, 8, &CpuDid);
 			err += cpu_rdmsr_range(info->handle, pstate,  7, 0, &CpuFid);
-			*multiplier = (double) (CpuFid / CpuDid) * 2;
+			*multiplier = ((double) CpuFid / CpuDid) * 2;
 			break;
 		default:
 			err = 1;
