@@ -381,8 +381,13 @@ static void decode_amd_number_of_cores(struct cpu_raw_data_t* raw, struct cpu_id
 	}
 	if (data->flags[CPU_FEATURE_HT]) {
 		if (num_cores > 1) {
-			if (data->ext_family >= 23)
-				num_cores /= 2; // e.g., Ryzen 7 reports 16 "real" cores, but they are really just 8.
+			if ((data->ext_family >= 23) && (raw->ext_cpuid[0][0] >= 30))
+				/* Ryzen 3 has SMT flag, but in fact cores count is equal to threads count.
+				Ryzen 5/7 reports twice as many "real" cores (e.g. 16 cores instead of 8) because of SMT. */
+				/* On PPR 17h, page 82:
+				CPUID_Fn8000001E_EBX [Core Identifiers][15:8] is ThreadsPerCore
+				ThreadsPerCore: [...] The number of threads per core is ThreadsPerCore+1 */
+				num_cores /= ((raw->ext_cpuid[30][1] >> 8) & 0xff) + 1;
 			data->num_cores = num_cores;
 			data->num_logical_cpus = logical_cpus;
 		} else {
