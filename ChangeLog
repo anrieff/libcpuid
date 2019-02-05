@@ -46,3 +46,15 @@ Version 0.4.0 (2016-09-30):
 	  cpu_id_t are now different.
 	* Better detection of AMD clock multiplier with msrinfo.
 	* Support for Intel SGX detection
+
+Version 0.4.1 (2019-02-05):
+	* Better support for Skylake Core i5 (#76)
+	* Misdiagnosis microarchitecture for i3-3220T (#81)
+	* Ability to dump MSR values to a file (PR #82)
+	* AMD Ryzen support (#86)
+	* Support for Coffee and Kaby Lake (#104)
+	* Support for Raven Ridge and Threadripper (#106)
+	* Support for Pinnacle Ridge (#111)
+	* Fix P-III Celeron misdetection
+	* Support for Skylake-X (#116)
+	* Support for Zen+ Threadripper

@@ -29,7 +29,7 @@
  * \file     libcpuid.h
  * \author   Veselin Georgiev
  * \date     Oct 2008
- * \version  0.4.0
+ * \version  0.4.1
  *
  * Version history:
  *
@@ -57,6 +57,7 @@
  *                       Support for Intel SGX detection
  *                       (a backwards-incompatible change since the sizeof
  *                        cpu_raw_data_t and cpu_id_t is now different).
+ * * 0.4.1 (2019-02-05): A lot of DB updates, and better RDMSR
  */
 
 /** @mainpage A simple libcpuid introduction
