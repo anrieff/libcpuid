@@ -33,6 +33,8 @@
 #include "libcpuid_internal.h"
 #include "rdtsc.h"
 
+#define MSR_PATH_LEN 32
+
 #if defined (__linux__) || defined (__gnu_linux__)
 /* Assuming linux with /dev/cpu/x/msr: */
 #include <unistd.h>
@@ -65,7 +67,7 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 
 struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 {
-	char msr[32];
+	char msr[MSR_PATH_LEN];
 	struct msr_driver_t* handle;
 	if (core_num >= cpuid_get_total_cpus()) {
 		set_error(ERR_INVCNB);
@@ -75,7 +77,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 		set_error(ERR_NO_RDMSR);
 		return NULL;
 	}
-	sprintf(msr, "/dev/cpu/%u/msr", core_num);
+	snprintf(msr, MSR_PATH_LEN, "/dev/cpu/%u/msr", core_num);
 	if(!load_driver(msr)) {
 		set_error(ERR_NO_DRIVER);
 		return NULL;
@@ -149,7 +151,7 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 
 struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 {
-	char msr[32];
+	char msr[MSR_PATH_LEN];
 	struct msr_driver_t* handle;
 	if (core_num >= cpuid_get_total_cpus()) {
 		set_error(ERR_INVCNB);
@@ -159,7 +161,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 		set_error(ERR_NO_RDMSR);
 		return NULL;
 	}
-	sprintf(msr, "/dev/cpuctl%u", core_num);
+	snprintf(msr, MSR_PATH_LEN, "/dev/cpuctl%u", core_num);
 	if(!load_driver(msr)) {
 		set_error(ERR_NO_DRIVER);
 		return NULL;
