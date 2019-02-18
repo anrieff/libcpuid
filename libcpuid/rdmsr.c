@@ -33,6 +33,8 @@
 #include "libcpuid_internal.h"
 #include "rdtsc.h"
 
+#define MSR_PATH_LEN 32
+
 #if defined (__linux__) || defined (__gnu_linux__)
 /* Assuming linux with /dev/cpu/x/msr: */
 #include <unistd.h>
@@ -65,7 +67,7 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 
 struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 {
-	char msr[32];
+	char msr[MSR_PATH_LEN];
 	struct msr_driver_t* handle;
 	if (core_num >= cpuid_get_total_cpus()) {
 		set_error(ERR_INVCNB);
@@ -75,7 +77,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 		set_error(ERR_NO_RDMSR);
 		return NULL;
 	}
-	sprintf(msr, "/dev/cpu/%u/msr", core_num);
+	snprintf(msr, MSR_PATH_LEN, "/dev/cpu/%u/msr", core_num);
 	if(!load_driver(msr)) {
 		set_error(ERR_NO_DRIVER);
 		return NULL;
@@ -149,7 +151,7 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 
 struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 {
-	char msr[32];
+	char msr[MSR_PATH_LEN];
 	struct msr_driver_t* handle;
 	if (core_num >= cpuid_get_total_cpus()) {
 		set_error(ERR_INVCNB);
@@ -159,7 +161,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 		set_error(ERR_NO_RDMSR);
 		return NULL;
 	}
-	sprintf(msr, "/dev/cpuctl%u", core_num);
+	snprintf(msr, MSR_PATH_LEN, "/dev/cpuctl%u", core_num);
 	if(!load_driver(msr)) {
 		set_error(ERR_NO_DRIVER);
 		return NULL;
@@ -1021,7 +1023,7 @@ int msr_serialize_raw_data(struct msr_driver_t* handle, const char* filename)
 	if (handle == NULL)
 		return set_error(ERR_HANDLE);
 
-	if (!strcmp(filename, ""))
+	if ((filename == NULL) || !strcmp(filename, ""))
 		f = stdout;
 	else
 		f = fopen(filename, "wt");
@@ -1031,22 +1033,21 @@ int msr_serialize_raw_data(struct msr_driver_t* handle, const char* filename)
 		return -1;
 
 	fprintf(f, "CPU is %s %s, stock clock is %dMHz.\n", id.vendor_str, id.brand_str, cpu_clock_measure(250, 1));
-	if (id.vendor == VENDOR_INTEL)
-		msr = intel_msr;
-	else if (id.vendor == VENDOR_AMD)
-		msr = amd_msr;
-	else
-		return set_error(ERR_CPU_UNKN);
+	switch (id.vendor) {
+		case VENDOR_AMD:   msr = amd_msr; break;
+		case VENDOR_INTEL: msr = intel_msr; break;
+		default: return set_error(ERR_CPU_UNKN);
+	}
 
 	for (i = 0; msr[i] != CPU_INVALID_VALUE; i++) {
 		cpu_rdmsr(handle, msr[i], &reg);
 		fprintf(f, "msr[%#08x]=", msr[i]);
 		for (j = 56; j >= 0; j -= 8)
 			fprintf(f, "%02x ", (int) (reg >> j) & 0xff);
-		printf("\n");
+		fprintf(f, "\n");
 	}
 
-	if (strcmp(filename, ""))
+	if ((filename != NULL) && strcmp(filename, ""))
 		fclose(f);
 	return set_error(ERR_OK);
 }
