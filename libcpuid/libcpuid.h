@@ -110,6 +110,7 @@ typedef enum {
 	VENDOR_RISE,       /*!< x86 CPU by Rise Technology */
 	VENDOR_SIS,        /*!< x86 CPU by SiS */
 	VENDOR_NSC,        /*!< x86 CPU by National Semiconductor */
+	VENDOR_HYGON,	   /*!< Hygon CPU */
 	
 	NUM_CPU_VENDORS,   /*!< Valid CPU vendor ids: 0..NUM_CPU_VENDORS - 1 */
 	VENDOR_UNKNOWN = -1,

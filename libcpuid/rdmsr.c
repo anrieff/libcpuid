@@ -765,7 +765,7 @@ static double get_info_min_multiplier(struct msr_info_t *info)
 		err = cpu_rdmsr_range(info->handle, MSR_PLATFORM_INFO, 47, 40, &reg);
 		if (!err) return (double) reg;
 	}
-	else if(info->id->vendor == VENDOR_AMD) {
+	else if(info->id->vendor == VENDOR_AMD || info->id->vendor == VENDOR_HYGON) {
 		/* N.B.: Find the last P-state
 		get_amd_last_pstate_addr() returns the last P-state, MSR_PSTATE_0 <= addr <= MSR_PSTATE_7 */
 		addr = get_amd_last_pstate_addr(info);
@@ -794,7 +794,7 @@ static double get_info_cur_multiplier(struct msr_info_t *info)
 		err = cpu_rdmsr_range(info->handle, IA32_PERF_STATUS, 15, 8, &reg);
 		if (!err) return (double) reg;
 	}
-	else if(info->id->vendor == VENDOR_AMD) {
+	else if(info->id->vendor == VENDOR_AMD || info->id->vendor == VENDOR_HYGON) {
 		/* Refer links above
 		MSRC001_0063[2:0] is CurPstate */
 		err  = cpu_rdmsr_range(info->handle, MSR_PSTATE_S, 2, 0, &reg);
@@ -834,7 +834,7 @@ static double get_info_max_multiplier(struct msr_info_t *info)
 		err = cpu_rdmsr_range(info->handle, MSR_TURBO_RATIO_LIMIT, 7, 0, &reg);
 		if (!err) return (double) reg;
 	}
-	else if(info->id->vendor == VENDOR_AMD) {
+	else if(info->id->vendor == VENDOR_AMD || info->id->vendor == VENDOR_HYGON) {
 		/* Refer links above
 		MSRC001_0064 is Pb0
 		Pb0 is the highest-performance boosted P-state */
@@ -886,7 +886,7 @@ static double get_info_voltage(struct msr_info_t *info)
 		err = cpu_rdmsr_range(info->handle, MSR_PERF_STATUS, 47, 32, &reg);
 		if (!err) return (double) reg / (1 << 13);
 	}
-	else if(info->id->vendor == VENDOR_AMD) {
+	else if(info->id->vendor == VENDOR_AMD || info->id->vendor == VENDOR_HYGON) {
 		/* Refer links above
 		MSRC001_00[6B:64][15:9]  is CpuVid (Jaguar and before)
 		MSRC001_00[6B:64][21:14] is CpuVid (Zen)
@@ -926,7 +926,7 @@ static double get_info_bus_clock(struct msr_info_t *info)
 		err = cpu_rdmsr_range(info->handle, MSR_PLATFORM_INFO, 15, 8, &reg);
 		if (!err) return (double) info->cpu_clock / reg;
 	}
-	else if(info->id->vendor == VENDOR_AMD) {
+	else if(info->id->vendor == VENDOR_AMD || info->id->vendor == VENDOR_HYGON) {
 		/* Refer links above
 		MSRC001_0061[6:4] is PstateMaxVal
 		PstateMaxVal is the the lowest-performance non-boosted P-state */
@@ -1034,6 +1034,7 @@ int msr_serialize_raw_data(struct msr_driver_t* handle, const char* filename)
 
 	fprintf(f, "CPU is %s %s, stock clock is %dMHz.\n", id.vendor_str, id.brand_str, cpu_clock_measure(250, 1));
 	switch (id.vendor) {
+		case VENDOR_HYGON:
 		case VENDOR_AMD:   msr = amd_msr; break;
 		case VENDOR_INTEL: msr = intel_msr; break;
 		default: return set_error(ERR_CPU_UNKN);

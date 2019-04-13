@@ -251,7 +251,7 @@ static void adjust_march_ic_multiplier(const struct cpu_id_t* id, int* numerator
 	}
 	//
 	// Bulldozer or later: assume 1.4 IPC
-	if (id->vendor == VENDOR_AMD && id->ext_family >= 21) {
+	if ((id->vendor == VENDOR_AMD && id->ext_family >= 21) || (id->vendor == VENDOR_HYGON)) {
 		debugf(1, "cpu_clock_by_ic: Bulldozer (or later) detected, dividing result by 1.4\n");
 		*numerator = 5;
 		*denom = 7; // multiply by 5/7, to divide by 1.4

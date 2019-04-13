@@ -279,6 +279,10 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 23,    8,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Pinnacle Ridge)"      },
 	{ 15, -1, -1, 23,    8,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Pinnacle Ridge)"      },
 
+	{ 15, -1, -1, 24,    0,  -1,    -1,    -1, NC, C86_|_7              ,     0, "C86 7 (Dhyana)"               },
+	{ 15, -1, -1, 24,    0,  -1,    -1,    -1, NC, C86_|_5              ,     0, "C86 5 (Dhyana)"               },
+	{ 15, -1, -1, 24,    0,  -1,    -1,    -1, NC, C86_|_3              ,     0, "C86 3 (Dhyana)"               },
+
 
 	/* Newer Opterons: */
 	{ 15,  9, -1, 22,    9,   8,    -1,    -1, NC, OPTERON_            ,     0, "Magny-Cours Opteron"           },
@@ -459,6 +463,7 @@ static struct amd_code_and_bits_t decode_amd_codename_part1(const char *bs)
 		{ _APU_, " APU " },
 		{ EPYC_, "EPYC" },
 		{ RYZEN_TR_, "Ryzen Threadripper" },
+		{ C86_, "C86" },
 	};
 
 	for (i = 0; i < COUNT_OF(bit_matchtable); i++) {
@@ -470,6 +475,16 @@ static struct amd_code_and_bits_t decode_amd_codename_part1(const char *bs)
 	}
 	if ((i = match_pattern(bs, "Ryzen [357]")) != 0) {
 		bits |= RYZEN_;
+		i--;
+		switch (bs[i + 6]) {
+			case '3': bits |= _3; break;
+			case '5': bits |= _5; break;
+			case '7': bits |= _7; break;
+		}
+	}
+
+	if ((i = match_pattern(bs, "C86 [357]")) != 0) {
+		bits |= C86_;
 		i--;
 		switch (bs[i + 6]) {
 			case '3': bits |= _3; break;
