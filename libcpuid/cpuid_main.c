@@ -264,6 +264,7 @@ static cpu_vendor_t cpuid_vendor_identify(const uint32_t *raw_vendor, char *vend
 		{ VENDOR_RISE		, "RiseRiseRise" },
 		{ VENDOR_SIS		, "SiS SiS SiS " },
 		{ VENDOR_NSC		, "Geode by NSC" },
+		{ VENDOR_HYGON		, "HygonGenuine" },
 	};
 
 	memcpy(vendor_str + 0, &raw_vendor[1], 4);
@@ -519,6 +520,7 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 			r = cpuid_identify_intel(raw, data, internal);
 			break;
 		case VENDOR_AMD:
+		case VENDOR_HYGON:
 			r = cpuid_identify_amd(raw, data, internal);
 			break;
 		default:
@@ -729,6 +731,7 @@ void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list)
 			cpuid_get_list_intel(list);
 			break;
 		case VENDOR_AMD:
+		case VENDOR_HYGON:
 			cpuid_get_list_amd(list);
 			break;
 		case VENDOR_CYRIX:
