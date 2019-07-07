@@ -67,6 +67,7 @@ enum _common_bits_t {
 	_3                      = LBIT(  3 ),
 	_5                      = LBIT(  4 ),
 	_7                      = LBIT(  5 ),
+	_9                      = LBIT(  6 ),
 };
 
 // additional detection bits for Intel CPUs:
@@ -75,9 +76,8 @@ enum _intel_bits_t {
 	CELERON_                = LBIT( 11 ),
 	CORE_                   = LBIT( 12 ),
 	_I_                     = LBIT( 13 ),
-	_9                      = LBIT( 14 ),
-	XEON_                   = LBIT( 15 ),
-	ATOM_                   = LBIT( 16 ),
+	XEON_                   = LBIT( 14 ),
+	ATOM_                   = LBIT( 15 ),
 };
 typedef enum _intel_bits_t intel_bits_t;
 

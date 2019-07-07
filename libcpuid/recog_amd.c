@@ -262,22 +262,35 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  0, -1, 22,   48,   2,    -1,    -1, FUSION_E, 0             ,     0, "Mullins X2"                    },
 	{ 15,  0, -1, 22,   48,   4,    -1,    -1, FUSION_A, 0             ,     0, "Mullins X4"                    },
 
-	/* Family 17h: Zen Architecture (2017) */
+	/* Family 17h: Zen Architecture (2017) => https://en.wikichip.org/wiki/amd/microarchitectures/zen */
 	{ 15, -1, -1, 23,    1,  -1,    -1,    -1, NC, EPYC_               ,     0, "EPYC (Naples)"                 },
 	{ 15, -1, -1, 23,    1,  -1,    -1,    -1, NC, RYZEN_TR_           ,     0, "Threadripper (Whitehaven)"     },
 	{ 15, -1, -1, 23,    1,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Summit Ridge)"        },
 	{ 15, -1, -1, 23,    1,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Summit Ridge)"        },
 	{ 15, -1, -1, 23,    1,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Summit Ridge)"        },
-	/* APUs */
 	{ 15, -1, -1, 23,   17,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Raven Ridge)"         },
 	{ 15, -1, -1, 23,   17,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Raven Ridge)"         },
 	{ 15, -1, -1, 23,   17,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Raven Ridge)"         },
 	{ 15, -1, -1, 23,   17,  -1,    -1,    -1, NC, ATHLON_             ,     0, "Athlon (Raven Ridge)"          },
-	/* 2nd-gen, Zen+ (2018): */
+	/* Zen+ (2018) => https://en.wikichip.org/wiki/amd/microarchitectures/zen%2B */
 	{ 15, -1, -1, 23,    8,  -1,    -1,    -1, NC, RYZEN_TR_           ,     0, "Threadripper (Colfax)"         },
 	{ 15, -1, -1, 23,    8,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Pinnacle Ridge)"      },
 	{ 15, -1, -1, 23,    8,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Pinnacle Ridge)"      },
 	{ 15, -1, -1, 23,    8,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Pinnacle Ridge)"      },
+	{ 15, -1, -1, 23,   24,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Picasso)"             },
+	{ 15, -1, -1, 23,   24,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Picasso)"             },
+	{ 15, -1, -1, 23,   24,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Picasso)"             },
+	{ 15, -1, -1, 23,   24,  -1,    -1,    -1, NC, ATHLON_             ,     0, "Athlon (Picasso)"              },
+	/* Zen 2 (2019) => https://en.wikichip.org/wiki/amd/microarchitectures/zen_2 */
+	{ 15, -1, -1, 23,  113,  -1,    -1,    -1, NC, EPYC_               ,     0, "EPYC (Rome)"                   },
+	{ 15, -1, -1, 23,  113,  -1,    -1,    -1, NC, RYZEN_|_9           ,     0, "Ryzen 9 (Matisse)"             },
+	{ 15, -1, -1, 23,  113,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Matisse)"             },
+	{ 15, -1, -1, 23,  113,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Matisse)"             },
+	{ 15, -1, -1, 23,  113,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Matisse)"             },
+	//{ 15, -1, -1, 23,   ??,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Renoir)"             }, //TBA
+	//{ 15, -1, -1, 23,   ??,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Renoir)"             }, //TBA
+	//{ 15, -1, -1, 23,   ??,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Renoir)"             }, //TBA
+	//{ 15, -1, -1, 23,   ??,  -1,    -1,    -1, NC, ATHLON_             ,     0, "Athlon (Renoir)"              }, //TBA
 
 
 	/* Newer Opterons: */
@@ -468,13 +481,14 @@ static struct amd_code_and_bits_t decode_amd_codename_part1(const char *bs)
 	if (amd_has_turion_modelname(bs)) {
 		bits |= TURION_;
 	}
-	if ((i = match_pattern(bs, "Ryzen [357]")) != 0) {
+	if ((i = match_pattern(bs, "Ryzen [3579]")) != 0) {
 		bits |= RYZEN_;
 		i--;
 		switch (bs[i + 6]) {
 			case '3': bits |= _3; break;
 			case '5': bits |= _5; break;
 			case '7': bits |= _7; break;
+			case '9': bits |= _9; break;
 		}
 	}
 
