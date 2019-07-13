@@ -180,6 +180,9 @@ void cpu_rdtsc(uint64_t* result)
 #ifdef PLATFORM_ARM
   low_part = 0;
   hi_part = 0;
+#elif defined(PLATFORM_AARCH64)
+  low_part = 0;
+  hi_part = 0;
 #else
 	__asm __volatile (
 		"	rdtsc\n"
@@ -213,6 +216,7 @@ void busy_sse_loop(int cycles)
 #	define XALIGN ".align 4\n"
 #endif
 #ifdef PLATFORM_ARM
+#elif defined(PLATFORM_AARCH64)
 #else
 	__asm __volatile (
 		"	xorps	%%xmm0,	%%xmm0\n"
