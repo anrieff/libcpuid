@@ -406,6 +406,9 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		{ 30, CPU_FEATURE_AVX512BW },
 		{ 31, CPU_FEATURE_AVX512VL },
 	};
+	const struct feature_map_t matchtable_ecx7[] = {
+		{ 11, CPU_FEATURE_AVX512VNNI },
+	};
 	if (raw->basic_cpuid[0][0] >= 1) {
 		match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][3], data);
 		match_features(matchtable_ecx1, COUNT_OF(matchtable_ecx1), raw->basic_cpuid[1][2], data);
@@ -416,6 +419,7 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	// detect TSX/AVX512:
 	if (raw->basic_cpuid[0][0] >= 7) {
 		match_features(matchtable_ebx7, COUNT_OF(matchtable_ebx7), raw->basic_cpuid[7][1], data);
+		match_features(matchtable_ecx7, COUNT_OF(matchtable_ecx7), raw->basic_cpuid[7][2], data);
 	}
 }
 
