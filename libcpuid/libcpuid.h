@@ -489,6 +489,7 @@ typedef enum {
 	CPU_FEATURE_SGX,	/*!< SGX extensions. Non-autoritative, check cpu_id_t::sgx::present to verify presence */
 	CPU_FEATURE_RDSEED,	/*!< RDSEED instruction */
 	CPU_FEATURE_ADX,	/*!< ADX extensions (arbitrary precision) */
+	CPU_FEATURE_AVX512VNNI, /*!< AVX-512 Vector Neural Network Instructions */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;
