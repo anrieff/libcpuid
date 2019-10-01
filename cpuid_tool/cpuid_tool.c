@@ -162,7 +162,7 @@ static void usage(void)
 	printf("Options:\n");
 	printf("  -h, --help       - Show this help\n");
 	printf("  --load=<file>    - Load raw CPUID data from file\n");
-	printf("  --save=<file>    - Aquire raw CPUID data and write it to file\n");
+	printf("  --save=<file>    - Acquire raw CPUID data and write it to file\n");
 	printf("  --report, --all  - Report all decoded CPU info (w/o clock)\n");
 	printf("  --clock          - in conjunction to --report: print CPU clock as well\n");
 	printf("  --clock-rdtsc    - same as --clock, but use RDTSC for clock detection\n");
@@ -173,7 +173,7 @@ static void usage(void)
 	printf("  --verbose, -v    - be extra verbose (more keys increase verbosiness level)\n");
 	printf("  --version        - print library version\n");
 	printf("\n");
-	printf("Query switches (generate 1 line of ouput per switch; in order of appearance):");
+	printf("Query switches (generate 1 line of output per switch; in order of appearance):");
 	
 	line_fill = 80;
 	for (i = 0; i < sz_match; i++) {

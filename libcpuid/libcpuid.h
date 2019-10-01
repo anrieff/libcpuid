@@ -264,7 +264,7 @@ struct cpu_id_t {
 	
 	/**
 	 * The total number of logical processors.
-	 * The same value is availabe through \ref cpuid_get_total_cpus.
+	 * The same value is available through \ref cpuid_get_total_cpus.
 	 *
 	 * This is num_logical_cpus * {total physical processors in the system}
 	 * (but only on a real system, under a VM this number may be lower).
@@ -734,7 +734,7 @@ void cpu_tsc_mark(struct cpu_mark_t* mark);
 /**
  * @brief Calculate TSC and timing difference
  *
- * @param mark - input/output: a pointer to a cpu_mark_t sturcture, which has
+ * @param mark - input/output: a pointer to a cpu_mark_t structure, which has
  *               already been initialized by cpu_tsc_mark. The difference in
  *               TSC and time will be written here.
  *
