@@ -114,6 +114,17 @@ static int get_total_cpus(void)
 #define GET_TOTAL_CPUS_DEFINED
 #endif
 
+#ifdef __HAIKU__
+#include <OS.h>
+static int get_total_cpus(void)
+{
+	system_info info;
+	get_system_info(&info);
+	return info.cpu_count;
+}
+#define GET_TOTAL_CPUS_DEFINED
+#endif
+
 #if defined linux || defined __linux__ || defined __sun
 #include <sys/sysinfo.h>
 #include <unistd.h>
