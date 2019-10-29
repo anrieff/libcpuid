@@ -70,8 +70,6 @@ int cpuid_exists_by_eflags(void)
 #  else
 	return 0;
 #  endif /* COMPILER_MICROSOFT */
-#elif defined(PLATFORM_ARM)
-  return 0;
 #else
 	return 0;
 #endif /* PLATFORM_X86 */
@@ -137,7 +135,6 @@ void exec_cpuid(uint32_t *regs)
 		:"m"(regs)
 		:"memory", "eax", "edi"
 	);
-#	elif defined(PLATFORM_ARM)
 #	endif /* COMPILER_GCC */
 #else
 #  ifdef COMPILER_MICROSOFT
@@ -177,20 +174,17 @@ void cpu_rdtsc(uint64_t* result)
 {
 	uint32_t low_part, hi_part;
 #if defined(COMPILER_GCC) || defined(COMPILER_CLANG)
-#ifdef PLATFORM_ARM
-  low_part = 0;
-  hi_part = 0;
-#elif defined(PLATFORM_AARCH64)
-  low_part = 0;
-  hi_part = 0;
-#else
+#  if defined(PLATFORM_X86) || defined(PLATFORM_X64)
 	__asm __volatile (
 		"	rdtsc\n"
 		"	mov	%%eax,	%0\n"
 		"	mov	%%edx,	%1\n"
 		:"=m"(low_part), "=m"(hi_part)::"memory", "eax", "edx"
 	);
-#endif
+#  else
+  low_part = 0;
+  hi_part = 0;
+#  endif
 #else
 #  ifdef COMPILER_MICROSOFT
 	__asm {
@@ -215,9 +209,7 @@ void busy_sse_loop(int cycles)
 #else
 #	define XALIGN ".align 4\n"
 #endif
-#ifdef PLATFORM_ARM
-#elif defined(PLATFORM_AARCH64)
-#else
+#if defined(PLATFORM_X86) || defined(PLATFORM_X64)
 	__asm __volatile (
 		"	xorps	%%xmm0,	%%xmm0\n"
 		"	xorps	%%xmm1,	%%xmm1\n"
