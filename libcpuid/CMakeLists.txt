@@ -1,12 +1,18 @@
+set(cpuid_sources cpuid_main.c
+    recog_intel.c
+    recog_amd.c
+    rdtsc.c
+    libcpuid_util.c
+    rdmsr.c
+    msrdriver.c
+    asm-bits.c)
+
+if ("${MSVC_CXX_ARCHITECTURE_ID}" MATCHES "x64")
+    list(APPEND cpuid_sources masm-x64.asm)
+endif ()
+
 add_library(cpuid
-            cpuid_main.c
-            recog_intel.c
-            recog_amd.c
-            rdtsc.c
-            asm-bits.c
-            libcpuid_util.c
-            rdmsr.c
-            msrdriver.c
+            ${cpuid_sources}
             )
 target_include_directories(cpuid SYSTEM PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
