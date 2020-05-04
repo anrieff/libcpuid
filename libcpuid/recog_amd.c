@@ -370,7 +370,7 @@ static void decode_amd_cache_info(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 {
 	int l3_result;
 	const int assoc_table[16] = {
-		0, 1, 2, 0, 4, 0, 8, 0, 16, 0, 32, 48, 64, 96, 128, 255
+		0, 1, 2, 0, 4, 0, 8, 0, 16, 16, 32, 48, 64, 96, 128, 255
 	};
 	unsigned n = raw->ext_cpuid[0][0];
 	

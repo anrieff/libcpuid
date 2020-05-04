@@ -6,15 +6,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #define LINE_LEN     53
-#define FILENAME_LEN 32
+#define FILENAME_LEN 128
 #define CMD_LEN      256
 #define EXT_CPUID    0x80000000
 
 int main(int argc, char *argv[])
 {
-	uint32_t addr, eax, ebx, ecx, edx;
+	uint32_t addr, prev_addr, eax, ebx, ecx, edx;
 	char line[LINE_LEN], raw_filename[FILENAME_LEN], report_filename[FILENAME_LEN], cmd[CMD_LEN];
 	FILE *fin = NULL, *fout = NULL;
 
@@ -24,25 +25,29 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	snprintf(raw_filename,    FILENAME_LEN, "%s.raw",        argv[2]);
-	snprintf(report_filename, FILENAME_LEN, "%s_report.txt", argv[2]);
+	const char *input_filename  = argv[1];
+	const char *output_filename = argv[2];
+	snprintf(raw_filename,    FILENAME_LEN, "%s.raw",        output_filename);
+	snprintf(report_filename, FILENAME_LEN, "%s_report.txt", output_filename);
 
-	if((fin  = fopen(argv[1], "r")) == NULL)
+	/* Open files */
+	if((fin  = fopen(input_filename, "r")) == NULL)
 	{
 		perror("Failed to open input file");
 		return 1;
 	}
-
 	if((fout = fopen(raw_filename, "w")) == NULL)
 	{
 		perror("Failed to open output file");
 		return 1;
 	}
 
+	/* Parse and convert CPUID dump */
+	prev_addr = -1;
 	while(fgets(line, LINE_LEN, fin) != NULL)
 	{
 		sscanf(line, "CPUID %x: %x-%x-%x-%x", &addr, &eax, &ebx, &ecx, &edx);
-		if(((addr < EXT_CPUID) && (addr >= 32)) || ((addr >= EXT_CPUID) && (addr - EXT_CPUID >= 32)))
+		if(((addr < EXT_CPUID) && (addr >= 32)) || ((addr >= EXT_CPUID) && (addr - EXT_CPUID >= 32)) || (addr == prev_addr))
 			continue;
 
 		if(addr < EXT_CPUID)
@@ -50,13 +55,27 @@ int main(int argc, char *argv[])
 		else
 			fprintf(fout, "ext_cpuid[%d]", addr - EXT_CPUID);
 		fprintf(fout, "=%08x %08x %08x %08x\n", eax, ebx, ecx, edx);
+		prev_addr = addr;
 	}
 
+	/* Invoke cpuid_tool */
 	fclose(fout);
 	snprintf(cmd, CMD_LEN, "cpuid_tool --load=%s --report --outfile=%s", raw_filename, report_filename);
 	system(cmd);
-	printf("Done. Use the following command to create the test file:\n");
-	printf("./create_test.py %s %s > %s.test\n", raw_filename, report_filename, argv[2]);
+	
+	/* Invoke create_test */
+	snprintf(cmd, CMD_LEN, "./create_test.py %s %s > %s.test", raw_filename, report_filename, output_filename);
+	if((argc > 3) && !strcmp(argv[3], "--create"))
+	{
+		system(cmd);
+		remove(raw_filename);
+		remove(report_filename);
+	}
+	else
+	{
+		printf("Done. Use the following command to create the test file:\n");
+		printf("%s\n", cmd);
+	}
 
 	return 0;
 }
