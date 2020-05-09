@@ -263,7 +263,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  5, -1, -1, 37,   2,    -1,  3072, NC, CORE_|_I_|_5  ,     0, "Arrandale (Core i5)"      },
 	{  6,  5, -1, -1, 37,   2,    -1,  3072, NC, CORE_|_I_|_3  ,     0, "Arrandale (Core i3)"      },
 
-	/* Sandy Bridge CPUs (32nm): */
+	/* Sandy Bridge CPUs (2nd gen, 32nm): */
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, NC, 0             ,     0, "Unknown Sandy Bridge"     },
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, NC, XEON_         ,     0, "Sandy Bridge (Xeon)"      },
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Sandy Bridge (Core i7)"   },
@@ -276,7 +276,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 13, -1, -1, 45,  -1,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Sandy Bridge-E"           },
 	{  6, 13, -1, -1, 45,  -1,    -1,    -1, NC, XEON_         ,     0, "Sandy Bridge-E (Xeon)"    },
 
-	/* Ivy Bridge CPUs (22nm): */
+	/* Ivy Bridge CPUs (3rd gen, 22nm): */
 	{  6, 10, -1, -1, 58,  -1,    -1,    -1, NC, XEON_         ,     0, "Ivy Bridge (Xeon)"        },
 	{  6, 10, -1, -1, 58,   4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Ivy Bridge (Core i7)"     },
 	{  6, 10, -1, -1, 58,   4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Ivy Bridge (Core i5)"     },
@@ -286,7 +286,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 58,   2,    -1,    -1, NC, CELERON_      ,     0, "Ivy Bridge (Celeron)"     },
 	{  6, 14, -1, -1, 62,  -1,    -1,    -1, NC, 0             ,     0, "Ivy Bridge-E"             },
 	
-	/* Haswell CPUs (22nm): */
+	/* Haswell CPUs (4th gen, 22nm): */
 	{  6, 12, -1, -1, 60,  -1,    -1,    -1, NC, XEON_         ,     0, "Haswell (Xeon)"           },
 	{  6, 12, -1, -1, 60,   4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Haswell (Core i7)"        },
 	{  6,  5, -1, -1, 69,   4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Haswell (Core i7)"        },
@@ -302,7 +302,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 12, -1, -1, 60,   1,    -1,    -1, NC, CELERON_      ,     0, "Haswell (Celeron)"        },
 	{  6, 15, -1, -1, 63,  -1,    -1,    -1, NC, 0             ,     0, "Haswell-E"                },
 
-	/* Broadwell CPUs (14nm): */
+	/* Broadwell CPUs (5th gen, 14nm): */
 	{  6,  7, -1, -1, 71,   4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Broadwell (Core i7)"      },
 	{  6,  7, -1, -1, 71,   4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Broadwell (Core i5)"      },
 	{  6, 13, -1, -1, 61,   4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Broadwell-U (Core i7)"    },
@@ -319,7 +319,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, 79,   2,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Broadwell-E (Core i7)"    },
 	{  6, 15, -1, -1, 79,   4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Broadwell-E (Core i7)"    },
 
-	/* Skylake CPUs (14nm): */
+	/* Skylake CPUs (6th gen, 14nm): */
 	{  6, 14, -1, -1, 94,  -1,    -1,    -1, NC, XEON_         ,     0, "Skylake (Xeon)"           },
 	{  6, 14, -1, -1, 94,   4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Skylake (Core i7)"        },
 	{  6, 14, -1, -1, 94,   4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Skylake (Core i5)"        },
@@ -335,7 +335,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, CORE_|_I_|_9,       0, "Skylake-X (Core i9)"      }, /* 10 to 18 cores */
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, CORE_|_I_|_7,       0, "Skylake-X (Core i7)"      }, /* 6 to 8 cores */
 
-	/* Kaby Lake CPUs (14nm): */
+	/* Kaby Lake CPUs (7th gen, 14nm): */
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Kaby Lake (Core i7)"      },
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Kaby Lake (Core i5)"      },
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Kaby Lake (Core i3)"      },
@@ -348,7 +348,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 142,  2,    -1,    -1, NC, CELERON_      ,     0, "Kaby Lake-U (Celeron)"    },
 	{  6, 14, -1, -1, 142,  2,    -1,    -1, NC, CORE_|_M_|_3  ,     0, "Kaby Lake-U (Core m3)"    },
 
-	/* Coffee Lake CPUs (14nm): */
+	/* Coffee Lake CPUs (8th gen, 14nm): */
 	{  6, 14, -1, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_9  ,     0, "Coffee Lake (Core i9)"    },
 	{  6, 14, -1, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Coffee Lake (Core i7)"    },
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Coffee Lake (Core i7)"    },
