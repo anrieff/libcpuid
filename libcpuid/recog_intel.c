@@ -356,6 +356,8 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Coffee Lake (Core i3)"    },
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, NC, PENTIUM_      ,     0, "Coffee Lake (Pentium)"    },
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, NC, CELERON_      ,     0, "Coffee Lake (Celeron)"    },
+	{  6,  6, -1, -1, 102,  2,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Cannon Lake (Core i3)"    }, /* Core i3 8121U */
+	{  6,  6, -1, -1, 102,  2,    -1,    -1, NC, CORE_|_M_|_3  ,     0, "Cannon Lake (Core m3)"    }, /* Core m3 8114Y */
 
 
 	/* Itaniums */
