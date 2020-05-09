@@ -227,19 +227,19 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 	const struct feature_map_t matchtable_edx87[] = {
 		{  8, CPU_FEATURE_CONSTANT_TSC },
 	};
-	if (raw->basic_cpuid[0][0] >= 1) {
-		match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][3], data);
-		match_features(matchtable_ecx1, COUNT_OF(matchtable_ecx1), raw->basic_cpuid[1][2], data);
+	if (raw->basic_cpuid[0][EAX] >= 1) {
+		match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][EDX], data);
+		match_features(matchtable_ecx1, COUNT_OF(matchtable_ecx1), raw->basic_cpuid[1][ECX], data);
 	}
-	if (raw->basic_cpuid[0][0] >= 7) {
-		match_features(matchtable_ebx7, COUNT_OF(matchtable_ebx7), raw->basic_cpuid[7][1], data);
+	if (raw->basic_cpuid[0][EAX] >= 7) {
+		match_features(matchtable_ebx7, COUNT_OF(matchtable_ebx7), raw->basic_cpuid[7][EBX], data);
 	}
-	if (raw->ext_cpuid[0][0] >= 0x80000001) {
-		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][3], data);
-		match_features(matchtable_ecx81, COUNT_OF(matchtable_ecx81), raw->ext_cpuid[1][2], data);
+	if (raw->ext_cpuid[0][EAX] >= 0x80000001) {
+		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][EDX], data);
+		match_features(matchtable_ecx81, COUNT_OF(matchtable_ecx81), raw->ext_cpuid[1][ECX], data);
 	}
-	if (raw->ext_cpuid[0][0] >= 0x80000007) {
-		match_features(matchtable_edx87, COUNT_OF(matchtable_edx87), raw->ext_cpuid[7][3], data);
+	if (raw->ext_cpuid[0][EAX] >= 0x80000007) {
+		match_features(matchtable_edx87, COUNT_OF(matchtable_edx87), raw->ext_cpuid[7][EDX], data);
 	}
 	if (data->flags[CPU_FEATURE_SSE]) {
 		/* apply guesswork to check if the SSE unit width is 128 bit */
@@ -300,20 +300,20 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 
 	if (data->vendor == VENDOR_UNKNOWN)
 		return set_error(ERR_CPU_UNKN);
-	basic = raw->basic_cpuid[0][0];
+	basic = raw->basic_cpuid[0][EAX];
 	if (basic >= 1) {
-		data->family = (raw->basic_cpuid[1][0] >> 8) & 0xf;
-		data->model = (raw->basic_cpuid[1][0] >> 4) & 0xf;
-		data->stepping = raw->basic_cpuid[1][0] & 0xf;
-		xmodel = (raw->basic_cpuid[1][0] >> 16) & 0xf;
-		xfamily = (raw->basic_cpuid[1][0] >> 20) & 0xff;
+		data->family = (raw->basic_cpuid[1][EAX] >> 8) & 0xf;
+		data->model = (raw->basic_cpuid[1][EAX] >> 4) & 0xf;
+		data->stepping = raw->basic_cpuid[1][EAX] & 0xf;
+		xmodel = (raw->basic_cpuid[1][EAX] >> 16) & 0xf;
+		xfamily = (raw->basic_cpuid[1][EAX] >> 20) & 0xff;
 		if (data->vendor == VENDOR_AMD && data->family < 0xf)
 			data->ext_family = data->family;
 		else
 			data->ext_family = data->family + xfamily;
 		data->ext_model = data->model + (xmodel << 4);
 	}
-	ext = raw->ext_cpuid[0][0] - 0x8000000;
+	ext = raw->ext_cpuid[0][EAX] - 0x8000000;
 
 	/* obtain the brand string, if present: */
 	if (ext >= 4) {
@@ -388,26 +388,26 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 		cpu_exec_cpuid(0x80000000 + i, data->ext_cpuid[i]);
 	for (i = 0; i < MAX_INTELFN4_LEVEL; i++) {
 		memset(data->intel_fn4[i], 0, sizeof(data->intel_fn4[i]));
-		data->intel_fn4[i][0] = 4;
-		data->intel_fn4[i][2] = i;
+		data->intel_fn4[i][EAX] = 4;
+		data->intel_fn4[i][ECX] = i;
 		cpu_exec_cpuid_ext(data->intel_fn4[i]);
 	}
 	for (i = 0; i < MAX_INTELFN11_LEVEL; i++) {
 		memset(data->intel_fn11[i], 0, sizeof(data->intel_fn11[i]));
-		data->intel_fn11[i][0] = 11;
-		data->intel_fn11[i][2] = i;
+		data->intel_fn11[i][EAX] = 11;
+		data->intel_fn11[i][ECX] = i;
 		cpu_exec_cpuid_ext(data->intel_fn11[i]);
 	}
 	for (i = 0; i < MAX_INTELFN12H_LEVEL; i++) {
 		memset(data->intel_fn12h[i], 0, sizeof(data->intel_fn12h[i]));
-		data->intel_fn12h[i][0] = 0x12;
-		data->intel_fn12h[i][2] = i;
+		data->intel_fn12h[i][EAX] = 0x12;
+		data->intel_fn12h[i][ECX] = i;
 		cpu_exec_cpuid_ext(data->intel_fn12h[i]);
 	}
 	for (i = 0; i < MAX_INTELFN14H_LEVEL; i++) {
 		memset(data->intel_fn14h[i], 0, sizeof(data->intel_fn14h[i]));
-		data->intel_fn14h[i][0] = 0x14;
-		data->intel_fn14h[i][2] = i;
+		data->intel_fn14h[i][EAX] = 0x14;
+		data->intel_fn14h[i][ECX] = i;
 		cpu_exec_cpuid_ext(data->intel_fn14h[i]);
 	}
 	return set_error(ERR_OK);
@@ -427,28 +427,28 @@ int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 	fprintf(f, "version=%s\n", VERSION);
 	for (i = 0; i < MAX_CPUID_LEVEL; i++)
 		fprintf(f, "basic_cpuid[%d]=%08x %08x %08x %08x\n", i,
-			data->basic_cpuid[i][0], data->basic_cpuid[i][1],
-			data->basic_cpuid[i][2], data->basic_cpuid[i][3]);
+			data->basic_cpuid[i][EAX], data->basic_cpuid[i][EBX],
+			data->basic_cpuid[i][ECX], data->basic_cpuid[i][EDX]);
 	for (i = 0; i < MAX_EXT_CPUID_LEVEL; i++)
 		fprintf(f, "ext_cpuid[%d]=%08x %08x %08x %08x\n", i,
-			data->ext_cpuid[i][0], data->ext_cpuid[i][1],
-			data->ext_cpuid[i][2], data->ext_cpuid[i][3]);
+			data->ext_cpuid[i][EAX], data->ext_cpuid[i][EBX],
+			data->ext_cpuid[i][ECX], data->ext_cpuid[i][EDX]);
 	for (i = 0; i < MAX_INTELFN4_LEVEL; i++)
 		fprintf(f, "intel_fn4[%d]=%08x %08x %08x %08x\n", i,
-			data->intel_fn4[i][0], data->intel_fn4[i][1],
-			data->intel_fn4[i][2], data->intel_fn4[i][3]);
+			data->intel_fn4[i][EAX], data->intel_fn4[i][EBX],
+			data->intel_fn4[i][ECX], data->intel_fn4[i][EDX]);
 	for (i = 0; i < MAX_INTELFN11_LEVEL; i++)
 		fprintf(f, "intel_fn11[%d]=%08x %08x %08x %08x\n", i,
-			data->intel_fn11[i][0], data->intel_fn11[i][1],
-			data->intel_fn11[i][2], data->intel_fn11[i][3]);
+			data->intel_fn11[i][EAX], data->intel_fn11[i][EBX],
+			data->intel_fn11[i][ECX], data->intel_fn11[i][EDX]);
 	for (i = 0; i < MAX_INTELFN12H_LEVEL; i++)
 		fprintf(f, "intel_fn12h[%d]=%08x %08x %08x %08x\n", i,
-			data->intel_fn12h[i][0], data->intel_fn12h[i][1],
-			data->intel_fn12h[i][2], data->intel_fn12h[i][3]);
+			data->intel_fn12h[i][EAX], data->intel_fn12h[i][EBX],
+			data->intel_fn12h[i][ECX], data->intel_fn12h[i][EDX]);
 	for (i = 0; i < MAX_INTELFN14H_LEVEL; i++)
 		fprintf(f, "intel_fn14h[%d]=%08x %08x %08x %08x\n", i,
-			data->intel_fn14h[i][0], data->intel_fn14h[i][1],
-			data->intel_fn14h[i][2], data->intel_fn14h[i][3]);
+			data->intel_fn14h[i][EAX], data->intel_fn14h[i][EBX],
+			data->intel_fn14h[i][ECX], data->intel_fn14h[i][EDX]);
 
 	if (strcmp(filename, ""))
 		fclose(f);

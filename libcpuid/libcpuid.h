@@ -126,31 +126,31 @@ typedef enum {
  */
 struct cpu_raw_data_t {
 	/** contains results of CPUID for eax = 0, 1, ...*/
-	uint32_t basic_cpuid[MAX_CPUID_LEVEL][4];
+	uint32_t basic_cpuid[MAX_CPUID_LEVEL][NUM_REGS];
 
 	/** contains results of CPUID for eax = 0x80000000, 0x80000001, ...*/
-	uint32_t ext_cpuid[MAX_EXT_CPUID_LEVEL][4];
+	uint32_t ext_cpuid[MAX_EXT_CPUID_LEVEL][NUM_REGS];
 
 	/** when the CPU is intel and it supports deterministic cache
 	    information: this contains the results of CPUID for eax = 4
 	    and ecx = 0, 1, ... */
-	uint32_t intel_fn4[MAX_INTELFN4_LEVEL][4];
+	uint32_t intel_fn4[MAX_INTELFN4_LEVEL][NUM_REGS];
 
 	/** when the CPU is intel and it supports leaf 0Bh (Extended Topology
 	    enumeration leaf), this stores the result of CPUID with
 	    eax = 11 and ecx = 0, 1, 2... */
-	uint32_t intel_fn11[MAX_INTELFN11_LEVEL][4];
+	uint32_t intel_fn11[MAX_INTELFN11_LEVEL][NUM_REGS];
 
 	/** when the CPU is intel and supports leaf 12h (SGX enumeration leaf),
 	 *  this stores the result of CPUID with eax = 0x12 and
 	 *  ecx = 0, 1, 2... */
-	uint32_t intel_fn12h[MAX_INTELFN12H_LEVEL][4];
+	uint32_t intel_fn12h[MAX_INTELFN12H_LEVEL][NUM_REGS];
 
 	/** when the CPU is intel and supports leaf 14h (Intel Processor Trace
 	 *  capabilities leaf).
 	 *  this stores the result of CPUID with eax = 0x12 and
 	 *  ecx = 0, 1, 2... */
-	uint32_t intel_fn14h[MAX_INTELFN14H_LEVEL][4];
+	uint32_t intel_fn14h[MAX_INTELFN14H_LEVEL][NUM_REGS];
 };
 
 /**

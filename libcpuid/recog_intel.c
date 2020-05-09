@@ -434,17 +434,17 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	const struct feature_map_t matchtable_ecx7[] = {
 		{ 11, CPU_FEATURE_AVX512VNNI },
 	};
-	if (raw->basic_cpuid[0][0] >= 1) {
-		match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][3], data);
-		match_features(matchtable_ecx1, COUNT_OF(matchtable_ecx1), raw->basic_cpuid[1][2], data);
+	if (raw->basic_cpuid[0][EAX] >= 1) {
+		match_features(matchtable_edx1, COUNT_OF(matchtable_edx1), raw->basic_cpuid[1][EDX], data);
+		match_features(matchtable_ecx1, COUNT_OF(matchtable_ecx1), raw->basic_cpuid[1][ECX], data);
 	}
-	if (raw->ext_cpuid[0][0] >= 1) {
-		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][3], data);
+	if (raw->ext_cpuid[0][EAX] >= 1) {
+		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][EDX], data);
 	}
 	// detect TSX/AVX512:
-	if (raw->basic_cpuid[0][0] >= 7) {
-		match_features(matchtable_ebx7, COUNT_OF(matchtable_ebx7), raw->basic_cpuid[7][1], data);
-		match_features(matchtable_ecx7, COUNT_OF(matchtable_ecx7), raw->basic_cpuid[7][2], data);
+	if (raw->basic_cpuid[0][EAX] >= 7) {
+		match_features(matchtable_ebx7, COUNT_OF(matchtable_ebx7), raw->basic_cpuid[7][EBX], data);
+		match_features(matchtable_ecx7, COUNT_OF(matchtable_ecx7), raw->basic_cpuid[7][ECX], data);
 	}
 }
 
@@ -593,9 +593,9 @@ static void decode_intel_deterministic_cache_info(struct cpu_raw_data_t* raw,
 	int ways, partitions, linesize, sets, size, level, typenumber;
 	cache_type_t type;
 	for (ecx = 0; ecx < MAX_INTELFN4_LEVEL; ecx++) {
-		typenumber = raw->intel_fn4[ecx][0] & 0x1f;
+		typenumber = raw->intel_fn4[ecx][EAX] & 0x1f;
 		if (typenumber == 0) break;
-		level = (raw->intel_fn4[ecx][0] >> 5) & 0x7;
+		level = (raw->intel_fn4[ecx][EAX] >> 5) & 0x7;
 		if (level == 1 && typenumber == 1)
 			type = L1D;
 		else if (level == 1 && typenumber == 2)
@@ -611,10 +611,10 @@ static void decode_intel_deterministic_cache_info(struct cpu_raw_data_t* raw,
 			warnf("deterministic_cache: recognize cache type\n");
 			continue;
 		}
-		ways = ((raw->intel_fn4[ecx][1] >> 22) & 0x3ff) + 1;
-		partitions = ((raw->intel_fn4[ecx][1] >> 12) & 0x3ff) + 1;
-		linesize = (raw->intel_fn4[ecx][1] & 0xfff) + 1;
-		sets = raw->intel_fn4[ecx][2] + 1;
+		ways = ((raw->intel_fn4[ecx][EBX] >> 22) & 0x3ff) + 1;
+		partitions = ((raw->intel_fn4[ecx][EBX] >> 12) & 0x3ff) + 1;
+		linesize = (raw->intel_fn4[ecx][EBX] & 0xfff) + 1;
+		sets = raw->intel_fn4[ecx][ECX] + 1;
 		size = ways * partitions * linesize * sets / 1024;
 		check_case(1, type, size, ways, linesize, data);
 	}
@@ -625,13 +625,13 @@ static int decode_intel_extended_topology(struct cpu_raw_data_t* raw,
 {
 	int i, level_type, num_smt = -1, num_core = -1;
 	for (i = 0; i < MAX_INTELFN11_LEVEL; i++) {
-		level_type = (raw->intel_fn11[i][2] & 0xff00) >> 8;
+		level_type = (raw->intel_fn11[i][ECX] & 0xff00) >> 8;
 		switch (level_type) {
 			case 0x01:
-				num_smt = raw->intel_fn11[i][1] & 0xffff;
+				num_smt = raw->intel_fn11[i][EBX] & 0xffff;
 				break;
 			case 0x02:
-				num_core = raw->intel_fn11[i][1] & 0xffff;
+				num_core = raw->intel_fn11[i][EBX] & 0xffff;
 				break;
 			default:
 				break;
@@ -652,14 +652,14 @@ static void decode_intel_number_of_cores(struct cpu_raw_data_t* raw,
 {
 	int logical_cpus = -1, num_cores = -1;
 
-	if (raw->basic_cpuid[0][0] >= 11) {
+	if (raw->basic_cpuid[0][EAX] >= 11) {
 		if (decode_intel_extended_topology(raw, data)) return;
 	}
 
-	if (raw->basic_cpuid[0][0] >= 1) {
-		logical_cpus = (raw->basic_cpuid[1][1] >> 16) & 0xff;
-		if (raw->basic_cpuid[0][0] >= 4) {
-			num_cores = 1 + ((raw->basic_cpuid[4][0] >> 26) & 0x3f);
+	if (raw->basic_cpuid[0][EAX] >= 1) {
+		logical_cpus = (raw->basic_cpuid[1][EBX] >> 16) & 0xff;
+		if (raw->basic_cpuid[0][EAX] >= 4) {
+			num_cores = 1 + ((raw->basic_cpuid[4][EAX] >> 26) & 0x3f);
 		}
 	}
 	if (data->flags[CPU_FEATURE_HT]) {
@@ -857,21 +857,21 @@ static void decode_intel_sgx_features(const struct cpu_raw_data_t* raw, struct c
 	struct cpu_epc_t epc;
 	int i;
 
-	if (raw->basic_cpuid[0][0] < 0x12) return; // no 12h leaf
-	if (raw->basic_cpuid[0x12][0] == 0) return; // no sub-leafs available, probably it's disabled by BIOS
+	if (raw->basic_cpuid[0][EAX] < 0x12) return; // no 12h leaf
+	if (raw->basic_cpuid[0x12][EAX] == 0) return; // no sub-leafs available, probably it's disabled by BIOS
 
 	// decode sub-leaf 0:
-	if (raw->basic_cpuid[0x12][0] & 1) data->sgx.flags[INTEL_SGX1] = 1;
-	if (raw->basic_cpuid[0x12][0] & 2) data->sgx.flags[INTEL_SGX2] = 1;
+	if (raw->basic_cpuid[0x12][EAX] & 1) data->sgx.flags[INTEL_SGX1] = 1;
+	if (raw->basic_cpuid[0x12][EAX] & 2) data->sgx.flags[INTEL_SGX2] = 1;
 	if (data->sgx.flags[INTEL_SGX1] || data->sgx.flags[INTEL_SGX2])
 		data->sgx.present = 1;
-	data->sgx.misc_select = raw->basic_cpuid[0x12][1];
-	data->sgx.max_enclave_32bit = (raw->basic_cpuid[0x12][3]     ) & 0xff;
-	data->sgx.max_enclave_64bit = (raw->basic_cpuid[0x12][3] >> 8) & 0xff;
+	data->sgx.misc_select = raw->basic_cpuid[0x12][EBX];
+	data->sgx.max_enclave_32bit = (raw->basic_cpuid[0x12][EDX]     ) & 0xff;
+	data->sgx.max_enclave_64bit = (raw->basic_cpuid[0x12][EDX] >> 8) & 0xff;
 
 	// decode sub-leaf 1:
-	data->sgx.secs_attributes = raw->intel_fn12h[1][0] | (((uint64_t) raw->intel_fn12h[1][1]) << 32);
-	data->sgx.secs_xfrm       = raw->intel_fn12h[1][2] | (((uint64_t) raw->intel_fn12h[1][3]) << 32);
+	data->sgx.secs_attributes = raw->intel_fn12h[1][EAX] | (((uint64_t) raw->intel_fn12h[1][EBX]) << 32);
+	data->sgx.secs_xfrm       = raw->intel_fn12h[1][ECX] | (((uint64_t) raw->intel_fn12h[1][EDX]) << 32);
 
 	// decode higher-order subleafs, whenever present:
 	data->sgx.num_epc_sections = -1;
@@ -922,10 +922,10 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data, stru
 	char* brand_code_str = NULL;
 
 	load_intel_features(raw, data);
-	if (raw->basic_cpuid[0][0] >= 4) {
+	if (raw->basic_cpuid[0][EAX] >= 4) {
 		/* Deterministic way is preferred, being more generic */
 		decode_intel_deterministic_cache_info(raw, data);
-	} else if (raw->basic_cpuid[0][0] >= 2) {
+	} else if (raw->basic_cpuid[0][EAX] >= 2) {
 		decode_intel_oldstyle_cache_info(raw, data);
 	}
 	decode_intel_number_of_cores(raw, data);

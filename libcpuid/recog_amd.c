@@ -344,22 +344,22 @@ static void load_amd_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		{ 11, CPU_FEATURE_PFI },
 		{ 12, CPU_FEATURE_PA },
 	};
-	if (raw->ext_cpuid[0][0] >= 0x80000001) {
-		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][3], data);
-		match_features(matchtable_ecx81, COUNT_OF(matchtable_ecx81), raw->ext_cpuid[1][2], data);
+	if (raw->ext_cpuid[0][EAX] >= 0x80000001) {
+		match_features(matchtable_edx81, COUNT_OF(matchtable_edx81), raw->ext_cpuid[1][EDX], data);
+		match_features(matchtable_ecx81, COUNT_OF(matchtable_ecx81), raw->ext_cpuid[1][ECX], data);
 	}
-	if (raw->ext_cpuid[0][0] >= 0x80000007)
-		match_features(matchtable_edx87, COUNT_OF(matchtable_edx87), raw->ext_cpuid[7][3], data);
-	if (raw->ext_cpuid[0][0] >= 0x8000001a) {
+	if (raw->ext_cpuid[0][EAX] >= 0x80000007)
+		match_features(matchtable_edx87, COUNT_OF(matchtable_edx87), raw->ext_cpuid[7][EDX], data);
+	if (raw->ext_cpuid[0][EAX] >= 0x8000001a) {
 		/* We have the extended info about SSE unit size
 		Extracted from BKDG, about CPUID_Fn8000001A_EAX [Performance Optimization Identifiers] (Core::X86::Cpuid::PerfOptId):
 		- bit 2: FP256
 		- bit 1: MOVU
 		- bit 0: FP128 */
 		data->detection_hints[CPU_HINT_SSE_SIZE_AUTH] = 1;
-		if ((raw->ext_cpuid[0x1a][0] >> 2) & 1)
+		if ((raw->ext_cpuid[0x1a][EAX] >> 2) & 1)
 			data->sse_size = 256;
-		else if ((raw->ext_cpuid[0x1a][0]) & 1)
+		else if ((raw->ext_cpuid[0x1a][EAX]) & 1)
 			data->sse_size = 128;
 		else
 			data->sse_size = 64;
@@ -372,26 +372,26 @@ static void decode_amd_cache_info(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 	const int assoc_table[16] = {
 		0, 1, 2, 0, 4, 0, 8, 0, 16, 16, 32, 48, 64, 96, 128, 255
 	};
-	unsigned n = raw->ext_cpuid[0][0];
+	unsigned n = raw->ext_cpuid[0][EAX];
 
 	if (n >= 0x80000005) {
-		data->l1_data_cache = (raw->ext_cpuid[5][2] >> 24) & 0xff;
-		data->l1_assoc = (raw->ext_cpuid[5][2] >> 16) & 0xff;
-		data->l1_cacheline = (raw->ext_cpuid[5][2]) & 0xff;
-		data->l1_instruction_cache = (raw->ext_cpuid[5][3] >> 24) & 0xff;
+		data->l1_data_cache = (raw->ext_cpuid[5][ECX] >> 24) & 0xff;
+		data->l1_assoc = (raw->ext_cpuid[5][ECX] >> 16) & 0xff;
+		data->l1_cacheline = (raw->ext_cpuid[5][ECX]) & 0xff;
+		data->l1_instruction_cache = (raw->ext_cpuid[5][EDX] >> 24) & 0xff;
 	}
 	if (n >= 0x80000006) {
-		data->l2_cache = (raw->ext_cpuid[6][2] >> 16) & 0xffff;
-		data->l2_assoc = assoc_table[(raw->ext_cpuid[6][2] >> 12) & 0xf];
-		data->l2_cacheline = (raw->ext_cpuid[6][2]) & 0xff;
+		data->l2_cache = (raw->ext_cpuid[6][ECX] >> 16) & 0xffff;
+		data->l2_assoc = assoc_table[(raw->ext_cpuid[6][ECX] >> 12) & 0xf];
+		data->l2_cacheline = (raw->ext_cpuid[6][ECX]) & 0xff;
 
-		l3_result = (raw->ext_cpuid[6][3] >> 18);
+		l3_result = (raw->ext_cpuid[6][EDX] >> 18);
 		if (l3_result > 0) {
 			l3_result = 512 * l3_result; /* AMD spec says it's a range,
 			                                but we take the lower bound */
 			data->l3_cache = l3_result;
-			data->l3_assoc = assoc_table[(raw->ext_cpuid[6][3] >> 12) & 0xf];
-			data->l3_cacheline = (raw->ext_cpuid[6][3]) & 0xff;
+			data->l3_assoc = assoc_table[(raw->ext_cpuid[6][EDX] >> 12) & 0xf];
+			data->l3_cacheline = (raw->ext_cpuid[6][EDX]) & 0xff;
 		} else {
 			data->l3_cache = 0;
 		}
@@ -402,21 +402,21 @@ static void decode_amd_number_of_cores(struct cpu_raw_data_t* raw, struct cpu_id
 {
 	int logical_cpus = -1, num_cores = -1;
 
-	if (raw->basic_cpuid[0][0] >= 1) {
-		logical_cpus = (raw->basic_cpuid[1][1] >> 16) & 0xff;
-		if (raw->ext_cpuid[0][0] >= 8) {
-			num_cores = 1 + (raw->ext_cpuid[8][2] & 0xff);
+	if (raw->basic_cpuid[0][EAX] >= 1) {
+		logical_cpus = (raw->basic_cpuid[1][EBX] >> 16) & 0xff;
+		if (raw->ext_cpuid[0][EAX] >= 8) {
+			num_cores = 1 + (raw->ext_cpuid[8][ECX] & 0xff);
 		}
 	}
 	if (data->flags[CPU_FEATURE_HT]) {
 		if (num_cores > 1) {
-			if ((data->ext_family >= 23) && (raw->ext_cpuid[0][0] >= 30))
+			if ((data->ext_family >= 23) && (raw->ext_cpuid[0][EAX] >= 30))
 				/* Ryzen 3 has SMT flag, but in fact cores count is equal to threads count.
 				Ryzen 5/7 reports twice as many "real" cores (e.g. 16 cores instead of 8) because of SMT. */
 				/* On PPR 17h, page 82:
 				CPUID_Fn8000001E_EBX [Core Identifiers][15:8] is ThreadsPerCore
 				ThreadsPerCore: [...] The number of threads per core is ThreadsPerCore+1 */
-				num_cores /= ((raw->ext_cpuid[30][1] >> 8) & 0xff) + 1;
+				num_cores /= ((raw->ext_cpuid[30][EBX] >> 8) & 0xff) + 1;
 			data->num_cores = num_cores;
 			data->num_logical_cpus = logical_cpus;
 		} else {
