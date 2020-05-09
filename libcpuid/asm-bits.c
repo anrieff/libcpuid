@@ -76,7 +76,7 @@ int cpuid_exists_by_eflags(void)
 }
 
 #ifdef INLINE_ASM_SUPPORTED
-/* 
+/*
  * with MSVC/AMD64, the exec_cpuid() and cpu_rdtsc() functions
  * are implemented in separate .asm files. Otherwise, use inline assembly
  */
@@ -90,14 +90,14 @@ void exec_cpuid(uint32_t *regs)
 		"	push	%%rbx\n"
 		"	push	%%rcx\n"
 		"	push	%%rdx\n"
-		
+
 		"	mov	(%%rdi),	%%eax\n"
 		"	mov	4(%%rdi),	%%ebx\n"
 		"	mov	8(%%rdi),	%%ecx\n"
 		"	mov	12(%%rdi),	%%edx\n"
-		
+
 		"	cpuid\n"
-		
+
 		"	movl	%%eax,	(%%rdi)\n"
 		"	movl	%%ebx,	4(%%rdi)\n"
 		"	movl	%%ecx,	8(%%rdi)\n"
@@ -116,14 +116,14 @@ void exec_cpuid(uint32_t *regs)
 		"	push	%%ebx\n"
 		"	push	%%ecx\n"
 		"	push	%%edx\n"
-		
+
 		"	mov	(%%edi),	%%eax\n"
 		"	mov	4(%%edi),	%%ebx\n"
 		"	mov	8(%%edi),	%%ecx\n"
 		"	mov	12(%%edi),	%%edx\n"
-		
+
 		"	cpuid\n"
-		
+
 		"	mov	%%eax,	(%%edi)\n"
 		"	mov	%%ebx,	4(%%edi)\n"
 		"	mov	%%ecx,	8(%%edi)\n"
@@ -144,19 +144,19 @@ void exec_cpuid(uint32_t *regs)
 		push	edx
 		push	edi
 		mov	edi,	regs
-		
+
 		mov	eax,	[edi]
 		mov	ebx,	[edi+4]
 		mov	ecx,	[edi+8]
 		mov	edx,	[edi+12]
-		
+
 		cpuid
-		
+
 		mov	[edi],		eax
 		mov	[edi+4],	ebx
 		mov	[edi+8],	ecx
 		mov	[edi+12],	edx
-		
+
 		pop	edi
 		pop	edx
 		pop	ecx
@@ -510,7 +510,7 @@ void busy_sse_loop(int cycles)
 		"	addps	%%xmm6, %%xmm5\n"
 		"	addps	%%xmm7, %%xmm6\n"
 		"	addps	%%xmm0, %%xmm7\n"
-		
+
 		"	dec	%%eax\n"
 		/* "jnz	.bsLoop\n" */
 		"	jnz	1b\n"

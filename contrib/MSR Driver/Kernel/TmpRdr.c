@@ -18,7 +18,7 @@ typedef struct _DEVICE_EXTENSION{
 
 PDEVICE_OBJECT g_pDeviceObject;
 
-#pragma alloc_text(PAGE0DEF, DriverEntry) 
+#pragma alloc_text(PAGE0DEF, DriverEntry)
 
 //
 NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING RegistryPath){
@@ -28,7 +28,7 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING Registry
 
     PDEVICE_OBJECT    pDeviceObject;
     PDEVICE_EXTENSION extension;
-    
+
 	// Point uszDriverString at the driver name
     RtlInitUnicodeString(&uszDriverString, L"\\Device\\TmpRdr");
 
@@ -36,13 +36,13 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING Registry
     ntStatus = IoCreateDevice(DriverObject, sizeof(DEVICE_EXTENSION), &uszDriverString, FILE_DEVICE_UNKNOWN, 0, FALSE, &pDeviceObject);
     if(ntStatus != STATUS_SUCCESS)
         return ntStatus;
-    
+
 	// Assign extension variable
     extension = pDeviceObject->DeviceExtension;
-    
+
 	// Point uszDeviceString at the device name
     RtlInitUnicodeString(&uszDeviceString, L"\\DosDevices\\TmpRdr");
-    
+
 	// Create symbolic link to the user-visible name
     ntStatus = IoCreateSymbolicLink(&uszDeviceString, &uszDriverString);
 
@@ -83,7 +83,7 @@ NTSTATUS DispatchIoctl(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp){
     PDEVICE_EXTENSION     extension = DeviceObject->DeviceExtension;
 	__int64				  *p__int64;
 	int					  iMSRregister;
-  
+
     switch(irpStack->Parameters.DeviceIoControl.IoControlCode){
 		case IOCTL_PROCVIEW_RDMSR:
 			if(irpStack->Parameters.DeviceIoControl.OutputBufferLength >= sizeof(__int64)){
@@ -106,7 +106,7 @@ NTSTATUS DispatchIoctl(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp){
     }
 
     Irp->IoStatus.Status = ntStatus;
-   
+
     if(ntStatus == STATUS_SUCCESS)
         Irp->IoStatus.Information = irpStack->Parameters.DeviceIoControl.OutputBufferLength;
     else

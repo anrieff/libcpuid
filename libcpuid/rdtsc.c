@@ -78,13 +78,13 @@ void cpu_tsc_unmark(struct cpu_mark_t* mark)
 int cpu_clock_by_mark(struct cpu_mark_t* mark)
 {
 	uint64_t result;
-	
+
 	/* Check if some subtraction resulted in a negative number: */
 	if ((mark->tsc >> 63) != 0 || (mark->sys_clock >> 63) != 0) return -1;
-	
+
 	/* Divide-by-zero check: */
 	if (mark->sys_clock == 0) return -1;
-	
+
 	/* Check if the result fits in 32bits */
 	result = mark->tsc / mark->sys_clock;
 	if (result > (uint64_t) 0x7fffffff) return -1;
@@ -97,16 +97,16 @@ int cpu_clock_by_os(void)
 	HKEY key;
 	DWORD result;
 	DWORD size = 4;
-	
+
 	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"), 0, KEY_READ, &key) != ERROR_SUCCESS)
 		return -1;
-	
+
 	if (RegQueryValueEx(key, TEXT("~MHz"), NULL, NULL, (LPBYTE) &result, (LPDWORD) &size) != ERROR_SUCCESS) {
 		RegCloseKey(key);
 		return -1;
 	}
 	RegCloseKey(key);
-	
+
 	return (int)result;
 }
 #else
@@ -129,10 +129,10 @@ int cpu_clock_by_os(void)
 	FILE *f;
 	char line[1024], *s;
 	int result;
-	
+
 	f = fopen("/proc/cpuinfo", "rt");
 	if (!f) return -1;
-	
+
 	while (fgets(line, sizeof(line), f)) {
 		if (!strncmp(line, "cpu MHz", 7)) {
 			s = strchr(line, ':');
@@ -184,7 +184,7 @@ int cpu_clock_measure(int millis, int quad_check)
 	struct cpu_mark_t begin[4], end[4], temp, temp2;
 	int results[4], cycles, n, k, i, j, bi, bj, mdiff, diff, _zero = 0;
 	uint64_t tl;
-	
+
 	if (millis < 1) return -1;
 	tl = millis * (uint64_t) 1000;
 	if (quad_check)
@@ -301,7 +301,7 @@ int cpu_clock_by_ic(int millis, int runs)
 		} while (t1 - t0 < tl * (uint64_t) 8);
 		// cpu_Hz = cycles_inner * cycles_outer * 256 / (t1 - t0) * 1000000
 		debugf(2, "c = %d, td = %d\n", c, (int) (t1 - t0));
-		hz = ((uint64_t) cycles_inner * (uint64_t) 256 + 12) * 
+		hz = ((uint64_t) cycles_inner * (uint64_t) 256 + 12) *
 		     (uint64_t) cycles_outer * (uint64_t) multiplier_numerator * (uint64_t) c * (uint64_t) 1000000
 		     / ((t1 - t0) * (uint64_t) multiplier_denom);
 		cur_value = (int) (hz / 1000000);

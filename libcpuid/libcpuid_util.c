@@ -77,12 +77,12 @@ void debugf(int verboselevel, const char* format, ...)
 static int popcount64(uint64_t mask)
 {
 	int num_set_bits = 0;
-	
+
 	while (mask) {
 		mask &= mask - 1;
 		num_set_bits++;
 	}
-	
+
 	return num_set_bits;
 }
 
@@ -100,7 +100,7 @@ static int score(const struct match_entry_t* entry, const struct cpu_id_t* data,
 	if (entry->l3cache	== data->l3_cache  ) res += 1;
 	if (entry->brand_code   == brand_code  ) res += 2;
 	if (entry->model_code   == model_code  ) res += 2;
-	
+
 	res += popcount64(entry->model_bits & bits) * 2;
 	return res;
 }
@@ -112,11 +112,11 @@ int match_cpu_codename(const struct match_entry_t* matchtable, int count,
 	int bestscore = -1;
 	int bestindex = 0;
 	int i, t;
-	
+
 	debugf(3, "Matching cpu f:%d, m:%d, s:%d, xf:%d, xm:%d, ncore:%d, l2:%d, bcode:%d, bits:%llu, code:%d\n",
 		data->family, data->model, data->stepping, data->ext_family,
 		data->ext_model, data->num_cores, data->l2_cache, brand_code, (unsigned long long) bits, model_code);
-	
+
 	for (i = 0; i < count; i++) {
 		t = score(&matchtable[i], data, brand_code, bits, model_code);
 		debugf(3, "Entry %d, `%s', score %d\n", i, matchtable[i].name, t);

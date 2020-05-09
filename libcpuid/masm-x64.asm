@@ -7,16 +7,16 @@ exec_cpuid Proc
 	push	rcx
 	push	rdx
 	push	rdi
-	
+
 	mov	rdi,	rcx
-	
+
 	mov	eax,	[rdi]
 	mov	ebx,	[rdi+4]
 	mov	ecx,	[rdi+8]
 	mov	edx,	[rdi+12]
-	
+
 	cpuid
-	
+
 	mov	[rdi],	eax
 	mov	[rdi+4],	ebx
 	mov	[rdi+8],	ecx

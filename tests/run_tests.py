@@ -101,7 +101,7 @@ def do_test(inp, expected_out, binary, test_file_name):
 			fixFile(test_file_name, inp, real_out)
 			return "Mismatch, fixed."
 		else:
-			return "Mismatch in fields:\n%s" % "\n".join([fmt_error(err) for err in err_fields]) 
+			return "Mismatch in fields:\n%s" % "\n".join([fmt_error(err) for err in err_fields])
 
 errors = False
 print "Testing..."

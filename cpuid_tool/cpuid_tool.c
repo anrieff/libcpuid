@@ -174,7 +174,7 @@ static void usage(void)
 	printf("  --version        - print library version\n");
 	printf("\n");
 	printf("Query switches (generate 1 line of output per switch; in order of appearance):");
-	
+
 	line_fill = 80;
 	for (i = 0; i < sz_match; i++) {
 		l = (int) strlen(matchtable[i].synopsis);
@@ -305,7 +305,7 @@ static int parse_cmdline(int argc, char** argv)
 				recog = 1;
 				break;
 			}
-		
+
 		if (!recog) {
 			fprintf(stderr, "Unrecognized option: `%s'\n\n", arg);
 			fprintf(stderr, "Use -h to get a list of supported options\n");
@@ -323,7 +323,7 @@ static void close_out(void)
 static int check_need_raw_data(void)
 {
 	int i, j;
-	
+
 	if (need_output || need_report || need_identify) return 1;
 	for (i = 0; i < num_requests; i++) {
 		for (j = 0; j < sz_match; j++)
@@ -476,7 +476,7 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 		}
 		case NEED_SSE_UNIT_SIZE:
 		{
-			fprintf(fout, "%d (%s)\n", data->sse_size, 
+			fprintf(fout, "%d (%s)\n", data->sse_size,
 				data->detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
 			break;
 		}
@@ -546,7 +546,7 @@ int main(int argc, char** argv)
 	/* In quiet mode, disable libcpuid warning messages: */
 	if (need_quiet)
 		cpuid_set_warn_function(NULL);
-	
+
 	cpuid_set_verbosiness_level(verbose_level);
 
 	/* Redirect output, if necessary: */
@@ -561,11 +561,11 @@ int main(int argc, char** argv)
 	} else {
 		fout = stdout;
 	}
-	
+
 	/* If requested, print library version: */
 	if (need_version)
 		fprintf(fout, "%s\n", cpuid_lib_version());
-	
+
 	if (need_input) {
 		/* We have a request to input raw CPUID data from file: */
 		if (!strcmp(raw_data_file, "-"))
@@ -599,7 +599,7 @@ int main(int argc, char** argv)
 			}
 		}
 	}
-	
+
 	/* Need to dump raw CPUID data to file: */
 	if (need_output) {
 		if (verbose_level >= 1)
@@ -635,7 +635,7 @@ int main(int argc, char** argv)
 		 */
 		if (cpu_identify(&raw, &data) < 0)
 			fprintf(fout, "Error identifying the CPU: %s\n", cpuid_error());
-		
+
 		/* OK, now write what we have in `data'...: */
 		fprintf(fout, "CPU Info:\n------------------\n");
 		fprintf(fout, "  vendor_str : `%s'\n", data.vendor_str);
@@ -673,7 +673,7 @@ int main(int argc, char** argv)
 			if (data.flags[i])
 				fprintf(fout, " %s", cpu_feature_str(i));
 		fprintf(fout, "\n");
-		
+
 		/* Is CPU clock info requested? */
 		if (need_clockreport) {
 			if (need_timed_clockreport) {
@@ -719,6 +719,6 @@ int main(int argc, char** argv)
 	if (need_sgx) {
 		print_sgx_data(&raw, &data);
 	}
-	
+
 	return 0;
 }

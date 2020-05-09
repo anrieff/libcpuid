@@ -13,7 +13,7 @@ libcpuid.lib: $(OBJECTS)
 
 masm-x64.obj: masm-x64.asm
 	$(ASM) /c masm-x64.asm
-	
+
 asm-bits.obj: asm-bits.c
 	$(CC) $(OPTFLAGS) $(DEFINES) /c asm-bits.c
 

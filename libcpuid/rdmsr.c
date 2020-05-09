@@ -191,7 +191,7 @@ int cpu_rdmsr(struct msr_driver_t* driver, uint32_t msr_index, uint64_t* result)
 	if(ioctl(driver->fd, CPUCTL_RDMSR, &args))
 		return set_error(ERR_INVMSR);
 
-	*result = args.data; 
+	*result = args.data;
 	return 0;
 }
 
@@ -237,7 +237,7 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 		set_error(ERR_NO_RDMSR);
 		return NULL;
 	}
-	
+
 	drv = (struct msr_driver_t*) malloc(sizeof(struct msr_driver_t));
 	if (!drv) {
 		set_error(ERR_NO_MEM);
@@ -250,7 +250,7 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 		set_error(ERR_EXTRACT);
 		return NULL;
 	}
-	
+
 	status = load_driver(drv);
 	if (!DeleteFile(drv->driver_path))
 		debugf(1, "Deleting temporary driver file failed.\n");
@@ -285,7 +285,7 @@ static int extract_driver(struct msr_driver_t* driver)
 	FILE *f;
 	if (!GetTempPath(sizeof(driver->driver_path), driver->driver_path)) return 0;
 	strcat(driver->driver_path, "TmpRdr.sys");
-	
+
 	f = fopen(driver->driver_path, "wb");
 	if (!f) return 0;
 	if (is_running_x64())
@@ -303,15 +303,15 @@ static BOOL wait_for_service_state(SC_HANDLE hService, DWORD dwDesiredState, SER
 	if(hService != NULL){
 		while(TRUE){
 			fOK = QueryServiceStatus(hService, lpsrvStatus);
-			if(!fOK) 
+			if(!fOK)
 				break;
-			if(lpsrvStatus->dwCurrentState == dwDesiredState) 
+			if(lpsrvStatus->dwCurrentState == dwDesiredState)
 				break;
 
 			dwWaitHint = lpsrvStatus->dwWaitHint / 10;    // Poll 1/10 of the wait hint
-			if (dwWaitHint <  1000) 
+			if (dwWaitHint <  1000)
 				dwWaitHint = 1000;  // At most once per second
-			if (dwWaitHint > 10000) 
+			if (dwWaitHint > 10000)
 				dwWaitHint = 10000; // At least every 10 seconds
 			Sleep(dwWaitHint);
 		}
@@ -372,7 +372,7 @@ static int load_driver(struct msr_driver_t* drv)
 				default:
 					debugf(1, "Create driver service failed: %d\n", dwLastError);
 					break;
-			}				
+			}
 		}
 		if(drv->scDriver != NULL){
 			if(StartService(drv->scDriver, 0, NULL)){
@@ -400,7 +400,7 @@ static int load_driver(struct msr_driver_t* drv)
 			if(fRunning)
 				debugf(1, "Driver already running.\n");
 			else
-				debugf(1, "Driver loaded.\n"); 
+				debugf(1, "Driver loaded.\n");
 			CloseServiceHandle(drv->scManager);
 			drv->hhDriver = CreateFile(lpszDriverName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
 			drv->ovl.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
@@ -438,7 +438,7 @@ int cpu_rdmsr(struct msr_driver_t* driver, uint32_t msr_index, uint64_t* result)
 	if (!driver)
 		return set_error(ERR_HANDLE);
 	DeviceIoControl(driver->hhDriver, IOCTL_PROCVIEW_RDMSR, &msr_index, sizeof(int), &msrdata, sizeof(__int64), &dwBytesReturned, &driver->ovl);
-	GetOverlappedResult(driver->hhDriver, &driver->ovl, &dwBytesReturned, TRUE);	
+	GetOverlappedResult(driver->hhDriver, &driver->ovl, &dwBytesReturned, TRUE);
 	*result = msrdata;
 	return 0;
 }

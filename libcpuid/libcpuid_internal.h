@@ -105,7 +105,7 @@ typedef enum _amd_bits_t amd_bits_t;
 
 
 
-int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, 
+int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data,
 		       struct internal_id_info_t* internal);
 
 #endif /* __LIBCPUID_INTERNAL_H__ */

@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 	fclose(fout);
 	snprintf(cmd, CMD_LEN, "cpuid_tool --load=%s --report --outfile=%s", raw_filename, report_filename);
 	system(cmd);
-	
+
 	/* Invoke create_test */
 	snprintf(cmd, CMD_LEN, "./create_test.py %s %s > %s.test", raw_filename, report_filename, output_filename);
 	if((argc > 3) && !strcmp(argv[3], "--create"))

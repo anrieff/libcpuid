@@ -2,7 +2,7 @@ libcpuid
 ========
 
 libcpuid provides CPU identification for the x86 (and x86_64).
-For details about the programming API, you might want to 
+For details about the programming API, you might want to
 take a look at the project's website on sourceforge
 (http://libcpuid.sourceforge.net/). There you'd find a short
 [tutorial](http://libcpuid.sf.net/documentation.html), as well
@@ -52,7 +52,7 @@ a good idea to run `make test`. If some test fails, and you're confident
 that the test is wrong and needs fixing, run `make fix-tests`.
 
 You can also add a new test (which is basically a file containing
-the raw CPUID data and the expected decoded items) by using 
+the raw CPUID data and the expected decoded items) by using
 `tests/create_test.py`. The workflow there is as follows:
 
 1. Run "cpuid_tool" with no arguments. It will tell you that it

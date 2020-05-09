@@ -128,7 +128,7 @@ static int get_total_cpus(void)
 #if defined linux || defined __linux__ || defined __sun
 #include <sys/sysinfo.h>
 #include <unistd.h>
- 
+
 static int get_total_cpus(void)
 {
 	return sysconf(_SC_NPROCESSORS_ONLN);
@@ -314,7 +314,7 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		data->ext_model = data->model + (xmodel << 4);
 	}
 	ext = raw->ext_cpuid[0][0] - 0x8000000;
-	
+
 	/* obtain the brand string, if present: */
 	if (ext >= 4) {
 		for (i = 0; i < 3; i++)
@@ -417,13 +417,13 @@ int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 {
 	int i;
 	FILE *f;
-	
+
 	if (!strcmp(filename, ""))
 		f = stdout;
 	else
 		f = fopen(filename, "wt");
 	if (!f) return set_error(ERR_OPEN);
-	
+
 	fprintf(f, "version=%s\n", VERSION);
 	for (i = 0; i < MAX_CPUID_LEVEL; i++)
 		fprintf(f, "basic_cpuid[%d]=%08x %08x %08x %08x\n", i,
@@ -449,7 +449,7 @@ int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 		fprintf(f, "intel_fn14h[%d]=%08x %08x %08x %08x\n", i,
 			data->intel_fn14h[i][0], data->intel_fn14h[i][1],
 			data->intel_fn14h[i][2], data->intel_fn14h[i][3]);
-	
+
 	if (strcmp(filename, ""))
 		fclose(f);
 	return set_error(ERR_OK);
@@ -465,9 +465,9 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
 	int cur_line = 0;
 	int recognized;
 	FILE *f;
-	
+
 	raw_data_t_constructor(data);
-	
+
 	if (!strcmp(filename, ""))
 		f = stdin;
 	else
@@ -508,7 +508,7 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
 			warnf("Warning: %s:%d not understood!\n", filename, cur_line);
 		}
 	}
-	
+
 	if (strcmp(filename, ""))
 		fclose(f);
 	return set_error(ERR_OK);

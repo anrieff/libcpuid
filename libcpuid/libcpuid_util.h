@@ -32,7 +32,7 @@ struct feature_map_t {
 	unsigned bit;
 	cpu_feature_t feature;
 };
- 
+
 void match_features(const struct feature_map_t* matchtable, int count,
                     uint32_t reg, struct cpu_id_t* data);
 
