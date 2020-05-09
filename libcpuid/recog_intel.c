@@ -349,18 +349,26 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14,  9, -1, 142,  2,    -1,    -1, NC, CORE_|_M_|_3  ,     0, "Kaby Lake-U (Core m3)"    },
 
 	/* Coffee Lake CPUs (8th gen, 14nm): */
-	{  6, 14, -1, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_9  ,     0, "Coffee Lake (Core i9)"    },
-	{  6, 14, -1, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Coffee Lake (Core i7)"    },
-	{  6, 14, -1, -1, 158,  6,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Coffee Lake (Core i7)"    },
-	{  6, 14, -1, -1, 158,  6,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Coffee Lake (Core i5)"    },
-	{  6, 14, -1, -1, 158,  4,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Coffee Lake (Core i3)"    },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, NC, PENTIUM_      ,     0, "Coffee Lake (Pentium)"    },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, NC, CELERON_      ,     0, "Coffee Lake (Celeron)"    },
+	{  6, 14, 10, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_9  ,     0, "Coffee Lake (Core i9)"    },
+	{  6, 14, 10, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Coffee Lake (Core i7)"    },
+	{  6, 14, 10, -1, 158,  6,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Coffee Lake (Core i7)"    },
+	{  6, 14, 10, -1, 158,  6,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Coffee Lake (Core i5)"    },
+	{  6, 14, 10, -1, 158,  4,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Coffee Lake (Core i3)"    },
+	{  6, 14, 10, -1, 158,  2,    -1,    -1, NC, PENTIUM_      ,     0, "Coffee Lake (Pentium)"    },
+	{  6, 14, 10, -1, 158,  2,    -1,    -1, NC, CELERON_      ,     0, "Coffee Lake (Celeron)"    },
 	{  6, 14, 10, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Coffee Lake-U (Core i7)"  },
 	{  6, 14, 10, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Coffee Lake-U (Core i5)"  },
 	{  6, 14, 10, -1, 142,  2,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Coffee Lake-U (Core i3)"  },
 	{  6,  6, -1, -1, 102,  2,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Cannon Lake (Core i3)"    }, /* Core i3 8121U */
 	{  6,  6, -1, -1, 102,  2,    -1,    -1, NC, CORE_|_M_|_3  ,     0, "Cannon Lake (Core m3)"    }, /* Core m3 8114Y */
+
+	/* Coffee Lake Refresh CPUs (9th gen, 14nm): */
+	{  6, 14, 13, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_9  ,     0, "Coffee Lake-R (Core i9)"  },
+	{  6, 14, 12, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_9  ,     0, "Coffee Lake-R (Core i9)"  },
+	{  6, 14, 13, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Coffee Lake-R (Core i7)"  },
+	{  6, 14, 12, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Coffee Lake-R (Core i7)"  },
+	{  6, 14, 13, -1, 158,  6,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Coffee Lake-R (Core i5)"  },
+	{  6, 14, 11, -1, 158,  4,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Coffee Lake-R (Core i3)"  },
 	/* F   M   S  EF   EM   C     L2     L3               Brand */
 
 
