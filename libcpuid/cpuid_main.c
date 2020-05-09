@@ -410,6 +410,12 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 		data->intel_fn14h[i][ECX] = i;
 		cpu_exec_cpuid_ext(data->intel_fn14h[i]);
 	}
+	for (i = 0; i < MAX_AMDFN8000001DH_LEVEL; i++) {
+		memset(data->amd_fn8000001dh[i], 0, sizeof(data->amd_fn8000001dh[i]));
+		data->amd_fn8000001dh[i][EAX] = 0x8000001d;
+		data->amd_fn8000001dh[i][ECX] = i;
+		cpu_exec_cpuid_ext(data->amd_fn8000001dh[i]);
+	}
 	return set_error(ERR_OK);
 }
 
@@ -449,6 +455,10 @@ int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 		fprintf(f, "intel_fn14h[%d]=%08x %08x %08x %08x\n", i,
 			data->intel_fn14h[i][EAX], data->intel_fn14h[i][EBX],
 			data->intel_fn14h[i][ECX], data->intel_fn14h[i][EDX]);
+	for (i = 0; i < MAX_AMDFN8000001DH_LEVEL; i++)
+		fprintf(f, "amd_fn8000001dh[%d]=%08x %08x %08x %08x\n", i,
+			data->amd_fn8000001dh[i][EAX], data->amd_fn8000001dh[i][EBX],
+			data->amd_fn8000001dh[i][ECX], data->amd_fn8000001dh[i][EDX]);
 
 	if (strcmp(filename, ""))
 		fclose(f);
@@ -499,6 +509,7 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
 		syntax = syntax && parse_token("intel_fn11", token, value, data->intel_fn11,     MAX_INTELFN11_LEVEL, &recognized);
 		syntax = syntax && parse_token("intel_fn12h", token, value, data->intel_fn12h,   MAX_INTELFN12H_LEVEL, &recognized);
 		syntax = syntax && parse_token("intel_fn14h", token, value, data->intel_fn14h,   MAX_INTELFN14H_LEVEL, &recognized);
+		syntax = syntax && parse_token("amd_fn8000001dh", token, value, data->amd_fn8000001dh, MAX_AMDFN8000001DH_LEVEL, &recognized);
 		if (!syntax) {
 			warnf("Error: %s:%d: Syntax error\n", filename, cur_line);
 			fclose(f);
