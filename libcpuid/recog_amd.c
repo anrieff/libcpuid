@@ -283,8 +283,8 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 23,   24,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Picasso)"             },
 	{ 15, -1, -1, 23,   24,  -1,    -1,    -1, NC, ATHLON_             ,     0, "Athlon (Picasso)"              },
 	/* Zen 2 (2019) => https://en.wikichip.org/wiki/amd/microarchitectures/zen_2 */
-	{ 15, -1, -1, 23,  113,  -1,    -1,    -1, NC, EPYC_               ,     0, "EPYC (Rome)"                   },
-	{ 15, -1, -1, 23,   49,  -1,    -1,    -1, NC,RYZEN_TR_            ,     0, "Threadripper (Castle Peak)"    },
+	{ 15, -1, -1, 23,   49,  -1,    -1,    -1, NC, EPYC_               ,     0, "EPYC (Rome)"                   },
+	{ 15, -1, -1, 23,   49,  -1,    -1,    -1, NC, RYZEN_TR_           ,     0, "Threadripper (Castle Peak)"    },
 	{ 15, -1, -1, 23,  113,  -1,    -1,    -1, NC, RYZEN_|_9           ,     0, "Ryzen 9 (Matisse)"             },
 	{ 15, -1, -1, 23,  113,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Matisse)"             },
 	{ 15, -1, -1, 23,  113,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Matisse)"             },
