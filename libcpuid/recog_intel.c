@@ -369,6 +369,14 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, 12, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Coffee Lake-R (Core i7)"  },
 	{  6, 14, 13, -1, 158,  6,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Coffee Lake-R (Core i5)"  },
 	{  6, 14, 11, -1, 158,  4,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Coffee Lake-R (Core i3)"  },
+	
+	/* Comet Lake CPUs (10th gen, 14nm): */
+	{  6,  5, -1, -1, 165, 10,    -1,    -1, NC, CORE_|_I_|_9  ,     0, "Comet Lake (Core i9)"     },
+	{  6,  5, -1, -1, 165,  8,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Comet Lake (Core i7)"     },
+	{  6,  5, -1, -1, 165,  6,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Comet Lake (Core i5)"     },
+	{  6,  5, -1, -1, 165,  4,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Comet Lake (Core i3)"     },
+	{  6,  5, -1, -1, 165,  2,    -1,    -1, NC, PENTIUM_      ,     0, "Comet Lake (Pentium)"     },
+	{  6,  5, -1, -1, 165,  2,    -1,    -1, NC, CELERON_      ,     0, "Comet Lake (Celeron)"     },
 	/* F   M   S  EF   EM   C     L2     L3               Brand */
 
 
