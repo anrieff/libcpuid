@@ -284,6 +284,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 58,   2,    -1,    -1, NC, PENTIUM_      ,     0, "Ivy Bridge (Pentium)"     },
 	{  6, 10, -1, -1, 58,   1,    -1,    -1, NC, CELERON_      ,     0, "Ivy Bridge (Celeron)"     },
 	{  6, 10, -1, -1, 58,   2,    -1,    -1, NC, CELERON_      ,     0, "Ivy Bridge (Celeron)"     },
+	{  6, 14, -1, -1, 62,  -1,    -1,    -1, NC, XEON_         ,     0, "Ivy Bridge-E (Xeon)"      },
 	{  6, 14, -1, -1, 62,  -1,    -1,    -1, NC, 0             ,     0, "Ivy Bridge-E"             },
 
 	/* Haswell CPUs (4th gen, 22nm): */
