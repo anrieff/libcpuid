@@ -310,8 +310,16 @@ struct cpu_id_t {
 	/** L4 cache size in KB. Zero on most systems */
 	int32_t l4_cache;
 
-	/** Cache associativity for the L1 data cache. -1 if undetermined */
+	/** Cache associativity for the L1 data cache. -1 if undetermined
+	 * @deprecated replaced by \ref cpu_id_t::l1_data_assoc
+	 */
 	int32_t l1_assoc;
+
+	/** Cache associativity for the L1 data cache. -1 if undetermined */
+	int32_t l1_data_assoc;
+
+	/** Cache associativity for the L1 intruction cache. -1 if undetermined */
+	int32_t l1_instruction_assoc;
 
 	/** Cache associativity for the L2 cache. -1 if undetermined */
 	int32_t l2_assoc;
@@ -322,8 +330,16 @@ struct cpu_id_t {
 	/** Cache associativity for the L4 cache. -1 if undetermined */
 	int32_t l4_assoc;
 
-	/** Cache-line size for L1 data cache. -1 if undetermined */
+	/** Cache-line size for L1 data cache. -1 if undetermined
+	 * @deprecated replaced by \ref cpu_id_t::l1_data_cacheline
+	 */
 	int32_t l1_cacheline;
+
+	/** Cache-line size for L1 data cache. -1 if undetermined */
+	int32_t l1_data_cacheline;
+
+	/** Cache-line size for L1 intruction cache. -1 if undetermined */
+	int32_t l1_instruction_cacheline;
 
 	/** Cache-line size for L2 cache. -1 if undetermined */
 	int32_t l2_cacheline;

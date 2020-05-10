@@ -375,10 +375,15 @@ static void decode_amd_cache_info(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 	unsigned n = raw->ext_cpuid[0][EAX];
 
 	if (n >= 0x80000005) {
-		data->l1_data_cache = (raw->ext_cpuid[5][ECX] >> 24) & 0xff;
-		data->l1_assoc = (raw->ext_cpuid[5][ECX] >> 16) & 0xff;
-		data->l1_cacheline = (raw->ext_cpuid[5][ECX]) & 0xff;
-		data->l1_instruction_cache = (raw->ext_cpuid[5][EDX] >> 24) & 0xff;
+		/* L1 Data Cache */
+		data->l1_data_cache     = EXTRACTS_BITS(raw->ext_cpuid[5][ECX], 31, 24); // L1DcSize
+		data->l1_data_assoc     = EXTRACTS_BITS(raw->ext_cpuid[5][ECX], 23, 16); // L1DcAssoc
+		data->l1_data_cacheline = EXTRACTS_BITS(raw->ext_cpuid[5][ECX],  7,  0); // L1DcLineSize
+
+		/* L1 Instruction Cache */
+		data->l1_instruction_cache     = EXTRACTS_BITS(raw->ext_cpuid[5][EDX], 31, 24); // L1IcSize
+		data->l1_instruction_assoc     = EXTRACTS_BITS(raw->ext_cpuid[5][EDX], 23, 16); // L1IcAssoc
+		data->l1_instruction_cacheline = EXTRACTS_BITS(raw->ext_cpuid[5][EDX],  7,  0); // L1IcLineSize
 	}
 	if (n >= 0x80000006) {
 		data->l2_cache = (raw->ext_cpuid[6][ECX] >> 16) & 0xffff;
@@ -398,7 +403,7 @@ static void decode_amd_cache_info(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 				Processor Programming Reference (PPR) for AMD Family 17h Model 71h, Revision B0 Processors:
 				"There are insufficient available encodings to represent all possible L3
 				associativities. Please refer to Core::X86::Cpuid::CachePropEbx3[CacheNumWays]."
-				Note: we do not read CPUID_Fn80000001_ECX[22] (AKA TopologyExtensions) to allow retrocompatibility with existing tests */
+				Note: we do not read CPUID_Fn80000001_ECX[22] (AKA TopologyExtensions) to allow backward compatibility with existing tests */
 				data->l3_assoc     = EXTRACTS_BITS(raw->amd_fn8000001dh[0x3][EBX], 31, 22) + 1; // Cache number of ways is CacheNumWays + 1
 				data->l3_cacheline = EXTRACTS_BITS(raw->amd_fn8000001dh[0x3][EBX], 11, 0) + 1; // Cache line size in bytes is CacheLineSize + 1
 			} else {

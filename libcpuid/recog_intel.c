@@ -463,11 +463,13 @@ static void check_case(uint8_t on, cache_type_t cache, int size, int assoc, int 
 	switch (cache) {
 		case L1I:
 			data->l1_instruction_cache = size;
+			data->l1_instruction_assoc = assoc;
+			data->l1_instruction_cacheline = linesize;
 			break;
 		case L1D:
 			data->l1_data_cache = size;
-			data->l1_assoc = assoc;
-			data->l1_cacheline = linesize;
+			data->l1_data_assoc = assoc;
+			data->l1_data_cacheline = linesize;
 			break;
 		case L2:
 			data->l2_cache = size;

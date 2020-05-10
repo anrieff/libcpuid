@@ -55,8 +55,8 @@ static void cpu_id_t_constructor(struct cpu_id_t* id)
 {
 	memset(id, 0, sizeof(struct cpu_id_t));
 	id->l1_data_cache = id->l1_instruction_cache = id->l2_cache = id->l3_cache = id->l4_cache = -1;
-	id->l1_assoc = id->l2_assoc = id->l3_assoc = id->l4_assoc = -1;
-	id->l1_cacheline = id->l2_cacheline = id->l3_cacheline = id->l4_cacheline = -1;
+	id->l1_assoc = id->l1_data_assoc = id->l1_instruction_assoc = id->l2_assoc = id->l3_assoc = id->l4_assoc = -1;
+	id->l1_cacheline = id->l1_data_cacheline = id->l1_instruction_cacheline = id->l2_cacheline = id->l3_cacheline = id->l4_cacheline = -1;
 	id->sse_size = -1;
 }
 
@@ -548,6 +548,10 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 		default:
 			break;
 	}
+	/* Backward compatibility */
+	/* - Deprecated since v0.5.0 */
+	data->l1_assoc     = data->l1_data_assoc;
+	data->l1_cacheline = data->l1_data_cacheline;
 	return set_error(r);
 }
 
