@@ -432,6 +432,8 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		{ 31, CPU_FEATURE_AVX512VL },
 	};
 	const struct feature_map_t matchtable_ecx7[] = {
+		{  1, CPU_FEATURE_AVX512VBMI },
+		{  6, CPU_FEATURE_AVX512VBMI2 },
 		{ 11, CPU_FEATURE_AVX512VNNI },
 	};
 	if (raw->basic_cpuid[0][EAX] >= 1) {

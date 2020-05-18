@@ -512,6 +512,8 @@ typedef enum {
 	CPU_FEATURE_RDSEED,	/*!< RDSEED instruction */
 	CPU_FEATURE_ADX,	/*!< ADX extensions (arbitrary precision) */
 	CPU_FEATURE_AVX512VNNI, /*!< AVX-512 Vector Neural Network Instructions */
+	CPU_FEATURE_AVX512VBMI, /*!< AVX-512 Vector Bit ManipulationInstructions (version 1) */
+	CPU_FEATURE_AVX512VBMI2, /*!< AVX-512 Vector Bit ManipulationInstructions (version 2) */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

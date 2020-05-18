@@ -686,6 +686,8 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_RDSEED, "rdseed" },
 		{ CPU_FEATURE_ADX, "adx" },
 		{ CPU_FEATURE_AVX512VNNI, "avx512_vnni" },
+		{ CPU_FEATURE_AVX512VBMI, "avx512_vbmi" },
+		{ CPU_FEATURE_AVX512VBMI2, "avx512_vbmi2" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {
