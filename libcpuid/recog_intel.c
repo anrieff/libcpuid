@@ -423,12 +423,11 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 		{ 11, CPU_FEATURE_RTM },
 		{ 16, CPU_FEATURE_AVX512F },
 		{ 17, CPU_FEATURE_AVX512DQ },
-		{ 18, CPU_FEATURE_RDSEED },
-		{ 19, CPU_FEATURE_ADX },
+		/* id 18 and 19 are handled in common */
 		{ 26, CPU_FEATURE_AVX512PF },
 		{ 27, CPU_FEATURE_AVX512ER },
 		{ 28, CPU_FEATURE_AVX512CD },
-		{ 29, CPU_FEATURE_SHA_NI },
+		/* id 29 is handled in common */
 		{ 30, CPU_FEATURE_AVX512BW },
 		{ 31, CPU_FEATURE_AVX512VL },
 	};

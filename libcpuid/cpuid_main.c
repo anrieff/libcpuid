@@ -221,6 +221,9 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 		{  3, CPU_FEATURE_BMI1 },
 		{  5, CPU_FEATURE_AVX2 },
 		{  8, CPU_FEATURE_BMI2 },
+		{ 18, CPU_FEATURE_RDSEED },
+		{ 19, CPU_FEATURE_ADX },
+		{ 29, CPU_FEATURE_SHA_NI },
 	};
 	const struct feature_map_t matchtable_edx81[] = {
 		{ 11, CPU_FEATURE_SYSCALL },
