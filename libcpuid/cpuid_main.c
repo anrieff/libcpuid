@@ -232,6 +232,7 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 	};
 	const struct feature_map_t matchtable_ecx81[] = {
 		{  0, CPU_FEATURE_LAHF_LM },
+		{  5, CPU_FEATURE_ABM },
 	};
 	const struct feature_map_t matchtable_edx87[] = {
 		{  8, CPU_FEATURE_CONSTANT_TSC },
