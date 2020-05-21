@@ -129,13 +129,21 @@ int main(int argc, char *argv[])
 
 	/* Invoke cpuid_tool */
 	snprintf(cmd, CMD_LEN, "../cpuid_tool/cpuid_tool --load=%s --report --outfile=%s", raw_filename, report_filename);
-	system(cmd);
+	if(system(cmd))
+	{
+		perror("Failed to load raw file in cpuid_tool");
+		return 1;
+	}
 
 	/* Invoke create_test */
 	snprintf(cmd, CMD_LEN, "./create_test.py %s %s > %s.test", raw_filename, report_filename, output_filename);
 	if((argc > 3) && !strcmp(argv[3], "--create"))
 	{
-		system(cmd);
+		if(system(cmd))
+		{
+			perror("Failed to create test");
+			return 1;
+		}
 		remove(raw_filename);
 		remove(report_filename);
 	}
