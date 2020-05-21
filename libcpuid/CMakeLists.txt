@@ -8,7 +8,7 @@ set(cpuid_sources
     msrdriver.c
     asm-bits.c)
 
-if(WIN32 AND "${MSVC_CXX_ARCHITECTURE_ID}" MATCHES "x64")
+if("${MSVC_CXX_ARCHITECTURE_ID}" MATCHES "x64")
   list(APPEND cpuid_sources masm-x64.asm)
 endif()
 
@@ -67,26 +67,20 @@ configure_package_config_file("${CMAKE_MODULE_PATH}/Config.cmake.in" "${project_
                               INSTALL_DESTINATION "${config_install_dir}")
 
 # Installation
-if(WIN32)
-  install(
-    TARGETS cpuid
-    EXPORT "${TARGETS_EXPORT_NAME}"
-    LIBRARY DESTINATION "lib"
-    ARCHIVE DESTINATION "lib"
-    RUNTIME DESTINATION "bin"
-    INCLUDES
-    DESTINATION "include")
-  install(
-    EXPORT "${TARGETS_EXPORT_NAME}"
-    NAMESPACE "${namespace}"
-    DESTINATION "${config_install_dir}")
 
-else()
-  install(
-    TARGETS cpuid
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-endif()
+install(
+  TARGETS cpuid
+  EXPORT "${TARGETS_EXPORT_NAME}"
+  LIBRARY DESTINATION "lib"
+  ARCHIVE DESTINATION "lib"
+  RUNTIME DESTINATION "bin"
+  INCLUDES
+  PUBLIC_HEADER DESTINATION "include")
+
+install(
+  EXPORT "${TARGETS_EXPORT_NAME}"
+  NAMESPACE "${namespace}"
+  DESTINATION "${config_install_dir}")
 
 install(FILES "${project_config}" "${version_config}" DESTINATION "${config_install_dir}")
 
