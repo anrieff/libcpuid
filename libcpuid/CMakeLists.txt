@@ -12,7 +12,11 @@ if("${MSVC_CXX_ARCHITECTURE_ID}" MATCHES "x64")
   list(APPEND cpuid_sources masm-x64.asm)
 endif()
 
-add_library(cpuid SHARED ${cpuid_sources})
+if(UNIX)
+  add_library(cpuid SHARED ${cpuid_sources})
+else()
+  add_library(cpuid ${cpuid_sources})
+endif()
 target_include_directories(cpuid SYSTEM PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 target_compile_definitions(cpuid PRIVATE VERSION="${PROJECT_VERSION}")

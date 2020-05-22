@@ -1,5 +1,7 @@
-add_executable(convert_instlatx64 convert_instlatx64.c)
-target_link_libraries(convert_instlatx64 PUBLIC cpuid)
+if(UNIX)
+  add_executable(convert_instlatx64 convert_instlatx64.c)
+  target_link_libraries(convert_instlatx64 PUBLIC cpuid)
+endif(UNIX)
 
 add_custom_target(test DEPENDS test-fast)
 
