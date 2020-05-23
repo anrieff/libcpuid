@@ -116,12 +116,13 @@ for fn in glob.glob("%s/*.c" % sys.argv[1]):
 			files_code[fn].append(entry)
 	f.close()
 
+features_whitelist = ["CPU_FEATURE_SSE5"]
 for feature in allf:
 	matching_files = []
 	for fn in files_code:
 		if feature in files_code[fn]:
 			matching_files.append(fn)
-	if len(matching_files) == 0:
+	if len(matching_files) == 0 and feature not in features_whitelist:
 		if firstError:
 			print "FAILED:"
 			firstError = False
