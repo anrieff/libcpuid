@@ -78,8 +78,8 @@ install(
   LIBRARY DESTINATION "lib"
   ARCHIVE DESTINATION "lib"
   RUNTIME DESTINATION "bin"
-  INCLUDES
-  PUBLIC_HEADER DESTINATION "include")
+  INCLUDES DESTINATION "include/libcpuid"
+  PUBLIC_HEADER DESTINATION "include/libcpuid")
 
 install(
   EXPORT "${TARGETS_EXPORT_NAME}"
@@ -92,5 +92,5 @@ add_custom_target(
   consistency
   COMMAND "./check-consistency.py" "./"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
-  COMMENT "Run tests (fast mode)"
+  COMMENT "Check consistency"
   VERBATIM)
