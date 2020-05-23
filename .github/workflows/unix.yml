@@ -1,0 +1,49 @@
+name: Build (UNIX)
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build_unix:
+    name: Build
+    runs-on: ${{ matrix.os.label }}
+    strategy:
+      matrix:
+        os:
+          - { label: macos-latest, name: macos }
+          - { label: ubuntu-latest, name: linux }
+    env:
+      OS_NAME: ${{ matrix.os.name }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Generate build system
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=""
+
+    - name: Build
+      run: cmake --build build
+
+    - name: Run tests
+      run: |
+        make -C build consistency
+        make -C build test-old
+
+    - name: Install
+      run: |
+        cmake --install build
+        install -v AUTHORS ChangeLog COPYING Readme.md "$DESTDIR"
+        echo -e "Operating system and compiler version:\n$(uname -a)\n$(cc --version)" > "$DESTDIR/Readme.$OS_NAME"
+      env:
+        DESTDIR: ${{ github.workspace }}/installdir
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.os.name }}
+        path: installdir/*

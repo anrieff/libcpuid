@@ -1,0 +1,76 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Get Git tag
+      run: echo ::set-env name=VERSION::${GITHUB_REF#refs/tags/}
+
+    - name: Create distribution source tarball
+      run: |
+        libtoolize
+        autoreconf --install
+        ./configure
+        make dist
+
+    - name: Download macOS artifacts
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        workflow: unix.yml
+        commit: ${{ github.sha }}
+        name: macos
+        path: macos
+
+    - name: Download Windows (32-bit) artifacts
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        workflow: windows.yml
+        commit: ${{ github.sha }}
+        name: win32
+        path: win32
+
+    - name: Download Windows (64-bit) artifacts
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        workflow: windows.yml
+        commit: ${{ github.sha }}
+        name: win64
+        path: win64
+
+    - name: Compress artifacts
+      run: |
+        for dir in macos win32 win64; do
+          zip -r "libcpuid-$VERSION-$dir.zip" "$dir"
+        done
+      env:
+        VERSION: ${{ env.VERSION }}
+
+    - name: Create release
+      uses: ncipollo/release-action@v1
+      with:
+        token: "${{ secrets.GITHUB_TOKEN }}"
+        tag: ${{ env.VERSION }}
+        name: ${{ env.VERSION }}
+        draft: true
+        prerelease: false
+        body: |
+          This is an **official** release.
+          Brief info of changes between the releases can be found in the [ChangeLog](https://github.com/anrieff/libcpuid/blob/master/ChangeLog).
+
+          As a convenience, the following binaries are provided:
+          - A source tarball;
+          - Build for 64-bit macOS (built under macOS 10.15);
+          - Build for 32-bit Windows, using MSVC 16.5, in Debug, Release and Release DLL configurations;
+          - Build for 64-bit Windows, using MSVC 16.5, in Debug, Release and Release DLL configurations.
+        artifacts: "libcpuid-${{ env.VERSION }}.tar.gz,libcpuid-${{ env.VERSION }}-macos.zip,libcpuid-${{ env.VERSION }}-win32.zip,libcpuid-${{ env.VERSION }}-win64.zip"

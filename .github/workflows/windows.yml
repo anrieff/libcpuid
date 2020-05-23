@@ -1,0 +1,71 @@
+name: Build (Windows)
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build_win:
+    name: Build
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        config: [Debug, Release, ReleaseDLL]
+        platform:
+          - { bitness: x32, ms: Win32, name: win32 }
+          - { bitness: x64, ms: x64, name: win64 }
+    env:
+      CONFIG: ${{ matrix.config }}
+      BITNESS: ${{ matrix.platform.bitness }}
+      PLATFORM: ${{ matrix.platform.ms }}
+      PTS: v142
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.0
+
+    - name: Build with MSBuild
+      run: |
+        MSBuild.exe libcpuid_vc10.sln `
+          /property:Platform=$Env:PLATFORM `
+          /property:Configuration=$Env:CONFIG `
+          /property:PlatformToolset=$Env:PTS `
+          /verbosity:normal
+
+    - name: Write Readme.win
+      uses: DamianReeves/write-file-action@master
+      with:
+        path: Readme.win
+        contents: |
+          The binaries here are compiled with Microsoft Visual C++. The following configurations are built:
+
+          Debug\ - no optimizations, using the static debug C runtime (/MTd)
+          Release\ - optimizations on, using the static C runtime (/MT)
+          ReleaseDLL\ - the library is compiled in a .dll (libcpuid.dll), which you'd need to ship alongside your executable. Static C runtime.
+
+          Operating system and compiler version:
+        write-mode: overwrite
+
+    - name: Prepate artifacts
+      run: |
+        mkdir -pv "$DESTDIR/"{bin,include,lib}
+        echo -e "$(cat Readme.win)\n$(wmic os get caption,version -value | sed '/^[[:space:]]*$/d')\n$(MSBuild.exe -version | sed '/^[[:space:]]*$/d')" > "$DESTDIR/Readme.win"
+        install -v AUTHORS ChangeLog COPYING Readme.md "$DESTDIR/"
+        install -v libcpuid/{libcpuid_constants.h,libcpuid.h,libcpuid_types.h} "$DESTDIR/include/"
+        cd "$GITHUB_WORKSPACE/cpuid_tool/$BITNESS" && find * -type f -name '*.exe'                                         -exec install -Dv "{}" "$DESTDIR/bin/{}" \;
+        cd "$GITHUB_WORKSPACE/libcpuid/$BITNESS"   && find * -type f \( -name '*.lib' -o -name '*.dll' -o -name '*.exp' \) -exec install -Dv "{}" "$DESTDIR/lib/{}" \;
+      shell: bash
+      env:
+        DESTDIR: ${{ github.workspace }}/installdir
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.platform.name }}
+        path: installdir/*
