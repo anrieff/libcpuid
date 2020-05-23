@@ -6,7 +6,7 @@ if len(sys.argv) != 2:
 	print "Usage: check-consistency <path>"
 	sys.exit(0)
 
-
+err = 0
 def getEnumElements(enumName):
 	f = open("%s/libcpuid.h" % sys.argv[1], "r")
 	l = []
@@ -42,6 +42,7 @@ def checkEnumSize(enumName, constantName):
 	themax = getConstant(constantName)
 	print "%d elements; max size (%s=%d)..." % (count, constantName, themax),
 	if count > themax:
+		err += 1
 		print "FAILED"
 		global firstError
 		firstError = False
@@ -63,8 +64,10 @@ for fn in glob.glob("%s/*.c" % sys.argv[1]):
 			nfeat += 1
 			res = rexp.findall(s)
 			if len(res) > 1:
+				err += 1
 				raise "..Too many matches"
 			if res[0][0].lower() != res[0][1]:
+				err += 1
 				print "..Mismatch - %s:%d - `%s' vs `%s'" % (os.path.basename(fn), line, res[0][0], res[0][1])
 		line += 1
 	if nfeat:
@@ -89,6 +92,7 @@ for s in f.readlines():
 	if rexp.match(s):
 		entry = rexp.findall(s)[0]
 		if entry in impf:
+			err += 1
 			print "cpu_feature_str(): duplicate entry: %s" % entry
 		impf.append(entry)
 f.close()
@@ -97,6 +101,7 @@ print "Found %d total features and %d named features" % (len(allf), len(impf))
 
 for feature in allf:
 	if not feature in impf:
+		err += 1
 		print "cpu_feature_str(): don't have entry for %s" % feature
 
 # Check whether all features have detection code:
@@ -126,11 +131,13 @@ for feature in allf:
 		if firstError:
 			print "FAILED:"
 			firstError = False
+		err += 1
 		print "..No detection code for %s" % feature
 	if len(matching_files) > 1:
 		if firstError:
 			print "FAILED:"
 			firstError = False
+		err += 1
 		print "..Conflicting detection code for %s in files %s" % (feature, " and ".join(matching_files))
 
 if firstError:
@@ -166,16 +173,19 @@ for fn in glob.glob("%s/*.c" % sys.argv[1]):
 			cdefs += 1
 			s = parts[10].strip()
 			if s[0] != '"' or s[-1] != '"':
+				err += 1
 				print "..Warning, %s:%d - cannot correctly handle the cpu codename" % (bfn, nline)
 				allok = False
 				continue
 			s = s[1:-1]
 			if len(s) > 31:
+				err += 1
 				print "..%s:%d - codename (%s) is longer than 31 characters!" % (bfn, nline, s)
 				allok = False
 			if cache_exp.match(s):
 				cache_size = cache_exp.findall(s)[0][1:-1]
 				if not cache_size in common_cache_sizes:
+					err += 1
 					print "..Warning, %s:%d - suspicious cache size in codename [%s] (%s)" % (bfn, nline, s, cache_size)
 					allok = False
 	if cdefs:
@@ -185,3 +195,5 @@ for fn in glob.glob("%s/*.c" % sys.argv[1]):
 		else:
 			print "some errors/warnings"
 	f.close()
+
+sys.exit(err)
