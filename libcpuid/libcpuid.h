@@ -29,7 +29,7 @@
  * \file     libcpuid.h
  * \author   Veselin Georgiev
  * \date     Oct 2008
- * \version  0.4.1
+ * \version  0.5.0
  *
  * Version history:
  *
@@ -58,6 +58,9 @@
  *                       (a backwards-incompatible change since the sizeof
  *                        cpu_raw_data_t and cpu_id_t is now different).
  * * 0.4.1 (2019-02-05): A lot of DB updates, and better RDMSR
+ * * 0.5.0 (2020-05-23): A lot of DB updates, detection of new CPU features,
+ *                       (a backwards-incompatible change since the sizeof
+ *                        cpu_raw_data_t and cpu_id_t is now different).
  */
 
 /** @mainpage A simple libcpuid introduction

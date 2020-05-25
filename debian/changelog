@@ -1,3 +1,30 @@
+libcpuid (0.5.0) unstable; urgency=low
+
+  * A backwards-incompatible change, since the sizeof cpu_raw_data_t and
+    cpu_id_t are now different.
+  * Support for Hygon Dhyana (#123)
+  * Support for Zen 2 (#125, #137)
+  * Stubs for AArch64 (#127)
+  * Support for Intel AVX512VNNI detection (#129)
+  * Typo fixes (#130)
+  * Support for get_total_cpus on Haiku (#131)
+  * Fix build on PPC (#132)
+  * Support for CMake build system (#138) and vcpkg packaging (#140)
+  * Support for Cannon Lake
+  * Support for Coffee Lake-U and Coffee Lake Refresh
+  * Support for Comet Lake
+  * Support for Ice Lake
+  * Support for Renoir
+  * Fix ThreadSanitizer report (#142)
+  * Better support of L1 intruction cache (--l1i-assoc, --l1i-cacheline)
+  * Support for Ivy Bridge-E (Xeon)
+  * Support up to 4 subleaf entries for CPUID leaf 0x8000001D and
+    fix detection of L3 cache on Zen 2
+  * Support for RDSEED/ADX/SHA_NI detection (AMD)
+  * Support for ABM/AVX512VBMI/AVX512VBMI2 detection (Intel)
+
+ -- Georgiev, Veselin <anrieff@gmail.com>  Sat, 23 May 2020 20:35:00 +0200
+
 libcpuid (0.4.1) unstable; urgency=low
 
   * Better support for Skylake Core i5 (#76)
