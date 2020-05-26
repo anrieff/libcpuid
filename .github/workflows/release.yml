@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v2
+
     - name: Get Git tag
       run: echo ::set-env name=VERSION::${GITHUB_REF#refs/tags/}
 
