@@ -79,3 +79,24 @@ So far, I'm aware of the following projects which utilize libcpuid (listed alpha
 * ucbench (http://anrieff.net/ucbench)
 
 We'd love to hear from you if you are also using libcpuid and want your project listed above.
+
+Downloads
+---------
+
+You can find latest versioned archives [here](https://github.com/anrieff/libcpuid/releases/latest), with binaries for macOS and Windows.
+
+#### Binary packages
+
+Also, libcpuid is available for following systems in official repositories:
+
+* [Debian (since version 11 "Bullseye")](https://packages.debian.org/source/bullseye/libcpuid): `apt install cpuidtool libcpuid14 libcpuid-dev`
+* [Fedora (since version 25)](https://src.fedoraproject.org/rpms/libcpuid): `dnf install libcpuid libcpuid-devel`
+* [FreeBSD (since version 11)](https://www.freshports.org/sysutils/libcpuid): `pkg install libcpuid`
+* [OpenMandriva Lx (since version 4.0 "Nitrogen")](https://github.com/OpenMandrivaAssociation/libcpuid): `dnf install libcpuid-tools libcpuid14 libcpuid-devel`
+* [openSUSE Leap (since version 15.1)](https://software.opensuse.org/package/libcpuid): `zypper install libcpuid-tools libcpuid14 libcpuid-devel`
+* [Solus](https://packages.getsol.us/shannon/libc/libcpuid/): `eopkg install libcpuid libcpuid-devel`
+* [Ubuntu (since version 20.04 "Focal Fossa")](https://packages.ubuntu.com/source/focal/libcpuid) : `apt install cpuidtool libcpuid14 libcpuid-dev`
+
+#### Build tool
+
+* Vcpkg: `vcpkg install cpuid`
