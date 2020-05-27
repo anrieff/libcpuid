@@ -70,11 +70,12 @@ misdetections or new CPUs that libcpuid doesn't handle well yet.
 Users
 -----
 
-So far, I'm aware of the following projects which utilize libcpuid:
+So far, I'm aware of the following projects which utilize libcpuid (listed alphabetically):
 
 * CPU-X (https://github.com/X0rg/CPU-X)
 * fre:ac (https://www.freac.org/)
-* ucbench (http://anrieff.net/ucbench)
+* I-Nex (https://github.com/i-nex/I-Nex)
 * Multiprecision Computing Toolbox for MATLAB (https://www.advanpix.com/)
+* ucbench (http://anrieff.net/ucbench)
 
 We'd love to hear from you if you are also using libcpuid and want your project listed above.
