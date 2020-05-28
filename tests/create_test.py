@@ -1,12 +1,12 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import os, sys, re
 
 args = sys.argv
 
 if len(args) != 3:
-	print "Usage: create_test.py <rawdata file> <report file>"
-	print "The .test file is written to stdout."
+	print("Usage: create_test.py <rawdata file> <report file>")
+	print("The .test file is written to stdout.")
 	sys.exit(1)
 
 def readRawFile():
@@ -57,4 +57,4 @@ def readResultFile():
 
 delimiter = "-" * 80
 lines = readRawFile() + [delimiter] + readResultFile()
-sys.stdout.writelines(map(lambda s: s + "\n", lines))
+sys.stdout.writelines([s + "\n" for s in lines])

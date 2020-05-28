@@ -1,6 +1,6 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
-from __future__ import with_statement
+
 import os, sys, re, random
 
 
@@ -16,7 +16,7 @@ fix = False
 show_test_fast_warning = False
 
 if len(args) < 3:
-	print """
+	print("""
 Usage: run_tests.py <cpuid_tool binary> <test file/dir> [test file/dir ...] [OPTIONS]
 
 If a test file is given, it is tested by itself.
@@ -24,7 +24,7 @@ If a directory is given, process all *.test files there, subdirectories included
 
 If the --fix option is given, the behaviour of the cpuid_tool binary is deemed correct
 and any failing tests are updated.
-"""
+""")
 	sys.exit(1)
 
 filelist = []
@@ -51,12 +51,12 @@ for arg in args[2:]:
 # warnings when you attempt to use that :(
 def make_tempname(prefix):
 	chars = ""
-	for i in xrange(26):
+	for i in range(26):
 		chars += chr(97+i)
 		chars += chr(65+i)
-	for i in xrange(10):
+	for i in range(10):
 		chars += chr(48+i)
-	for i in xrange(6):
+	for i in range(6):
 		prefix += random.choice(chars)
 	return prefix
 
@@ -66,24 +66,24 @@ def fmt_error(err):
 
 def fixFile(filename, input_lines, output_lines):
 	f = open(filename, "wt")
-	f.writelines(map(lambda s: s + "\n", input_lines))
+	f.writelines([s + "\n" for s in input_lines])
 	f.write("--------------------------------------------------------------------------------\n")
-	f.writelines(map(lambda s: s + "\n", output_lines))
+	f.writelines([s + "\n" for s in output_lines])
 	f.close()
 
 def do_test(inp, expected_out, binary, test_file_name):
 	fninp = make_tempname("cpuidin")
 	fnoutp = make_tempname("cpuidout")
 	f = open(fninp, "wt")
-	f.writelines(map(lambda s: s + "\n", inp))
+	f.writelines([s + "\n" for s in inp])
 	f.close()
-	cmd = "%s --load=%s --outfile=%s %s" % (binary, fninp, fnoutp, " ".join(map(lambda s: "--" + s, fields)))
+	cmd = "%s --load=%s --outfile=%s %s" % (binary, fninp, fnoutp, " ".join(["--" + s for s in fields]))
 	os.system(cmd)
 	os.unlink(fninp)
 	real_out = []
 	try:
 		f = open(fnoutp, "rt")
-		real_out = map(lambda s: s.strip(), f.readlines())
+		real_out = [s.strip() for s in f.readlines()]
 		f.close()
 		os.unlink(fnoutp)
 	except IOError:
@@ -104,7 +104,7 @@ def do_test(inp, expected_out, binary, test_file_name):
 			return "Mismatch in fields:\n%s" % "\n".join([fmt_error(err) for err in err_fields])
 
 errors = False
-print "Testing..."
+print("Testing...")
 for test_file_name in filelist:
 	current_input = []
 	current_output = []
@@ -120,15 +120,15 @@ for test_file_name in filelist:
 					current_input.append(line.strip())
 		#codename = current_output[len(current_output) - 2]
 		result = do_test(current_input, current_output, cpuid_tool, test_file_name)
-		print "Test [%s]: %s" % (test_file_name[:-5], result)
+		print("Test [%s]: %s" % (test_file_name[:-5], result))
 		if result != "OK":
 			errors = True
 		build_output = False
 
 if errors:
 	if show_test_fast_warning:
-		print """
+		print("""
 You're running tests in fast mode; before taking any action on the errors
-above, please confirm that the slow mode ('make test-old') also fails."""
+above, please confirm that the slow mode ('make test-old') also fails.""")
 else:
-	print "All successfull!"
+	print("All successfull!")
