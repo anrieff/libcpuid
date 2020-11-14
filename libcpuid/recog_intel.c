@@ -348,6 +348,8 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14,  9, -1, 142,  2,    -1,    -1, NC, PENTIUM_      ,     0, "Kaby Lake-U (Pentium)"    },
 	{  6, 14,  9, -1, 142,  2,    -1,    -1, NC, CELERON_      ,     0, "Kaby Lake-U (Celeron)"    },
 	{  6, 14,  9, -1, 142,  2,    -1,    -1, NC, CORE_|_M_|_3  ,     0, "Kaby Lake-U (Core m3)"    },
+	{  6, 14, 10, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Kaby Lake-R (Core i7)"    }, /* i7-8550U + i7-8650U */
+	{  6, 14, 10, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Kaby Lake-R (Core i5)"    }, /* i5-8250U + i5-8350U /*
 
 	/* Coffee Lake CPUs (8th gen, 14nm): */
 	{  6, 14, 10, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_9  ,     0, "Coffee Lake (Core i9)"    },
