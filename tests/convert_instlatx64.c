@@ -7,10 +7,12 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <unistd.h>
 #include "../libcpuid/libcpuid.h"
 
 #define LINE_LEN     60
 #define FILENAME_LEN 128
+#define PATH_MAX     1024
 #define CMD_LEN      256
 #define EXT_CPUID    0x80000000
 
@@ -58,8 +60,9 @@ int main(int argc, char *argv[])
 {
 	int assigned, subleaf;
 	uint32_t addr, prev_addr, eax, ebx, ecx, edx;
-	char line[LINE_LEN], raw_filename[FILENAME_LEN], report_filename[FILENAME_LEN], cmd[CMD_LEN];
-	FILE *fin = NULL, *fout = NULL;
+	char line[LINE_LEN], raw_filename[FILENAME_LEN], report_filename[FILENAME_LEN];
+	char libcpuid_directory[PATH_MAX], cpuid_tool[PATH_MAX], cmd[CMD_LEN];
+	FILE *fin = NULL, *fout = NULL, *ftmp = NULL;
 	struct cpu_raw_data_t *raw = &(struct cpu_raw_data_t) {};
 
 	if(argc < 3)
@@ -73,6 +76,20 @@ int main(int argc, char *argv[])
 	snprintf(raw_filename,    FILENAME_LEN, "%s.raw",        output_filename);
 	snprintf(report_filename, FILENAME_LEN, "%s_report.txt", output_filename);
 	memset(raw, 0xff, sizeof(struct cpu_raw_data_t)); // ffffffff ffffffff ffffffff ffffffff means data is missing in output test file
+
+	/* Find libcpuid root directory */
+	if((ftmp = popen("git rev-parse --show-toplevel", "r")) == NULL)
+	{
+		perror("Failed to run 'git' command");
+		return 1;
+	}
+	if(fgets(libcpuid_directory, PATH_MAX, ftmp) == NULL)
+	{
+		perror("Failed to get source directory");
+		return 1;
+	}
+	pclose(ftmp);
+	libcpuid_directory[strlen(libcpuid_directory) - 1] = '\0';
 
 	/* Open files */
 	if((fin  = fopen(input_filename, "r")) == NULL)
@@ -128,7 +145,12 @@ int main(int argc, char *argv[])
 	fclose(fout);
 
 	/* Invoke cpuid_tool */
-	snprintf(cmd, CMD_LEN, "../cpuid_tool/cpuid_tool --load=%s --report --outfile=%s", raw_filename, report_filename);
+	snprintf(cpuid_tool, PATH_MAX, "%s/build/cpuid_tool/cpuid_tool", libcpuid_directory);
+	if(access(cpuid_tool, F_OK) == 0)
+		snprintf(cmd, CMD_LEN, "%s --load=%s --report --outfile=%s", cpuid_tool, raw_filename, report_filename);
+	else
+		snprintf(cmd, CMD_LEN, "%s/cpuid_tool/cpuid_tool --load=%s --report --outfile=%s", libcpuid_directory, raw_filename, report_filename);
+
 	if(system(cmd))
 	{
 		perror("Failed to load raw file in cpuid_tool");
