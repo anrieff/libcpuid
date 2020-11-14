@@ -390,6 +390,11 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 126,  4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Ice Lake (Core i7)"       },
 	{  6, 14, -1, -1, 126,  4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Ice Lake (Core i5)"       },
 	{  6, 14, -1, -1, 126,  2,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Ice Lake (Core i3)"       },
+
+	/* Goldmont Plus CPUs (14nm) */
+	{  6, 10, -1, -1, 122,  4,    -1,    -1, NC, PENTIUM_      ,     0, "Gemini Lake (Pentium)"    },
+	{  6, 10, -1, -1, 122,  4,    -1,    -1, NC, CELERON_      ,     0, "Gemini Lake (Celeron)"    },
+	{  6, 10, -1, -1, 122,  2,    -1,    -1, NC, CELERON_      ,     0, "Gemini Lake (Celeron)"    },
 	/* F   M   S  EF   EM   C     L2     L3               Brand */
 
 
