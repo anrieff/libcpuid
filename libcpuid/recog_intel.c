@@ -56,6 +56,14 @@ enum _intel_model_t {
 	_5400,
 	_2xxx, /* Core i[357] 2xxx */
 	_3xxx, /* Core i[357] 3xxx */
+	_4xxx, /* Core i[357] 4xxx */
+	_5xxx, /* Core i[357] 5xxx */
+	_6xxx, /* Core i[357] 6xxx */
+	_7xxx, /* Core i[3579] 7xxx */
+	_8xxx, /* Core i[3579] 8xxx */
+	_9xxx, /* Core i[3579] 9xxx */
+	_10xxx, /* Core i[3579] 10xxx */
+	_11xxx, /* Core i[3579] 11xxx */
 };
 typedef enum _intel_model_t intel_model_t;
 
@@ -366,6 +374,11 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, 10, -1, 142,  2,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Coffee Lake-U (Core i3)"  },
 	{  6,  6, -1, -1, 102,  2,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Cannon Lake (Core i3)"    }, /* Core i3 8121U */
 	{  6,  6, -1, -1, 102,  2,    -1,    -1, NC, CORE_|_M_|_3  ,     0, "Cannon Lake (Core m3)"    }, /* Core m3 8114Y */
+	{  6, 14, 12, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_7  , _8xxx, "Whiskey Lake-U (Core i7)" },
+	{  6, 14, 12, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_5  , _8xxx, "Whiskey Lake-U (Core i5)" },
+	{  6, 14, 12, -1, 142,  2,    -1,    -1, NC, CORE_|_I_|_3  , _8xxx, "Whiskey Lake-U (Core i3)" },
+	{  6, 14, 12, -1, 142,  2,    -1,    -1, NC, PENTIUM_      , _8xxx, "Whiskey Lake-U (Pentium)" },
+	{  6, 14, 12, -1, 142,  2,    -1,    -1, NC, CELERON_      , _8xxx, "Whiskey Lake-U (Celeron)" },
 
 	/* Coffee Lake Refresh CPUs (9th gen, 14nm): */
 	{  6, 14, 13, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_9  ,     0, "Coffee Lake-R (Core i9)"  },
@@ -382,14 +395,14 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  5, -1, -1, 165,  4,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Comet Lake (Core i3)"     },
 	{  6,  5, -1, -1, 165,  2,    -1,    -1, NC, PENTIUM_      ,     0, "Comet Lake (Pentium)"     },
 	{  6,  5, -1, -1, 165,  2,    -1,    -1, NC, CELERON_      ,     0, "Comet Lake (Celeron)"     },
-	{  6, 14, 12, -1, 142,  6,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Comet Lake-U (Core i7)"   },
-	{  6, 14, 12, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Comet Lake-U (Core i7)"   },
-	{  6, 14, 12, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Comet Lake-U (Core i5)"   },
-	{  6, 14, 12, -1, 142,  2,    -1,    -1, NC, PENTIUM_      ,     0, "Comet Lake-U (Pentium)"   },
-	{  6, 14, 12, -1, 142,  2,    -1,    -1, NC, CELERON_      ,     0, "Comet Lake-U (Celeron)"   },
-	{  6, 14, -1, -1, 126,  4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Ice Lake (Core i7)"       },
-	{  6, 14, -1, -1, 126,  4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Ice Lake (Core i5)"       },
-	{  6, 14, -1, -1, 126,  2,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Ice Lake (Core i3)"       },
+	{  6, 14, 12, -1, 142,  6,    -1,    -1, NC, CORE_|_I_|_7  ,_10xxx, "Comet Lake-U (Core i7)"   },
+	{  6, 14, 12, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_7  ,_10xxx, "Comet Lake-U (Core i7)"   },
+	{  6, 14, 12, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_5  ,_10xxx, "Comet Lake-U (Core i5)"   },
+	{  6, 14, 12, -1, 142,  2,    -1,    -1, NC, PENTIUM_      ,_10xxx, "Comet Lake-U (Pentium)"   },
+	{  6, 14, 12, -1, 142,  2,    -1,    -1, NC, CELERON_      ,_10xxx, "Comet Lake-U (Celeron)"   },
+	{  6, 14, -1, -1, 126,  4,    -1,    -1, NC, CORE_|_I_|_7  ,_10xxx, "Ice Lake (Core i7)"       },
+	{  6, 14, -1, -1, 126,  4,    -1,    -1, NC, CORE_|_I_|_5  ,_10xxx, "Ice Lake (Core i5)"       },
+	{  6, 14, -1, -1, 126,  2,    -1,    -1, NC, CORE_|_I_|_3  ,_10xxx, "Ice Lake (Core i3)"       },
 
 	/* Goldmont Plus CPUs (14nm) */
 	{  6, 10, -1, -1, 122,  4,    -1,    -1, NC, PENTIUM_      ,     0, "Gemini Lake (Pentium)"    },
@@ -818,11 +831,19 @@ static intel_model_t get_model_code(struct cpu_id_t* data)
 	const char *bs = data->brand_str;
 	int mod_flags = 0, model_no = 0, ndigs = 0;
 	/* If the CPU is a Core ix, then just return the model number generation: */
-	if ((i = match_pattern(bs, "Core(TM) i[357]")) != 0) {
+	if ((i = match_pattern(bs, "Core(TM) i[3579]")) != 0) {
 		i += 11;
 		if (i + 4 >= l) return UNKNOWN;
 		if (bs[i] == '2') return _2xxx;
 		if (bs[i] == '3') return _3xxx;
+		if (bs[i] == '4') return _4xxx;
+		if (bs[i] == '5') return _5xxx;
+		if (bs[i] == '6') return _6xxx;
+		if (bs[i] == '7') return _7xxx;
+		if (bs[i] == '8') return _8xxx;
+		if (bs[i] == '9') return _9xxx;
+		if ((bs[i] == '1') && (bs[i+1] == '0')) return _10xxx;
+		if ((bs[i] == '1') && (bs[i+1] == '1')) return _11xxx;
 		return UNKNOWN;
 	}
 
