@@ -274,6 +274,7 @@ const struct match_entry_t cpudb_intel[] = {
 	/* Sandy Bridge CPUs (2nd gen, 32nm): */
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, NC, 0             ,     0, "Unknown Sandy Bridge"     },
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, NC, XEON_         ,     0, "Sandy Bridge (Xeon)"      },
+	{  6, 10, -1, -1, 42,   4,    -1,    -1, NC, XEON_         ,     0, "Sandy Bridge (Xeon)"      },
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Sandy Bridge (Core i7)"   },
 	{  6, 10, -1, -1, 42,   4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Sandy Bridge (Core i7)"   },
 	{  6, 10, -1, -1, 42,   4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Sandy Bridge (Core i5)"   },
