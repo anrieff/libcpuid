@@ -298,6 +298,10 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 25,   33,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Vermeer)"             },
 	{ 15, -1, -1, 25,   33,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Vermeer)"             },
 	{ 15, -1, -1, 25,   33,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Vermeer)"             },
+	{ 15, -1, -1, 25,   80,  -1,    -1,    -1, NC, RYZEN_|_9           ,     0, "Ryzen 9 (Cezanne)"             },
+	{ 15, -1, -1, 25,   80,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Cezanne)"             },
+	{ 15, -1, -1, 25,   80,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Cezanne)"             },
+	{ 15, -1, -1, 25,   80,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Cezanne)"             },
 	/* F   M   S  EF    EM  #cores  L2$   L3$  BC  ModelBits          ModelCode  Name                           */
 
 	{ 15, -1, -1, 24,    0,  -1,    -1,    -1, NC, C86_|_7              ,     0, "C86 7 (Dhyana)"               },
