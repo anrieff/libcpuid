@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 
 	if(argc < 3)
 	{
-		fprintf(stderr, "Usage: %s <input file (from instlatx64)> <output file (without extension)>\n", argv[0]);
+		fprintf(stderr, "Usage: %s <input file (from instlatx64)> <output file (without extension)> [--create]\n", argv[0]);
 		return 1;
 	}
 
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Invoke create_test */
-	snprintf(cmd, CMD_LEN, "./create_test.py %s %s > %s.test", raw_filename, report_filename, output_filename);
+	snprintf(cmd, CMD_LEN, "%s/tests/create_test.py %s %s > %s.test", libcpuid_directory, raw_filename, report_filename, output_filename);
 	if((argc > 3) && !strcmp(argv[3], "--create"))
 	{
 		if(system(cmd))
