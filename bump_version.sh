@@ -11,6 +11,11 @@ NEW_VERSION="$1"
 SO_VERSION="$2"
 DATE="$(date '+%Y-%m-%d')"
 
+if ! [[ "$SO_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+	echo "$0: SO_VERSION must contain dots (e.g. '15.0.1')"
+	exit 1
+fi
+
 echo -e "\nVersion $NEW_VERSION ($DATE):" >> "$GIT_DIR/ChangeLog"
 sed -i "s|\[$OLD_VERSION\]|\[$NEW_VERSION\]|" "$GIT_DIR/configure.ac"
 sed -i "s|LIBCPUID_CURRENT=.*|dnl $(echo $SO_VERSION | tr . :)   Version $NEW_VERSION:\nLIBCPUID_CURRENT=$(echo $SO_VERSION | cut -d. -f1)|" "$GIT_DIR/configure.ac"

@@ -1,3 +1,18 @@
+libcpuid (0.5.1) unstable; urgency=low
+
+  * Convert all python scripts to Python 3
+  * Support for Kaby Lake Refresh
+  * Support for Kaby Lake-G
+  * Support for Comet Lake-U
+  * Support for Gemini Lake
+  * Support for Vermeer
+  * Support for Whiskey Lake-U
+  * Support for Cezanne
+  * Support for Milan
+  * Support for Rocket Lake
+
+ -- Georgiev, Veselin <anrieff@gmail.com>  Sat, 20 March 2021 17:42:00 +0100
+
 libcpuid (0.5.0) unstable; urgency=low
 
   * A backwards-incompatible change, since the sizeof cpu_raw_data_t and
