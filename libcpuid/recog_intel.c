@@ -360,7 +360,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14,  9, -1, 158,  4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Kaby Lake-G (Core i7)"    },
 	{  6, 14,  9, -1, 158,  4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Kaby Lake-G (Core i5)"    },
 	{  6, 14, 10, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Kaby Lake-R (Core i7)"    }, /* i7-8550U + i7-8650U */
-	{  6, 14, 10, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Kaby Lake-R (Core i5)"    }, /* i5-8250U + i5-8350U /*
+	{  6, 14, 10, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Kaby Lake-R (Core i5)"    }, /* i5-8250U + i5-8350U */
 
 	/* Coffee Lake CPUs (8th gen, 14nm): */
 	{  6, 14, 10, -1, 158,  8,    -1,    -1, NC, CORE_|_I_|_9  ,     0, "Coffee Lake (Core i9)"    },
