@@ -12,8 +12,9 @@
 
 #define LINE_LEN     60
 #define FILENAME_LEN 128
-#define PATH_MAX     1024
-#define CMD_LEN      256
+#define LIB_DIR_LEN  1024
+#define TOOL_LEN     2048
+#define CMD_LEN      4096
 #define EXT_CPUID    0x80000000
 
 #define NOT_AFFECTED(__line)        (__line[0] == 0xffffffff) && (__line[1] == 0xffffffff) && (__line[2] == 0xffffffff) && (__line[3] == 0xffffffff)
@@ -61,7 +62,7 @@ int main(int argc, char *argv[])
 	int assigned, subleaf;
 	uint32_t addr, prev_addr, eax, ebx, ecx, edx;
 	char line[LINE_LEN], raw_filename[FILENAME_LEN], report_filename[FILENAME_LEN];
-	char libcpuid_directory[PATH_MAX], cpuid_tool[PATH_MAX], cmd[CMD_LEN];
+	char libcpuid_directory[LIB_DIR_LEN], cpuid_tool[TOOL_LEN], cmd[CMD_LEN];
 	FILE *fin = NULL, *fout = NULL, *ftmp = NULL;
 	struct cpu_raw_data_t *raw = &(struct cpu_raw_data_t) {};
 
@@ -83,7 +84,7 @@ int main(int argc, char *argv[])
 		perror("Failed to run 'git' command");
 		return 1;
 	}
-	if(fgets(libcpuid_directory, PATH_MAX, ftmp) == NULL)
+	if(fgets(libcpuid_directory, LIB_DIR_LEN, ftmp) == NULL)
 	{
 		perror("Failed to get source directory");
 		return 1;
@@ -145,7 +146,7 @@ int main(int argc, char *argv[])
 	fclose(fout);
 
 	/* Invoke cpuid_tool */
-	snprintf(cpuid_tool, PATH_MAX, "%s/build/cpuid_tool/cpuid_tool", libcpuid_directory);
+	snprintf(cpuid_tool, TOOL_LEN, "%s/build/cpuid_tool/cpuid_tool", libcpuid_directory);
 	if(access(cpuid_tool, F_OK) == 0)
 		snprintf(cmd, CMD_LEN, "%s --load=%s --report --outfile=%s", cpuid_tool, raw_filename, report_filename);
 	else
