@@ -82,3 +82,15 @@ Version 0.5.0 (2020-05-23):
 	  fix detection of L3 cache on Zen 2
 	* Support for RDSEED/ADX/SHA_NI detection (AMD)
 	* Support for ABM/AVX512VBMI/AVX512VBMI2 detection (Intel)
+
+Version 0.5.1 (2021-03-20):
+	* Convert all python scripts to Python 3
+	* Support for Kaby Lake Refresh
+	* Support for Kaby Lake-G
+	* Support for Comet Lake-U
+	* Support for Gemini Lake
+	* Support for Vermeer
+	* Support for Whiskey Lake-U
+	* Support for Cezanne
+	* Support for Milan
+	* Support for Rocket Lake

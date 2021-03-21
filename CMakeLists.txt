@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(VERSION "0.5.0")
+set(VERSION "0.5.1")
 set(SOVERSION 15)
 project(
   cpuid
