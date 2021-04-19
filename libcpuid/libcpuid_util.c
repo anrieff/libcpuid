@@ -29,6 +29,9 @@
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "libcpuid.h"
 #include "libcpuid_util.h"
 
@@ -74,6 +77,7 @@ void debugf(int verboselevel, const char* format, ...)
 	_warn_fun(buff);
 }
 
+#ifndef HAVE_POPCOUNT64
 static int popcount64(uint64_t mask)
 {
 	int num_set_bits = 0;
@@ -85,6 +89,7 @@ static int popcount64(uint64_t mask)
 
 	return num_set_bits;
 }
+#endif
 
 static int score(const struct match_entry_t* entry, const struct cpu_id_t* data,
                  int brand_code, uint64_t bits, int model_code)
