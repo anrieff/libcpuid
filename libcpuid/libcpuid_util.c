@@ -78,9 +78,9 @@ void debugf(int verboselevel, const char* format, ...)
 }
 
 #ifndef HAVE_POPCOUNT64
-static int popcount64(uint64_t mask)
+static unsigned int popcount64(uint64_t mask)
 {
-	int num_set_bits = 0;
+	unsigned int num_set_bits = 0;
 
 	while (mask) {
 		mask &= mask - 1;
