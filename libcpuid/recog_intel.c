@@ -415,6 +415,14 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 122,  4,    -1,    -1, NC, PENTIUM_      ,     0, "Gemini Lake (Pentium)"    },
 	{  6, 10, -1, -1, 122,  4,    -1,    -1, NC, CELERON_      ,     0, "Gemini Lake (Celeron)"    },
 	{  6, 10, -1, -1, 122,  2,    -1,    -1, NC, CELERON_      ,     0, "Gemini Lake (Celeron)"    },
+
+	/* Tiger Lake CPUs (11th gen, 10nm, mobile processors): */
+	{  6, 12, -1, -1, 140, -1,    -1,    -1, NC, CORE_|_I_|_9  ,_11xxx, "Tiger Lake (Core i9)"     },
+	{  6, 12, -1, -1, 140, -1,    -1,    -1, NC, CORE_|_I_|_7  ,_11xxx, "Tiger Lake (Core i7)"     },
+	{  6, 12, -1, -1, 140, -1,    -1,    -1, NC, CORE_|_I_|_5  ,_11xxx, "Tiger Lake (Core i5)"     },
+	{  6, 12, -1, -1, 140, -1,    -1,    -1, NC, CORE_|_I_|_3  ,_11xxx, "Tiger Lake (Core i3)"     },
+	{  6, 12, -1, -1, 140,  2,    -1,    -1, NC, PENTIUM_      ,     0, "Tiger Lake (Pentium)"     },
+	{  6, 12, -1, -1, 140,  2,    -1,    -1, NC, CELERON_      ,     0, "Tiger Lake (Celeron)"     },
 	/* F   M   S  EF   EM   C     L2     L3               Brand */
 
 
