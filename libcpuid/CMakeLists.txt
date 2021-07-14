@@ -67,7 +67,7 @@ include(CMakePackageConfigHelpers)
 write_basic_package_version_file("${version_config}" COMPATIBILITY SameMajorVersion)
 
 # Configure '<PROJECT-NAME>Config.cmake' Use variables: * TARGETS_EXPORT_NAME * PROJECT_NAME
-configure_package_config_file("${CMAKE_MODULE_PATH}/Config.cmake.in" "${project_config}"
+configure_package_config_file("${PROJECT_SOURCE_DIR}/cmake/Config.cmake.in" "${project_config}"
                               INSTALL_DESTINATION "${config_install_dir}")
 
 # Installation
