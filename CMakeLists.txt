@@ -7,6 +7,13 @@ project(
   LANGUAGES C CXX ASM_MASM
   VERSION ${VERSION})
 
+if(MSVC)
+  set(LIBCPUID_SHARED OFF)
+else()
+  set(LIBCPUID_SHARED ON)
+endif()
+option(BUILD_SHARED_LIBS "Build shared lib" ${LIBCPUID_SHARED})
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 99)
 
