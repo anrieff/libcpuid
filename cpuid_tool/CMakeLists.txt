@@ -12,5 +12,5 @@ if(WIN32)
     CONFIGURATIONS Release
     RUNTIME DESTINATION bin/Release)
 else()
-  install(TARGETS cpuid_tool RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS cpuid_tool DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()

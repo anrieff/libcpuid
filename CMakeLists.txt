@@ -14,11 +14,13 @@ else()
 endif()
 option(BUILD_SHARED_LIBS "Build shared lib" ${LIBCPUID_SHARED})
 
+option(LIBCPUID_TESTS "Enable building tests" OFF)
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 99)
 
 # Global variables
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 if(UNIX)
   include(GNUInstallDirs)
@@ -34,4 +36,6 @@ endif(UNIX)
 # Include subdirectories
 add_subdirectory(libcpuid)
 add_subdirectory(cpuid_tool)
-add_subdirectory(tests)
+if(LIBCPUID_TESTS)
+  add_subdirectory(tests)
+endif()
