@@ -7,6 +7,8 @@ project(
   LANGUAGES C CXX ASM_MASM
   VERSION ${VERSION})
 
+option(LIBCPUID_TESTS "Enable building tests" OFF)
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 99)
 
@@ -27,4 +29,6 @@ endif(UNIX)
 # Include subdirectories
 add_subdirectory(libcpuid)
 add_subdirectory(cpuid_tool)
-add_subdirectory(tests)
+if(LIBCPUID_TESTS)
+  add_subdirectory(tests)
+endif()
