@@ -247,19 +247,22 @@ struct cpu_id_t {
 	 */
 	uint8_t flags[CPU_FLAGS_MAX];
 
-	/** CPU family */
+	/** CPU family (BaseFamily[3:0]) */
 	int32_t family;
 
-	/** CPU model */
+	/** CPU model (BaseModel[3:0]) */
 	int32_t model;
 
 	/** CPU stepping */
 	int32_t stepping;
 
-	/** CPU extended family */
+	/** CPU display ("true") family (computed as BaseFamily[3:0]+ExtendedFamily[7:0]) */
 	int32_t ext_family;
 
-	/** CPU extended model */
+	/**
+	 * CPU display ("true") model (computed as (ExtendedModel[3:0]<<4) + BaseModel[3:0])
+	 * For detailed discussion about what BaseModel / ExtendedModel / Model are, see Github issue #150.
+	 */
 	int32_t ext_model;
 
 	/** Number of CPU cores on the current processor */
