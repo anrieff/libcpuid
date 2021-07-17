@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.13)
 
 set(VERSION "0.5.1")
 set(SOVERSION 15)
