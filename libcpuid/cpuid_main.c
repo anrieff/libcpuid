@@ -63,6 +63,7 @@ static void cpu_id_t_constructor(struct cpu_id_t* id)
 	id->l1_data_cache = id->l1_instruction_cache = id->l2_cache = id->l3_cache = id->l4_cache = -1;
 	id->l1_assoc = id->l1_data_assoc = id->l1_instruction_assoc = id->l2_assoc = id->l3_assoc = id->l4_assoc = -1;
 	id->l1_cacheline = id->l1_data_cacheline = id->l1_instruction_cacheline = id->l2_cacheline = id->l3_cacheline = id->l4_cacheline = -1;
+	id->l1_data_cache_share_thread = id->l1_instruction_cache_share_thread = id->l2_cache_share_thread = id->l3_cache_share_thread = id->l4_cache_share_thread = -1;
 	id->sse_size = -1;
 }
 

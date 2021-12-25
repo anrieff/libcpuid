@@ -222,7 +222,7 @@ void debug_print_lbits(int debuglevel, uint64_t mask)
 	debugf(2, "\n");
 }
 
-void check_case(uint8_t on, cache_type_t cache, int size, int assoc, int linesize, struct cpu_id_t* data)
+void check_case(uint8_t on, cache_type_t cache, int size, int assoc, int linesize, int share_thread, struct cpu_id_t* data)
 {
 	if (!on) return;
 	switch (cache) {
@@ -230,26 +230,31 @@ void check_case(uint8_t on, cache_type_t cache, int size, int assoc, int linesiz
 			data->l1_instruction_cache = size;
 			data->l1_instruction_assoc = assoc;
 			data->l1_instruction_cacheline = linesize;
+			data->l1_instruction_cache_share_thread = share_thread;
 			break;
 		case L1D:
 			data->l1_data_cache = size;
 			data->l1_data_assoc = assoc;
 			data->l1_data_cacheline = linesize;
+			data->l1_data_cache_share_thread = share_thread;
 			break;
 		case L2:
 			data->l2_cache = size;
 			data->l2_assoc = assoc;
 			data->l2_cacheline = linesize;
+			data->l2_cache_share_thread = share_thread;
 			break;
 		case L3:
 			data->l3_cache = size;
 			data->l3_assoc = assoc;
 			data->l3_cacheline = linesize;
+			data->l3_cache_share_thread = share_thread;
 			break;
 		case L4:
 			data->l4_cache = size;
 			data->l4_assoc = assoc;
 			data->l4_cacheline = linesize;
+			data->l4_cache_share_thread = share_thread;
 			break;
 		default:
 			break;
@@ -260,7 +265,7 @@ void decode_deterministic_cache_info(struct cpu_id_t* data,
 												 uint32_t cache_info[][NUM_REGS])
 {
 	int ecx;
-	int ways, partitions, linesize, sets, size, level, typenumber;
+	int ways, partitions, linesize, sets, size, level, typenumber, share_thread;
 	cache_type_t type;
 	for (ecx = 0; ecx < NUM_REGS; ecx++) {
 		typenumber = cache_info[ecx][EAX] & 0x1f;
@@ -286,6 +291,7 @@ void decode_deterministic_cache_info(struct cpu_id_t* data,
 		linesize = (cache_info[ecx][EBX] & 0xfff) + 1;
 		sets = cache_info[ecx][ECX] + 1;
 		size = ways * partitions * linesize * sets / 1024;
-		check_case(1, type, size, ways, linesize, data);
+		share_thread = ((cache_info[ecx][EAX] >> 14) & 0xfff) + 1;
+		check_case(1, type, size, ways, linesize, share_thread, data);
 	}
 }

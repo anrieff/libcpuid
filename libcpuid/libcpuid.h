@@ -357,6 +357,21 @@ struct cpu_id_t {
 	/** Cache-line size for L4 cache. -1 if undetermined */
 	int32_t l4_cacheline;
 
+	/** The number of threads sharing L1 data cache. -1 if undetermined */
+	int32_t l1_data_cache_share_thread;
+
+	/** The number of threads sharing L1 data cache. -1 if undetermined */
+	int32_t l1_instruction_cache_share_thread;
+
+	/** The number of threads sharing L2 cache. -1 if undetermined */
+	int32_t l2_cache_share_thread;
+
+	/** The number of threads sharing L3 cache. -1 if undetermined */
+	int32_t l3_cache_share_thread;
+
+	/** The number of threads sharing L4 cache. -1 if undetermined */
+	int32_t l4_cache_share_thread;
+
 	/**
 	 * The brief and human-friendly CPU codename, which was recognized.<br>
 	 * Examples:

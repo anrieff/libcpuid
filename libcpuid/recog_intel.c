@@ -506,59 +506,59 @@ static void decode_intel_oldstyle_cache_info(struct cpu_raw_data_t* raw, struct 
 		}
 	}
 
-	check_case(f[0x06], L1I,      8,  4,  32, data);
-	check_case(f[0x08], L1I,     16,  4,  32, data);
-	check_case(f[0x0A], L1D,      8,  2,  32, data);
-	check_case(f[0x0C], L1D,     16,  4,  32, data);
-	check_case(f[0x22],  L3,    512,  4,  64, data);
-	check_case(f[0x23],  L3,   1024,  8,  64, data);
-	check_case(f[0x25],  L3,   2048,  8,  64, data);
-	check_case(f[0x29],  L3,   4096,  8,  64, data);
-	check_case(f[0x2C], L1D,     32,  8,  64, data);
-	check_case(f[0x30], L1I,     32,  8,  64, data);
-	check_case(f[0x39],  L2,    128,  4,  64, data);
-	check_case(f[0x3A],  L2,    192,  6,  64, data);
-	check_case(f[0x3B],  L2,    128,  2,  64, data);
-	check_case(f[0x3C],  L2,    256,  4,  64, data);
-	check_case(f[0x3D],  L2,    384,  6,  64, data);
-	check_case(f[0x3E],  L2,    512,  4,  64, data);
-	check_case(f[0x41],  L2,    128,  4,  32, data);
-	check_case(f[0x42],  L2,    256,  4,  32, data);
-	check_case(f[0x43],  L2,    512,  4,  32, data);
-	check_case(f[0x44],  L2,   1024,  4,  32, data);
-	check_case(f[0x45],  L2,   2048,  4,  32, data);
-	check_case(f[0x46],  L3,   4096,  4,  64, data);
-	check_case(f[0x47],  L3,   8192,  8,  64, data);
-	check_case(f[0x4A],  L3,   6144, 12,  64, data);
-	check_case(f[0x4B],  L3,   8192, 16,  64, data);
-	check_case(f[0x4C],  L3,  12288, 12,  64, data);
-	check_case(f[0x4D],  L3,  16384, 16,  64, data);
-	check_case(f[0x4E],  L2,   6144, 24,  64, data);
-	check_case(f[0x60], L1D,     16,  8,  64, data);
-	check_case(f[0x66], L1D,      8,  4,  64, data);
-	check_case(f[0x67], L1D,     16,  4,  64, data);
-	check_case(f[0x68], L1D,     32,  4,  64, data);
+	check_case(f[0x06], L1I,      8,  4,  32, -1, data);
+	check_case(f[0x08], L1I,     16,  4,  32, -1, data);
+	check_case(f[0x0A], L1D,      8,  2,  32, -1, data);
+	check_case(f[0x0C], L1D,     16,  4,  32, -1, data);
+	check_case(f[0x22],  L3,    512,  4,  64, -1, data);
+	check_case(f[0x23],  L3,   1024,  8,  64, -1, data);
+	check_case(f[0x25],  L3,   2048,  8,  64, -1, data);
+	check_case(f[0x29],  L3,   4096,  8,  64, -1, data);
+	check_case(f[0x2C], L1D,     32,  8,  64, -1, data);
+	check_case(f[0x30], L1I,     32,  8,  64, -1, data);
+	check_case(f[0x39],  L2,    128,  4,  64, -1, data);
+	check_case(f[0x3A],  L2,    192,  6,  64, -1, data);
+	check_case(f[0x3B],  L2,    128,  2,  64, -1, data);
+	check_case(f[0x3C],  L2,    256,  4,  64, -1, data);
+	check_case(f[0x3D],  L2,    384,  6,  64, -1, data);
+	check_case(f[0x3E],  L2,    512,  4,  64, -1, data);
+	check_case(f[0x41],  L2,    128,  4,  32, -1, data);
+	check_case(f[0x42],  L2,    256,  4,  32, -1, data);
+	check_case(f[0x43],  L2,    512,  4,  32, -1, data);
+	check_case(f[0x44],  L2,   1024,  4,  32, -1, data);
+	check_case(f[0x45],  L2,   2048,  4,  32, -1, data);
+	check_case(f[0x46],  L3,   4096,  4,  64, -1, data);
+	check_case(f[0x47],  L3,   8192,  8,  64, -1, data);
+	check_case(f[0x4A],  L3,   6144, 12,  64, -1, data);
+	check_case(f[0x4B],  L3,   8192, 16,  64, -1, data);
+	check_case(f[0x4C],  L3,  12288, 12,  64, -1, data);
+	check_case(f[0x4D],  L3,  16384, 16,  64, -1, data);
+	check_case(f[0x4E],  L2,   6144, 24,  64, -1, data);
+	check_case(f[0x60], L1D,     16,  8,  64, -1, data);
+	check_case(f[0x66], L1D,      8,  4,  64, -1, data);
+	check_case(f[0x67], L1D,     16,  4,  64, -1, data);
+	check_case(f[0x68], L1D,     32,  4,  64, -1, data);
 	/* The following four entries are trace cache. Intel does not
 	 * specify a cache-line size, so we use -1 instead
 	 */
-	check_case(f[0x70], L1I,     12,  8,  -1, data);
-	check_case(f[0x71], L1I,     16,  8,  -1, data);
-	check_case(f[0x72], L1I,     32,  8,  -1, data);
-	check_case(f[0x73], L1I,     64,  8,  -1, data);
+	check_case(f[0x70], L1I,     12,  8,  -1, -1, data);
+	check_case(f[0x71], L1I,     16,  8,  -1, -1, data);
+	check_case(f[0x72], L1I,     32,  8,  -1, -1, data);
+	check_case(f[0x73], L1I,     64,  8,  -1, -1, data);
 
-	check_case(f[0x78],  L2,   1024,  4,  64, data);
-	check_case(f[0x79],  L2,    128,  8,  64, data);
-	check_case(f[0x7A],  L2,    256,  8,  64, data);
-	check_case(f[0x7B],  L2,    512,  8,  64, data);
-	check_case(f[0x7C],  L2,   1024,  8,  64, data);
-	check_case(f[0x7D],  L2,   2048,  8,  64, data);
-	check_case(f[0x7F],  L2,    512,  2,  64, data);
-	check_case(f[0x82],  L2,    256,  8,  32, data);
-	check_case(f[0x83],  L2,    512,  8,  32, data);
-	check_case(f[0x84],  L2,   1024,  8,  32, data);
-	check_case(f[0x85],  L2,   2048,  8,  32, data);
-	check_case(f[0x86],  L2,    512,  4,  64, data);
-	check_case(f[0x87],  L2,   1024,  8,  64, data);
+	check_case(f[0x78],  L2,   1024,  4,  64, -1, data);
+	check_case(f[0x79],  L2,    128,  8,  64, -1, data);
+	check_case(f[0x7A],  L2,    256,  8,  64, -1, data);
+	check_case(f[0x7B],  L2,    512,  8,  64, -1, data);
+	check_case(f[0x7C],  L2,   1024,  8,  64, -1, data);
+	check_case(f[0x7D],  L2,   2048,  8,  64, -1, data);
+	check_case(f[0x7F],  L2,    512,  2,  64, -1, data);
+	check_case(f[0x82],  L2,    256,  8,  32, -1, data);
+	check_case(f[0x83],  L2,    512,  8,  32, -1, data);
+	check_case(f[0x84],  L2,   1024,  8,  32, -1, data);
+	check_case(f[0x85],  L2,   2048,  8,  32, -1, data);
+	check_case(f[0x86],  L2,    512,  4,  64, -1, data);
+	check_case(f[0x87],  L2,   1024,  8,  64, -1, data);
 
 	if (f[0x49]) {
 		/* This flag is overloaded with two meanings. On Xeon MP

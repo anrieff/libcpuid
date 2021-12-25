@@ -102,7 +102,7 @@ enum _cache_type_t {
 };
 typedef enum _cache_type_t cache_type_t;
 
-void check_case(uint8_t on, cache_type_t cache, int size, int assoc, int linesize, struct cpu_id_t* data);
+void check_case(uint8_t on, cache_type_t cache, int size, int assoc, int linesize, int share_thread, struct cpu_id_t* data);
 void decode_deterministic_cache_info(struct cpu_id_t* data, uint32_t cache_info[][NUM_REGS]);
 
 extern libcpuid_warn_fn_t _warn_fun;
