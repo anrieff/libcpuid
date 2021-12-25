@@ -84,6 +84,11 @@ typedef enum {
 	NEED_L2_CACHELINE,
 	NEED_L3_CACHELINE,
 	NEED_L4_CACHELINE,
+	NEED_L1D_SHARE_THREAD,
+	NEED_L1I_SHARE_THREAD,
+	NEED_L2_SHARE_THREAD,
+	NEED_L3_SHARE_THREAD,
+	NEED_L4_SHARE_THREAD,
 	NEED_CODENAME,
 	NEED_FEATURES,
 	NEED_CLOCK,
@@ -116,43 +121,48 @@ FILE *fout;
 
 const struct { output_data_switch sw; const char* synopsis; int ident_required; }
 matchtable[] = {
-	{ NEED_CPUID_PRESENT, "--cpuid"        , 0},
-	{ NEED_VENDOR_STR   , "--vendorstr"    , 1},
-	{ NEED_VENDOR_ID    , "--vendorid"     , 1},
-	{ NEED_BRAND_STRING , "--brandstr"     , 1},
-	{ NEED_FAMILY       , "--family"       , 1},
-	{ NEED_MODEL        , "--model"        , 1},
-	{ NEED_STEPPING     , "--stepping"     , 1},
-	{ NEED_EXT_FAMILY   , "--extfamily"    , 1},
-	{ NEED_EXT_MODEL    , "--extmodel"     , 1},
-	{ NEED_NUM_CORES    , "--cores"        , 1},
-	{ NEED_NUM_LOGICAL  , "--logical"      , 1},
-	{ NEED_TOTAL_CPUS   , "--total-cpus"   , 1},
-	{ NEED_L1D_SIZE     , "--l1d-cache"    , 1},
-	{ NEED_L1I_SIZE     , "--l1i-cache"    , 1},
-	{ NEED_L2_SIZE      , "--cache"        , 1},
-	{ NEED_L2_SIZE      , "--l2-cache"     , 1},
-	{ NEED_L3_SIZE      , "--l3-cache"     , 1},
-	{ NEED_L4_SIZE      , "--l4-cache"     , 1},
-	{ NEED_L1D_ASSOC    , "--l1d-assoc"    , 1},
-	{ NEED_L1I_ASSOC    , "--l1i-assoc"    , 1},
-	{ NEED_L2_ASSOC     , "--l2-assoc"     , 1},
-	{ NEED_L3_ASSOC     , "--l3-assoc"     , 1},
-	{ NEED_L4_ASSOC     , "--l4-assoc"     , 1},
-	{ NEED_L1D_CACHELINE, "--l1d-cacheline", 1},
-	{ NEED_L1I_CACHELINE, "--l1i-cacheline", 1},
-	{ NEED_L2_CACHELINE , "--l2-cacheline" , 1},
-	{ NEED_L3_CACHELINE , "--l3-cacheline" , 1},
-	{ NEED_L4_CACHELINE , "--l4-cacheline" , 1},
-	{ NEED_CODENAME     , "--codename"     , 1},
-	{ NEED_FEATURES     , "--flags"        , 1},
-	{ NEED_CLOCK        , "--clock"        , 0},
-	{ NEED_CLOCK_OS     , "--clock-os"     , 0},
-	{ NEED_CLOCK_RDTSC  , "--clock-rdtsc"  , 1},
-	{ NEED_CLOCK_IC     , "--clock-ic"     , 1},
-	{ NEED_RDMSR        , "--rdmsr"        , 0},
-	{ NEED_RDMSR_RAW    , "--rdmsr-raw"    , 0},
-	{ NEED_SSE_UNIT_SIZE, "--sse-size"     , 1},
+	{ NEED_CPUID_PRESENT   , "--cpuid"           , 0},
+	{ NEED_VENDOR_STR      , "--vendorstr"       , 1},
+	{ NEED_VENDOR_ID       , "--vendorid"        , 1},
+	{ NEED_BRAND_STRING    , "--brandstr"        , 1},
+	{ NEED_FAMILY          , "--family"          , 1},
+	{ NEED_MODEL           , "--model"           , 1},
+	{ NEED_STEPPING        , "--stepping"        , 1},
+	{ NEED_EXT_FAMILY      , "--extfamily"       , 1},
+	{ NEED_EXT_MODEL       , "--extmodel"        , 1},
+	{ NEED_NUM_CORES       , "--cores"           , 1},
+	{ NEED_NUM_LOGICAL     , "--logical"         , 1},
+	{ NEED_TOTAL_CPUS      , "--total-cpus"      , 1},
+	{ NEED_L1D_SIZE        , "--l1d-cache"       , 1},
+	{ NEED_L1I_SIZE        , "--l1i-cache"       , 1},
+	{ NEED_L2_SIZE         , "--cache"           , 1},
+	{ NEED_L2_SIZE         , "--l2-cache"        , 1},
+	{ NEED_L3_SIZE         , "--l3-cache"        , 1},
+	{ NEED_L4_SIZE         , "--l4-cache"        , 1},
+	{ NEED_L1D_ASSOC       , "--l1d-assoc"       , 1},
+	{ NEED_L1I_ASSOC       , "--l1i-assoc"       , 1},
+	{ NEED_L2_ASSOC        , "--l2-assoc"        , 1},
+	{ NEED_L3_ASSOC        , "--l3-assoc"        , 1},
+	{ NEED_L4_ASSOC        , "--l4-assoc"        , 1},
+	{ NEED_L1D_CACHELINE   , "--l1d-cacheline"   , 1},
+	{ NEED_L1I_CACHELINE   , "--l1i-cacheline"   , 1},
+	{ NEED_L2_CACHELINE    , "--l2-cacheline"    , 1},
+	{ NEED_L3_CACHELINE    , "--l3-cacheline"    , 1},
+	{ NEED_L4_CACHELINE    , "--l4-cacheline"    , 1},
+	{ NEED_L1D_SHARE_THREAD, "--l1d-share-thread", 1},
+	{ NEED_L1I_SHARE_THREAD, "--l1i-share-thread", 1},
+	{ NEED_L2_SHARE_THREAD , "--l2-share-thread" , 1},
+	{ NEED_L3_SHARE_THREAD , "--l3-share-thread" , 1},
+	{ NEED_L4_SHARE_THREAD , "--l4-share-thread" , 1},
+	{ NEED_CODENAME        , "--codename"        , 1},
+	{ NEED_FEATURES        , "--flags"           , 1},
+	{ NEED_CLOCK           , "--clock"           , 0},
+	{ NEED_CLOCK_OS        , "--clock-os"        , 0},
+	{ NEED_CLOCK_RDTSC     , "--clock-rdtsc"     , 1},
+	{ NEED_CLOCK_IC        , "--clock-ic"        , 1},
+	{ NEED_RDMSR           , "--rdmsr"           , 0},
+	{ NEED_RDMSR_RAW       , "--rdmsr-raw"       , 0},
+	{ NEED_SSE_UNIT_SIZE   , "--sse-size"        , 1},
 };
 
 const int sz_match = (sizeof(matchtable) / sizeof(matchtable[0]));
@@ -424,6 +434,21 @@ static void print_info(output_data_switch query, struct cpu_raw_data_t* raw,
 		case NEED_L4_CACHELINE:
 			fprintf(fout, "%d\n", data->l4_cacheline);
 			break;
+		case NEED_L1D_SHARE_THREAD:
+			fprintf(fout, "%d\n", data->l1_data_cache_share_thread);
+			break;
+		case NEED_L1I_SHARE_THREAD:
+			fprintf(fout, "%d\n", data->l1_instruction_cache_share_thread);
+			break;
+		case NEED_L2_SHARE_THREAD:
+			fprintf(fout, "%d\n", data->l2_cache_share_thread);
+			break;
+		case NEED_L3_SHARE_THREAD:
+			fprintf(fout, "%d\n", data->l3_cache_share_thread);
+			break;
+		case NEED_L4_SHARE_THREAD:
+			fprintf(fout, "%d\n", data->l4_cache_share_thread);
+			break;
 		case NEED_CODENAME:
 			fprintf(fout, "%s\n", data->cpu_codename);
 			break;
@@ -648,35 +673,40 @@ int main(int argc, char** argv)
 
 		/* OK, now write what we have in `data'...: */
 		fprintf(fout, "CPU Info:\n------------------\n");
-		fprintf(fout, "  vendor_str : `%s'\n", data.vendor_str);
-		fprintf(fout, "  vendor id  : %d\n", (int) data.vendor);
-		fprintf(fout, "  brand_str  : `%s'\n", data.brand_str);
-		fprintf(fout, "  family     : %d (%02Xh)\n", data.family, data.family);
-		fprintf(fout, "  model      : %d (%02Xh)\n", data.model, data.model);
-		fprintf(fout, "  stepping   : %d (%02Xh)\n", data.stepping, data.stepping);
-		fprintf(fout, "  ext_family : %d (%02Xh)\n", data.ext_family, data.ext_family);
-		fprintf(fout, "  ext_model  : %d (%02Xh)\n", data.ext_model, data.ext_model);
-		fprintf(fout, "  num_cores  : %d\n", data.num_cores);
-		fprintf(fout, "  num_logical: %d\n", data.num_logical_cpus);
-		fprintf(fout, "  tot_logical: %d\n", data.total_logical_cpus);
-		fprintf(fout, "  L1 D cache : %d KB\n", data.l1_data_cache);
-		fprintf(fout, "  L1 I cache : %d KB\n", data.l1_instruction_cache);
-		fprintf(fout, "  L2 cache   : %d KB\n", data.l2_cache);
-		fprintf(fout, "  L3 cache   : %d KB\n", data.l3_cache);
-		fprintf(fout, "  L4 cache   : %d KB\n", data.l4_cache);
-		fprintf(fout, "  L1D assoc. : %d-way\n", data.l1_data_assoc);
-		fprintf(fout, "  L1I assoc. : %d-way\n", data.l1_instruction_assoc);
-		fprintf(fout, "  L2 assoc.  : %d-way\n", data.l2_assoc);
-		fprintf(fout, "  L3 assoc.  : %d-way\n", data.l3_assoc);
-		fprintf(fout, "  L4 assoc.  : %d-way\n", data.l4_assoc);
-		fprintf(fout, "  L1D line sz: %d bytes\n", data.l1_data_cacheline);
-		fprintf(fout, "  L1I line sz: %d bytes\n", data.l1_instruction_cacheline);
-		fprintf(fout, "  L2 line sz : %d bytes\n", data.l2_cacheline);
-		fprintf(fout, "  L3 line sz : %d bytes\n", data.l3_cacheline);
-		fprintf(fout, "  L4 line sz : %d bytes\n", data.l4_cacheline);
-		fprintf(fout, "  SSE units  : %d bits (%s)\n", data.sse_size, data.detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
-		fprintf(fout, "  code name  : `%s'\n", data.cpu_codename);
-		fprintf(fout, "  features   :");
+		fprintf(fout, "  vendor_str       : `%s'\n", data.vendor_str);
+		fprintf(fout, "  vendor id        : %d\n", (int) data.vendor);
+		fprintf(fout, "  brand_str        : `%s'\n", data.brand_str);
+		fprintf(fout, "  family           : %d (%02Xh)\n", data.family, data.family);
+		fprintf(fout, "  model            : %d (%02Xh)\n", data.model, data.model);
+		fprintf(fout, "  stepping         : %d (%02Xh)\n", data.stepping, data.stepping);
+		fprintf(fout, "  ext_family       : %d (%02Xh)\n", data.ext_family, data.ext_family);
+		fprintf(fout, "  ext_model        : %d (%02Xh)\n", data.ext_model, data.ext_model);
+		fprintf(fout, "  num_cores        : %d\n", data.num_cores);
+		fprintf(fout, "  num_logical      : %d\n", data.num_logical_cpus);
+		fprintf(fout, "  tot_logical      : %d\n", data.total_logical_cpus);
+		fprintf(fout, "  L1 D cache       : %d KB\n", data.l1_data_cache);
+		fprintf(fout, "  L1 I cache       : %d KB\n", data.l1_instruction_cache);
+		fprintf(fout, "  L2 cache         : %d KB\n", data.l2_cache);
+		fprintf(fout, "  L3 cache         : %d KB\n", data.l3_cache);
+		fprintf(fout, "  L4 cache         : %d KB\n", data.l4_cache);
+		fprintf(fout, "  L1D assoc.       : %d-way\n", data.l1_data_assoc);
+		fprintf(fout, "  L1I assoc.       : %d-way\n", data.l1_instruction_assoc);
+		fprintf(fout, "  L2 assoc.        : %d-way\n", data.l2_assoc);
+		fprintf(fout, "  L3 assoc.        : %d-way\n", data.l3_assoc);
+		fprintf(fout, "  L4 assoc.        : %d-way\n", data.l4_assoc);
+		fprintf(fout, "  L1D line sz      : %d bytes\n", data.l1_data_cacheline);
+		fprintf(fout, "  L1I line sz      : %d bytes\n", data.l1_instruction_cacheline);
+		fprintf(fout, "  L2 line sz       : %d bytes\n", data.l2_cacheline);
+		fprintf(fout, "  L3 line sz       : %d bytes\n", data.l3_cacheline);
+		fprintf(fout, "  L4 line sz       : %d bytes\n", data.l4_cacheline);
+		fprintf(fout, "  L1D share thread : %d\n", data.l1_data_cache_share_thread);
+		fprintf(fout, "  L1I share thread : %d\n", data.l1_instruction_cache_share_thread);
+		fprintf(fout, "  L2  share thread : %d\n", data.l2_cache_share_thread);
+		fprintf(fout, "  L3  share thread : %d\n", data.l3_cache_share_thread);
+		fprintf(fout, "  L4  share thread : %d\n", data.l4_cache_share_thread);
+		fprintf(fout, "  SSE units        : %d bits (%s)\n", data.sse_size, data.detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
+		fprintf(fout, "  code name        : `%s'\n", data.cpu_codename);
+		fprintf(fout, "  features         :");
 		/*
 		 * Here we enumerate all CPU feature bits, and when a feature
 		 * is present output its name:
