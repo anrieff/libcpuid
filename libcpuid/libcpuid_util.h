@@ -27,6 +27,7 @@
 #define __LIBCPUID_UTIL_H__
 
 #define COUNT_OF(array) (sizeof(array) / sizeof(array[0]))
+#include "libcpuid_types.h"
 
 struct feature_map_t {
 	unsigned bit;
@@ -91,6 +92,18 @@ void debug_print_lbits(int debuglevel, uint64_t mask);
  * Sets the current errno
  */
 int set_error(cpu_error_t err);
+
+enum _cache_type_t {
+	L1I,
+	L1D,
+	L2,
+	L3,
+	L4
+};
+typedef enum _cache_type_t cache_type_t;
+
+void check_case(uint8_t on, cache_type_t cache, int size, int assoc, int linesize, struct cpu_id_t* data);
+void decode_deterministic_cache_info(struct cpu_id_t* data, uint32_t cache_info[][NUM_REGS]);
 
 extern libcpuid_warn_fn_t _warn_fun;
 extern int _current_verboselevel;

@@ -378,6 +378,11 @@ static void load_amd_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 
 static void decode_amd_cache_info(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
+	if (data->ext_family >= 15) {
+		decode_deterministic_cache_info(data, raw->amd_fn8000001dh);
+		return;
+	}
+
 	int l3_result, l3_assoc;
 	const int assoc_table[16] = {
 		0, 1, 2, 0, 4, 0, 8, 0, 16, 16, 32, 48, 64, 96, 128, 255

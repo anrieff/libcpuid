@@ -221,3 +221,71 @@ void debug_print_lbits(int debuglevel, uint64_t mask)
 	}
 	debugf(2, "\n");
 }
+
+void check_case(uint8_t on, cache_type_t cache, int size, int assoc, int linesize, struct cpu_id_t* data)
+{
+	if (!on) return;
+	switch (cache) {
+		case L1I:
+			data->l1_instruction_cache = size;
+			data->l1_instruction_assoc = assoc;
+			data->l1_instruction_cacheline = linesize;
+			break;
+		case L1D:
+			data->l1_data_cache = size;
+			data->l1_data_assoc = assoc;
+			data->l1_data_cacheline = linesize;
+			break;
+		case L2:
+			data->l2_cache = size;
+			data->l2_assoc = assoc;
+			data->l2_cacheline = linesize;
+			break;
+		case L3:
+			data->l3_cache = size;
+			data->l3_assoc = assoc;
+			data->l3_cacheline = linesize;
+			break;
+		case L4:
+			data->l4_cache = size;
+			data->l4_assoc = assoc;
+			data->l4_cacheline = linesize;
+			break;
+		default:
+			break;
+	}
+}
+
+void decode_deterministic_cache_info(struct cpu_id_t* data,
+												 uint32_t cache_info[][NUM_REGS])
+{
+	int ecx;
+	int ways, partitions, linesize, sets, size, level, typenumber;
+	cache_type_t type;
+	for (ecx = 0; ecx < NUM_REGS; ecx++) {
+		typenumber = cache_info[ecx][EAX] & 0x1f;
+		if (typenumber == 0) break;
+		level = (cache_info[ecx][EAX] >> 5) & 0x7;
+		if (level == 1 && typenumber == 1)
+			type = L1D;
+		else if (level == 1 && typenumber == 2)
+			type = L1I;
+		else if (level == 2 && typenumber == 3)
+			type = L2;
+		else if (level == 3 && typenumber == 3)
+			type = L3;
+		else if (level == 4 && typenumber == 3)
+			type = L4;
+		else {
+			warnf("deterministic_cache: unknown level/typenumber combo (%d/%d), cannot\n", level, typenumber);
+			warnf("deterministic_cache: recognize cache type\n");
+			continue;
+		}
+		ways = ((cache_info[ecx][EBX] >> 22) & 0x3ff) + 1;
+		partitions = ((cache_info[ecx][EBX] >> 12) & 0x3ff) + 1;
+		linesize = (cache_info[ecx][EBX] & 0xfff) + 1;
+		sets = cache_info[ecx][ECX] + 1;
+		size = ways * partitions * linesize * sets / 1024;
+		check_case(1, type, size, ways, linesize, data);
+	}
+}

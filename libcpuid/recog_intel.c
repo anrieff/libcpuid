@@ -492,49 +492,6 @@ static void load_intel_features(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	}
 }
 
-enum _cache_type_t {
-	L1I,
-	L1D,
-	L2,
-	L3,
-	L4
-};
-typedef enum _cache_type_t cache_type_t;
-
-static void check_case(uint8_t on, cache_type_t cache, int size, int assoc, int linesize, struct cpu_id_t* data)
-{
-	if (!on) return;
-	switch (cache) {
-		case L1I:
-			data->l1_instruction_cache = size;
-			data->l1_instruction_assoc = assoc;
-			data->l1_instruction_cacheline = linesize;
-			break;
-		case L1D:
-			data->l1_data_cache = size;
-			data->l1_data_assoc = assoc;
-			data->l1_data_cacheline = linesize;
-			break;
-		case L2:
-			data->l2_cache = size;
-			data->l2_assoc = assoc;
-			data->l2_cacheline = linesize;
-			break;
-		case L3:
-			data->l3_cache = size;
-			data->l3_assoc = assoc;
-			data->l3_cacheline = linesize;
-			break;
-		case L4:
-			data->l4_cache = size;
-			data->l4_assoc = assoc;
-			data->l4_cacheline = linesize;
-			break;
-		default:
-			break;
-	}
-}
-
 static void decode_intel_oldstyle_cache_info(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
 	uint8_t f[256] = {0};
@@ -635,35 +592,8 @@ static void decode_intel_oldstyle_cache_info(struct cpu_raw_data_t* raw, struct 
 static void decode_intel_deterministic_cache_info(struct cpu_raw_data_t* raw,
                                                   struct cpu_id_t* data)
 {
-	int ecx;
-	int ways, partitions, linesize, sets, size, level, typenumber;
-	cache_type_t type;
-	for (ecx = 0; ecx < MAX_INTELFN4_LEVEL; ecx++) {
-		typenumber = raw->intel_fn4[ecx][EAX] & 0x1f;
-		if (typenumber == 0) break;
-		level = (raw->intel_fn4[ecx][EAX] >> 5) & 0x7;
-		if (level == 1 && typenumber == 1)
-			type = L1D;
-		else if (level == 1 && typenumber == 2)
-			type = L1I;
-		else if (level == 2 && typenumber == 3)
-			type = L2;
-		else if (level == 3 && typenumber == 3)
-			type = L3;
-		else if (level == 4 && typenumber == 3)
-			type = L4;
-		else {
-			warnf("deterministic_cache: unknown level/typenumber combo (%d/%d), cannot\n", level, typenumber);
-			warnf("deterministic_cache: recognize cache type\n");
-			continue;
-		}
-		ways = ((raw->intel_fn4[ecx][EBX] >> 22) & 0x3ff) + 1;
-		partitions = ((raw->intel_fn4[ecx][EBX] >> 12) & 0x3ff) + 1;
-		linesize = (raw->intel_fn4[ecx][EBX] & 0xfff) + 1;
-		sets = raw->intel_fn4[ecx][ECX] + 1;
-		size = ways * partitions * linesize * sets / 1024;
-		check_case(1, type, size, ways, linesize, data);
-	}
+   decode_deterministic_cache_info(data, raw->intel_fn4);
+   return;
 }
 
 static int decode_intel_extended_topology(struct cpu_raw_data_t* raw,
