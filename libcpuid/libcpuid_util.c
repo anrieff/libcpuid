@@ -262,7 +262,7 @@ void check_case(uint8_t on, cache_type_t cache, int size, int assoc, int linesiz
 }
 
 void decode_deterministic_cache_info(struct cpu_id_t* data,
-												 uint32_t cache_info[][NUM_REGS])
+                                     uint32_t cache_info[][NUM_REGS])
 {
 	int ecx;
 	int ways, partitions, linesize, sets, size, level, typenumber, share_thread;
