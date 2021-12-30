@@ -267,7 +267,7 @@ void decode_deterministic_cache_info(struct cpu_id_t* data,
 	int ecx;
 	int ways, partitions, linesize, sets, size, level, typenumber, share_thread;
 	cache_type_t type;
-	for (ecx = 0; ecx < NUM_REGS; ecx++) {
+	for (ecx = 0; ecx < MAX_INTELFN4_LEVEL; ecx++) {
 		typenumber = cache_info[ecx][EAX] & 0x1f;
 		if (typenumber == 0) break;
 		level = (cache_info[ecx][EAX] >> 5) & 0x7;
