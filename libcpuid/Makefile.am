@@ -13,8 +13,11 @@ libcpuid_la_SOURCES =		\
 	rdtsc.c			\
 	asm-bits.c		\
 	libcpuid_util.c		\
-	rdmsr.c			\
-	msrdriver.c
+	rdmsr.c
+
+if WINDOWS
+libcpuid_la_SOURCES += msrdriver.c
+endif
 
 libcpuid_la_DEPENDENCIES = \
 	$(srcdir)/libcpuid.sym
