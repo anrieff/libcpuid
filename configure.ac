@@ -56,6 +56,17 @@ if test "x$GCC" = "xyes"; then
     AM_LDFLAGS="$AM_LDFLAGS -g -Wall"
 fi
 
+AC_CANONICAL_HOST
+
+build_windows=no
+
+case "${host_os}" in
+    cygwin*|mingw*)
+        build_windows=yes
+        ;;
+esac
+
+AM_CONDITIONAL([WINDOWS], [test "$build_windows" = "yes"])
 
 AC_SUBST(AM_CPPFLAGS)
 AC_SUBST(AM_LDFLAGS)
