@@ -344,17 +344,30 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 
 static void make_list_from_string(const char* csv, struct cpu_list_t* list)
 {
-	int i, n, l, last;
+	int i, j, n, l, last;
 	l = (int) strlen(csv);
 	n = 0;
 	for (i = 0; i < l; i++) if (csv[i] == ',') n++;
 	n++;
-	list->num_entries = n;
 	list->names = (char**) malloc(sizeof(char*) * n);
+	if (!list->names) { /* Memory allocation failed */
+		list->num_entries = 0;
+		set_error(ERR_NO_MEM);
+		return;
+	}
+	list->num_entries = n;
 	last = -1;
 	n = 0;
 	for (i = 0; i <= l; i++) if (i == l || csv[i] == ',') {
 		list->names[n] = (char*) malloc(i - last);
+		if (!list->names[n]) { /* Memory allocation failed */
+			set_error(ERR_NO_MEM);
+			for (j = 0; j < n; j++) free(list->names[j]);
+			free(list->names);
+			list->num_entries = 0;
+			list->names = NULL;
+			return;
+		}
 		memcpy(list->names[n], &csv[last + 1], i - last - 1);
 		list->names[n][i - last - 1] = '\0';
 		n++;
@@ -799,6 +812,9 @@ void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list)
 			break;
 		default:
 			warnf("Unknown vendor passed to cpuid_get_cpu_list()\n");
+			set_error(ERR_INVRANGE);
+			list->num_entries = 0;
+			list->names = NULL;
 			break;
  	}
 }

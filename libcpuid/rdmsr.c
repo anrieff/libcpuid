@@ -92,6 +92,10 @@ struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 		return NULL;
 	}
 	handle = (struct msr_driver_t*) malloc(sizeof(struct msr_driver_t));
+	if (!handle) {
+		set_error(ERR_NO_MEM);
+		return NULL;
+	}
 	handle->fd = fd;
 	return handle;
 }
@@ -176,6 +180,10 @@ struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 		return NULL;
 	}
 	handle = (struct msr_driver_t*) malloc(sizeof(struct msr_driver_t));
+	if (!handle) {
+		set_error(ERR_NO_MEM);
+		return NULL;
+	}
 	handle->fd = fd;
 	return handle;
 }
