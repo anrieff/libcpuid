@@ -1010,7 +1010,9 @@ struct cpu_list_t {
  * order of the parts.
  *
  * @param vendor the vendor to be queried
- * @param list [out] the resulting list will be written here.
+ * @param list [out] the resulting list will be written here. On failure,
+ * num_entries is set to zero and names to NULL. The error message can be
+ * obtained by calling \ref cpuid_error. @see cpu_error_t
  * NOTE: As the memory is dynamically allocated, be sure to call
  *       cpuid_free_cpu_list() after you're done with the data
  * @see cpu_list_t
