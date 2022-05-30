@@ -89,6 +89,7 @@ You can find latest versioned archives [here](https://github.com/anrieff/libcpui
 
 Also, libcpuid is available for following systems in official repositories:
 
+* [Arch Linux](https://archlinux.org/packages/community/x86_64/libcpuid/): `pacman -S libcpuid`
 * [Debian (since version 11 "Bullseye")](https://packages.debian.org/source/bullseye/libcpuid): `apt install cpuidtool libcpuid14 libcpuid-dev`
 * [Fedora (since version 25)](https://src.fedoraproject.org/rpms/libcpuid): `dnf install libcpuid libcpuid-devel`
 * [FreeBSD (since version 11)](https://www.freshports.org/sysutils/libcpuid): `pkg install libcpuid`
