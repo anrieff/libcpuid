@@ -7,11 +7,14 @@ project(
   LANGUAGES C CXX ASM_MASM
   VERSION ${VERSION})
 
-if(MSVC)
-  set(LIBCPUID_SHARED OFF)
-else()
-  set(LIBCPUID_SHARED ON)
+if(NOT DEFINED LIBCPUID_SHARED)
+  if(MSVC)
+    set(LIBCPUID_SHARED OFF)
+  else()
+    set(LIBCPUID_SHARED ON)
+  endif()
 endif()
+
 option(BUILD_SHARED_LIBS "Build shared lib" ${LIBCPUID_SHARED})
 
 option(LIBCPUID_TESTS "Enable building tests" OFF)
