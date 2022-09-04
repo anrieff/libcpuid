@@ -667,21 +667,34 @@ static void decode_intel_deterministic_cache_info(struct cpu_raw_data_t* raw,
 }
 
 static int decode_intel_extended_topology(struct cpu_raw_data_t* raw,
-                                           struct cpu_id_t* data)
+                                           struct cpu_id_t* data,
+                                           struct internal_id_info_t* internal)
 {
 	int i, level_type, num_smt = -1, num_core = -1;
-	for (i = 0; i < MAX_INTELFN11_LEVEL; i++) {
-		level_type = (raw->intel_fn11[i][ECX] & 0xff00) >> 8;
+	uint8_t apic_package_shift = 0, apic_shift = 0, apic_next_shift;
+	uint32_t apic_id, unique_id;
+
+	for (i = 0; (raw->intel_fn11[i][EAX] != 0x0) && (raw->intel_fn11[i][EBX] != 0x0) && (i < MAX_INTELFN11_LEVEL); i++)
+		apic_package_shift = EXTRACTS_BITS(raw->intel_fn11[i][EAX], 4, 0);
+
+	for (i = 0; (raw->intel_fn11[i][EAX] != 0x0) && (raw->intel_fn11[i][EBX] != 0x0) && (i < MAX_INTELFN11_LEVEL); i++) {
+		level_type = EXTRACTS_BITS(raw->intel_fn11[i][ECX], 15, 8);
+		apic_next_shift = EXTRACTS_BITS(raw->intel_fn11[i][EAX], 4, 0);
+		apic_id = raw->intel_fn11[i][EDX];
+		unique_id = (apic_id >> apic_shift) & ((1 << (apic_package_shift - apic_shift)) - 1);
 		switch (level_type) {
 			case 0x01:
-				num_smt = raw->intel_fn11[i][EBX] & 0xffff;
+				num_smt = EXTRACTS_BITS(raw->intel_fn11[i][EBX], 15, 0);
+				internal->smt_id = unique_id;
 				break;
 			case 0x02:
-				num_core = raw->intel_fn11[i][EBX] & 0xffff;
+				num_core = EXTRACTS_BITS(raw->intel_fn11[i][EBX], 15, 0);
+				internal->core_id = unique_id;
 				break;
 			default:
 				break;
 		}
+		apic_shift = apic_next_shift;
 	}
 	if (num_smt == -1 || num_core == -1) return 0;
 	data->num_logical_cpus = num_core;
@@ -694,12 +707,13 @@ static int decode_intel_extended_topology(struct cpu_raw_data_t* raw,
 }
 
 static void decode_intel_number_of_cores(struct cpu_raw_data_t* raw,
-                                         struct cpu_id_t* data)
+                                         struct cpu_id_t* data,
+                                         struct internal_id_info_t* internal)
 {
 	int logical_cpus = -1, num_cores = -1;
 
 	if (raw->basic_cpuid[0][EAX] >= 11) {
-		if (decode_intel_extended_topology(raw, data)) return;
+		if (decode_intel_extended_topology(raw, data, internal)) return;
 	}
 
 	if (raw->basic_cpuid[0][EAX] >= 1) {
@@ -720,6 +734,20 @@ static void decode_intel_number_of_cores(struct cpu_raw_data_t* raw,
 		}
 	} else {
 		data->num_cores = data->num_logical_cpus = 1;
+	}
+}
+
+static void decode_intel_type_of_cores(struct cpu_raw_data_t* raw,
+                                       struct cpu_id_t* data)
+{
+	/* Check for hybrid architecture */
+	if ((raw->basic_cpuid[0x7][EDX] >> 15) & 0x1) {
+		debugf(2, "Detected Intel CPU hybrid architecture\n");
+		switch((raw->basic_cpuid[0x1a][EAX] >> 24) & 0xff) {
+			case 0x20: /* Atom */ data->purpose = PURPOSE_EFFICIENCY;  break;
+			case 0x40: /* Core */ data->purpose = PURPOSE_PERFORMANCE; break;
+			default:              data->purpose = PURPOSE_GENERAL;     break;
+		}
 	}
 }
 
@@ -982,7 +1010,8 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data, stru
 	} else if (raw->basic_cpuid[0][EAX] >= 2) {
 		decode_intel_oldstyle_cache_info(raw, data);
 	}
-	decode_intel_number_of_cores(raw, data);
+	decode_intel_number_of_cores(raw, data, internal);
+	decode_intel_type_of_cores(raw, data);
 
 	brand = get_brand_code_and_bits(data);
 	model_code = get_model_code(data);
