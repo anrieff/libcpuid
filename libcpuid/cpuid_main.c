@@ -755,6 +755,26 @@ int cpu_identify_all(struct cpu_raw_data_array_t *raw_array, struct system_id_t*
 	return ret_error;
 }
 
+struct cpu_id_t* cpu_request_core_type(cpu_purpose_t purpose, struct cpu_raw_data_array_t* raw_array, struct system_id_t* system)
+{
+	uint8_t cpu_type_index = 0;
+	struct system_id_t my_system;
+
+	if (!system) {
+		system = &my_system;
+		if (cpu_identify_all(raw_array, system) != ERR_OK)
+			return NULL;
+	}
+
+	for (cpu_type_index = 0; cpu_type_index < system->num_cpu_types; cpu_type_index++) {
+		if (purpose == system->cpu_types[cpu_type_index].purpose)
+			return &system->cpu_types[cpu_type_index];
+	}
+
+	set_error(ERR_NOT_FOUND);
+	return NULL;
+}
+
 const char* cpu_architecture_str(cpu_architecture_t architecture)
 {
 	const struct { cpu_architecture_t architecture; const char* name; }
@@ -940,6 +960,7 @@ const char* cpuid_error(void)
 		{ ERR_INVCNB   , "Invalid core number"},
 		{ ERR_HANDLE_R , "Error on handle read"},
 		{ ERR_INVRANGE , "Invalid given range"},
+		{ ERR_NOT_FOUND, "Requested type not found"},
 	};
 	unsigned i;
 	for (i = 0; i < COUNT_OF(matchtable); i++)

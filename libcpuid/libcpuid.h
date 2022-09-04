@@ -654,6 +654,7 @@ typedef enum {
 	ERR_INVCNB   = -14,	/*!< Invalid core number */
 	ERR_HANDLE_R = -15,	/*!< Error on handle read */
 	ERR_INVRANGE = -16,	/*!< Invalid given range */
+	ERR_NOT_FOUND= -17,	/*!< Requested type not found */
 } cpu_error_t;
 
 /**
@@ -783,6 +784,26 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data);
  *          @see cpu_error_t
  */
 int cpu_identify_all(struct cpu_raw_data_array_t *raw_array, struct system_id_t* system);
+
+/**
+ * @brief Identifies a given CPU type
+ * @param purpose - Input - a \ref cpu_purpose_t to request
+ * @param raw_array - Optional input - a pointer to the array of raw CPUID data, which is obtained
+ *              either by cpuid_get_all_raw_data or cpuid_deserialize_all_raw_data.
+ *              Can also be NULL, in which case the functions calls
+ *              cpuid_get_all_raw_data itself.
+ * @param system - Optional input - the decoded CPU features/info for each CPU type, which is obtained
+ *              by cpu_identify_all.
+ *              Can also be NULL, in which case the functions calls
+ *              cpu_identify_all itself.
+ * @note The function is based on cpu_identify_all. Refer to cpu_identify notes.
+ * @returns the decoded CPU features/info matching purpose if purpose found successfully,
+ *          ERR_NOT_FOUND if CPU type not found,
+ *          or a different negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
+ */
+struct cpu_id_t* cpu_request_core_type(cpu_purpose_t purpose, struct cpu_raw_data_array_t* raw_array, struct system_id_t* system);
 
 /**
  * @brief Returns the short textual representation of a CPU architecture

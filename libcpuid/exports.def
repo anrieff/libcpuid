@@ -34,5 +34,6 @@ cpu_rdmsr_range @30
 cpuid_get_epc @31
 msr_serialize_raw_data @32
 cpu_identify_all @36
+cpu_request_core_type @37
 cpu_architecture_str @38
 cpu_purpose_str @39
