@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 /* Implementation: */
 
@@ -310,6 +311,7 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 
 	if (data->vendor == VENDOR_UNKNOWN)
 		return set_error(ERR_CPU_UNKN);
+	data->architecture = ARCHITECTURE_X86;
 	basic = raw->basic_cpuid[0][EAX];
 	if (basic >= 1) {
 		data->family = (raw->basic_cpuid[1][EAX] >> 8) & 0xf;
@@ -558,6 +560,8 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 		raw = &myraw;
 	}
 	cpu_id_t_constructor(data);
+	internal->smt_id = -1;
+	internal->core_id = -1;
 	if ((r = cpuid_basic_identify(raw, data)) < 0)
 		return set_error(r);
 	switch (data->vendor) {
@@ -582,6 +586,42 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
 	struct internal_id_info_t throwaway;
 	return cpu_ident_internal(raw, data, &throwaway);
+}
+
+const char* cpu_architecture_str(cpu_architecture_t architecture)
+{
+	const struct { cpu_architecture_t architecture; const char* name; }
+	matchtable[] = {
+		{ ARCHITECTURE_UNKNOWN, "unknown" },
+		{ ARCHITECTURE_X86,     "x86"     },
+		{ ARCHITECTURE_ARM,     "ARM"     },
+	};
+	unsigned i, n = COUNT_OF(matchtable);
+	if (n != NUM_CPU_ARCHITECTURES + 1) {
+		warnf("Warning: incomplete library, architecture matchtable size differs from the actual number of architectures.\n");
+	}
+	for (i = 0; i < n; i++)
+		if (matchtable[i].architecture == architecture)
+			return matchtable[i].name;
+	return "";
+}
+
+const char* cpu_purpose_str(cpu_purpose_t purpose)
+{
+	const struct { cpu_purpose_t purpose; const char* name; }
+	matchtable[] = {
+		{ PURPOSE_GENERAL,     "general"     },
+		{ PURPOSE_PERFORMANCE, "performance" },
+		{ PURPOSE_EFFICIENCY,  "efficiency"  },
+	};
+	unsigned i, n = COUNT_OF(matchtable);
+	if (n != NUM_CPU_PURPOSES) {
+		warnf("Warning: incomplete library, purpose matchtable size differs from the actual number of purposes.\n");
+	}
+	for (i = 0; i < n; i++)
+		if (matchtable[i].purpose == purpose)
+			return matchtable[i].name;
+	return "";
 }
 
 const char* cpu_feature_str(cpu_feature_t feature)

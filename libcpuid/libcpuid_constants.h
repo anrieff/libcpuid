@@ -44,6 +44,8 @@
 #define MAX_AMDFN8000001DH_LEVEL 4
 #define CPU_HINTS_MAX		16
 #define SGX_FLAGS_MAX		14
+#define CPU_RAW_MAX			512
+#define CPU_TYPE_MAX		8
 
 typedef enum {
 	EAX,

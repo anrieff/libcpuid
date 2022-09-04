@@ -90,6 +90,9 @@
  * @brief LibCPUID provides CPU identification
  @{ */
 
+/* Include C99 booleans: */
+#include <stdbool.h>
+
 /* Include some integer type specifications: */
 #include "libcpuid_types.h"
 
@@ -120,6 +123,30 @@ typedef enum {
 	VENDOR_UNKNOWN = -1,
 } cpu_vendor_t;
 #define NUM_CPU_VENDORS NUM_CPU_VENDORS
+
+/**
+ * @brief CPU architecture
+ */
+typedef enum {
+	ARCHITECTURE_X86 = 0,  /*!< x86 CPU */
+	ARCHITECTURE_ARM,      /*!< ARM CPU */
+
+	NUM_CPU_ARCHITECTURES, /*!< Valid CPU architecture ids: 0..NUM_CPU_ARCHITECTURES - 1 */
+	ARCHITECTURE_UNKNOWN = -1,
+} cpu_architecture_t;
+#define NUM_CPU_ARCHITECTURES NUM_CPU_ARCHITECTURES
+
+/**
+ * @brief CPU purpose
+ */
+typedef enum {
+	PURPOSE_GENERAL = 0,  /*!< general purpose CPU */
+	PURPOSE_PERFORMANCE,  /*!< performance CPU */
+	PURPOSE_EFFICIENCY,   /*!< efficiency CPU */
+
+	NUM_CPU_PURPOSES,     /*!< Valid CPU purpose ids: 0..NUM_CPU_PURPOSES - 1 */
+} cpu_purpose_t;
+#define NUM_CPU_PURPOSES NUM_CPU_PURPOSES
 
 /**
  * @brief Contains just the raw CPUID data.
@@ -161,6 +188,26 @@ struct cpu_raw_data_t {
 	 * this stores the result of CPUID with eax = 8000001Dh and
 	 *  ecx = 0, 1, 2... */
 	uint32_t amd_fn8000001dh[MAX_AMDFN8000001DH_LEVEL][NUM_REGS];
+};
+
+/**
+ * @brief Contains an array of raw CPUID data.
+ *
+ * This contains one \ref cpu_raw_data_t for each logical CPU.
+ */
+struct cpu_raw_data_array_t {
+	/** Indicates if \ref raw was obtained by using CPU affinity
+	 *  if false, \ref raw contains a single data from an old dump (versions 0.5.1 and below).
+	 *  if true, \ref raw contains data from a new dump (versions 0.6.0 and above).
+	 *  if true and if \ref num_raw is 1, it indicates only one logical core was detected on the system.
+	 */
+	bool with_affinity;
+
+	/** \ref raw length */
+	uint8_t num_raw;
+
+	/** array of raw CPUID data */
+	struct cpu_raw_data_t raw[CPU_RAW_MAX];
 };
 
 /**
@@ -231,6 +278,9 @@ struct cpu_sgx_t {
  * @brief This contains the recognized CPU features/info
  */
 struct cpu_id_t {
+	/** contains the CPU architecture ID (e.g. ARCHITECTURE_X86) */
+	cpu_architecture_t architecture;
+
 	/** contains the CPU vendor string, e.g. "GenuineIntel" */
 	char vendor_str[VENDOR_STR_MAX];
 
@@ -385,6 +435,23 @@ struct cpu_id_t {
 
 	/** contains information about SGX features if the processor, if present */
 	struct cpu_sgx_t sgx;
+
+	/** bitmask of the affinity ids this processor type is occupying */
+	uint32_t affinity_mask;
+
+	/** processor type purpose, relevant in case of hybrid CPU (e.g. PURPOSE_PERFORMANCE) */
+	cpu_purpose_t purpose;
+};
+
+/**
+ * @brief This contains the recognized features/info for all CPUs on the system
+ */
+struct system_id_t {
+	/** count of different processor types in the system (e.g. performance, efficiency, ...) */
+	uint8_t num_cpu_types;
+
+	/** array of recognized CPU features/info for each different processor types in the system */
+	struct cpu_id_t cpu_types[CPU_TYPE_MAX];
 };
 
 /**
@@ -702,6 +769,20 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
  *          @see cpu_error_t
  */
 int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data);
+
+/**
+ * @brief Returns the short textual representation of a CPU architecture
+ * @param architecture - the architecture, whose textual representation is wanted.
+ * @returns a constant string like "x86", "ARM", etc.
+ */
+const char* cpu_architecture_str(cpu_architecture_t architecture);
+
+/**
+ * @brief Returns the short textual representation of a CPU purpose
+ * @param purpose - the purpose, whose textual representation is wanted.
+ * @returns a constant string like "general", "performance", "efficiency", etc.
+ */
+const char* cpu_purpose_str(cpu_purpose_t purpose);
 
 /**
  * @brief Returns the short textual representation of a CPU flag
