@@ -96,6 +96,7 @@ static int parse_token(const char* expected_token, const char *token,
 #include <mach/clock_types.h>
 #include <mach/clock.h>
 #include <mach/mach.h>
+#include <mach/thread_policy.h>
 static int get_total_cpus(void)
 {
 	kern_return_t kr;
@@ -108,7 +109,15 @@ static int get_total_cpus(void)
 	return basic_info.avail_cpus;
 }
 #define GET_TOTAL_CPUS_DEFINED
-#endif
+
+static int set_cpu_affinity(uint32_t logical_cpu)
+{
+	thread_affinity_policy_data_t ap;
+	ap.affinity_tag = logical_cpu + 1;
+	return thread_policy_set(mach_thread_self(), THREAD_AFFINITY_POLICY, (thread_policy_t) &ap, THREAD_AFFINITY_POLICY_COUNT) == KERN_SUCCESS;
+}
+#define SET_CPU_AFFINITY
+#endif /* __APPLE__ */
 
 #ifdef _WIN32
 #include <windows.h>
@@ -119,7 +128,15 @@ static int get_total_cpus(void)
 	return system_info.dwNumberOfProcessors;
 }
 #define GET_TOTAL_CPUS_DEFINED
-#endif
+
+static int set_cpu_affinity(uint32_t logical_cpu)
+{
+	HANDLE process = GetCurrentProcess();
+	DWORD_PTR processAffinityMask = 1 << logical_cpu;
+	return !SetProcessAffinityMask(process, processAffinityMask);
+}
+#define SET_CPU_AFFINITY
+#endif /* _WIN32 */
 
 #ifdef __HAIKU__
 #include <OS.h>
@@ -130,7 +147,7 @@ static int get_total_cpus(void)
 	return info.cpu_count;
 }
 #define GET_TOTAL_CPUS_DEFINED
-#endif
+#endif /* __HAIKU__ */
 
 #if defined linux || defined __linux__ || defined __sun
 #include <sys/sysinfo.h>
@@ -141,7 +158,32 @@ static int get_total_cpus(void)
 	return sysconf(_SC_NPROCESSORS_ONLN);
 }
 #define GET_TOTAL_CPUS_DEFINED
-#endif
+#endif /* defined linux || defined __linux__ || defined __sun */
+
+#if defined linux || defined __linux__
+#include <sched.h>
+
+static int set_cpu_affinity(uint32_t logical_cpu)
+{
+	cpu_set_t cpuset;
+	CPU_ZERO(&cpuset);
+	CPU_SET(logical_cpu, &cpuset);
+	return sched_setaffinity(0, sizeof(cpuset), &cpuset);
+}
+#define SET_CPU_AFFINITY
+#endif /* defined linux || defined __linux__ */
+
+#if defined sun || defined __sun
+#include <sys/types.h>
+#include <sys/processor.h>
+#include <sys/procset.h>
+
+static int set_cpu_affinity(uint32_t logical_cpu)
+{
+	return processor_bind(P_LWPID, P_MYID, logical_cpu, NULL) == 0;
+}
+#define SET_CPU_AFFINITY
+#endif /* defined sun || defined __sun */
 
 #if defined __FreeBSD__ || defined __OpenBSD__ || defined __NetBSD__ || defined __bsdi__ || defined __QNX__
 #include <sys/types.h>
@@ -156,7 +198,51 @@ static int get_total_cpus(void)
 	return ncpus;
 }
 #define GET_TOTAL_CPUS_DEFINED
-#endif
+#endif /* defined __FreeBSD__ || defined __OpenBSD__ || defined __NetBSD__ || defined __bsdi__ || defined __QNX__ */
+
+#if defined __FreeBSD__
+#include <sys/param.h>
+#include <sys/cpuset.h>
+
+static int set_cpu_affinity(uint32_t logical_cpu)
+{
+	cpuset_t cpuset;
+	CPU_ZERO(&cpuset);
+	CPU_SET(logical_cpu, &cpuset);
+	return cpuset_setaffinity(CPU_LEVEL_WHICH, CPU_WHICH_TID, -1, sizeof(cpuset), &cpuset);
+}
+#define SET_CPU_AFFINITY
+#endif /* defined __FreeBSD__ */
+
+#if defined __DragonFly__
+#include <pthread.h>
+#include <pthread_np.h>
+
+static int set_cpu_affinity(uint32_t logical_cpu)
+{
+	cpuset_t cpuset;
+	CPU_ZERO(&cpuset);
+	CPU_SET(logical_cpu, &cpuset);
+	return pthread_setaffinity_np(pthread_self(), sizeof(cpuset), &cpuset);
+}
+#define SET_CPU_AFFINITY
+#endif /* defined __DragonFly__ */
+
+#if defined __NetBSD__
+#include <pthread.h>
+#include <sched.h>
+
+static int set_cpu_affinity(uint32_t logical_cpu)
+{
+	cpuset_t *cpuset;
+	cpuset = cpuset_create();
+	cpuset_set((cpuid_t) logical_cpu, cpuset);
+	int ret = pthread_setaffinity_np(pthread_self(), cpuset_size(cpuset), cpuset);
+	cpuset_destroy(cpuset);
+	return ret;
+}
+#define SET_CPU_AFFINITY
+#endif /* defined __NetBSD__ */
 
 #ifndef GET_TOTAL_CPUS_DEFINED
 static int get_total_cpus(void)
@@ -171,6 +257,18 @@ static int get_total_cpus(void)
 	return 1;
 }
 #endif /* GET_TOTAL_CPUS_DEFINED */
+
+#ifndef SET_CPU_AFFINITY
+static int set_cpu_affinity(uint32_t logical_cpu)
+{
+	static int warning_printed = 0;
+	if (!warning_printed) {
+		warning_printed = 1;
+		warnf("Your system is not supported by libcpuid -- don't know how to set the CPU affinity.\n");
+	}
+	return -1;
+}
+#endif /* SET_CPU_AFFINITY */
 
 
 static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* data)

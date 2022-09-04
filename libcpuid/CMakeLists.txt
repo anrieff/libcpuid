@@ -8,8 +8,11 @@ set(cpuid_sources
     asm-bits.c)
 
 if(WIN32)
-   list(APPEND cpuid_sources msrdriver.c)
+  list(APPEND cpuid_sources msrdriver.c)
 endif()
+if(UNIX)
+  add_compile_definitions(_GNU_SOURCE)
+endif(UNIX)
 
 if("${MSVC_CXX_ARCHITECTURE_ID}" MATCHES "x64")
   list(APPEND cpuid_sources masm-x64.asm)
