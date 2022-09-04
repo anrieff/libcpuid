@@ -714,6 +714,15 @@ void cpu_exec_cpuid_ext(uint32_t* regs);
 int cpuid_get_raw_data(struct cpu_raw_data_t* data);
 
 /**
+ * @brief Obtains the raw CPUID data from all CPUs
+ * @param data - a pointer to cpu_raw_data_array_t structure
+ * @returns zero if successful, and some negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
+ */
+int cpuid_get_all_raw_data(struct cpu_raw_data_array_t* data);
+
+/**
  * @brief Writes the raw CPUID data to a text file
  * @param data - a pointer to cpu_raw_data_t structure
  * @param filename - the path of the file, where the serialized data should be
@@ -733,6 +742,25 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data);
 int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename);
 
 /**
+ * @brief Writes all the raw CPUID data to a text file
+ * @param data - a pointer to cpu_raw_data_array_t structure
+ * @param filename - the path of the file, where the serialized data for all CPUs
+ *                   should be written. If empty, stdout will be used.
+ * @note This is intended primarily for debugging. On some processor, which is
+ *       not currently supported or not completely recognized by cpu_identify_all,
+ *       one can still successfully get the raw data and write it to a file.
+ *       libcpuid developers can later import this file and debug the detection
+ *       code as if running on the actual hardware.
+ *       The file is simple text format of "something=value" pairs. Version info
+ *       is also written, but the format is not intended to be neither backward-
+ *       nor forward compatible.
+ * @returns zero if successful, and some negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
+ */
+int cpuid_serialize_all_raw_data(struct cpu_raw_data_array_t *data, const char* filename);
+
+/**
  * @brief Reads raw CPUID data from file
  * @param data - a pointer to cpu_raw_data_t structure. The deserialized data will
  *               be written here.
@@ -745,6 +773,20 @@ int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename);
  *          @see cpu_error_t
 */
 int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename);
+
+/**
+ * @brief Reads all raw CPUID data from file
+ * @param data - a pointer to cpu_raw_data_array_t structure. The deserialized array data will
+ *               be written here.
+ * @param filename - the path of the file, containing the serialized raw data.
+ *                   If empty, stdin will be used.
+ * @note This function may fail, if the file is created by different version of
+ *       the library. Also, see the notes on cpuid_serialize_all_raw_data.
+ * @returns zero if successful, and some negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
+*/
+int cpuid_deserialize_all_raw_data(struct cpu_raw_data_array_t *data, const char* filename);
 
 /**
  * @brief Identifies the CPU

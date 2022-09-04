@@ -65,29 +65,8 @@ static void cpu_id_t_constructor(struct cpu_id_t* id)
 	id->l1_assoc = id->l1_data_assoc = id->l1_instruction_assoc = id->l2_assoc = id->l3_assoc = id->l4_assoc = -1;
 	id->l1_cacheline = id->l1_data_cacheline = id->l1_instruction_cacheline = id->l2_cacheline = id->l3_cacheline = id->l4_cacheline = -1;
 	id->sse_size = -1;
-}
-
-static int parse_token(const char* expected_token, const char *token,
-                        const char *value, uint32_t array[][4], int limit, int *recognized)
-{
-	char format[32];
-	int veax, vebx, vecx, vedx;
-	int index;
-
-	if (*recognized) return 1; /* already recognized */
-	if (strncmp(token, expected_token, strlen(expected_token))) return 1; /* not what we search for */
-	sprintf(format, "%s[%%d]", expected_token);
-	*recognized = 1;
-	if (1 == sscanf(token, format, &index) && index >=0 && index < limit) {
-		if (4 == sscanf(value, "%x%x%x%x", &veax, &vebx, &vecx, &vedx)) {
-			array[index][0] = veax;
-			array[index][1] = vebx;
-			array[index][2] = vecx;
-			array[index][3] = vedx;
-			return 1;
-		}
-	}
-	return 0;
+	id->affinity_mask = 0x00000000;
+	id->purpose = PURPOSE_GENERAL;
 }
 
 /* get_total_cpus() system specific code: uses OS routines to determine total number of CPUs */
@@ -270,6 +249,196 @@ static int set_cpu_affinity(uint32_t logical_cpu)
 }
 #endif /* SET_CPU_AFFINITY */
 
+static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, struct cpu_raw_data_array_t *raw_array, const char* filename)
+{
+	int i;
+	const bool raw_is_init = (raw_array != NULL) && raw_array->num_raw > 0;
+	int8_t logical_cpu = raw_is_init ? 0 : -1;
+	struct cpu_raw_data_t* raw_ptr = raw_is_init ? &raw_array->raw[0] : single_raw;
+	FILE *f;
+
+	/* Open file descriptor */
+	f = !strcmp(filename, "") ? stdin : fopen(filename, "wt");
+	if (!f)
+		return set_error(ERR_OPEN);
+	debugf(1, "Writing RAW dump to '%s'\n", f == stdin ? "stdin" : filename);
+
+	/* Write RAW data to output file */
+	fprintf(f, "version=%s\n", VERSION);
+	while ((raw_is_init && (logical_cpu < raw_array->num_raw)) || (!raw_is_init && (logical_cpu < 0))) {
+		if (raw_is_init) {
+			debugf(2, "Writing RAW dump for logical CPU %i\n", logical_cpu);
+			fprintf(f, "\n_________________ Logical CPU #%i _________________\n", logical_cpu);
+			raw_ptr = &raw_array->raw[logical_cpu];
+		}
+		for (i = 0; i < MAX_CPUID_LEVEL; i++)
+			fprintf(f, "basic_cpuid[%d]=%08x %08x %08x %08x\n", i,
+				raw_ptr->basic_cpuid[i][EAX], raw_ptr->basic_cpuid[i][EBX],
+				raw_ptr->basic_cpuid[i][ECX], raw_ptr->basic_cpuid[i][EDX]);
+		for (i = 0; i < MAX_EXT_CPUID_LEVEL; i++)
+			fprintf(f, "ext_cpuid[%d]=%08x %08x %08x %08x\n", i,
+				raw_ptr->ext_cpuid[i][EAX], raw_ptr->ext_cpuid[i][EBX],
+				raw_ptr->ext_cpuid[i][ECX], raw_ptr->ext_cpuid[i][EDX]);
+		for (i = 0; i < MAX_INTELFN4_LEVEL; i++)
+			fprintf(f, "intel_fn4[%d]=%08x %08x %08x %08x\n", i,
+				raw_ptr->intel_fn4[i][EAX], raw_ptr->intel_fn4[i][EBX],
+				raw_ptr->intel_fn4[i][ECX], raw_ptr->intel_fn4[i][EDX]);
+		for (i = 0; i < MAX_INTELFN11_LEVEL; i++)
+			fprintf(f, "intel_fn11[%d]=%08x %08x %08x %08x\n", i,
+				raw_ptr->intel_fn11[i][EAX], raw_ptr->intel_fn11[i][EBX],
+				raw_ptr->intel_fn11[i][ECX], raw_ptr->intel_fn11[i][EDX]);
+		for (i = 0; i < MAX_INTELFN12H_LEVEL; i++)
+			fprintf(f, "intel_fn12h[%d]=%08x %08x %08x %08x\n", i,
+				raw_ptr->intel_fn12h[i][EAX], raw_ptr->intel_fn12h[i][EBX],
+				raw_ptr->intel_fn12h[i][ECX], raw_ptr->intel_fn12h[i][EDX]);
+		for (i = 0; i < MAX_INTELFN14H_LEVEL; i++)
+			fprintf(f, "intel_fn14h[%d]=%08x %08x %08x %08x\n", i,
+				raw_ptr->intel_fn14h[i][EAX], raw_ptr->intel_fn14h[i][EBX],
+				raw_ptr->intel_fn14h[i][ECX], raw_ptr->intel_fn14h[i][EDX]);
+		for (i = 0; i < MAX_AMDFN8000001DH_LEVEL; i++)
+			fprintf(f, "amd_fn8000001dh[%d]=%08x %08x %08x %08x\n", i,
+				raw_ptr->amd_fn8000001dh[i][EAX], raw_ptr->amd_fn8000001dh[i][EBX],
+				raw_ptr->amd_fn8000001dh[i][ECX], raw_ptr->amd_fn8000001dh[i][EDX]);
+		logical_cpu++;
+	}
+
+	/* Close file descriptor */
+	if (strcmp(filename, ""))
+		fclose(f);
+	return set_error(ERR_OK);
+}
+
+#define RAW_ASSIGN_LINE(__line) __line[EAX] = eax ; __line[EBX] = ebx ; __line[ECX] = ecx ; __line[EDX] = edx
+static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw, struct cpu_raw_data_array_t *raw_array, const char* filename)
+{
+	int i;
+	int cur_line = 0;
+	int assigned = 0;
+	int subleaf = 0;
+	bool is_libcpuid_dump = true;
+	bool is_aida64_dump = false;
+	const bool raw_is_init = (raw_array != NULL);
+	int16_t logical_cpu = -1;
+	uint32_t addr, eax, ebx, ecx, edx;
+	char version[8];
+	char line[100];
+	struct cpu_raw_data_t* raw_ptr = raw_is_init ? &raw_array->raw[0] : single_raw;
+	FILE *f;
+
+	/* Open file descriptor */
+	f = !strcmp(filename, "") ? stdin : fopen(filename, "rt");
+	if (!f)
+		return set_error(ERR_OPEN);
+	debugf(1, "Opening RAW dump from '%s'\n", f == stdin ? "stdin" : filename);
+
+	if (raw_is_init) {
+		raw_array->with_affinity = false;
+		raw_array->num_raw = raw_array->with_affinity ? 0 : 1;
+		raw_data_t_constructor(raw_ptr);
+	}
+
+	/* Parse file and store data in cpu_raw_data_t */
+	while (fgets(line, sizeof(line), f) != NULL) {
+		line[strcspn(line, "\n")] = '\0';
+		cur_line++;
+		if (cur_line == 1) {
+			if (sscanf(line, "version=%s", version) >= 1) {
+				is_libcpuid_dump = true;
+				is_aida64_dump = false;
+				debugf(2, "Recognized version '%s' from RAW dump\n", version);
+				continue;
+			}
+			else if (!strcmp(line, "------[ Versions ]------") || !strcmp(line, "------[ Logical CPU #0 ]------") || !strcmp(line, "------[ CPUID Registers / Logical CPU #0 ]------")) {
+				is_libcpuid_dump = false;
+				is_aida64_dump = true;
+				debugf(2, "Recognized AIDA64 RAW dump\n");
+			}
+		}
+
+		if (is_libcpuid_dump) {
+			if (raw_is_init && (sscanf(line, "_________________ Logical CPU #%hi _________________", &logical_cpu) >= 1)) {
+				if (raw_array->num_raw >= CPU_RAW_MAX) {
+					warnf("RAW dump contains more than %d logical CPU, cannot parse more.\n", CPU_RAW_MAX);
+					return set_error(ERR_NO_MEM);
+				}
+				debugf(2, "Parsing RAW dump for logical CPU %i\n", logical_cpu);
+				raw_ptr = &raw_array->raw[logical_cpu];
+				raw_array->with_affinity = true;
+				raw_array->num_raw = logical_cpu + 1;
+				raw_data_t_constructor(raw_ptr);
+			}
+			else if ((sscanf(line, "basic_cpuid[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_CPUID_LEVEL)) {
+				RAW_ASSIGN_LINE(raw_ptr->basic_cpuid[i]);
+			}
+			else if ((sscanf(line, "ext_cpuid[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_EXT_CPUID_LEVEL)) {
+				RAW_ASSIGN_LINE(raw_ptr->ext_cpuid[i]);
+			}
+			else if ((sscanf(line, "intel_fn4[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN4_LEVEL)) {
+				RAW_ASSIGN_LINE(raw_ptr->intel_fn4[i]);
+			}
+			else if ((sscanf(line, "intel_fn11[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN11_LEVEL)) {
+				RAW_ASSIGN_LINE(raw_ptr->intel_fn11[i]);
+			}
+			else if ((sscanf(line, "intel_fn12h[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN12H_LEVEL)) {
+				RAW_ASSIGN_LINE(raw_ptr->intel_fn12h[i]);
+			}
+			else if ((sscanf(line, "intel_fn14h[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN14H_LEVEL)) {
+				RAW_ASSIGN_LINE(raw_ptr->intel_fn14h[i]);
+			}
+			else if ((sscanf(line, "amd_fn8000001dh[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_AMDFN8000001DH_LEVEL)) {
+				RAW_ASSIGN_LINE(raw_ptr->amd_fn8000001dh[i]);
+			}
+			else if (line[0] != '\0') {
+				warnf("Warning: file '%s', line %d: '%s' not understood!\n", filename, cur_line, line);
+			}
+		}
+		else if (is_aida64_dump) {
+			if (raw_is_init && ((sscanf(line, "------[Logical CPU #%hi ]------", &logical_cpu) >= 1) || \
+			                            (sscanf(line, "------[ CPUID Registers / Logical CPU #%hi ]------", &logical_cpu) >= 1))) {
+				if (raw_array->num_raw >= CPU_RAW_MAX) {
+					warnf("AIDA64 RAW dump contains more than %d logical CPU, cannot parse more.\n", CPU_RAW_MAX);
+					return set_error(ERR_NO_MEM);
+				}
+				debugf(2, "Parsing AIDA64 RAW dump for logical CPU %i\n", logical_cpu);
+				raw_ptr = &raw_array->raw[logical_cpu];
+				raw_array->with_affinity = true;
+				raw_array->num_raw = logical_cpu + 1;
+				raw_data_t_constructor(raw_ptr);
+				continue;
+			}
+			subleaf = 0;
+			assigned = sscanf(line, "CPUID %x: %x-%x-%x-%x [SL %02i]", &addr, &eax, &ebx, &ecx, &edx, &subleaf);
+			debugf(3, "RAW line %d: %i items assigned for string '%s'\n", cur_line, assigned, line);
+			if ((assigned >= 5) && (subleaf == 0)) {
+				if (addr < MAX_CPUID_LEVEL) {
+					i = (int) addr;
+					RAW_ASSIGN_LINE(raw_ptr->basic_cpuid[i]);
+				}
+				else if ((addr >= ADDRESS_EXT_CPUID_START) && (addr < ADDRESS_EXT_CPUID_END)) {
+					i = (int) addr - ADDRESS_EXT_CPUID_START;
+					RAW_ASSIGN_LINE(raw_ptr->ext_cpuid[i]);
+				}
+			}
+			if (assigned >= 6) {
+				i = subleaf;
+				switch (addr) {
+					case 0x00000004: RAW_ASSIGN_LINE(raw_ptr->intel_fn4[i]);       break;
+					case 0x0000000B: RAW_ASSIGN_LINE(raw_ptr->intel_fn11[i]);      break;
+					case 0x00000012: RAW_ASSIGN_LINE(raw_ptr->intel_fn12h[i]);     break;
+					case 0x00000014: RAW_ASSIGN_LINE(raw_ptr->intel_fn14h[i]);     break;
+					case 0x8000001D: RAW_ASSIGN_LINE(raw_ptr->amd_fn8000001dh[i]); break;
+					default: break;
+				}
+			}
+		}
+	}
+
+	/* Close file descriptor */
+	if (strcmp(filename, ""))
+		fclose(f);
+	return set_error(ERR_OK);
+}
+#undef RAW_ASSIGN_LINE
 
 static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
@@ -542,110 +711,53 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 	return set_error(ERR_OK);
 }
 
+int cpuid_get_all_raw_data(struct cpu_raw_data_array_t *data)
+{
+	int cur_error = set_error(ERR_OK);
+	int ret_error = set_error(ERR_OK);
+	struct cpu_raw_data_t* raw_ptr = NULL;
+
+	if (data == NULL)
+		return set_error(ERR_HANDLE);
+
+	data->with_affinity = true;
+	data->num_raw = 0;
+	while (set_cpu_affinity(data->num_raw) == 0) {
+		if (data->num_raw >= CPU_RAW_MAX) {
+			warnf("System has more than %d logical CPU, cannot get more RAW.\n", CPU_RAW_MAX);
+			return set_error(ERR_NO_MEM);
+		}
+		debugf(2, "Getting RAW dump for logical CPU %i\n", data->num_raw);
+		raw_ptr = &data->raw[data->num_raw];
+		raw_data_t_constructor(raw_ptr);
+		cur_error = cpuid_get_raw_data(raw_ptr);
+		if (ret_error == ERR_OK)
+			ret_error = cur_error;
+		data->num_raw++;
+	}
+
+	return ret_error;
+}
+
 int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 {
-	int i;
-	FILE *f;
+	return cpuid_serialize_raw_data_internal(data, NULL, filename);
+}
 
-	if (!strcmp(filename, ""))
-		f = stdout;
-	else
-		f = fopen(filename, "wt");
-	if (!f) return set_error(ERR_OPEN);
-
-	fprintf(f, "version=%s\n", VERSION);
-	for (i = 0; i < MAX_CPUID_LEVEL; i++)
-		fprintf(f, "basic_cpuid[%d]=%08x %08x %08x %08x\n", i,
-			data->basic_cpuid[i][EAX], data->basic_cpuid[i][EBX],
-			data->basic_cpuid[i][ECX], data->basic_cpuid[i][EDX]);
-	for (i = 0; i < MAX_EXT_CPUID_LEVEL; i++)
-		fprintf(f, "ext_cpuid[%d]=%08x %08x %08x %08x\n", i,
-			data->ext_cpuid[i][EAX], data->ext_cpuid[i][EBX],
-			data->ext_cpuid[i][ECX], data->ext_cpuid[i][EDX]);
-	for (i = 0; i < MAX_INTELFN4_LEVEL; i++)
-		fprintf(f, "intel_fn4[%d]=%08x %08x %08x %08x\n", i,
-			data->intel_fn4[i][EAX], data->intel_fn4[i][EBX],
-			data->intel_fn4[i][ECX], data->intel_fn4[i][EDX]);
-	for (i = 0; i < MAX_INTELFN11_LEVEL; i++)
-		fprintf(f, "intel_fn11[%d]=%08x %08x %08x %08x\n", i,
-			data->intel_fn11[i][EAX], data->intel_fn11[i][EBX],
-			data->intel_fn11[i][ECX], data->intel_fn11[i][EDX]);
-	for (i = 0; i < MAX_INTELFN12H_LEVEL; i++)
-		fprintf(f, "intel_fn12h[%d]=%08x %08x %08x %08x\n", i,
-			data->intel_fn12h[i][EAX], data->intel_fn12h[i][EBX],
-			data->intel_fn12h[i][ECX], data->intel_fn12h[i][EDX]);
-	for (i = 0; i < MAX_INTELFN14H_LEVEL; i++)
-		fprintf(f, "intel_fn14h[%d]=%08x %08x %08x %08x\n", i,
-			data->intel_fn14h[i][EAX], data->intel_fn14h[i][EBX],
-			data->intel_fn14h[i][ECX], data->intel_fn14h[i][EDX]);
-	for (i = 0; i < MAX_AMDFN8000001DH_LEVEL; i++)
-		fprintf(f, "amd_fn8000001dh[%d]=%08x %08x %08x %08x\n", i,
-			data->amd_fn8000001dh[i][EAX], data->amd_fn8000001dh[i][EBX],
-			data->amd_fn8000001dh[i][ECX], data->amd_fn8000001dh[i][EDX]);
-
-	if (strcmp(filename, ""))
-		fclose(f);
-	return set_error(ERR_OK);
+int cpuid_serialize_all_raw_data(struct cpu_raw_data_array_t *data, const char* filename)
+{
+	return cpuid_serialize_raw_data_internal(NULL, data, filename);
 }
 
 int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename)
 {
-	int i, len;
-	char line[100];
-	char token[100];
-	char *value;
-	int syntax;
-	int cur_line = 0;
-	int recognized;
-	FILE *f;
-
 	raw_data_t_constructor(data);
+	return cpuid_deserialize_raw_data_internal(data, NULL, filename);
+}
 
-	if (!strcmp(filename, ""))
-		f = stdin;
-	else
-		f = fopen(filename, "rt");
-	if (!f) return set_error(ERR_OPEN);
-	while (fgets(line, sizeof(line), f)) {
-		++cur_line;
-		len = (int) strlen(line);
-		if (len < 2) continue;
-		if (line[len - 1] == '\n')
-			line[--len] = '\0';
-		for (i = 0; i < len && line[i] != '='; i++)
-		if (i >= len && i < 1 && len - i - 1 <= 0) {
-			fclose(f);
-			return set_error(ERR_BADFMT);
-		}
-		strncpy(token, line, i);
-		token[i] = '\0';
-		value = &line[i + 1];
-		/* try to recognize the line */
-		recognized = 0;
-		if (!strcmp(token, "version") || !strcmp(token, "build_date")) {
-			recognized = 1;
-		}
-		syntax = 1;
-		syntax = syntax && parse_token("basic_cpuid", token, value, data->basic_cpuid,   MAX_CPUID_LEVEL, &recognized);
-		syntax = syntax && parse_token("ext_cpuid", token, value, data->ext_cpuid,       MAX_EXT_CPUID_LEVEL, &recognized);
-		syntax = syntax && parse_token("intel_fn4", token, value, data->intel_fn4,       MAX_INTELFN4_LEVEL, &recognized);
-		syntax = syntax && parse_token("intel_fn11", token, value, data->intel_fn11,     MAX_INTELFN11_LEVEL, &recognized);
-		syntax = syntax && parse_token("intel_fn12h", token, value, data->intel_fn12h,   MAX_INTELFN12H_LEVEL, &recognized);
-		syntax = syntax && parse_token("intel_fn14h", token, value, data->intel_fn14h,   MAX_INTELFN14H_LEVEL, &recognized);
-		syntax = syntax && parse_token("amd_fn8000001dh", token, value, data->amd_fn8000001dh, MAX_AMDFN8000001DH_LEVEL, &recognized);
-		if (!syntax) {
-			warnf("Error: %s:%d: Syntax error\n", filename, cur_line);
-			fclose(f);
-			return set_error(ERR_BADFMT);
-		}
-		if (!recognized) {
-			warnf("Warning: %s:%d not understood!\n", filename, cur_line);
-		}
-	}
-
-	if (strcmp(filename, ""))
-		fclose(f);
-	return set_error(ERR_OK);
+int cpuid_deserialize_all_raw_data(struct cpu_raw_data_array_t *data, const char* filename)
+{
+	return cpuid_deserialize_raw_data_internal(NULL, data, filename);
 }
 
 int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal)

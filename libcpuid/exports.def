@@ -33,6 +33,9 @@ cpuid_get_vendor @29
 cpu_rdmsr_range @30
 cpuid_get_epc @31
 msr_serialize_raw_data @32
+cpuid_get_all_raw_data @33
+cpuid_serialize_all_raw_data @34
+cpuid_deserialize_all_raw_data @35
 cpu_identify_all @36
 cpu_request_core_type @37
 cpu_architecture_str @38
