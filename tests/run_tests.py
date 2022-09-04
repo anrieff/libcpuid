@@ -5,11 +5,11 @@ import os, sys, re, random
 
 
 ### Constants:
-fields = [ "family", "model", "stepping", "extfamily", "extmodel", "cores",
-	   "logical", "l1d-cache", "l1i-cache", "l2-cache", "l3-cache", "l4-cache",
-	   "l1d-assoc", "l1i-assoc", "l2-assoc", "l3-assoc", "l4-assoc", "l1d-cacheline",
-	   "l1i-cacheline", "l2-cacheline", "l3-cacheline", "l4-cacheline", "sse-size",
-	   "codename", "flags" ]
+fields = [ "architecture", "purpose", "family", "model", "stepping", "extfamily",
+	   "extmodel", "cores", "logical", "l1d-cache", "l1i-cache", "l2-cache",
+	   "l3-cache", "l4-cache", "l1d-assoc", "l1i-assoc", "l2-assoc", "l3-assoc",
+	   "l4-assoc", "l1d-cacheline", "l1i-cacheline", "l2-cacheline", "l3-cacheline",
+	   "l4-cacheline", "sse-size", "codename", "flags" ]
 
 args = sys.argv
 fix = False
@@ -71,7 +71,7 @@ def fixFile(filename, input_lines, output_lines):
 	f.writelines([s + "\n" for s in output_lines])
 	f.close()
 
-def do_test(inp, expected_out, binary, test_file_name):
+def do_test(inp, expected_out, binary, test_file_name, num_cpu_type):
 	fninp = make_tempname("cpuidin")
 	fnoutp = make_tempname("cpuidout")
 	f = open(fninp, "wt")
@@ -83,17 +83,19 @@ def do_test(inp, expected_out, binary, test_file_name):
 	real_out = []
 	try:
 		f = open(fnoutp, "rt")
-		real_out = [s.strip() for s in f.readlines()]
+		for s in f.readlines():
+			if "-----" not in s:
+				real_out.append(s.strip())
 		f.close()
 		os.unlink(fnoutp)
 	except IOError:
 		return "Exception"
-	if len(real_out) != len(expected_out) or len(real_out) != len(fields):
+	if len(real_out) != len(expected_out) or len(real_out) != len(fields) * num_cpu_type:
 		return "Unexpected number of records returned"
 	err_fields = []
 	for i in range(len(real_out)):
 		if real_out[i] != expected_out[i]:
-			err_fields.append((fields[i], expected_out[i], real_out[i]))
+			err_fields.append((fields[i % len(fields)], expected_out[i], real_out[i]))
 	if not err_fields:
 		return "OK"
 	else:
@@ -104,22 +106,26 @@ def do_test(inp, expected_out, binary, test_file_name):
 			return "Mismatch in fields:\n%s" % "\n".join([fmt_error(err) for err in err_fields])
 
 errors = False
+delimiter = "-" * 80
 print("Testing...")
 for test_file_name in filelist:
+	num_cpu_type = 0
 	current_input = []
 	current_output = []
 	build_output = False
 	with open(test_file_name, "rt") as f:
 		for line in f.readlines():
-			if line[:3] == "---":
+			line = line.strip()
+			if line == delimiter:
 				build_output = True
+				num_cpu_type += 1
 			else:
 				if build_output:
-					current_output.append(line.strip())
+					current_output.append(line)
 				else:
-					current_input.append(line.strip())
+					current_input.append(line)
 		#codename = current_output[len(current_output) - 2]
-		result = do_test(current_input, current_output, cpuid_tool, test_file_name)
+		result = do_test(current_input, current_output, cpuid_tool, test_file_name, num_cpu_type)
 		print("Test [%s]: %s" % (test_file_name[:-5], result))
 		if result != "OK":
 			errors = True
