@@ -64,6 +64,7 @@ enum _intel_model_t {
 	_9xxx, /* Core i[3579] 9xxx */
 	_10xxx, /* Core i[3579] 10xxx */
 	_11xxx, /* Core i[3579] 11xxx */
+	_12xxx, /* Core i[3579] 11xxx */
 };
 typedef enum _intel_model_t intel_model_t;
 
@@ -423,6 +424,16 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 12, -1, -1, 140, -1,    -1,    -1, NC, CORE_|_I_|_3  ,_11xxx, "Tiger Lake (Core i3)"     },
 	{  6, 12, -1, -1, 140,  2,    -1,    -1, NC, PENTIUM_      ,     0, "Tiger Lake (Pentium)"     },
 	{  6, 12, -1, -1, 140,  2,    -1,    -1, NC, CELERON_      ,     0, "Tiger Lake (Celeron)"     },
+
+	/* Alder Lake CPUs (12th gen, 10nm, mobile processors): */
+	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CORE_|_I_|_9  ,_12xxx, "Alder Lake-S (Core i9)"     },
+	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CORE_|_I_|_7  ,_12xxx, "Alder Lake-S (Core i7)"     },
+	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CORE_|_I_|_5  ,_12xxx, "Alder Lake-S (Core i5)"     },
+	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CORE_|_I_|_3  ,_12xxx, "Alder Lake-S (Core i3)"     },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_9  ,_12xxx, "Alder Lake-P (Core i9)"     },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_7  ,_12xxx, "Alder Lake-P (Core i7)"     },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_5  ,_12xxx, "Alder Lake-P (Core i5)"     },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_3  ,_12xxx, "Alder Lake-P (Core i3)"     },
 	/* F   M   S  EF   EM   C     L2     L3               Brand */
 
 
