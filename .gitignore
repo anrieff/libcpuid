@@ -39,7 +39,6 @@ libcpuid/x64
 cpuid_tool/x32
 cpuid_tool/x64
 *.vcxproj.user
-tests/convert_instlatx64
 build
 docs
 .vscode

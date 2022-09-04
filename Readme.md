@@ -63,6 +63,13 @@ the raw CPUID data and the expected decoded items) by using
    and tests/intel to get an idea) and copy your test file to an
    appropriate place within the tests directory hierarchy.
 
+AIDA64 CPUID dumps (mostly found on [InstLatx64](http://instlatx64.atw.hu/)) are also supported.
+To create a new test based on a AIDA64 CPUID dump, you can do:
+```sh
+cpuid_tool --load=aida64_raw.txt --outfile=report.txt --report
+./tests/create_test.py aida64_raw.txt report.txt > tests/xxx/yyy/my-cpu.test
+```
+
 For non-developers, who still want to contribute tests for the project,
 use [this page](http://libcpuid.sourceforge.net/bugreport.php) to report
 misdetections or new CPUs that libcpuid doesn't handle well yet.

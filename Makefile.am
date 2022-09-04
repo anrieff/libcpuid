@@ -7,7 +7,7 @@ pkgconfig_DATA = libcpuid.pc
 EXTRA_DIST     = libcpuid.pc.in libcpuid_vc71.sln libcpuid_vc10.sln Readme.md
 # CMake support:
 EXTRA_DIST    += CMakeLists.txt libcpuid/CMakeLists.txt tests/CMakeLists.txt cpuid_tool/CMakeLists.txt \
-                 cmake/Config.cmake.in tests/convert_instlatx64.c
+                 cmake/Config.cmake.in
 
 consistency:
 	$(top_srcdir)/libcpuid/check-consistency.py $(top_srcdir)/libcpuid
