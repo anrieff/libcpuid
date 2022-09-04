@@ -682,8 +682,77 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 
 int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
+	int r;
 	struct internal_id_info_t throwaway;
-	return cpu_ident_internal(raw, data, &throwaway);
+	r = cpu_ident_internal(raw, data, &throwaway);
+	data->affinity_mask = (1 << data->num_logical_cpus) - 1;
+	return r;
+}
+
+int cpu_identify_all(struct cpu_raw_data_array_t *raw_array, struct system_id_t* system)
+{
+	int cur_error = set_error(ERR_OK);
+	int ret_error = set_error(ERR_OK);	bool is_new_cpu_type;
+	uint8_t logical_cpu;
+	uint8_t cpu_type_index = 0;
+	int32_t core_previous_id = -1;
+	int32_t num_cores = 1;
+	int32_t num_logical_cpus = 1;
+	uint32_t affinity_mask = 0x00000001;
+	struct cpu_raw_data_array_t my_raw_array;
+	struct internal_id_info_t throwaway;
+
+	if (!raw_array) {
+		if ((ret_error = cpuid_get_all_raw_data(&my_raw_array)) < 0)
+			return set_error(ret_error);
+		raw_array = &my_raw_array;
+	}
+	if (system == NULL)
+		return set_error(ERR_HANDLE);
+	system->num_cpu_types = 0;
+
+	/* Iterate over all RAW */
+	for (logical_cpu = 0; logical_cpu < raw_array->num_raw; logical_cpu++) {
+		debugf(2, "Identifying logical core %u...\n", logical_cpu);
+		is_new_cpu_type = false;
+		cur_error = cpu_ident_internal(&raw_array->raw[logical_cpu], &system->cpu_types[system->num_cpu_types], &throwaway);
+		if (ret_error == ERR_OK)
+			ret_error = cur_error;
+
+		/* Copy data to system->cpu_types on the first iteration or when purpose is different than previous core */
+		if ((system->num_cpu_types == 0) || (system->cpu_types[system->num_cpu_types].purpose != system->cpu_types[system->num_cpu_types - 1].purpose)) {
+			is_new_cpu_type = true;
+			system->num_cpu_types++;
+		}
+		/* Increment logical and physical CPU counters for current purpose */
+		else {
+			affinity_mask |= 1 << logical_cpu;
+			num_logical_cpus++;
+			if (core_previous_id != throwaway.core_id)
+				num_cores++;
+		}
+		/* Update logical and physical CPU counters in system->cpu_types on the last iteration or when purpose is different than previous core */
+		if ((logical_cpu + 1 == raw_array->num_raw) || (is_new_cpu_type && (system->num_cpu_types > 1))) {
+			cpu_type_index = is_new_cpu_type ? system->num_cpu_types - 2 : system->num_cpu_types - 1;
+			/* Save current values in system->cpu_types[cpu_type_index] */
+			system->cpu_types[cpu_type_index].affinity_mask = affinity_mask;
+			if (core_previous_id > 0) {
+				system->cpu_types[cpu_type_index].num_cores = num_cores;
+				system->cpu_types[cpu_type_index].num_logical_cpus = num_logical_cpus;
+			}
+			/* Reset values for the next purpose */
+			affinity_mask = 1 << logical_cpu;
+			num_cores = 1;
+			num_logical_cpus = 1;
+		}
+		core_previous_id = throwaway.core_id;
+	}
+
+	/* Update the total_logical_cpus value for each purpose */
+	for (cpu_type_index = 0; cpu_type_index < system->num_cpu_types; cpu_type_index++)
+		system->cpu_types[cpu_type_index].total_logical_cpus = logical_cpu;
+
+	return ret_error;
 }
 
 const char* cpu_architecture_str(cpu_architecture_t architecture)

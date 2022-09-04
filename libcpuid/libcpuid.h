@@ -771,6 +771,20 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
 int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data);
 
 /**
+ * @brief Identifies all the CPUs
+ * @param raw_array - Input - a pointer to the array of raw CPUID data, which is obtained
+ *              either by cpuid_get_all_raw_data or cpuid_deserialize_all_raw_data.
+ *              Can also be NULL, in which case the functions calls
+ *              cpuid_get_all_raw_data itself.
+ * @param system - Output - the decoded CPU features/info is written here for each CPU type.
+ * @note The function is similar to cpu_identify. Refer to cpu_identify notes.
+ * @returns zero if successful, and some negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
+ */
+int cpu_identify_all(struct cpu_raw_data_array_t *raw_array, struct system_id_t* system);
+
+/**
  * @brief Returns the short textual representation of a CPU architecture
  * @param architecture - the architecture, whose textual representation is wanted.
  * @returns a constant string like "x86", "ARM", etc.

@@ -30,5 +30,6 @@ cpuid_get_vendor
 cpu_rdmsr_range
 cpuid_get_epc
 msr_serialize_raw_data
+cpu_identify_all
 cpu_architecture_str
 cpu_purpose_str
