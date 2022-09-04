@@ -111,7 +111,7 @@ static int get_total_cpus(void)
 static int set_cpu_affinity(uint32_t logical_cpu)
 {
 	HANDLE process = GetCurrentProcess();
-	DWORD_PTR processAffinityMask = 1 << logical_cpu;
+	DWORD_PTR processAffinityMask = 1ULL << logical_cpu;
 	return !SetProcessAffinityMask(process, processAffinityMask);
 }
 #define SET_CPU_AFFINITY
@@ -797,7 +797,7 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	int r;
 	struct internal_id_info_t throwaway;
 	r = cpu_ident_internal(raw, data, &throwaway);
-	data->affinity_mask = (1 << data->num_logical_cpus) - 1;
+	data->affinity_mask = (1ULL << data->num_logical_cpus) - 1;
 	return r;
 }
 
@@ -838,7 +838,7 @@ int cpu_identify_all(struct cpu_raw_data_array_t *raw_array, struct system_id_t*
 		}
 		/* Increment logical and physical CPU counters for current purpose */
 		else {
-			affinity_mask |= 1 << logical_cpu;
+			affinity_mask |= 1ULL << logical_cpu;
 			num_logical_cpus++;
 			if (core_previous_id != throwaway.core_id)
 				num_cores++;
@@ -853,7 +853,7 @@ int cpu_identify_all(struct cpu_raw_data_array_t *raw_array, struct system_id_t*
 				system->cpu_types[cpu_type_index].num_logical_cpus = num_logical_cpus;
 			}
 			/* Reset values for the next purpose */
-			affinity_mask = 1 << logical_cpu;
+			affinity_mask = 1ULL << logical_cpu;
 			num_cores = 1;
 			num_logical_cpus = 1;
 		}
