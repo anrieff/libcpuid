@@ -37,3 +37,4 @@ cpu_identify_all
 cpu_request_core_type
 cpu_architecture_str
 cpu_purpose_str
+cpuid_free_raw_data_array

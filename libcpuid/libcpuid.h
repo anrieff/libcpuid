@@ -207,7 +207,7 @@ struct cpu_raw_data_array_t {
 	uint8_t num_raw;
 
 	/** array of raw CPUID data */
-	struct cpu_raw_data_t raw[CPU_RAW_MAX];
+	struct cpu_raw_data_t *raw;
 };
 
 /**
@@ -716,6 +716,8 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data);
 /**
  * @brief Obtains the raw CPUID data from all CPUs
  * @param data - a pointer to cpu_raw_data_array_t structure
+ * @note As the memory is dynamically allocated, be sure to call
+ *       cpuid_free_raw_data_array() after you're done with the data
  * @returns zero if successful, and some negative number on error.
  *          The error message can be obtained by calling \ref cpuid_error.
  *          @see cpu_error_t
@@ -782,6 +784,8 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
  *                   If empty, stdin will be used.
  * @note This function may fail, if the file is created by different version of
  *       the library. Also, see the notes on cpuid_serialize_all_raw_data.
+ * @note As the memory is dynamically allocated, be sure to call
+ *       cpuid_free_raw_data_array() after you're done with the data
  * @returns zero if successful, and some negative number on error.
  *          The error message can be obtained by calling \ref cpuid_error.
  *          @see cpu_error_t
@@ -821,6 +825,8 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data);
  *              cpuid_get_all_raw_data itself.
  * @param system - Output - the decoded CPU features/info is written here for each CPU type.
  * @note The function is similar to cpu_identify. Refer to cpu_identify notes.
+ * @note As the memory is dynamically allocated, be sure to call
+ *       cpuid_free_raw_data_array() after you're done with the data
  * @returns zero if successful, and some negative number on error.
  *          The error message can be obtained by calling \ref cpuid_error.
  *          @see cpu_error_t
@@ -1186,6 +1192,16 @@ void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list);
  * @param list - the list to be free()'d.
  */
 void cpuid_free_cpu_list(struct cpu_list_t* list);
+
+/**
+ * @brief Frees a RAW array
+ *
+ * This function deletes all the memory associated with a RAW array, as obtained
+ * by cpuid_get_all_raw_data(), cpuid_deserialize_all_raw_data() and cpu_identify_all()
+ *
+ * @param raw_array - the RAW array to be free()'d.
+ */
+void cpuid_free_raw_data_array(struct cpu_raw_data_array_t* raw_array);
 
 struct msr_driver_t;
 /**

@@ -564,7 +564,8 @@ int main(int argc, char** argv)
 	uint8_t cpu_type_index;
 	struct cpu_raw_data_array_t raw_array = {
 		.with_affinity = false,
-		.num_raw = 0
+		.num_raw       = 0,
+		.raw           = NULL
 	};
 	struct system_id_t data = {
 		.num_cpu_types = 0
@@ -762,5 +763,6 @@ int main(int argc, char** argv)
 		print_sgx_data(&raw_array.raw[0], &data.cpu_types[0]);
 	}
 
+	cpuid_free_raw_data_array(&raw_array);
 	return 0;
 }
