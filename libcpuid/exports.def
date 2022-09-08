@@ -41,3 +41,4 @@ cpu_request_core_type @37
 cpu_architecture_str @38
 cpu_purpose_str @39
 cpuid_free_raw_data_array @40
+affinity_mask_str @41

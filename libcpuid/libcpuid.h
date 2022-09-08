@@ -437,7 +437,7 @@ struct cpu_id_t {
 	struct cpu_sgx_t sgx;
 
 	/** bitmask of the affinity ids this processor type is occupying */
-	uint32_t affinity_mask;
+	cpu_affinity_mask_t affinity_mask;
 
 	/** processor type purpose, relevant in case of hybrid CPU (e.g. PURPOSE_PERFORMANCE) */
 	cpu_purpose_t purpose;
@@ -866,6 +866,13 @@ const char* cpu_architecture_str(cpu_architecture_t architecture);
  * @returns a constant string like "general", "performance", "efficiency", etc.
  */
 const char* cpu_purpose_str(cpu_purpose_t purpose);
+
+/**
+ * @brief Returns textual representation of a CPU affinity mask
+ * @param affinity_mask - the affinity mask, whose textual representation is wanted.
+ * @returns a string like "0x0000FFFF", "0x00FF0000", etc.
+ */
+char* affinity_mask_str(cpu_affinity_mask_t *affinity_mask);
 
 /**
  * @brief Returns the short textual representation of a CPU flag

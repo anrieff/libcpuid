@@ -65,7 +65,7 @@ static void cpu_id_t_constructor(struct cpu_id_t* id)
 	id->l1_assoc = id->l1_data_assoc = id->l1_instruction_assoc = id->l2_assoc = id->l3_assoc = id->l4_assoc = -1;
 	id->l1_cacheline = id->l1_data_cacheline = id->l1_instruction_cacheline = id->l2_cacheline = id->l3_cacheline = id->l4_cacheline = -1;
 	id->sse_size = -1;
-	id->affinity_mask = 0x00000000;
+	init_affinity_mask(&id->affinity_mask);
 	id->purpose = PURPOSE_GENERAL;
 }
 
@@ -107,7 +107,7 @@ static int get_total_cpus(void)
 }
 #define GET_TOTAL_CPUS_DEFINED
 
-static int set_cpu_affinity(uint32_t logical_cpu)
+static int set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	thread_affinity_policy_data_t ap;
 	ap.affinity_tag = logical_cpu + 1;
@@ -126,7 +126,7 @@ static int get_total_cpus(void)
 }
 #define GET_TOTAL_CPUS_DEFINED
 
-static int set_cpu_affinity(uint32_t logical_cpu)
+static int set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	HANDLE process = GetCurrentProcess();
 	DWORD_PTR processAffinityMask = 1ULL << logical_cpu;
@@ -160,7 +160,7 @@ static int get_total_cpus(void)
 #if defined linux || defined __linux__
 #include <sched.h>
 
-static int set_cpu_affinity(uint32_t logical_cpu)
+static int set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	cpu_set_t cpuset;
 	CPU_ZERO(&cpuset);
@@ -175,7 +175,7 @@ static int set_cpu_affinity(uint32_t logical_cpu)
 #include <sys/processor.h>
 #include <sys/procset.h>
 
-static int set_cpu_affinity(uint32_t logical_cpu)
+static int set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	return processor_bind(P_LWPID, P_MYID, logical_cpu, NULL) == 0;
 }
@@ -201,7 +201,7 @@ static int get_total_cpus(void)
 #include <sys/param.h>
 #include <sys/cpuset.h>
 
-static int set_cpu_affinity(uint32_t logical_cpu)
+static int set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	cpuset_t cpuset;
 	CPU_ZERO(&cpuset);
@@ -215,7 +215,7 @@ static int set_cpu_affinity(uint32_t logical_cpu)
 #include <pthread.h>
 #include <pthread_np.h>
 
-static int set_cpu_affinity(uint32_t logical_cpu)
+static int set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	cpuset_t cpuset;
 	CPU_ZERO(&cpuset);
@@ -229,7 +229,7 @@ static int set_cpu_affinity(uint32_t logical_cpu)
 #include <pthread.h>
 #include <sched.h>
 
-static int set_cpu_affinity(uint32_t logical_cpu)
+static int set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	cpuset_t *cpuset;
 	cpuset = cpuset_create();
@@ -256,7 +256,7 @@ static int get_total_cpus(void)
 #endif /* GET_TOTAL_CPUS_DEFINED */
 
 #ifndef SET_CPU_AFFINITY
-static int set_cpu_affinity(uint32_t logical_cpu)
+static int set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	static int warning_printed = 0;
 	if (!warning_printed) {
@@ -270,8 +270,9 @@ static int set_cpu_affinity(uint32_t logical_cpu)
 static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, struct cpu_raw_data_array_t *raw_array, const char* filename)
 {
 	int i;
+	bool end_loop = false;
 	const bool raw_is_init = (raw_array != NULL) && raw_array->num_raw > 0;
-	int8_t logical_cpu = raw_is_init ? 0 : -1;
+	logical_cpu_t logical_cpu = 0;
 	struct cpu_raw_data_t* raw_ptr = raw_is_init ? &raw_array->raw[0] : single_raw;
 	FILE *f;
 
@@ -283,7 +284,7 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 
 	/* Write RAW data to output file */
 	fprintf(f, "version=%s\n", VERSION);
-	while ((raw_is_init && (logical_cpu < raw_array->num_raw)) || (!raw_is_init && (logical_cpu < 0))) {
+	while (!end_loop) {
 		if (raw_is_init) {
 			debugf(2, "Writing RAW dump for logical CPU %i\n", logical_cpu);
 			fprintf(f, "\n_________________ Logical CPU #%i _________________\n", logical_cpu);
@@ -318,6 +319,7 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 				raw_ptr->amd_fn8000001dh[i][EAX], raw_ptr->amd_fn8000001dh[i][EBX],
 				raw_ptr->amd_fn8000001dh[i][ECX], raw_ptr->amd_fn8000001dh[i][EDX]);
 		logical_cpu++;
+		end_loop = ((raw_is_init && (logical_cpu < raw_array->num_raw)) || !raw_is_init);
 	}
 
 	/* Close file descriptor */
@@ -336,7 +338,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 	bool is_libcpuid_dump = true;
 	bool is_aida64_dump = false;
 	const bool raw_is_init = (raw_array != NULL);
-	int16_t logical_cpu = -1;
+	logical_cpu_t logical_cpu = 0;
 	uint32_t addr, eax, ebx, ecx, edx;
 	char version[8];
 	char line[100];
@@ -726,7 +728,7 @@ int cpuid_get_all_raw_data(struct cpu_raw_data_array_t *data)
 {
 	int cur_error = set_error(ERR_OK);
 	int ret_error = set_error(ERR_OK);
-	uint8_t logical_cpu = 0;
+	logical_cpu_t logical_cpu = 0;
 	struct cpu_raw_data_t* raw_ptr = NULL;
 
 	if (data == NULL)
@@ -806,7 +808,6 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	int r;
 	struct internal_id_info_t throwaway;
 	r = cpu_ident_internal(raw, data, &throwaway);
-	data->affinity_mask = (1ULL << data->num_logical_cpus) - 1;
 	return r;
 }
 
@@ -814,12 +815,12 @@ int cpu_identify_all(struct cpu_raw_data_array_t *raw_array, struct system_id_t*
 {
 	int cur_error = set_error(ERR_OK);
 	int ret_error = set_error(ERR_OK);	bool is_new_cpu_type;
-	uint8_t logical_cpu;
 	uint8_t cpu_type_index = 0;
+	logical_cpu_t logical_cpu = 0;
 	int32_t core_previous_id = -1;
 	int32_t num_cores = 1;
 	int32_t num_logical_cpus = 1;
-	uint32_t affinity_mask = 0x00000001;
+	cpu_affinity_mask_t affinity_mask;
 	struct cpu_raw_data_array_t my_raw_array;
 	struct internal_id_info_t throwaway;
 
@@ -831,6 +832,9 @@ int cpu_identify_all(struct cpu_raw_data_array_t *raw_array, struct system_id_t*
 	if (system == NULL)
 		return set_error(ERR_HANDLE);
 	system->num_cpu_types = 0;
+	init_affinity_mask(&affinity_mask);
+	if (raw_array->with_affinity)
+		set_affinity_mask_bit(0, &affinity_mask);
 
 	/* Iterate over all RAW */
 	for (logical_cpu = 0; logical_cpu < raw_array->num_raw; logical_cpu++) {
@@ -847,22 +851,23 @@ int cpu_identify_all(struct cpu_raw_data_array_t *raw_array, struct system_id_t*
 		}
 		/* Increment logical and physical CPU counters for current purpose */
 		else {
-			affinity_mask |= 1ULL << logical_cpu;
+			set_affinity_mask_bit(logical_cpu, &affinity_mask);
 			num_logical_cpus++;
 			if (core_previous_id != throwaway.core_id)
 				num_cores++;
 		}
 		/* Update logical and physical CPU counters in system->cpu_types on the last iteration or when purpose is different than previous core */
 		if ((logical_cpu + 1 == raw_array->num_raw) || (is_new_cpu_type && (system->num_cpu_types > 1))) {
-			cpu_type_index = is_new_cpu_type ? system->num_cpu_types - 2 : system->num_cpu_types - 1;
+			cpu_type_index = is_new_cpu_type && raw_array->with_affinity ? system->num_cpu_types - 2 : system->num_cpu_types - 1;
 			/* Save current values in system->cpu_types[cpu_type_index] */
-			system->cpu_types[cpu_type_index].affinity_mask = affinity_mask;
+			copy_affinity_mask(&system->cpu_types[cpu_type_index].affinity_mask, &affinity_mask);
 			if (core_previous_id > 0) {
 				system->cpu_types[cpu_type_index].num_cores = num_cores;
 				system->cpu_types[cpu_type_index].num_logical_cpus = num_logical_cpus;
 			}
 			/* Reset values for the next purpose */
-			affinity_mask = 1ULL << logical_cpu;
+			init_affinity_mask(&affinity_mask);
+			set_affinity_mask_bit(logical_cpu, &affinity_mask);
 			num_cores = 1;
 			num_logical_cpus = 1;
 		}
@@ -930,6 +935,31 @@ const char* cpu_purpose_str(cpu_purpose_t purpose)
 		if (matchtable[i].purpose == purpose)
 			return matchtable[i].name;
 	return "";
+}
+
+char* affinity_mask_str(cpu_affinity_mask_t *affinity_mask)
+{
+	logical_cpu_t mask_index = __MASK_SETSIZE - 1;
+	logical_cpu_t str_index;
+	bool do_print = false;
+	static char buffer[__MASK_SETSIZE + 1] = "";
+
+	while (1) {
+		if (do_print || (mask_index < 4) || (affinity_mask->__bits[mask_index] != 0x00)) {
+			if (!do_print)
+				str_index = 0;
+			snprintf(&buffer[str_index], 3, "%02X", affinity_mask->__bits[mask_index]);
+			do_print = true;
+			str_index += 2;
+		}
+		/* mask_index in unsigned, so we cannot decrement it beyond 0 */
+		if (mask_index == 0)
+			break;
+		mask_index--;
+	}
+	buffer[str_index] = '\0';
+
+	return buffer;
 }
 
 const char* cpu_feature_str(cpu_feature_t feature)

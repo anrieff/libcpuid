@@ -237,3 +237,31 @@ void debug_print_lbits(int debuglevel, uint64_t mask)
 	}
 	debugf(2, "\n");
 }
+
+/* Functions to manage cpu_affinity_mask_t type
+ * Adapted from https://electronics.stackexchange.com/a/200070
+ */
+void inline init_affinity_mask(cpu_affinity_mask_t *affinity_mask)
+{
+	memset(affinity_mask->__bits, 0x00, __MASK_SETSIZE);
+}
+
+void inline copy_affinity_mask(cpu_affinity_mask_t *dest_affinity_mask, cpu_affinity_mask_t *src_affinity_mask)
+{
+	memcpy(dest_affinity_mask->__bits, src_affinity_mask->__bits, __MASK_SETSIZE);
+}
+
+void inline set_affinity_mask_bit(logical_cpu_t logical_cpu, cpu_affinity_mask_t *affinity_mask)
+{
+	affinity_mask->__bits[logical_cpu / __MASK_NCPUBITS] |= 0x1 << (logical_cpu % __MASK_NCPUBITS);
+}
+
+bool inline get_affinity_mask_bit(logical_cpu_t logical_cpu, cpu_affinity_mask_t *affinity_mask)
+{
+	return (affinity_mask->__bits[logical_cpu / __MASK_NCPUBITS] & (0x1 << (logical_cpu % __MASK_NCPUBITS))) != 0x00;
+}
+
+void inline clear_affinity_mask_bit(logical_cpu_t logical_cpu, cpu_affinity_mask_t *affinity_mask)
+{
+	affinity_mask->__bits[logical_cpu / __MASK_NCPUBITS] &= ~(0x1 << (logical_cpu % __MASK_NCPUBITS));
+}

@@ -391,7 +391,7 @@ static void print_info(output_data_switch query, struct cpu_id_t* data)
 			fprintf(fout, "%d\n", cpuid_get_total_cpus());
 			break;
 		case NEED_AFFI_MASK:
-			fprintf(fout, "0x%08X\n", data->affinity_mask);
+			fprintf(fout, "0x%s\n", affinity_mask_str(&data->affinity_mask));
 			break;
 		case NEED_L1D_SIZE:
 			fprintf(fout, "%d\n", data->l1_data_cache);
@@ -683,7 +683,7 @@ int main(int argc, char** argv)
 			fprintf(fout, "  num_cores  : %d\n", data.cpu_types[cpu_type_index].num_cores);
 			fprintf(fout, "  num_logical: %d\n", data.cpu_types[cpu_type_index].num_logical_cpus);
 			fprintf(fout, "  tot_logical: %d\n", data.cpu_types[cpu_type_index].total_logical_cpus);
-			fprintf(fout, "  affi_mask  : 0x%08X\n", data.cpu_types[cpu_type_index].affinity_mask);
+			fprintf(fout, "  affi_mask  : 0x%s\n", affinity_mask_str(&data.cpu_types[cpu_type_index].affinity_mask));
 			fprintf(fout, "  L1 D cache : %d KB\n", data.cpu_types[cpu_type_index].l1_data_cache);
 			fprintf(fout, "  L1 I cache : %d KB\n", data.cpu_types[cpu_type_index].l1_instruction_cache);
 			fprintf(fout, "  L2 cache   : %d KB\n", data.cpu_types[cpu_type_index].l2_cache);
