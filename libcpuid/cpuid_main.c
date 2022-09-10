@@ -107,7 +107,7 @@ static int get_total_cpus(void)
 }
 #define GET_TOTAL_CPUS_DEFINED
 
-static int set_cpu_affinity(logical_cpu_t logical_cpu)
+static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	thread_affinity_policy_data_t ap;
 	ap.affinity_tag = logical_cpu + 1;
@@ -126,11 +126,40 @@ static int get_total_cpus(void)
 }
 #define GET_TOTAL_CPUS_DEFINED
 
-static int set_cpu_affinity(logical_cpu_t logical_cpu)
+static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
+/* Credits to https://github.com/PolygonTek/BlueshiftEngine/blob/fbc374cbc391e1147c744649f405a66a27c35d89/Source/Runtime/Private/Platform/Windows/PlatformWinThread.cpp#L27 */
+#if (_WIN32_WINNT >= 0x0601)
+	int groups = GetActiveProcessorGroupCount();
+	int total_processors = 0;
+	int group = 0;
+	int number = 0;
+	HANDLE process = GetCurrentThread();
+	GROUP_AFFINITY groupAffinity;
+
+	for (int i = 0; i < groups; i++) {
+		int processors = GetActiveProcessorCount(i);
+		if (total_processors + processors > logical_cpu) {
+			group = i;
+			number = logical_cpu - total_processors;
+			break;
+		}
+		total_processors += processors;
+	}
+
+	memset(&groupAffinity, 0, sizeof(groupAffinity));
+	groupAffinity.Group = (WORD) group;
+	groupAffinity.Mask = (KAFFINITY) (1ULL << number);
+	return SetThreadGroupAffinity(thread, &groupAffinity, NULL);
+#else
+	if (logical_cpu > (sizeof(DWORD_PTR) * 8)) {
+		warnf("set_cpu_affinity for logical CPU %u is not supported in this operating system.\n", logical_cpu);
+		return -1;
+	}
 	HANDLE process = GetCurrentProcess();
 	DWORD_PTR processAffinityMask = 1ULL << logical_cpu;
-	return !SetProcessAffinityMask(process, processAffinityMask);
+	return SetProcessAffinityMask(process, processAffinityMask);
+#endif /* (_WIN32_WINNT >= 0x0601) */
 }
 #define SET_CPU_AFFINITY
 #endif /* _WIN32 */
@@ -160,12 +189,12 @@ static int get_total_cpus(void)
 #if defined linux || defined __linux__
 #include <sched.h>
 
-static int set_cpu_affinity(logical_cpu_t logical_cpu)
+static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	cpu_set_t cpuset;
 	CPU_ZERO(&cpuset);
 	CPU_SET(logical_cpu, &cpuset);
-	return sched_setaffinity(0, sizeof(cpuset), &cpuset);
+	return sched_setaffinity(0, sizeof(cpuset), &cpuset) == 0;
 }
 #define SET_CPU_AFFINITY
 #endif /* defined linux || defined __linux__ */
@@ -175,8 +204,12 @@ static int set_cpu_affinity(logical_cpu_t logical_cpu)
 #include <sys/processor.h>
 #include <sys/procset.h>
 
-static int set_cpu_affinity(logical_cpu_t logical_cpu)
+static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
+	if (logical_cpu > (sizeof(processorid_t) * 8)) {
+		warnf("set_cpu_affinity for logical CPU %u is not supported in this operating system.\n", logical_cpu);
+		return -1;
+	}
 	return processor_bind(P_LWPID, P_MYID, logical_cpu, NULL) == 0;
 }
 #define SET_CPU_AFFINITY
@@ -201,12 +234,12 @@ static int get_total_cpus(void)
 #include <sys/param.h>
 #include <sys/cpuset.h>
 
-static int set_cpu_affinity(logical_cpu_t logical_cpu)
+static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	cpuset_t cpuset;
 	CPU_ZERO(&cpuset);
 	CPU_SET(logical_cpu, &cpuset);
-	return cpuset_setaffinity(CPU_LEVEL_WHICH, CPU_WHICH_TID, -1, sizeof(cpuset), &cpuset);
+	return cpuset_setaffinity(CPU_LEVEL_WHICH, CPU_WHICH_TID, -1, sizeof(cpuset), &cpuset) == 0;
 }
 #define SET_CPU_AFFINITY
 #endif /* defined __FreeBSD__ */
@@ -215,12 +248,12 @@ static int set_cpu_affinity(logical_cpu_t logical_cpu)
 #include <pthread.h>
 #include <pthread_np.h>
 
-static int set_cpu_affinity(logical_cpu_t logical_cpu)
+static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	cpuset_t cpuset;
 	CPU_ZERO(&cpuset);
 	CPU_SET(logical_cpu, &cpuset);
-	return pthread_setaffinity_np(pthread_self(), sizeof(cpuset), &cpuset);
+	return pthread_setaffinity_np(pthread_self(), sizeof(cpuset), &cpuset) == 0;
 }
 #define SET_CPU_AFFINITY
 #endif /* defined __DragonFly__ */
@@ -229,14 +262,14 @@ static int set_cpu_affinity(logical_cpu_t logical_cpu)
 #include <pthread.h>
 #include <sched.h>
 
-static int set_cpu_affinity(logical_cpu_t logical_cpu)
+static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	cpuset_t *cpuset;
 	cpuset = cpuset_create();
 	cpuset_set((cpuid_t) logical_cpu, cpuset);
 	int ret = pthread_setaffinity_np(pthread_self(), cpuset_size(cpuset), cpuset);
 	cpuset_destroy(cpuset);
-	return ret;
+	return ret == 0;
 }
 #define SET_CPU_AFFINITY
 #endif /* defined __NetBSD__ */
@@ -256,14 +289,14 @@ static int get_total_cpus(void)
 #endif /* GET_TOTAL_CPUS_DEFINED */
 
 #ifndef SET_CPU_AFFINITY
-static int set_cpu_affinity(logical_cpu_t logical_cpu)
+static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	static int warning_printed = 0;
 	if (!warning_printed) {
 		warning_printed = 1;
 		warnf("Your system is not supported by libcpuid -- don't know how to set the CPU affinity.\n");
 	}
-	return -1;
+	return false;
 }
 #endif /* SET_CPU_AFFINITY */
 
@@ -737,7 +770,7 @@ int cpuid_get_all_raw_data(struct cpu_raw_data_array_t *data)
 	data->with_affinity = true;
 	data->num_raw       = 0;
 	data->raw           = NULL;
-	while (set_cpu_affinity(logical_cpu) == 0) {
+	while (set_cpu_affinity(logical_cpu)) {
 		debugf(2, "Getting RAW dump for logical CPU %i\n", logical_cpu);
 		cpuid_grow_raw_data_array(data, logical_cpu + 1);
 		raw_ptr = &data->raw[logical_cpu];
