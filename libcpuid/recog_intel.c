@@ -748,20 +748,6 @@ static void decode_intel_number_of_cores(struct cpu_raw_data_t* raw,
 	}
 }
 
-static void decode_intel_type_of_cores(struct cpu_raw_data_t* raw,
-                                       struct cpu_id_t* data)
-{
-	/* Check for hybrid architecture */
-	if ((raw->basic_cpuid[0x7][EDX] >> 15) & 0x1) {
-		debugf(2, "Detected Intel CPU hybrid architecture\n");
-		switch((raw->basic_cpuid[0x1a][EAX] >> 24) & 0xff) {
-			case 0x20: /* Atom */ data->purpose = PURPOSE_EFFICIENCY;  break;
-			case 0x40: /* Core */ data->purpose = PURPOSE_PERFORMANCE; break;
-			default:              data->purpose = PURPOSE_GENERAL;     break;
-		}
-	}
-}
-
 static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 {
 	intel_code_t code = (intel_code_t) NC;
@@ -1022,7 +1008,7 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data, stru
 		decode_intel_oldstyle_cache_info(raw, data);
 	}
 	decode_intel_number_of_cores(raw, data, internal);
-	decode_intel_type_of_cores(raw, data);
+	data->purpose = cpuid_identify_purpose_intel(raw);
 
 	brand = get_brand_code_and_bits(data);
 	model_code = get_model_code(data);
@@ -1059,4 +1045,28 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data, stru
 void cpuid_get_list_intel(struct cpu_list_t* list)
 {
 	generic_get_cpu_list(cpudb_intel, COUNT_OF(cpudb_intel), list);
+}
+
+cpu_purpose_t cpuid_identify_purpose_intel(struct cpu_raw_data_t* raw)
+{
+	/* Check for hybrid architecture
+	From Intel® 64 and IA-32 Architectures Software Developer’s Manual Combined Volumes: 1, 2A, 2B, 2C, 2D, 3A, 3B, 3C, 3D, and 4
+	Available at https://cdrdv2.intel.com/v1/dl/getContent/671200
+
+	- CPUID[7h] is Structured Extended Feature Flags Enumeration Leaf (Output depends on ECX input value)
+	  EDX, bit 15: Hybrid. If 1, the processor is identified as a hybrid part.
+
+	- CPUID[1Ah] is Hybrid Information Enumeration Leaf (EAX = 1AH, ECX = 0)
+	  EAX, bits 31-24: Core type
+	*/
+	if (EXTRACTS_BIT(raw->basic_cpuid[0x7][EDX], 15) == 0x1) {
+		debugf(3, "Detected Intel CPU hybrid architecture\n");
+		switch (EXTRACTS_BITS(raw->basic_cpuid[0x1a][EAX], 31, 24)) {
+			case 0x20: /* Atom */ return PURPOSE_EFFICIENCY;
+			case 0x40: /* Core */ return PURPOSE_PERFORMANCE;
+			default:              return PURPOSE_GENERAL;
+		}
+	}
+
+	return PURPOSE_GENERAL;
 }

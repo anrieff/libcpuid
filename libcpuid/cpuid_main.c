@@ -836,6 +836,31 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 	return set_error(r);
 }
 
+static cpu_purpose_t cpu_ident_purpose(struct cpu_raw_data_t* raw)
+{
+	cpu_vendor_t vendor = VENDOR_UNKNOWN;
+	cpu_purpose_t purpose = PURPOSE_GENERAL;
+	char vendor_str[VENDOR_STR_MAX];
+
+	vendor = cpuid_vendor_identify(raw->basic_cpuid[0], vendor_str);
+	if (vendor == VENDOR_UNKNOWN) {
+		set_error(ERR_CPU_UNKN);
+		return purpose;
+	}
+
+	switch (vendor) {
+		case VENDOR_INTEL:
+			purpose = cpuid_identify_purpose_intel(raw);
+			break;
+		default:
+			purpose = PURPOSE_GENERAL;
+			break;
+	}
+	debugf(3, "Identified a '%s' CPU core type\n", cpu_purpose_str(purpose));
+
+	return purpose;
+}
+
 int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
 	int r;
@@ -847,12 +872,14 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 int cpu_identify_all(struct cpu_raw_data_array_t *raw_array, struct system_id_t* system)
 {
 	int cur_error = set_error(ERR_OK);
-	int ret_error = set_error(ERR_OK);	bool is_new_cpu_type;
+	int ret_error = set_error(ERR_OK);
+	double smt_divisor;
+	bool is_new_cpu_type;
+	bool is_smt_supported;
 	uint8_t cpu_type_index = 0;
-	logical_cpu_t logical_cpu = 0;
-	int32_t core_previous_id = -1;
-	int32_t num_cores = 1;
 	int32_t num_logical_cpus = 1;
+	logical_cpu_t logical_cpu = 0;
+	cpu_purpose_t purpose;
 	cpu_affinity_mask_t affinity_mask;
 	struct cpu_raw_data_array_t my_raw_array;
 	struct internal_id_info_t throwaway;
@@ -865,46 +892,43 @@ int cpu_identify_all(struct cpu_raw_data_array_t *raw_array, struct system_id_t*
 	if (system == NULL)
 		return set_error(ERR_HANDLE);
 	system->num_cpu_types = 0;
-	init_affinity_mask(&affinity_mask);
-	if (raw_array->with_affinity)
+	if (raw_array->with_affinity) {
+		init_affinity_mask(&affinity_mask);
 		set_affinity_mask_bit(0, &affinity_mask);
+	}
 
 	/* Iterate over all RAW */
 	for (logical_cpu = 0; logical_cpu < raw_array->num_raw; logical_cpu++) {
-		debugf(2, "Identifying logical core %u...\n", logical_cpu);
 		is_new_cpu_type = false;
-		cur_error = cpu_ident_internal(&raw_array->raw[logical_cpu], &system->cpu_types[system->num_cpu_types], &throwaway);
-		if (ret_error == ERR_OK)
-			ret_error = cur_error;
-
-		/* Copy data to system->cpu_types on the first iteration or when purpose is different than previous core */
-		if ((system->num_cpu_types == 0) || (system->cpu_types[system->num_cpu_types].purpose != system->cpu_types[system->num_cpu_types - 1].purpose)) {
+		purpose = cpu_ident_purpose(&raw_array->raw[logical_cpu]);
+		debugf(2, "Identifying logical core %u with %s purpose\n", logical_cpu, cpu_purpose_str(purpose));
+		/* Put data to system->cpu_types on the first iteration or when purpose is different than previous core */
+		if ((system->num_cpu_types == 0) || (purpose != system->cpu_types[system->num_cpu_types - 1].purpose)) {
 			is_new_cpu_type = true;
+			cur_error = cpu_ident_internal(&raw_array->raw[logical_cpu], &system->cpu_types[system->num_cpu_types], &throwaway);
+			if (ret_error == ERR_OK)
+				ret_error = cur_error;
 			system->num_cpu_types++;
 		}
 		/* Increment logical and physical CPU counters for current purpose */
-		else {
+		else if (raw_array->with_affinity) {
 			set_affinity_mask_bit(logical_cpu, &affinity_mask);
 			num_logical_cpus++;
-			if (core_previous_id != throwaway.core_id)
-				num_cores++;
 		}
 		/* Update logical and physical CPU counters in system->cpu_types on the last iteration or when purpose is different than previous core */
-		if ((logical_cpu + 1 == raw_array->num_raw) || (is_new_cpu_type && (system->num_cpu_types > 1))) {
+		if (raw_array->with_affinity && ((logical_cpu + 1 == raw_array->num_raw) || (is_new_cpu_type && (system->num_cpu_types > 1)))) {
 			cpu_type_index = is_new_cpu_type && raw_array->with_affinity ? system->num_cpu_types - 2 : system->num_cpu_types - 1;
+			is_smt_supported = (system->cpu_types[cpu_type_index].num_logical_cpus % system->cpu_types[cpu_type_index].num_cores) == 0;
+			smt_divisor = is_smt_supported ? system->cpu_types[cpu_type_index].num_logical_cpus / system->cpu_types[cpu_type_index].num_cores : 1.0;
 			/* Save current values in system->cpu_types[cpu_type_index] */
 			copy_affinity_mask(&system->cpu_types[cpu_type_index].affinity_mask, &affinity_mask);
-			if (core_previous_id > 0) {
-				system->cpu_types[cpu_type_index].num_cores = num_cores;
-				system->cpu_types[cpu_type_index].num_logical_cpus = num_logical_cpus;
-			}
+			system->cpu_types[cpu_type_index].num_cores = num_logical_cpus / smt_divisor;
+			system->cpu_types[cpu_type_index].num_logical_cpus = num_logical_cpus;
 			/* Reset values for the next purpose */
 			init_affinity_mask(&affinity_mask);
 			set_affinity_mask_bit(logical_cpu, &affinity_mask);
-			num_cores = 1;
 			num_logical_cpus = 1;
 		}
-		core_previous_id = throwaway.core_id;
 	}
 
 	/* Update the total_logical_cpus value for each purpose */
@@ -914,24 +938,27 @@ int cpu_identify_all(struct cpu_raw_data_array_t *raw_array, struct system_id_t*
 	return ret_error;
 }
 
-struct cpu_id_t* cpu_request_core_type(cpu_purpose_t purpose, struct cpu_raw_data_array_t* raw_array, struct system_id_t* system)
+int cpu_request_core_type(cpu_purpose_t purpose, struct cpu_raw_data_array_t* raw_array, struct cpu_id_t* data)
 {
-	uint8_t cpu_type_index = 0;
-	struct system_id_t my_system;
+	int error;
+	logical_cpu_t logical_cpu = 0;
+	struct cpu_raw_data_array_t my_raw_array;
+	struct internal_id_info_t throwaway;
 
-	if (!system) {
-		system = &my_system;
-		if (cpu_identify_all(raw_array, system) != ERR_OK)
-			return NULL;
+	if (!raw_array) {
+		if ((error = cpuid_get_all_raw_data(&my_raw_array)) < 0)
+			return set_error(error);
+		raw_array = &my_raw_array;
 	}
 
-	for (cpu_type_index = 0; cpu_type_index < system->num_cpu_types; cpu_type_index++) {
-		if (purpose == system->cpu_types[cpu_type_index].purpose)
-			return &system->cpu_types[cpu_type_index];
+	for (logical_cpu = 0; logical_cpu < raw_array->num_raw; logical_cpu++) {
+		if (cpu_ident_purpose(&raw_array->raw[logical_cpu]) == purpose) {
+			cpu_ident_internal(&raw_array->raw[logical_cpu], data, &throwaway);
+			return set_error(ERR_OK);
+		}
 	}
 
-	set_error(ERR_NOT_FOUND);
-	return NULL;
+	return set_error(ERR_NOT_FOUND);
 }
 
 const char* cpu_architecture_str(cpu_architecture_t architecture)
