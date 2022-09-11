@@ -764,5 +764,6 @@ int main(int argc, char** argv)
 	}
 
 	cpuid_free_raw_data_array(&raw_array);
+	cpuid_free_system_id(&data);
 	return 0;
 }

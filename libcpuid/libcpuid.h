@@ -207,7 +207,7 @@ struct cpu_raw_data_array_t {
 	uint8_t num_raw;
 
 	/** array of raw CPUID data */
-	struct cpu_raw_data_t *raw;
+	struct cpu_raw_data_t* raw;
 };
 
 /**
@@ -451,7 +451,7 @@ struct system_id_t {
 	uint8_t num_cpu_types;
 
 	/** array of recognized CPU features/info for each different processor types in the system */
-	struct cpu_id_t cpu_types[CPU_TYPE_MAX];
+	struct cpu_id_t* cpu_types;
 };
 
 /**
@@ -760,7 +760,7 @@ int cpuid_serialize_raw_data(struct cpu_raw_data_t* data, const char* filename);
  *          The error message can be obtained by calling \ref cpuid_error.
  *          @see cpu_error_t
  */
-int cpuid_serialize_all_raw_data(struct cpu_raw_data_array_t *data, const char* filename);
+int cpuid_serialize_all_raw_data(struct cpu_raw_data_array_t* data, const char* filename);
 
 /**
  * @brief Reads raw CPUID data from file
@@ -790,7 +790,7 @@ int cpuid_deserialize_raw_data(struct cpu_raw_data_t* data, const char* filename
  *          The error message can be obtained by calling \ref cpuid_error.
  *          @see cpu_error_t
 */
-int cpuid_deserialize_all_raw_data(struct cpu_raw_data_array_t *data, const char* filename);
+int cpuid_deserialize_all_raw_data(struct cpu_raw_data_array_t* data, const char* filename);
 
 /**
  * @brief Identifies the CPU
@@ -826,12 +826,12 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data);
  * @param system - Output - the decoded CPU features/info is written here for each CPU type.
  * @note The function is similar to cpu_identify. Refer to cpu_identify notes.
  * @note As the memory is dynamically allocated, be sure to call
- *       cpuid_free_raw_data_array() after you're done with the data
+ *       cpuid_free_raw_data_array() and cpuid_free_system_id() after you're done with the data
  * @returns zero if successful, and some negative number on error.
  *          The error message can be obtained by calling \ref cpuid_error.
  *          @see cpu_error_t
  */
-int cpu_identify_all(struct cpu_raw_data_array_t *raw_array, struct system_id_t* system);
+int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t* system);
 
 /**
  * @brief Identifies a given CPU type
@@ -1203,6 +1203,16 @@ void cpuid_free_cpu_list(struct cpu_list_t* list);
  * @param raw_array - the RAW array to be free()'d.
  */
 void cpuid_free_raw_data_array(struct cpu_raw_data_array_t* raw_array);
+
+/**
+ * @brief Frees a system ID type
+ *
+ * This function deletes all the memory associated with a system ID, as obtained
+ * by cpu_identify_all()
+ *
+ * @param system - the system ID to be free()'d.
+ */
+void cpuid_free_system_id(struct system_id_t* system);
 
 struct msr_driver_t;
 /**
