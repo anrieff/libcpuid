@@ -40,3 +40,4 @@ cpu_purpose_str
 cpuid_free_raw_data_array
 affinity_mask_str
 cpuid_free_system_id
+affinity_mask_str_r

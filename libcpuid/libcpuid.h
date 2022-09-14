@@ -194,6 +194,9 @@ struct cpu_raw_data_t {
  * @brief Contains an array of raw CPUID data.
  *
  * This contains one \ref cpu_raw_data_t for each logical CPU.
+ *
+ * @note There is a hard limit of raw array: it is bounded by the logical_cpu_t type.
+ * In other words, the limit is 65536 logical CPUs in the system.
  */
 struct cpu_raw_data_array_t {
 	/** Indicates if \ref raw was obtained by using CPU affinity
@@ -204,7 +207,7 @@ struct cpu_raw_data_array_t {
 	bool with_affinity;
 
 	/** \ref raw length */
-	uint8_t num_raw;
+	logical_cpu_t num_raw;
 
 	/** array of raw CPUID data */
 	struct cpu_raw_data_t* raw;
@@ -862,9 +865,19 @@ const char* cpu_architecture_str(cpu_architecture_t architecture);
 const char* cpu_purpose_str(cpu_purpose_t purpose);
 
 /**
+ * @brief Returns textual representation of a CPU affinity mask (thread-safe)
+ * @param affinity_mask - Input - the affinity mask (in hexadecimal), whose textual representation is wanted.
+ * @param buffer - Output - an allocated string where to store the textual representation, like "0000FFFF", "00FF0000", etc.
+ * @param buffer_len - Input - the size of buffer.
+ * @returns a pointer on buffer
+ */
+char* affinity_mask_str_r(cpu_affinity_mask_t* affinity_mask, char* buffer, uint32_t buffer_len);
+
+/**
  * @brief Returns textual representation of a CPU affinity mask
- * @param affinity_mask - the affinity mask, whose textual representation is wanted.
- * @returns a string like "0x0000FFFF", "0x00FF0000", etc.
+ * @param affinity_mask - the affinity mask (in hexadecimal), whose textual representation is wanted.
+ * @note This function is not thread-safe
+ * @returns a string like "0000FFFF", "00FF0000", etc.
  */
 char* affinity_mask_str(cpu_affinity_mask_t *affinity_mask);
 

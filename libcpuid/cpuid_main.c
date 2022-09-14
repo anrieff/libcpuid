@@ -82,9 +82,9 @@ static void system_id_t_constructor(struct system_id_t* system)
 	system->cpu_types = NULL;
 }
 
-static void cpuid_grow_raw_data_array(struct cpu_raw_data_array_t* raw_array, uint8_t n)
+static void cpuid_grow_raw_data_array(struct cpu_raw_data_array_t* raw_array, logical_cpu_t n)
 {
-	uint8_t i;
+	logical_cpu_t i;
 	struct cpu_raw_data_t *tmp = NULL;
 
 	if ((n <= 0) || (n < raw_array->num_raw)) return;
@@ -482,7 +482,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 			}
 		}
 		else if (is_aida64_dump) {
-			if (use_raw_array && ((sscanf(line, "------[Logical CPU #%hi ]------", &logical_cpu) >= 1) || \
+			if (use_raw_array && ((sscanf(line, "------[ Logical CPU #%hi ]------", &logical_cpu) >= 1) || \
 			                      (sscanf(line, "------[ CPUID Registers / Logical CPU #%hi ]------", &logical_cpu) >= 1))) {
 				debugf(2, "Parsing AIDA64 RAW dump for logical CPU %i\n", logical_cpu);
 				cpuid_grow_raw_data_array(raw_array, logical_cpu + 1);
@@ -1035,17 +1035,14 @@ const char* cpu_purpose_str(cpu_purpose_t purpose)
 	return "";
 }
 
-char* affinity_mask_str(cpu_affinity_mask_t* affinity_mask)
+char* affinity_mask_str_r(cpu_affinity_mask_t* affinity_mask, char* buffer, uint32_t buffer_len)
 {
 	logical_cpu_t mask_index = __MASK_SETSIZE - 1;
-	logical_cpu_t str_index;
+	logical_cpu_t str_index = 0;
 	bool do_print = false;
-	static char buffer[__MASK_SETSIZE + 1] = "";
 
-	while (1) {
+	while (str_index + 1 < buffer_len) {
 		if (do_print || (mask_index < 4) || (affinity_mask->__bits[mask_index] != 0x00)) {
-			if (!do_print)
-				str_index = 0;
 			snprintf(&buffer[str_index], 3, "%02X", affinity_mask->__bits[mask_index]);
 			do_print = true;
 			str_index += 2;
@@ -1058,6 +1055,12 @@ char* affinity_mask_str(cpu_affinity_mask_t* affinity_mask)
 	buffer[str_index] = '\0';
 
 	return buffer;
+}
+
+char* affinity_mask_str(cpu_affinity_mask_t* affinity_mask)
+{
+	static char buffer[__MASK_SETSIZE + 1] = "";
+	return affinity_mask_str_r(affinity_mask, buffer, __MASK_SETSIZE + 1);
 }
 
 const char* cpu_feature_str(cpu_feature_t feature)

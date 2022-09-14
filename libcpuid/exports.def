@@ -43,3 +43,4 @@ cpu_purpose_str @39
 cpuid_free_raw_data_array @40
 affinity_mask_str @41
 cpuid_free_system_id @42
+affinity_mask_str_r @43
