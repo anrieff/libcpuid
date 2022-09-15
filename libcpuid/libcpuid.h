@@ -149,6 +149,24 @@ typedef enum {
 #define NUM_CPU_PURPOSES NUM_CPU_PURPOSES
 
 /**
+ * @brief Hypervisor vendor, as guessed from the CPU_FEATURE_HYPERVISOR flag.
+ */
+typedef enum {
+	HYPERVISOR_NONE = 0,     /*!< no hypervisor */
+	HYPERVISOR_BHYVE,        /*!< FreeBSD bhyve hypervisor */
+	HYPERVISOR_HYPERV,       /*!< Microsoft Hyper-V or Windows Virtual PC hypervisor */
+	HYPERVISOR_KVM,          /*!< KVM hypervisor */
+	HYPERVISOR_PARALLELS,    /*!< Parallels hypervisor */
+	HYPERVISOR_QEMU,         /*!< QEMU hypervisor */
+	HYPERVISOR_VIRTUALBOX,   /*!< VirtualBox hypervisor */
+	HYPERVISOR_VMWARE,       /*!< VMware hypervisor */
+	HYPERVISOR_XEN,          /*!< Xen hypervisor */
+	NUM_HYPERVISOR_VENDORS,  /*!< Valid hypervisor vendor ids: 0..NUM_HYPERVISOR_VENDORS - 1 */
+	HYPERVISOR_UNKNOWN = -1,
+} hypervisor_vendor_t;
+#define NUM_HYPERVISOR_VENDORS NUM_HYPERVISOR_VENDORS
+
+/**
  * @brief Contains just the raw CPUID data.
  *
  * This contains only the most basic CPU data, required to do identification
@@ -591,6 +609,7 @@ typedef enum {
 	CPU_FEATURE_AVX512VNNI, /*!< AVX-512 Vector Neural Network Instructions */
 	CPU_FEATURE_AVX512VBMI, /*!< AVX-512 Vector Bit ManipulationInstructions (version 1) */
 	CPU_FEATURE_AVX512VBMI2, /*!< AVX-512 Vector Bit ManipulationInstructions (version 2) */
+	CPU_FEATURE_HYPERVISOR, /*!< Hypervisor present (always zero on physical CPUs) */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;
@@ -1166,6 +1185,24 @@ void cpuid_set_verbosiness_level(int level);
  *          @see cpu_vendor_t
  */
 cpu_vendor_t cpuid_get_vendor(void);
+
+/**
+ * @brief Obtains the hypervisor vendor from CPUID from the current CPU
+ * @param raw - Optional input - a pointer to the raw CPUID data, which is obtained
+ *              either by cpuid_get_raw_data or cpuid_deserialize_raw_data.
+ *              Can also be NULL, in which case the functions calls
+ *              cpuid_get_raw_data itself.
+ * @param data - Optional input - the decoded CPU features/info is written here.
+ *              Can also be NULL, in which case the functions calls
+ *              cpu_identify itself.
+ * @note If no hypervisor is detected, the hypervisor can be hidden in some cases.
+ *       Refer to https://github.com/anrieff/libcpuid/issues/90#issuecomment-296568713.
+ * @returns HYPERVISOR_UNKNOWN if failed,
+ *          HYPERVISOR_NONE if no hypervisor detected (or hidden),
+ *          otherwise the hypervisor vendor type.
+ *          @see hypervisor_vendor_t
+ */
+hypervisor_vendor_t cpuid_get_hypervisor(struct cpu_raw_data_t* raw, struct cpu_id_t* data);
 
 /**
  * @brief a structure that holds a list of processor names

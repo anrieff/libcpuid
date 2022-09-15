@@ -568,6 +568,7 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 		{ 28, CPU_FEATURE_AVX },
 		{ 29, CPU_FEATURE_F16C },
 		{ 30, CPU_FEATURE_RDRAND },
+		{ 31, CPU_FEATURE_HYPERVISOR },
 	};
 	const struct feature_map_t matchtable_ebx7[] = {
 		{  3, CPU_FEATURE_BMI1 },
@@ -1180,6 +1181,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_AVX512VNNI, "avx512vnni" },
 		{ CPU_FEATURE_AVX512VBMI, "avx512vbmi" },
 		{ CPU_FEATURE_AVX512VBMI2, "avx512vbmi2" },
+		{ CPU_FEATURE_HYPERVISOR, "hypervisor" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {
@@ -1297,6 +1299,65 @@ void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list)
 			list->names = NULL;
 			break;
  	}
+}
+
+hypervisor_vendor_t cpuid_get_hypervisor(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+{
+	int i, r;
+	uint32_t hypervisor_fn40000000h[NUM_REGS];
+	char hypervisor_str[VENDOR_STR_MAX];
+	struct cpu_id_t mydata;
+	const struct { hypervisor_vendor_t hypervisor; char match[16]; }
+	matchtable[NUM_HYPERVISOR_VENDORS] = {
+		/* source: https://github.com/a0rtega/pafish/blob/master/pafish/cpu.c */
+		{ HYPERVISOR_BHYVE      , "bhyve bhyve\0"   },
+		{ HYPERVISOR_HYPERV     , "Microsoft Hv"    },
+		{ HYPERVISOR_KVM        , "KVMKVMKVM\0\0\0" },
+		{ HYPERVISOR_PARALLELS  , "prl hyperv\0\0"  },
+		{ HYPERVISOR_QEMU       , "TCGTCGTCGTCG"    },
+		{ HYPERVISOR_VIRTUALBOX , "VBoxVBoxVBox"    },
+		{ HYPERVISOR_VMWARE     , "VMwareVMware"    },
+		{ HYPERVISOR_XEN        , "XenVMMXenVMM"    },
+	};
+
+	if (!data) {
+		if ((r = cpu_identify(raw, data)) < 0)
+			return HYPERVISOR_UNKNOWN;
+		data = &mydata;
+	}
+
+	/* Intel and AMD CPUs have reserved bit 31 of ECX of CPUID leaf 0x1 as the hypervisor present bit
+	Source: https://kb.vmware.com/s/article/1009458 */
+	switch (data->vendor) {
+		case VENDOR_AMD:
+		case VENDOR_INTEL:
+			break;
+		default:
+			return HYPERVISOR_UNKNOWN;
+	}
+	if (!data->flags[CPU_FEATURE_HYPERVISOR])
+		return HYPERVISOR_NONE;
+
+	/* Intel and AMD have also reserved CPUID leaves 0x40000000 - 0x400000FF for software use.
+	Hypervisors can use these leaves to provide an interface to pass information
+	from the hypervisor to the guest operating system running inside a virtual machine.
+	The hypervisor bit indicates the presence of a hypervisor
+	and that it is safe to test these additional software leaves. */
+	memset(hypervisor_fn40000000h, 0, sizeof(hypervisor_fn40000000h));
+	hypervisor_fn40000000h[EAX] = 0x40000000;
+	cpu_exec_cpuid_ext(hypervisor_fn40000000h);
+
+	/* Copy the hypervisor CPUID information leaf */
+	memcpy(hypervisor_str + 0, &hypervisor_fn40000000h[1], 4);
+	memcpy(hypervisor_str + 4, &hypervisor_fn40000000h[2], 4);
+	memcpy(hypervisor_str + 8, &hypervisor_fn40000000h[3], 4);
+	hypervisor_str[12] = '\0';
+
+	/* Determine hypervisor */
+	for (i = 0; i < NUM_HYPERVISOR_VENDORS; i++)
+		if (!strcmp(hypervisor_str, matchtable[i].match))
+			return matchtable[i].hypervisor;
+	return HYPERVISOR_UNKNOWN;
 }
 
 void cpuid_free_cpu_list(struct cpu_list_t* list)
