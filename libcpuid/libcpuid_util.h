@@ -100,16 +100,16 @@ extern int _current_verboselevel;
  */
 
 /* initialize affinity_mask */
-extern inline void init_affinity_mask(cpu_affinity_mask_t *affinity_mask);
+void init_affinity_mask(cpu_affinity_mask_t *affinity_mask);
 
 /* copy one affinity_mask to another one */
-extern inline void copy_affinity_mask(cpu_affinity_mask_t *dest_affinity_mask, cpu_affinity_mask_t *src_affinity_mask);
+void copy_affinity_mask(cpu_affinity_mask_t *dest_affinity_mask, cpu_affinity_mask_t *src_affinity_mask);
 
 /* set bit corresponding to 'logical_cpu' to '1' */
-extern inline void set_affinity_mask_bit(logical_cpu_t logical_cpu, cpu_affinity_mask_t *affinity_mask);
+void set_affinity_mask_bit(logical_cpu_t logical_cpu, cpu_affinity_mask_t *affinity_mask);
 
 /* get bit corresponding to 'logical_cpu' */
-extern inline bool get_affinity_mask_bit(logical_cpu_t logical_cpu, cpu_affinity_mask_t *affinity_mask);
+bool get_affinity_mask_bit(logical_cpu_t logical_cpu, cpu_affinity_mask_t *affinity_mask);
 
 /* set bit corresponding to 'logical_cpu' to '0' */
 void clear_affinity_mask_bit(logical_cpu_t logical_cpu, cpu_affinity_mask_t *affinity_mask);
