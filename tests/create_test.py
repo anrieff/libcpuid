@@ -12,11 +12,16 @@ if len(args) != 3:
 def readRawFile():
 	rawdata = []
 	for line in open(args[1], "rt").readlines():
-		lookfor = ["basic_cpuid", "ext_cpuid", "intel_fn4", "intel_fn11", "amd_fn8000001dh"]
+		lookfor = ["basic_cpuid", "ext_cpuid", "intel_fn4", "intel_fn11", "amd_fn8000001dh", "Logical CPU", "CPUID"]
+		ignore  = ["MSR Register"]
 		good = False
 		for match in lookfor:
 			if line.find(match) != -1:
 				good = True
+				break
+		for match in ignore:
+			if line.find(match) != -1:
+				good = False
 				break
 		if good:
 			rawdata.append(line.strip())
@@ -40,6 +45,14 @@ def readResultFile():
 			if not rexp.match(value):
 				raise "Bad format of value: [%s]" % s
 			repdata.append(rexp.findall(value)[0])
+		if "CPU Info for type" in field:
+			repdata.append(delimiter)
+		if field == "arch":
+			value = s[s.find(":") + 2:]
+			repdata.append(value)
+		if field == "purpose":
+			value = s[s.find(":") + 2:]
+			repdata.append(value)
 		if field == "code name":
 			value = s[s.find("`") + 1: s.find("'")]
 			repdata.append(value)
@@ -56,5 +69,5 @@ def readResultFile():
 	return repdata
 
 delimiter = "-" * 80
-lines = readRawFile() + [delimiter] + readResultFile()
+lines = readRawFile() + readResultFile()
 sys.stdout.writelines([s + "\n" for s in lines])

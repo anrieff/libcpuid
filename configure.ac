@@ -66,6 +66,10 @@ case "${host_os}" in
         ;;
 esac
 
+if test "$build_windows" = "no"; then
+    AM_CPPFLAGS="$AM_CPPFLAGS -D_GNU_SOURCE"
+fi
+
 AM_CONDITIONAL([WINDOWS], [test "$build_windows" = "yes"])
 
 AC_SUBST(AM_CPPFLAGS)

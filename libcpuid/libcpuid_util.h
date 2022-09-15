@@ -95,4 +95,23 @@ int set_error(cpu_error_t err);
 extern libcpuid_warn_fn_t _warn_fun;
 extern int _current_verboselevel;
 
+/*
+ * Manage cpu_affinity_mask_t type
+ */
+
+/* initialize affinity_mask */
+extern inline void init_affinity_mask(cpu_affinity_mask_t *affinity_mask);
+
+/* copy one affinity_mask to another one */
+extern inline void copy_affinity_mask(cpu_affinity_mask_t *dest_affinity_mask, cpu_affinity_mask_t *src_affinity_mask);
+
+/* set bit corresponding to 'logical_cpu' to '1' */
+extern inline void set_affinity_mask_bit(logical_cpu_t logical_cpu, cpu_affinity_mask_t *affinity_mask);
+
+/* get bit corresponding to 'logical_cpu' */
+extern inline bool get_affinity_mask_bit(logical_cpu_t logical_cpu, cpu_affinity_mask_t *affinity_mask);
+
+/* set bit corresponding to 'logical_cpu' to '0' */
+void clear_affinity_mask_bit(logical_cpu_t logical_cpu, cpu_affinity_mask_t *affinity_mask);
+
 #endif /* __LIBCPUID_UTIL_H__ */
