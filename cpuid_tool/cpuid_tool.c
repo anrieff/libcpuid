@@ -108,6 +108,7 @@ int need_input = 0,
     need_version = 0,
     need_cpulist = 0,
     need_sgx = 0,
+    need_hypervisor = 0,
     need_identify = 0;
 
 #define MAX_REQUESTS 32
@@ -178,6 +179,7 @@ static void usage(void)
 	printf("  --clock-rdtsc    - same as --clock, but use RDTSC for clock detection\n");
 	printf("  --cpulist        - list all known CPUs\n");
 	printf("  --sgx            - list SGX leaf data, if SGX is supported.\n");
+	printf("  --hypervisor     - print hypervisor vendor if detected.\n");
 	printf("  --quiet          - disable warnings\n");
 	printf("  --outfile=<file> - redirect all output to this file, instead of stdout\n");
 	printf("  --verbose, -v    - be extra verbose (more keys increase verbosiness level)\n");
@@ -294,6 +296,11 @@ static int parse_cmdline(int argc, char** argv)
 		}
 		if (!strcmp(arg, "--sgx")) {
 			need_sgx = 1;
+			need_identify = 1;
+			recog = 1;
+		}
+		if (!strcmp(arg, "--hypervisor")) {
+			need_hypervisor = 1;
 			need_identify = 1;
 			recog = 1;
 		}
@@ -556,6 +563,33 @@ static void print_sgx_data(const struct cpu_raw_data_t* raw, const struct cpu_id
 	}
 }
 
+static void print_hypervisor(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+{
+	int i;
+	const char *hypervisor_str = NULL;
+	const hypervisor_vendor_t hypervisor = cpuid_get_hypervisor(raw, data);
+	const struct { const char *name; hypervisor_vendor_t hypervisor; } hypervisors_vendors[NUM_HYPERVISOR_VENDORS] = {
+		{ "none",               HYPERVISOR_NONE       },
+		{ "FreeBSD bhyve",      HYPERVISOR_BHYVE      },
+		{ "Microsoft Hyper-V ", HYPERVISOR_HYPERV     },
+		{ "KVM",                HYPERVISOR_KVM        },
+		{ "Parallels",          HYPERVISOR_PARALLELS  },
+		{ "QEMU",               HYPERVISOR_QEMU       },
+		{ "VirtualBox",         HYPERVISOR_VIRTUALBOX },
+		{ "VMware",             HYPERVISOR_VMWARE     },
+		{ "Xen",                HYPERVISOR_XEN        },
+	};
+	for (i = 0; i < NUM_HYPERVISOR_VENDORS; i++)
+		if (hypervisors_vendors[i].hypervisor == hypervisor) {
+			hypervisor_str = hypervisors_vendors[i].name;
+			break;
+		}
+	fprintf(fout, "Hypervisor vendor: %s\n", (hypervisor_str == NULL) ? "unknown" : hypervisor_str);
+	if (hypervisor == HYPERVISOR_NONE)
+		fprintf(fout, "Caution: no hypervisor detected from CPUID bits, but a hypervisor may be hidden.\n"
+		              "Refer to https://github.com/anrieff/libcpuid/issues/90#issuecomment-296568713\n");
+}
+
 int main(int argc, char** argv)
 {
 	int parseres = parse_cmdline(argc, argv);
@@ -761,6 +795,9 @@ int main(int argc, char** argv)
 	}
 	if (need_sgx) {
 		print_sgx_data(&raw_array.raw[0], &data.cpu_types[0]);
+	}
+	if (need_hypervisor) {
+		print_hypervisor(&raw_array.raw[0], &data.cpu_types[0]);
 	}
 
 	cpuid_free_raw_data_array(&raw_array);
