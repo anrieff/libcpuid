@@ -416,26 +416,13 @@ static void decode_amd_cache_info(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 
 		l3_result = (raw->ext_cpuid[6][EDX] >> 18);
 		if (l3_result > 0) {
-			l3_result = 512 * l3_result; /* AMD spec says it's a range,
-			                                but we take the lower bound */
+			l3_result *= 512; /* AMD spec says it's a range, but we take the lower bound */
 			l3_assoc = (raw->ext_cpuid[6][EDX] >> 12) & 0xf;
 			data->l3_cache = l3_result;
-
-			if(l3_assoc == 0x9) {
-				/* Since Zen 2, CPUID_Fn80000006_EDX[15:12] is invalid (0x9)
-				According to page 74 on
-				Processor Programming Reference (PPR) for AMD Family 17h Model 71h, Revision B0 Processors:
-				"There are insufficient available encodings to represent all possible L3
-				associativities. Please refer to Core::X86::Cpuid::CachePropEbx3[CacheNumWays]."
-				Note: we do not read CPUID_Fn80000001_ECX[22] (AKA TopologyExtensions) to allow backward compatibility with existing tests */
-				data->l3_assoc     = EXTRACTS_BITS(raw->amd_fn8000001dh[0x3][EBX], 31, 22) + 1; // Cache number of ways is CacheNumWays + 1
-				data->l3_cacheline = EXTRACTS_BITS(raw->amd_fn8000001dh[0x3][EBX], 11, 0) + 1; // Cache line size in bytes is CacheLineSize + 1
-			} else {
-				data->l3_assoc = assoc_table[l3_assoc];
-				data->l3_cacheline = (raw->ext_cpuid[6][EDX]) & 0xff;
-			}
+			data->l3_assoc = assoc_table[l3_assoc];
+			data->l3_cacheline = (raw->ext_cpuid[6][EDX]) & 0xff;
 		} else {
-			data->l3_cache = 0;
+			data->l3_cache = -1;
 		}
 	}
 }
@@ -608,7 +595,10 @@ static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 int cpuid_identify_amd(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal)
 {
 	load_amd_features(raw, data);
-	decode_amd_cache_info(raw, data);
+	if ((EXTRACTS_BIT(raw->ext_cpuid[1][ECX], 22) == 1) && (EXTRACTS_BITS(raw->amd_fn8000001dh[0][EAX], 4, 0) != 0)) /* TopologyExtensions supported */
+		decode_deterministic_cache_info_x86(raw->amd_fn8000001dh, MAX_AMDFN8000001DH_LEVEL, data, internal);
+	else
+		decode_amd_cache_info(raw, data);
 	decode_amd_number_of_cores(raw, data);
 	decode_amd_codename(raw, data, internal);
 	return 0;
