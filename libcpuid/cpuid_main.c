@@ -437,9 +437,11 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 				}
 				if (i >= 0) {
 					debugf(2, "Parsing RAW dump for a single CPU dump\n");
-					cpuid_grow_raw_data_array(raw_array, 1);
-					raw_ptr = &raw_array->raw[0];
-					raw_array->with_affinity = false;
+					if (use_raw_array) {
+						cpuid_grow_raw_data_array(raw_array, 1);
+						raw_ptr = &raw_array->raw[0];
+						raw_array->with_affinity = false;
+					}
 				}
 			}
 			else if (!strcmp(line, "------[ Versions ]------") || !strcmp(line, "------[ Logical CPU #0 ]------") || !strcmp(line, "------[ CPUID Registers / Logical CPU #0 ]------")) {
