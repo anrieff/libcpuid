@@ -6,10 +6,12 @@ import os, sys, re, random
 
 ### Constants:
 fields = [ "architecture", "purpose", "family", "model", "stepping", "extfamily",
-	   "extmodel", "cores", "logical", "l1d-cache", "l1i-cache", "l2-cache",
-	   "l3-cache", "l4-cache", "l1d-assoc", "l1i-assoc", "l2-assoc", "l3-assoc",
-	   "l4-assoc", "l1d-cacheline", "l1i-cacheline", "l2-cacheline", "l3-cacheline",
-	   "l4-cacheline", "sse-size", "codename", "flags" ]
+	   "extmodel", "cores", "logical",
+	   "l1d-cache",     "l1i-cache",     "l2-cache",     "l3-cache",     "l4-cache",
+	   "l1d-assoc",     "l1i-assoc",     "l2-assoc",     "l3-assoc",     "l4-assoc",
+	   "l1d-cacheline", "l1i-cacheline", "l2-cacheline", "l3-cacheline", "l4-cacheline",
+	   "l1d-instances", "l1i-instances", "l2-instances", "l3-instances", "l4-instances",
+	   "sse-size", "codename", "flags" ]
 
 args = sys.argv
 fix = False

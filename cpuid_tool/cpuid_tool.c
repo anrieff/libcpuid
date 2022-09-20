@@ -87,6 +87,11 @@ typedef enum {
 	NEED_L2_CACHELINE,
 	NEED_L3_CACHELINE,
 	NEED_L4_CACHELINE,
+	NEED_L1D_INSTANCES,
+	NEED_L1I_INSTANCES,
+	NEED_L2_INSTANCES,
+	NEED_L3_INSTANCES,
+	NEED_L4_INSTANCES,
 	NEED_CODENAME,
 	NEED_FEATURES,
 	NEED_CLOCK,
@@ -151,6 +156,11 @@ matchtable[] = {
 	{ NEED_L2_CACHELINE , "--l2-cacheline" , 1},
 	{ NEED_L3_CACHELINE , "--l3-cacheline" , 1},
 	{ NEED_L4_CACHELINE , "--l4-cacheline" , 1},
+	{ NEED_L1D_INSTANCES, "--l1d-instances", 1},
+	{ NEED_L1I_INSTANCES, "--l1i-instances", 1},
+	{ NEED_L2_INSTANCES , "--l2-instances" , 1},
+	{ NEED_L3_INSTANCES , "--l3-instances" , 1},
+	{ NEED_L4_INSTANCES , "--l4-instances" , 1},
 	{ NEED_CODENAME     , "--codename"     , 1},
 	{ NEED_FEATURES     , "--flags"        , 1},
 	{ NEED_CLOCK        , "--clock"        , 0},
@@ -445,6 +455,21 @@ static void print_info(output_data_switch query, struct cpu_id_t* data)
 		case NEED_L4_CACHELINE:
 			fprintf(fout, "%d\n", data->l4_cacheline);
 			break;
+		case NEED_L1D_INSTANCES:
+			fprintf(fout, "%d\n", data->l1_data_instances);
+			break;
+		case NEED_L1I_INSTANCES:
+			fprintf(fout, "%d\n", data->l1_instruction_instances);
+			break;
+		case NEED_L2_INSTANCES:
+			fprintf(fout, "%d\n", data->l2_instances);
+			break;
+		case NEED_L3_INSTANCES:
+			fprintf(fout, "%d\n", data->l3_instances);
+			break;
+		case NEED_L4_INSTANCES:
+			fprintf(fout, "%d\n", data->l4_instances);
+			break;
 		case NEED_CODENAME:
 			fprintf(fout, "%s\n", data->cpu_codename);
 			break;
@@ -733,6 +758,11 @@ int main(int argc, char** argv)
 			fprintf(fout, "  L2 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l2_cacheline);
 			fprintf(fout, "  L3 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l3_cacheline);
 			fprintf(fout, "  L4 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l4_cacheline);
+			fprintf(fout, "  L1D inst.  : %d\n", data.cpu_types[cpu_type_index].l1_data_instances);
+			fprintf(fout, "  L1I inst.  : %d\n", data.cpu_types[cpu_type_index].l1_instruction_instances);
+			fprintf(fout, "  L2 inst.   : %d\n", data.cpu_types[cpu_type_index].l2_instances);
+			fprintf(fout, "  L3 inst.   : %d\n", data.cpu_types[cpu_type_index].l3_instances);
+			fprintf(fout, "  L4 inst.   : %d\n", data.cpu_types[cpu_type_index].l4_instances);
 			fprintf(fout, "  SSE units  : %d bits (%s)\n", data.cpu_types[cpu_type_index].sse_size, data.cpu_types[cpu_type_index].detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
 			fprintf(fout, "  code name  : `%s'\n", data.cpu_types[cpu_type_index].cpu_codename);
 			fprintf(fout, "  features   :");

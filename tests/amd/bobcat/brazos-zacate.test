@@ -95,6 +95,11 @@ general
 64
 -1
 -1
+-1
+-1
+-1
+-1
+-1
 64 (authoritative)
 Brazos Zacate (Dual-core)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni monitor ssse3 cx16 syscall popcnt mmxext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch ibs skinit wdt ts ttp tm_amd stc 100mhzsteps hwpstate constant_tsc
