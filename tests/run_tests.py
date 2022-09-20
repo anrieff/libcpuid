@@ -136,5 +136,7 @@ if errors:
 		print("""
 You're running tests in fast mode; before taking any action on the errors
 above, please confirm that the slow mode ('make test-old') also fails.""")
+	sys.exit(1)
 else:
 	print("All successfull!")
+	sys.exit(0)
