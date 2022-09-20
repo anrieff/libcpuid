@@ -91,6 +91,11 @@ general
 64
 -1
 -1
+-1
+-1
+-1
+-1
+-1
 128 (non-authoritative)
 Atom (Diamondville)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl est tm2 ssse3 xtpr pdcm xd movbe lahf_lm

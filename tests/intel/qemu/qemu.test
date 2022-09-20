@@ -99,6 +99,11 @@ general
 64
 -1
 -1
+-1
+-1
+-1
+-1
+-1
 64 (non-authoritative)
 Pentium M (Dothan)
 fpu de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 pni cx16 syscall xd lm lahf_lm hypervisor

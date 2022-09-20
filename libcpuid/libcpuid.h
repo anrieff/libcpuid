@@ -428,6 +428,21 @@ struct cpu_id_t {
 	/** Cache-line size for L4 cache. -1 if undetermined */
 	int32_t l4_cacheline;
 
+	/** Number of L1 data cache instances. -1 if undetermined */
+	int32_t l1_data_instances;
+
+	/** Number of L1 intruction cache instances. -1 if undetermined */
+	int32_t l1_instruction_instances;
+
+	/** Number of L2 cache instances. -1 if undetermined */
+	int32_t l2_instances;
+
+	/** Number of L3 cache instances. -1 if undetermined */
+	int32_t l3_instances;
+
+	/** Number of L4 cache instances. -1 if undetermined */
+	int32_t l4_instances;
+
 	/**
 	 * The brief and human-friendly CPU codename, which was recognized.<br>
 	 * Examples:
@@ -473,6 +488,21 @@ struct system_id_t {
 
 	/** array of recognized CPU features/info for each different processor types in the system */
 	struct cpu_id_t* cpu_types;
+
+	/** Number of total L1 data cache instances. -1 if undetermined */
+	int32_t l1_data_total_instances;
+
+	/** Number of total L1 intruction cache instances. -1 if undetermined */
+	int32_t l1_instruction_total_instances;
+
+	/** Number of total L2 cache instances. -1 if undetermined */
+	int32_t l2_total_instances;
+
+	/** Number of total L3 cache instances. -1 if undetermined */
+	int32_t l3_total_instances;
+
+	/** Number of total L4 cache instances. -1 if undetermined */
+	int32_t l4_total_instances;
 };
 
 /**
