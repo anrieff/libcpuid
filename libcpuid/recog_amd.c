@@ -265,6 +265,9 @@ const struct match_entry_t cpudb_amd[] = {
 	/* Family 16h: Jaguar Architecture (2013) */
 	{ 15,  0, -1, 22,    0,   2,    -1,    -1, FUSION_A, 0             ,     0, "Kabini X2"                     },
 	{ 15,  0, -1, 22,    0,   4,    -1,    -1, FUSION_A, 0             ,     0, "Kabini X4"                     },
+	{ 15,  0, -1, 22,    0,   2,    -1,    -1, NC,       SEMPRON_|_X2  ,     0, "Kabini X2"                     },
+	{ 15,  0, -1, 22,    0,   4,    -1,    -1, NC,       SEMPRON_|_X4  ,     0, "Kabini X4"                     },
+	{ 15,  0, -1, 22,    0,   4,    -1,    -1, NC,       ATHLON_|_X4   ,     0, "Kabini X4"                     },
 	/* 2nd-gen, Puma core (2013): */
 	{ 15,  0, -1, 22,   48,   2,    -1,    -1, FUSION_E, 0             ,     0, "Mullins X2"                    },
 	{ 15,  0, -1, 22,   48,   4,    -1,    -1, FUSION_A, 0             ,     0, "Mullins X4"                    },
