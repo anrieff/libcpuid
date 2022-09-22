@@ -250,6 +250,8 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  8, -1, 21,   56,   4,    -1,    -1, FUSION_A, 0             ,     0, "Godavari X2"                   },
 	{ 15,  8, -1, 21,   56,   4,    -1,    -1, FUSION_A, 0             ,     0, "Godavari X4"                   },
 	{ 15,  8, -1, 21,   56,   4,    -1,    -1, NC      , ATHLON_|_X4   ,     0, "Godavari X4"                   },
+	{ 15,  0, -1, 21,   48,   2,    -1,    -1, FUSION_RX, 0            ,     0, "Bald Eagle X2"                 },
+	{ 15,  0, -1, 21,   48,   4,    -1,    -1, FUSION_RX, 0            ,     0, "Bald Eagle X4"                 },
 	/* 4th-gen, Excavator core (2015): */
 	{ 15,  1, -1, 21,   96,   2,    -1,    -1, FUSION_A, 0             ,     0, "Carrizo X2"                    },
 	{ 15,  1, -1, 21,   96,   4,    -1,    -1, FUSION_A, 0             ,     0, "Carrizo X4"                    },
@@ -492,6 +494,7 @@ static struct amd_code_and_bits_t decode_amd_codename_part1(const char *bs)
 		{ FUSION_E, "E-###" },
 		{ FUSION_Z, "Z-##" },
 		{ FUSION_EA, "[EA]#-####" },
+		{ FUSION_RX, "RX-###" },
 	};
 
 	const struct { uint64_t bit; const char *search; } bit_matchtable[] = {
