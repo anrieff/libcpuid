@@ -1037,6 +1037,8 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 	bool is_apic_supported = true;
 	uint8_t cpu_type_index = 0;
 	int32_t num_logical_cpus = 0;
+	int32_t cur_package_id = 0;
+	int32_t prev_package_id = 0;
 	logical_cpu_t logical_cpu = 0;
 	cpu_purpose_t purpose;
 	cpu_affinity_mask_t affinity_mask;
@@ -1068,11 +1070,14 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 		   APIC ID are unique for each logical CPU cores.
 		*/
 		purpose = cpu_ident_purpose(&raw_array->raw[logical_cpu]);
-		if (raw_array->with_affinity && is_apic_supported)
+		if (raw_array->with_affinity && is_apic_supported) {
 			is_apic_supported = cpu_ident_apic_id(logical_cpu, &raw_array->raw[logical_cpu], &apic_info);
+			if (is_apic_supported)
+				cur_package_id = apic_info.package_id;
+		}
 
 		/* Put data to system->cpu_types on the first iteration or when purpose is different than previous core */
-		if ((system->num_cpu_types == 0) || (purpose != system->cpu_types[system->num_cpu_types - 1].purpose)) {
+		if ((system->num_cpu_types == 0) || (purpose != system->cpu_types[system->num_cpu_types - 1].purpose) || (cur_package_id != prev_package_id)) {
 			is_new_cpu_type = true;
 			cpu_type_index  = system->num_cpu_types;
 			cpuid_grow_system_id(system, system->num_cpu_types + 1);
@@ -1117,6 +1122,7 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 				}
 			}
 		}
+		prev_package_id = cur_package_id;
 	}
 
 	/* Update the grand total of cache instances */
