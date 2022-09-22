@@ -232,10 +232,10 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  2, -1, 20,   -1,   2,    -1,    -1, FUSION_Z, 0             ,     0, "Brazos Desna (Dual-core)"      },
 
 	/* Family 15h: Bulldozer Architecture (2011) */
-	{ 15, -1, -1, 21,    0,   4,    -1,    -1, NC, 0                   ,     0, "Bulldozer X2"                  },
-	{ 15, -1, -1, 21,    1,   4,    -1,    -1, NC, 0                   ,     0, "Bulldozer X2"                  },
-	{ 15, -1, -1, 21,    1,   6,    -1,    -1, NC, 0                   ,     0, "Bulldozer X3"                  },
-	{ 15, -1, -1, 21,    1,   8,    -1,    -1, NC, 0                   ,     0, "Bulldozer X4"                  },
+	{ 15, -1, -1, 21,    0,   4,    -1,    -1, NC, 0                   ,     0, "Zambezi X2"                    },
+	{ 15, -1, -1, 21,    1,   4,    -1,    -1, NC, 0                   ,     0, "Zambezi X2"                    },
+	{ 15, -1, -1, 21,    1,   6,    -1,    -1, NC, 0                   ,     0, "Zambezi X3"                    },
+	{ 15, -1, -1, 21,    1,   8,    -1,    -1, NC, 0                   ,     0, "Zambezi X4"                    },
 	/* 2nd-gen, Piledriver core (2012): */
 	{ 15, -1, -1, 21,    2,   4,    -1,    -1, NC, 0                   ,     0, "Vishera X2"                    },
 	{ 15, -1, -1, 21,    2,   6,    -1,    -1, NC, 0                   ,     0, "Vishera X3"                    },
