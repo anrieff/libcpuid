@@ -236,6 +236,7 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 21,    1,   4,    -1,    -1, NC, 0                   ,     0, "Zambezi X2"                    },
 	{ 15, -1, -1, 21,    1,   6,    -1,    -1, NC, 0                   ,     0, "Zambezi X3"                    },
 	{ 15, -1, -1, 21,    1,   8,    -1,    -1, NC, 0                   ,     0, "Zambezi X4"                    },
+	{ 15, -1, -1, 21,    1,  -1,    -1,    -1, NC, OPTERON_            ,     0, "Interlagos"                    },
 	/* 2nd-gen, Piledriver core (2012): */
 	{ 15, -1, -1, 21,    2,   4,    -1,    -1, NC, 0                   ,     0, "Vishera X2"                    },
 	{ 15, -1, -1, 21,    2,   6,    -1,    -1, NC, 0                   ,     0, "Vishera X3"                    },
