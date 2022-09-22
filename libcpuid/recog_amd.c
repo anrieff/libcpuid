@@ -245,6 +245,7 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15,  0, -1, 21,   16,   4,    -1,    -1, FUSION_A, 0             ,     0, "Trinity X4"                    },
 	{ 15,  3, -1, 21,   19,   2,    -1,    -1, FUSION_A, 0             ,     0, "Richland X2"                   },
 	{ 15,  3, -1, 21,   19,   4,    -1,    -1, FUSION_A, 0             ,     0, "Richland X4"                   },
+	{ 15,  2, -1, 21,    2,  -1,    -1,    -1, NC, OPTERON_            ,     0, "Abu Dhabi"                     },
 	/* 3rd-gen, Steamroller core (2014): */
 	{ 15,  0, -1, 21,   48,   2,    -1,    -1, FUSION_A, 0             ,     0, "Kaveri X2"                     },
 	{ 15,  0, -1, 21,   48,   4,    -1,    -1, FUSION_A, 0             ,     0, "Kaveri X4"                     },
