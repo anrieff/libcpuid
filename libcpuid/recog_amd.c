@@ -268,6 +268,8 @@ const struct match_entry_t cpudb_amd[] = {
 	/* 2nd-gen, Puma core (2013): */
 	{ 15,  0, -1, 22,   48,   2,    -1,    -1, FUSION_E, 0             ,     0, "Mullins X2"                    },
 	{ 15,  0, -1, 22,   48,   4,    -1,    -1, FUSION_A, 0             ,     0, "Mullins X4"                    },
+	{ 15,  0,  1, 22,   48,   2,    -1,    -1, FUSION_A, 0             ,     0, "Beema X2"                      },
+	{ 15,  0,  1, 22,   48,   4,    -1,    -1, FUSION_A, 0             ,     0, "Beema X4"                      },
 
 	/* Family 17h: Zen Architecture (2017) => https://en.wikichip.org/wiki/amd/microarchitectures/zen */
 	{ 15, -1, -1, 23,    1,  -1,    -1,    -1, NC, EPYC_               ,     0, "EPYC (Naples)"                 },
