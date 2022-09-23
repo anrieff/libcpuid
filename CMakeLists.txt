@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
-set(VERSION "0.5.1")
-set(SOVERSION 15)
+set(VERSION "0.6.0")
+set(SOVERSION 16)
 project(
   cpuid
   LANGUAGES C CXX ASM_MASM
