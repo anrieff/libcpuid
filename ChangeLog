@@ -94,3 +94,31 @@ Version 0.5.1 (2021-03-20):
 	* Support for Cezanne
 	* Support for Milan
 	* Support for Rocket Lake
+
+Version 0.6.0 (2022-09-23):
+	* Support for Intel Tiger Lake
+	* CPU Family/Model is used as Ext.Family/Model
+	* Use popcount64 from libc when available (#152)
+	* Reduce minimum CMake requirement 3.14 to 3.13
+	* Do not link with msrdriver.c on non-Windows platform (#159)
+	* Report memory allocation failures without making a segmentation fault (#160)
+	* Support for AMD Lucienne
+	* Support for AMD Rembrandt
+	* Support for AMD Warhol
+	* Remove Debian package from source tree (#165)
+	* Fix build under Clang 15 (#167)
+	* Support for AMD Athlon Godavari
+	* Support for hybrid CPU like Intel Alder Lake (#166)
+	* Detect presence of hypervisor (#169)
+	* Decode deterministic cache info for AMD CPUs (#168)
+	* Add cache instances field in cpu_id_t and system_id_t (#168)
+	* Support AMD Bald Eagle
+	* Support for more AMD Godavari (Athlon)
+	* Rename AMD Bulldozer to Zambezi
+	* Support for AMD Interlagos
+	* Support for AMD Abu Dhabi
+	* Support for AMD Beema
+	* Support for AMD Steppe Eagle
+	* Support for more AMD Kabini (Sempron + Athlon)
+	* Improve msr_serialize_raw_data()
+	* Support for AMD Zen 2 custom APU for Steam Deck
