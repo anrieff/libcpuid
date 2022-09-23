@@ -692,8 +692,6 @@ int main(int argc, char** argv)
 
 	/* Need to dump raw CPUID data to file: */
 	if (need_output) {
-		if (verbose_level >= 1)
-			printf("Writing raw CPUID dump to `%s'\n", raw_data_file);
 		if (!strcmp(raw_data_file, "-"))
 			/* Serialize to stdout */
 			writeres = cpuid_serialize_all_raw_data(&raw_array, "");

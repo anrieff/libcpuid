@@ -368,7 +368,7 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 	f = !strcmp(filename, "") ? stdin : fopen(filename, "wt");
 	if (!f)
 		return set_error(ERR_OPEN);
-	debugf(1, "Writing RAW dump to '%s'\n", f == stdin ? "stdin" : filename);
+	debugf(1, "Writing raw CPUID dump to '%s'\n", f == stdin ? "stdin" : filename);
 
 	/* Write RAW data to output file */
 	fprintf(f, "version=%s\n", VERSION);
