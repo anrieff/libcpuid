@@ -370,11 +370,11 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 		return set_error(ERR_OPEN);
 	debugf(1, "Writing raw CPUID dump to '%s'\n", f == stdin ? "stdin" : filename);
 
-	/* Write RAW data to output file */
+	/* Write raw data to output file */
 	fprintf(f, "version=%s\n", VERSION);
 	while (!end_loop) {
 		if (use_raw_array) {
-			debugf(2, "Writing RAW dump for logical CPU %i\n", logical_cpu);
+			debugf(2, "Writing raw dump for logical CPU %i\n", logical_cpu);
 			fprintf(f, "\n_________________ Logical CPU #%i _________________\n", logical_cpu);
 			raw_ptr = &raw_array->raw[logical_cpu];
 		}
@@ -437,7 +437,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 	f = !strcmp(filename, "") ? stdin : fopen(filename, "rt");
 	if (!f)
 		return set_error(ERR_OPEN);
-	debugf(1, "Opening RAW dump from '%s'\n", f == stdin ? "stdin" : filename);
+	debugf(1, "Opening raw dump from '%s'\n", f == stdin ? "stdin" : filename);
 
 	if (use_raw_array)
 		cpu_raw_data_array_t_constructor(raw_array, false);
@@ -454,11 +454,11 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 				is_libcpuid_dump = true;
 				is_aida64_dump = false;
 				if (version[0] != '\0') {
-					debugf(2, "Recognized version '%s' from RAW dump\n", version);
+					debugf(2, "Recognized version '%s' from raw dump\n", version);
 					continue;
 				}
 				if (i >= 0) {
-					debugf(2, "Parsing RAW dump for a single CPU dump\n");
+					debugf(2, "Parsing raw dump for a single CPU dump\n");
 					if (use_raw_array) {
 						cpuid_grow_raw_data_array(raw_array, 1);
 						raw_ptr = &raw_array->raw[0];
@@ -469,13 +469,13 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 			else if (!strcmp(line, "------[ Versions ]------") || !strcmp(line, "------[ Logical CPU #0 ]------") || !strcmp(line, "------[ CPUID Registers / Logical CPU #0 ]------")) {
 				is_libcpuid_dump = false;
 				is_aida64_dump = true;
-				debugf(2, "Recognized AIDA64 RAW dump\n");
+				debugf(2, "Recognized AIDA64 raw dump\n");
 			}
 		}
 
 		if (is_libcpuid_dump) {
 			if (use_raw_array && (sscanf(line, "_________________ Logical CPU #%hi _________________", &logical_cpu) >= 1)) {
-				debugf(2, "Parsing RAW dump for logical CPU %i\n", logical_cpu);
+				debugf(2, "Parsing raw dump for logical CPU %i\n", logical_cpu);
 				cpuid_grow_raw_data_array(raw_array, logical_cpu + 1);
 				raw_ptr = &raw_array->raw[logical_cpu];
 				raw_array->with_affinity = true;
@@ -508,7 +508,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 		else if (is_aida64_dump) {
 			if (use_raw_array && ((sscanf(line, "------[ Logical CPU #%hi ]------", &logical_cpu) >= 1) || \
 			                      (sscanf(line, "------[ CPUID Registers / Logical CPU #%hi ]------", &logical_cpu) >= 1))) {
-				debugf(2, "Parsing AIDA64 RAW dump for logical CPU %i\n", logical_cpu);
+				debugf(2, "Parsing AIDA64 raw dump for logical CPU %i\n", logical_cpu);
 				cpuid_grow_raw_data_array(raw_array, logical_cpu + 1);
 				raw_ptr = &raw_array->raw[logical_cpu];
 				raw_array->with_affinity = true;
@@ -516,7 +516,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 			}
 			subleaf = 0;
 			assigned = sscanf(line, "CPUID %x: %x-%x-%x-%x [SL %02i]", &addr, &eax, &ebx, &ecx, &edx, &subleaf);
-			debugf(3, "RAW line %d: %i items assigned for string '%s'\n", cur_line, assigned, line);
+			debugf(3, "raw line %d: %i items assigned for string '%s'\n", cur_line, assigned, line);
 			if ((assigned >= 5) && (subleaf == 0)) {
 				if (addr < MAX_CPUID_LEVEL) {
 					i = (int) addr;
@@ -898,7 +898,7 @@ int cpuid_get_all_raw_data(struct cpu_raw_data_array_t* data)
 
 	cpu_raw_data_array_t_constructor(data, true);
 	while (set_cpu_affinity(logical_cpu)) {
-		debugf(2, "Getting RAW dump for logical CPU %i\n", logical_cpu);
+		debugf(2, "Getting raw dump for logical CPU %i\n", logical_cpu);
 		cpuid_grow_raw_data_array(data, logical_cpu + 1);
 		raw_ptr = &data->raw[logical_cpu];
 		cur_error = cpuid_get_raw_data(raw_ptr);
@@ -1060,7 +1060,7 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 	if (raw_array->with_affinity)
 		init_affinity_mask(&affinity_mask);
 
-	/* Iterate over all RAW */
+	/* Iterate over all raw */
 	for (logical_cpu = 0; logical_cpu < raw_array->num_raw; logical_cpu++) {
 		is_new_cpu_type = false;
 		is_last_item    = (logical_cpu + 1 >= raw_array->num_raw);

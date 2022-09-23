@@ -1275,12 +1275,12 @@ void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list);
 void cpuid_free_cpu_list(struct cpu_list_t* list);
 
 /**
- * @brief Frees a RAW array
+ * @brief Frees a raw array
  *
- * This function deletes all the memory associated with a RAW array, as obtained
+ * This function deletes all the memory associated with a raw array, as obtained
  * by cpuid_get_all_raw_data(), cpuid_deserialize_all_raw_data() and cpu_identify_all()
  *
- * @param raw_array - the RAW array to be free()'d.
+ * @param raw_array - the raw array to be free()'d.
  */
 void cpuid_free_raw_data_array(struct cpu_raw_data_array_t* raw_array);
 
