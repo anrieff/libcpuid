@@ -53,6 +53,11 @@ int set_error(cpu_error_t err)
 	return (int) err;
 }
 
+int get_error()
+{
+	return _libcpuid_errno;
+}
+
 static void raw_data_t_constructor(struct cpu_raw_data_t* raw)
 {
 	memset(raw, 0, sizeof(struct cpu_raw_data_t));

@@ -94,6 +94,11 @@ void debug_print_lbits(int debuglevel, uint64_t mask);
  */
 int set_error(cpu_error_t err);
 
+/*
+ * Gets the current errno
+ */
+int get_error(void);
+
 extern libcpuid_warn_fn_t _warn_fun;
 extern int _current_verboselevel;
 
