@@ -428,6 +428,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 	int cur_line = 0;
 	int assigned = 0;
 	int subleaf = 0;
+	bool is_header = true;
 	bool is_libcpuid_dump = true;
 	bool is_aida64_dump = false;
 	const bool use_raw_array = (raw_array != NULL);
@@ -453,34 +454,39 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 		line[strcspn(line, "\n")] = '\0';
 		if (line[0] == '\0') // Skip empty lines
 			continue;
+		if (!strcmp(line, "--------------------------------------------------------------------------------")) // Skip test results
+			break;
 		cur_line++;
-		if (cur_line == 1) {
-			if ((sscanf(line, "version=%s", version) >= 1) || (sscanf(line, "basic_cpuid[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5)) {
+		if (is_header) {
+			if (sscanf(line, "version=%s", version) >= 1) {
+				debugf(2, "Recognized version '%s' from raw dump\n", version);
 				is_libcpuid_dump = true;
 				is_aida64_dump = false;
-				if (version[0] != '\0') {
-					debugf(2, "Recognized version '%s' from raw dump\n", version);
-					continue;
-				}
-				if (i >= 0) {
-					debugf(2, "Parsing raw dump for a single CPU dump\n");
-					if (use_raw_array) {
-						cpuid_grow_raw_data_array(raw_array, 1);
-						raw_ptr = &raw_array->raw[0];
-						raw_array->with_affinity = false;
-					}
+				continue;
+			}
+			else if (sscanf(line, "basic_cpuid[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) {
+				debugf(2, "Parsing raw dump for a single CPU dump\n");
+				is_header = false;
+				is_libcpuid_dump = true;
+				is_aida64_dump = false;
+				if (use_raw_array) {
+					cpuid_grow_raw_data_array(raw_array, 1);
+					raw_ptr = &raw_array->raw[0];
+					raw_array->with_affinity = false;
 				}
 			}
 			else if (!strcmp(line, "------[ Versions ]------") || !strcmp(line, "------[ Logical CPU #0 ]------") || !strcmp(line, "------[ CPUID Registers / Logical CPU #0 ]------")) {
+				debugf(2, "Recognized AIDA64 raw dump\n");
+				is_header = false;
 				is_libcpuid_dump = false;
 				is_aida64_dump = true;
-				debugf(2, "Recognized AIDA64 raw dump\n");
 			}
 		}
 
 		if (is_libcpuid_dump) {
 			if (use_raw_array && (sscanf(line, "_________________ Logical CPU #%hi _________________", &logical_cpu) >= 1)) {
 				debugf(2, "Parsing raw dump for logical CPU %i\n", logical_cpu);
+				is_header = false;
 				cpuid_grow_raw_data_array(raw_array, logical_cpu + 1);
 				raw_ptr = &raw_array->raw[logical_cpu];
 				raw_array->with_affinity = true;
