@@ -286,6 +286,9 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 23,   17,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Raven Ridge)"         },
 	{ 15, -1, -1, 23,   17,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Raven Ridge)"         },
 	{ 15, -1, -1, 23,   17,  -1,    -1,    -1, NC, ATHLON_             ,     0, "Athlon (Raven Ridge)"          },
+	{ 15, -1, -1, 23,   32,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Dali)"                },
+	{ 15, -1, -1, 23,   32,  -1,    -1,    -1, NC, ATHLON_             ,     0, "Athlon (Dali)"                 },
+	{ 15, -1,  1, 23,   32,  -1,    -1,    -1, NC, 0                   ,     0, "Dali"                          },
 	/* Zen+ (2018) => https://en.wikichip.org/wiki/amd/microarchitectures/zen%2B */
 	{ 15, -1, -1, 23,    8,  -1,    -1,    -1, NC, RYZEN_TR_           ,     0, "Threadripper (Colfax)"         },
 	{ 15, -1, -1, 23,    8,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Pinnacle Ridge)"      },
@@ -312,6 +315,7 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 23,  144,  -1,    -1,    -1, NC, _APU_               ,     0, "Zen 2"                         },
 	/* Zen 3 (2020) => https://en.wikichip.org/wiki/amd/microarchitectures/zen_3 */
 	{ 15, -1, -1, 25,    1,  -1,    -1,    -1, NC, EPYC_               ,     0, "EPYC (Milan)"                  },
+	{ 15, -1, -1, 25,    8,  -1,    -1,    -1, NC, RYZEN_TR_           ,     0, "Threadripper (Chagall)"        },
 	{ 15, -1, -1, 25,   33,  -1,    -1,    -1, NC, RYZEN_|_9           ,     0, "Ryzen 9 (Vermeer)"             },
 	{ 15, -1, -1, 25,   33,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Vermeer)"             },
 	{ 15, -1, -1, 25,   33,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Vermeer)"             },
