@@ -194,6 +194,7 @@ static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 	int total_processors = 0;
 	int group = 0;
 	int number = 0;
+	int found = 0;
 	HANDLE thread = GetCurrentThread();
 	GROUP_AFFINITY groupAffinity;
 
@@ -202,10 +203,12 @@ static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 		if (total_processors + processors > logical_cpu) {
 			group = i;
 			number = logical_cpu - total_processors;
+			found = 1;
 			break;
 		}
 		total_processors += processors;
 	}
+	if (!found) return 0; // logical CPU # too large, does not exist
 
 	memset(&groupAffinity, 0, sizeof(groupAffinity));
 	groupAffinity.Group = (WORD) group;
