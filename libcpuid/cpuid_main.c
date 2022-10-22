@@ -1039,7 +1039,8 @@ static void update_core_instances(struct internal_core_instances_t* cores,
 
 static void update_cache_instances(struct internal_cache_instances_t* caches,
                                    struct internal_apic_info_t* apic_info,
-                                   struct internal_id_info_t* id_info)
+                                   struct internal_id_info_t* id_info,
+                                   bool debugf_is_needed)
 {
 	uint32_t cache_id_index = 0;
 	cache_type_t level;
@@ -1063,9 +1064,10 @@ static void update_cache_instances(struct internal_cache_instances_t* caches,
 		}
 	}
 
-	debugf(3, "Logical CPU %4u: APIC ID %4i, package ID %4i, core ID %4i, thread %i, L1I$ ID %4i, L1D$ ID %4i, L2$ ID %4i, L3$ ID %4i, L4$ ID %4i\n",
-		apic_info->logical_cpu, apic_info->apic_id, apic_info->package_id, apic_info->core_id, apic_info->smt_id,
-		apic_info->cache_id[L1I], apic_info->cache_id[L1D], apic_info->cache_id[L2], apic_info->cache_id[L3], apic_info->cache_id[L4]);
+	if (debugf_is_needed)
+		debugf(3, "Logical CPU %4u: APIC ID %4i, package ID %4i, core ID %4i, thread %i, L1I$ ID %4i, L1D$ ID %4i, L2$ ID %4i, L3$ ID %4i, L4$ ID %4i\n",
+			apic_info->logical_cpu, apic_info->apic_id, apic_info->package_id, apic_info->core_id, apic_info->smt_id,
+			apic_info->cache_id[L1I], apic_info->cache_id[L1D], apic_info->cache_id[L2], apic_info->cache_id[L3], apic_info->cache_id[L4]);
 }
 
 int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t* system)
@@ -1135,8 +1137,8 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 			num_logical_cpus++;
 			if (is_apic_supported) {
 				update_core_instances(&cores_type, &apic_info);
-				update_cache_instances(&caches_type, &apic_info, &id_info);
-				update_cache_instances(&caches_all,  &apic_info, &id_info);
+				update_cache_instances(&caches_type, &apic_info, &id_info, true);
+				update_cache_instances(&caches_all,  &apic_info, &id_info, false);
 			}
 		}
 
@@ -1159,8 +1161,8 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 					core_instances_t_constructor(&cores_type);
 					cache_instances_t_constructor(&caches_type);
 					update_core_instances(&cores_type, &apic_info);
-					update_cache_instances(&caches_type, &apic_info, &id_info);
-					update_cache_instances(&caches_all,  &apic_info, &id_info);
+					update_cache_instances(&caches_type, &apic_info, &id_info, true);
+					update_cache_instances(&caches_all,  &apic_info, &id_info, false);
 				}
 			}
 			else {
