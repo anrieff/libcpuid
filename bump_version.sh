@@ -16,13 +16,22 @@ if ! [[ "$SO_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 	exit 1
 fi
 
+IFS='.' read -a so_version_array <<< "$SO_VERSION"
+LIBCPUID_CURRENT="${so_version_array[0]}"
+LIBCPUID_AGE="${so_version_array[1]}"
+LIBCPUID_REVISION="${so_version_array[2]}"
+echo "$DATE: bumping libcpuid version from $OLD_VERSION to $NEW_VERSION"
+echo "LIBCPUID_CURRENT=$LIBCPUID_CURRENT LIBCPUID_AGE=$LIBCPUID_AGE LIBCPUID_REVISION=$LIBCPUID_REVISION"
+
 echo -e "\nVersion $NEW_VERSION ($DATE):" >> "$GIT_DIR/ChangeLog"
 sed -i "s|\[$OLD_VERSION\]|\[$NEW_VERSION\]|" "$GIT_DIR/configure.ac"
-sed -i "s|LIBCPUID_CURRENT=.*|dnl $(echo $SO_VERSION | tr . :)   Version $NEW_VERSION:\nLIBCPUID_CURRENT=$(echo $SO_VERSION | cut -d. -f1)|" "$GIT_DIR/configure.ac"
-sed -i "s|LIBCPUID_AGE=.*|LIBCPUID_AGE=$(echo $SO_VERSION | cut -d. -f2)|" "$GIT_DIR/configure.ac"
-sed -i "s|LIBCPUID_REVISION=.*|LIBCPUID_REVISION=$(echo $SO_VERSION | cut -d. -f3)|" "$GIT_DIR/configure.ac"
+sed -i "s|LIBCPUID_CURRENT=.*|dnl $(echo $SO_VERSION | tr . :)   Version $NEW_VERSION:\nLIBCPUID_CURRENT=$LIBCPUID_CURRENT|" "$GIT_DIR/configure.ac"
+sed -i "s|LIBCPUID_AGE=.*|LIBCPUID_AGE=$LIBCPUID_AGE|" "$GIT_DIR/configure.ac"
+sed -i "s|LIBCPUID_REVISION=.*|LIBCPUID_REVISION=$LIBCPUID_REVISION|" "$GIT_DIR/configure.ac"
 sed -i "s|VERSION \"$OLD_VERSION\"|VERSION \"$NEW_VERSION\"|" "$GIT_DIR/CMakeLists.txt"
-sed -i "s|set(SOVERSION .*)|set(SOVERSION $(echo $SO_VERSION | cut -d. -f1))|" "$GIT_DIR/CMakeLists.txt"
+sed -i "s|set(LIBCPUID_CURRENT .*)|set(LIBCPUID_CURRENT $LIBCPUID_CURRENT)|" "$GIT_DIR/CMakeLists.txt"
+sed -i "s|set(LIBCPUID_AGE .*)|set(LIBCPUID_AGE $LIBCPUID_AGE)|" "$GIT_DIR/CMakeLists.txt"
+sed -i "s|set(LIBCPUID_REVISION .*)|set(LIBCPUID_REVISION $LIBCPUID_REVISION)|" "$GIT_DIR/CMakeLists.txt"
 sed -i "s|$OLD_VERSION|$NEW_VERSION|g" "$GIT_DIR/libcpuid/"{Makefile.x64,Makefile.x86,libcpuid.dsp,libcpuid_vc10.vcxproj,libcpuid_vc71.vcproj}
 sed -i "s|\\\version  $OLD_VERSION|\\\version  $NEW_VERSION|" "$GIT_DIR/libcpuid/libcpuid.h"
 
