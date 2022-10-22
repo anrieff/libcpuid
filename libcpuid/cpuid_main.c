@@ -775,6 +775,7 @@ static void make_list_from_string(const char* csv, struct cpu_list_t* list)
 
 static bool cpu_ident_apic_id(logical_cpu_t logical_cpu, struct cpu_raw_data_t* raw, struct internal_apic_info_t* apic_info)
 {
+	bool is_apic_id_supported = false;
 	uint8_t subleaf;
 	uint8_t level_type = 0;
 	uint8_t mask_core_shift = 0;
@@ -783,19 +784,20 @@ static bool cpu_ident_apic_id(logical_cpu_t logical_cpu, struct cpu_raw_data_t* 
 	char vendor_str[VENDOR_STR_MAX];
 
 	apic_info_t_constructor(apic_info, logical_cpu);
-	vendor = cpuid_vendor_identify(raw->basic_cpuid[0], vendor_str);
-	if (vendor == VENDOR_UNKNOWN) {
-		set_error(ERR_CPU_UNKN);
-		return false;
-	}
 
 	/* Only AMD and Intel x86 CPUs support Extended Processor Topology Eumeration */
+	vendor = cpuid_vendor_identify(raw->basic_cpuid[0], vendor_str);
 	switch (vendor) {
 		case VENDOR_INTEL:
 		case VENDOR_AMD:
+			is_apic_id_supported = true;
 			break;
+		case VENDOR_UNKNOWN:
+			set_error(ERR_CPU_UNKN);
+			/* Fall through */
 		default:
-			return false;
+			is_apic_id_supported = false;
+			break;
 	}
 
 	/* Documentation: Intel® 64 and IA-32 Architectures Software Developer’s Manual
@@ -805,8 +807,10 @@ static bool cpu_ident_apic_id(logical_cpu_t logical_cpu, struct cpu_raw_data_t* 
 	*/
 
 	/* Check if leaf 0Bh is supported and if number of logical processors at this level type is greater than 0 */
-	if ((raw->basic_cpuid[0][EAX] < 11) || (EXTRACTS_BITS(raw->basic_cpuid[11][EBX], 15, 0) == 0))
+	if (!is_apic_id_supported || (raw->basic_cpuid[0][EAX] < 11) || (EXTRACTS_BITS(raw->basic_cpuid[11][EBX], 15, 0) == 0)) {
+		warnf("Warning: APIC ID are not supported, core count can be wrong if SMT is disabled and cache instances count will not be available.\n");
 		return false;
+	}
 
 	/* Derive core mask offsets */
 	for (subleaf = 0; (raw->intel_fn11[subleaf][EAX] != 0x0) && (raw->intel_fn11[subleaf][EBX] != 0x0) && (subleaf < MAX_INTELFN11_LEVEL); subleaf++)
