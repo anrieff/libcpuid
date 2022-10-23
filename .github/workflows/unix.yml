@@ -21,7 +21,7 @@ jobs:
       OS_NAME: ${{ matrix.os.name }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Generate build system
       run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="" -DLIBCPUID_TESTS:BOOL=ON
@@ -43,7 +43,7 @@ jobs:
         DESTDIR: ${{ github.workspace }}/installdir
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ matrix.os.name }}
         path: installdir/*

@@ -25,10 +25,10 @@ jobs:
       PTS: v142
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v1.1
 
     - name: Build with MSBuild
       run: |
@@ -38,24 +38,19 @@ jobs:
           /property:PlatformToolset=$Env:PTS `
           /verbosity:normal
 
-    - name: Write Readme.win
-      uses: DamianReeves/write-file-action@master
-      with:
-        path: Readme.win
-        contents: |
-          The binaries here are compiled with Microsoft Visual C++. The following configurations are built:
-
-          Debug\ - no optimizations, using the static debug C runtime (/MTd)
-          Release\ - optimizations on, using the static C runtime (/MT)
-          ReleaseDLL\ - the library is compiled in a .dll (libcpuid.dll), which you'd need to ship alongside your executable. Static C runtime.
-
-          Operating system and compiler version:
-        write-mode: overwrite
-
     - name: Prepate artifacts
       run: |
         mkdir -pv "$DESTDIR/"{bin,include,lib}
-        echo -e "$(cat Readme.win)\n$(wmic os get caption,version -value | sed '/^[[:space:]]*$/d')\n$(MSBuild.exe -version | sed '/^[[:space:]]*$/d')" > "$DESTDIR/Readme.win"
+        cat <<EOF > "$DESTDIR/Readme.win"
+        The binaries here are compiled with Microsoft Visual C++. The following configurations are built:
+
+        Debug\ - no optimizations, using the static debug C runtime (/MTd)
+        Release\ - optimizations on, using the static C runtime (/MT)
+        ReleaseDLL\ - the library is compiled in a .dll (libcpuid.dll), which you'd need to ship alongside your executable. Static C runtime.
+
+        Operating system and compiler version:
+        $(wmic os get caption,version -value | sed '/^[[:space:]]*$/d')\n$(MSBuild.exe -version | sed '/^[[:space:]]*$/d')
+        EOF
         install -v AUTHORS ChangeLog COPYING Readme.md "$DESTDIR/"
         install -v libcpuid/{libcpuid_constants.h,libcpuid.h,libcpuid_types.h} "$DESTDIR/include/"
         cd "$GITHUB_WORKSPACE/cpuid_tool/$BITNESS" && find * -type f -name '*.exe'                                         -exec install -Dv "{}" "$DESTDIR/bin/{}" \;
@@ -65,7 +60,7 @@ jobs:
         DESTDIR: ${{ github.workspace }}/installdir
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ matrix.platform.name }}
         path: installdir/*
