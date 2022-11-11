@@ -315,6 +315,7 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 23,  104,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Lucienne)"            },
 	{ 15, -1, -1, 23,  104,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Lucienne)"            },
 	{ 15, -1, -1, 23,  104,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Lucienne)"            },
+	{ 15, -1, -1, 23,  132,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Renoir)"              }, /* Ryzen 7 4800S Desktop Kit */
 	{ 15, -1,  2, 23,  144,  -1,    -1,    -1, NC, 0                   ,     0, "Van Gogh"                      },
 	{ 15, -1, -1, 23,  160,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Mendocino)"           },
 	{ 15, -1, -1, 23,  160,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Mendocino)"           },
