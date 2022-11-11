@@ -596,7 +596,7 @@ static struct amd_code_and_bits_t decode_amd_codename_part1(const char *bs)
 	return result;
 }
 
-static void decode_amd_codename(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal)
+static void decode_amd_codename(struct cpu_id_t* data, struct internal_id_info_t* internal)
 {
 	struct amd_code_and_bits_t code_and_bits = decode_amd_codename_part1(data->brand_str);
 	int i = 0;
@@ -637,7 +637,7 @@ int cpuid_identify_amd(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 	else
 		decode_amd_cache_info(raw, data);
 	decode_amd_number_of_cores(raw, data);
-	decode_amd_codename(raw, data, internal);
+	decode_amd_codename(data, internal);
 	return 0;
 }
 

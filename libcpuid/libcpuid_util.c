@@ -246,10 +246,10 @@ void debug_print_lbits(int debuglevel, uint64_t mask)
 	int i, first = 0;
 	for (i = 0; i < 64; i++) if (mask & (((uint64_t) 1) << i)) {
 		if (first) first = 0;
-		else debugf(2, " + ");
-		debugf(2, "LBIT(%d)", i);
+		else debugf(debuglevel, " + ");
+		debugf(debuglevel, "LBIT(%d)", i);
 	}
-	debugf(2, "\n");
+	debugf(debuglevel, "\n");
 }
 
 /* Functions to manage cpu_affinity_mask_t type
