@@ -1189,7 +1189,7 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 					/* Note: if SMT is disabled by BIOS, smt_divisor will no reflect the current state properly */
 					is_smt_supported = (system->cpu_types[cpu_type_index].num_logical_cpus % system->cpu_types[cpu_type_index].num_cores) == 0;
 					smt_divisor      = is_smt_supported ? system->cpu_types[cpu_type_index].num_logical_cpus / system->cpu_types[cpu_type_index].num_cores : 1.0;
-					system->cpu_types[cpu_type_index].num_cores = num_logical_cpus / smt_divisor;
+					system->cpu_types[cpu_type_index].num_cores = (int32_t) num_logical_cpus / smt_divisor;
 				}
 				/* Save current values in system->cpu_types[cpu_type_index] and reset values for the next purpose */
 				system->cpu_types[cpu_type_index].num_logical_cpus = num_logical_cpus;
@@ -1280,7 +1280,7 @@ char* affinity_mask_str_r(cpu_affinity_mask_t* affinity_mask, char* buffer, uint
 	logical_cpu_t str_index = 0;
 	bool do_print = false;
 
-	while (str_index + 1 < buffer_len) {
+	while (((uint32_t) str_index) + 1 < buffer_len) {
 		if (do_print || (mask_index < 4) || (affinity_mask->__bits[mask_index] != 0x00)) {
 			snprintf(&buffer[str_index], 3, "%02X", affinity_mask->__bits[mask_index]);
 			do_print = true;
