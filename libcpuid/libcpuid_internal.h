@@ -126,6 +126,7 @@ enum _intel_bits_t {
 	_H                      = LBIT( 16 ),
 	_K                      = LBIT( 17 ),
 	_X                      = LBIT( 18 ),
+	_P                      = LBIT( 19 ),
 };
 typedef enum _intel_bits_t intel_bits_t;
 

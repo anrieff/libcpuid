@@ -447,10 +447,12 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CORE_|_I_|_9|_H|_X, _12xxx, "Alder Lake-HX (Core i9)" },
 	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CORE_|_I_|_7|_H|_X, _12xxx, "Alder Lake-HX (Core i7)" },
 	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CORE_|_I_|_5|_H|_X, _12xxx, "Alder Lake-HX (Core i5)" },
-	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_9  ,     _12xxx, "Alder Lake-P (Core i9)"  },
-	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_7  ,     _12xxx, "Alder Lake-P (Core i7)"  },
-	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_5  ,     _12xxx, "Alder Lake-P (Core i5)"  },
-	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_3  ,     _12xxx, "Alder Lake-P (Core i3)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_7|_P  ,  _12xxx, "Alder Lake-P (Core i7)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_5|_P  ,  _12xxx, "Alder Lake-P (Core i5)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_3|_P  ,  _12xxx, "Alder Lake-P (Core i3)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_9|_H  ,  _12xxx, "Alder Lake-H (Core i9)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_7|_H  ,  _12xxx, "Alder Lake-H (Core i7)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_5|_H  ,  _12xxx, "Alder Lake-H (Core i5)"  },
 
 	/* Raptor Lake CPUs (2022, 13th gen, 7nm) => https://en.wikichip.org/wiki/intel/microarchitectures/raptor_lake */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_I_|_9  ,_13xxx, "Raptor Lake-S (Core i9)"    },
@@ -737,6 +739,7 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 				case 'H': bits |= _H; break;
 				case 'K': bits |= _K; break;
 				case 'X': bits |= _X; break;
+				case 'P': bits |= _P; break;
 			}
 		}
 	}
