@@ -442,6 +442,8 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CORE_|_I_|_7  ,_12xxx, "Alder Lake-S (Core i7)"     },
 	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CORE_|_I_|_5  ,_12xxx, "Alder Lake-S (Core i5)"     },
 	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CORE_|_I_|_3  ,_12xxx, "Alder Lake-S (Core i3)"     },
+	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, PENTIUM_      ,     0, "Alder Lake-S (Pentium)"     },
+	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CELERON_      ,     0, "Alder Lake-S (Celeron)"     },
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_9  ,_12xxx, "Alder Lake-P (Core i9)"     },
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_7  ,_12xxx, "Alder Lake-P (Core i7)"     },
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_5  ,_12xxx, "Alder Lake-P (Core i5)"     },
