@@ -403,7 +403,7 @@ struct cpu_id_t {
 	/** Cache associativity for the L1 data cache. -1 if undetermined */
 	int32_t l1_data_assoc;
 
-	/** Cache associativity for the L1 intruction cache. -1 if undetermined */
+	/** Cache associativity for the L1 instruction cache. -1 if undetermined */
 	int32_t l1_instruction_assoc;
 
 	/** Cache associativity for the L2 cache. -1 if undetermined */
@@ -423,7 +423,7 @@ struct cpu_id_t {
 	/** Cache-line size for L1 data cache. -1 if undetermined */
 	int32_t l1_data_cacheline;
 
-	/** Cache-line size for L1 intruction cache. -1 if undetermined */
+	/** Cache-line size for L1 instruction cache. -1 if undetermined */
 	int32_t l1_instruction_cacheline;
 
 	/** Cache-line size for L2 cache. -1 if undetermined */
@@ -438,7 +438,7 @@ struct cpu_id_t {
 	/** Number of L1 data cache instances. -1 if undetermined */
 	int32_t l1_data_instances;
 
-	/** Number of L1 intruction cache instances. -1 if undetermined */
+	/** Number of L1 instruction cache instances. -1 if undetermined */
 	int32_t l1_instruction_instances;
 
 	/** Number of L2 cache instances. -1 if undetermined */
@@ -499,7 +499,7 @@ struct system_id_t {
 	/** Number of total L1 data cache instances. -1 if undetermined */
 	int32_t l1_data_total_instances;
 
-	/** Number of total L1 intruction cache instances. -1 if undetermined */
+	/** Number of total L1 instruction cache instances. -1 if undetermined */
 	int32_t l1_instruction_total_instances;
 
 	/** Number of total L2 cache instances. -1 if undetermined */
