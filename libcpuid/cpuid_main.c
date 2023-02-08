@@ -229,9 +229,9 @@ static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 		warnf("set_cpu_affinity for logical CPU %u is not supported in this operating system.\n", logical_cpu);
 		return -1;
 	}
-	HANDLE process = GetCurrentProcess();
-	DWORD_PTR processAffinityMask = 1ULL << logical_cpu;
-	return SetProcessAffinityMask(process, processAffinityMask);
+	HANDLE thread = GetCurrentThread();
+	DWORD_PTR threadAffinityMask = 1ULL << logical_cpu;
+	return SetThreadAffinityMask(thread, threadAffinityMask);
 #endif /* (_WIN32_WINNT >= 0x0601) */
 }
 #define SET_CPU_AFFINITY
