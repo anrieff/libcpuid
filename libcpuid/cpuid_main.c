@@ -40,12 +40,14 @@
 /* Implementation: */
 
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ == 201112L
-	_Thread_local int _libcpuid_errno = ERR_OK;
+#define INTERNAL_SCOPE _Thread_local
 #elif defined(__GNUC__) // Also works for clang
-	__thread int _libcpuid_errno = ERR_OK;
+#define INTERNAL_SCOPE __thread
 #else
-	static int _libcpuid_errno = ERR_OK;
+#define INTERNAL_SCOPE static
 #endif
+
+INTERNAL_SCOPE int _libcpuid_errno = ERR_OK;
 
 int set_error(cpu_error_t err)
 {
@@ -173,6 +175,21 @@ static int get_total_cpus(void)
 }
 #define GET_TOTAL_CPUS_DEFINED
 
+INTERNAL_SCOPE thread_affinity_policy_data_t saved_affinity;
+
+static bool save_cpu_affinity()
+{
+	mach_msg_type_number_t count = THREAD_AFFINITY_POLICY_COUNT;
+	boolean_t get_default = false;
+	return thread_policy_get(mach_thread_self(), THREAD_AFFINITY_POLICY, (thread_policy_t) &saved_affinity, &count, &get_default) == KERN_SUCCESS;
+}
+
+static bool restore_cpu_affinity()
+{
+	return thread_policy_set(mach_thread_self(), THREAD_AFFINITY_POLICY, (thread_policy_t) &saved_affinity, THREAD_AFFINITY_POLICY_COUNT) == KERN_SUCCESS;
+}
+#define PRESERVE_CPU_AFFINITY
+
 static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	thread_affinity_policy_data_t ap;
@@ -195,6 +212,52 @@ static int get_total_cpus(void)
 	return system_info.dwNumberOfProcessors;
 }
 #define GET_TOTAL_CPUS_DEFINED
+
+#if (_WIN32_WINNT >= 0x0601)
+INTERNAL_SCOPE GROUP_AFFINITY savedGroupAffinity;
+#else
+INTERNAL_SCOPE DWORD_PTR savedAffinityMask = 0;
+#endif
+
+static bool save_cpu_affinity()
+{
+#if (_WIN32_WINNT >= 0x0601)
+	HANDLE thread = GetCurrentThread();
+	return GetThreadGroupAffinity(thread, &savedGroupAffinity);
+#else
+/* Credits to https://stackoverflow.com/questions/6601862/query-thread-not-process-processor-affinity#6601917 */
+	HANDLE thread = GetCurrentThread();
+	DWORD_PTR threadAffinityMask = 1;
+	while (threadAffinityMask) {
+		savedAffinityMask = SetThreadAffinityMask(thread, threadAffinityMask);
+		if(savedAffinityMask)
+			return SetThreadAffinityMask(thread, savedAffinityMask);
+		else if (GetLastError() != ERROR_INVALID_PARAMETER)
+			return false;
+
+		threadAffinityMask <<= 1; // try next CPU
+	}
+	return false;
+#endif
+}
+
+static bool restore_cpu_affinity()
+{
+#if (_WIN32_WINNT >= 0x0601)
+	if (!savedGroupAffinity.Mask)
+		return false;
+
+	HANDLE thread = GetCurrentThread();
+	return SetThreadGroupAffinity(thread, &savedGroupAffinity, NULL);
+#else
+	if (!savedAffinityMask)
+		return false;
+
+	HANDLE thread = GetCurrentThread();
+	return SetThreadAffinityMask(thread, savedAffinityMask);
+#endif
+}
+#define PRESERVE_CPU_AFFINITY
 
 static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
@@ -229,9 +292,9 @@ static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 		warnf("set_cpu_affinity for logical CPU %u is not supported in this operating system.\n", logical_cpu);
 		return -1;
 	}
-	HANDLE process = GetCurrentProcess();
-	DWORD_PTR processAffinityMask = 1ULL << logical_cpu;
-	return SetProcessAffinityMask(process, processAffinityMask);
+	HANDLE thread = GetCurrentThread();
+	DWORD_PTR threadAffinityMask = 1ULL << logical_cpu;
+	return SetThreadAffinityMask(thread, threadAffinityMask);
 #endif /* (_WIN32_WINNT >= 0x0601) */
 }
 #define SET_CPU_AFFINITY
@@ -262,6 +325,19 @@ static int get_total_cpus(void)
 #if defined linux || defined __linux__
 #include <sched.h>
 
+INTERNAL_SCOPE cpu_set_t saved_affinity;
+
+static bool save_cpu_affinity()
+{
+	return sched_getaffinity(0, sizeof(saved_affinity), &saved_affinity) == 0;
+}
+
+static bool restore_cpu_affinity()
+{
+	return sched_setaffinity(0, sizeof(saved_affinity), &saved_affinity) == 0;
+}
+#define PRESERVE_CPU_AFFINITY
+
 static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	cpu_set_t cpuset;
@@ -276,6 +352,19 @@ static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 #include <sys/types.h>
 #include <sys/processor.h>
 #include <sys/procset.h>
+
+INTERNAL_SCOPE processorid_t saved_binding = PBIND_NONE;
+
+static bool save_cpu_affinity()
+{
+	return processor_bind(P_LWPID, P_MYID, PBIND_QUERY, &saved_binding) == 0;
+}
+
+static bool restore_cpu_affinity()
+{
+	return processor_bind(P_LWPID, P_MYID, saved_binding, NULL) == 0;
+}
+#define PRESERVE_CPU_AFFINITY
 
 static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
@@ -307,6 +396,19 @@ static int get_total_cpus(void)
 #include <sys/param.h>
 #include <sys/cpuset.h>
 
+INTERNAL_SCOPE cpuset_t saved_affinity;
+
+static bool save_cpu_affinity()
+{
+	return cpuset_getaffinity(CPU_LEVEL_WHICH, CPU_WHICH_TID, -1, sizeof(saved_affinity), &saved_affinity) == 0;
+}
+
+static bool restore_cpu_affinity()
+{
+	return cpuset_setaffinity(CPU_LEVEL_WHICH, CPU_WHICH_TID, -1, sizeof(saved_affinity), &saved_affinity) == 0;
+}
+#define PRESERVE_CPU_AFFINITY
+
 static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	cpuset_t cpuset;
@@ -321,6 +423,19 @@ static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 #include <pthread.h>
 #include <pthread_np.h>
 
+INTERNAL_SCOPE cpuset_t saved_affinity;
+
+static bool save_cpu_affinity()
+{
+	return pthread_getaffinity_np(pthread_self(), sizeof(saved_affinity), &saved_affinity) == 0;
+}
+
+static bool restore_cpu_affinity()
+{
+	return pthread_setaffinity_np(pthread_self(), sizeof(saved_affinity), &saved_affinity) == 0;
+}
+#define PRESERVE_CPU_AFFINITY
+
 static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
 	cpuset_t cpuset;
@@ -334,6 +449,28 @@ static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 #if defined __NetBSD__
 #include <pthread.h>
 #include <sched.h>
+
+INTERNAL_SCOPE cpuset_t *saved_affinity = NULL;
+
+static bool save_cpu_affinity()
+{
+	if (!saved_affinity)
+		saved_affinity = cpuset_create();
+
+	return pthread_getaffinity_np(pthread_self(), cpuset_size(saved_affinity), saved_affinity) == 0;
+}
+
+static bool restore_cpu_affinity()
+{
+	if (!saved_affinity)
+		return false;
+
+	int ret = pthread_setaffinity_np(pthread_self(), cpuset_size(saved_affinity), saved_affinity) == 0;
+	cpuset_destroy(saved_affinity);
+	saved_affinity = NULL;
+	return ret == 0;
+}
+#define PRESERVE_CPU_AFFINITY
 
 static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
@@ -360,6 +497,18 @@ static int get_total_cpus(void)
 	return 1;
 }
 #endif /* GET_TOTAL_CPUS_DEFINED */
+
+#ifndef PRESERVE_CPU_AFFINITY
+static bool save_cpu_affinity()
+{
+	return false;
+}
+
+static bool restore_cpu_affinity()
+{
+	return false;
+}
+#endif /* PRESERVE_CPU_AFFINITY */
 
 #ifndef SET_CPU_AFFINITY
 static bool set_cpu_affinity(logical_cpu_t logical_cpu)
@@ -924,6 +1073,8 @@ int cpuid_get_all_raw_data(struct cpu_raw_data_array_t* data)
 	if (data == NULL)
 		return set_error(ERR_HANDLE);
 
+	bool affinity_saved = save_cpu_affinity();
+
 	cpu_raw_data_array_t_constructor(data, true);
 	while (set_cpu_affinity(logical_cpu)) {
 		debugf(2, "Getting raw dump for logical CPU %i\n", logical_cpu);
@@ -934,6 +1085,9 @@ int cpuid_get_all_raw_data(struct cpu_raw_data_array_t* data)
 			ret_error = cur_error;
 		logical_cpu++;
 	}
+
+	if (affinity_saved)
+		restore_cpu_affinity();
 
 	return ret_error;
 }
