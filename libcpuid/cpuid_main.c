@@ -177,14 +177,14 @@ static int get_total_cpus(void)
 
 INTERNAL_SCOPE thread_affinity_policy_data_t saved_affinity;
 
-static bool save_cpu_affinity()
+static bool save_cpu_affinity(void)
 {
 	mach_msg_type_number_t count = THREAD_AFFINITY_POLICY_COUNT;
 	boolean_t get_default = false;
 	return thread_policy_get(mach_thread_self(), THREAD_AFFINITY_POLICY, (thread_policy_t) &saved_affinity, &count, &get_default) == KERN_SUCCESS;
 }
 
-static bool restore_cpu_affinity()
+static bool restore_cpu_affinity(void)
 {
 	return thread_policy_set(mach_thread_self(), THREAD_AFFINITY_POLICY, (thread_policy_t) &saved_affinity, THREAD_AFFINITY_POLICY_COUNT) == KERN_SUCCESS;
 }
@@ -219,7 +219,7 @@ INTERNAL_SCOPE GROUP_AFFINITY savedGroupAffinity;
 INTERNAL_SCOPE DWORD_PTR savedAffinityMask = 0;
 #endif
 
-static bool save_cpu_affinity()
+static bool save_cpu_affinity(void)
 {
 #if (_WIN32_WINNT >= 0x0601)
 	HANDLE thread = GetCurrentThread();
@@ -241,7 +241,7 @@ static bool save_cpu_affinity()
 #endif
 }
 
-static bool restore_cpu_affinity()
+static bool restore_cpu_affinity(void)
 {
 #if (_WIN32_WINNT >= 0x0601)
 	if (!savedGroupAffinity.Mask)
@@ -327,12 +327,12 @@ static int get_total_cpus(void)
 
 INTERNAL_SCOPE cpu_set_t saved_affinity;
 
-static bool save_cpu_affinity()
+static bool save_cpu_affinity(void)
 {
 	return sched_getaffinity(0, sizeof(saved_affinity), &saved_affinity) == 0;
 }
 
-static bool restore_cpu_affinity()
+static bool restore_cpu_affinity(void)
 {
 	return sched_setaffinity(0, sizeof(saved_affinity), &saved_affinity) == 0;
 }
@@ -355,12 +355,12 @@ static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 
 INTERNAL_SCOPE processorid_t saved_binding = PBIND_NONE;
 
-static bool save_cpu_affinity()
+static bool save_cpu_affinity(void)
 {
 	return processor_bind(P_LWPID, P_MYID, PBIND_QUERY, &saved_binding) == 0;
 }
 
-static bool restore_cpu_affinity()
+static bool restore_cpu_affinity(void)
 {
 	return processor_bind(P_LWPID, P_MYID, saved_binding, NULL) == 0;
 }
@@ -398,12 +398,12 @@ static int get_total_cpus(void)
 
 INTERNAL_SCOPE cpuset_t saved_affinity;
 
-static bool save_cpu_affinity()
+static bool save_cpu_affinity(void)
 {
 	return cpuset_getaffinity(CPU_LEVEL_WHICH, CPU_WHICH_TID, -1, sizeof(saved_affinity), &saved_affinity) == 0;
 }
 
-static bool restore_cpu_affinity()
+static bool restore_cpu_affinity(void)
 {
 	return cpuset_setaffinity(CPU_LEVEL_WHICH, CPU_WHICH_TID, -1, sizeof(saved_affinity), &saved_affinity) == 0;
 }
@@ -425,12 +425,12 @@ static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 
 INTERNAL_SCOPE cpuset_t saved_affinity;
 
-static bool save_cpu_affinity()
+static bool save_cpu_affinity(void)
 {
 	return pthread_getaffinity_np(pthread_self(), sizeof(saved_affinity), &saved_affinity) == 0;
 }
 
-static bool restore_cpu_affinity()
+static bool restore_cpu_affinity(void)
 {
 	return pthread_setaffinity_np(pthread_self(), sizeof(saved_affinity), &saved_affinity) == 0;
 }
@@ -452,7 +452,7 @@ static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 
 INTERNAL_SCOPE cpuset_t *saved_affinity = NULL;
 
-static bool save_cpu_affinity()
+static bool save_cpu_affinity(void)
 {
 	if (!saved_affinity)
 		saved_affinity = cpuset_create();
@@ -460,7 +460,7 @@ static bool save_cpu_affinity()
 	return pthread_getaffinity_np(pthread_self(), cpuset_size(saved_affinity), saved_affinity) == 0;
 }
 
-static bool restore_cpu_affinity()
+static bool restore_cpu_affinity(void)
 {
 	if (!saved_affinity)
 		return false;
@@ -499,12 +499,12 @@ static int get_total_cpus(void)
 #endif /* GET_TOTAL_CPUS_DEFINED */
 
 #ifndef PRESERVE_CPU_AFFINITY
-static bool save_cpu_affinity()
+static bool save_cpu_affinity(void)
 {
 	return false;
 }
 
-static bool restore_cpu_affinity()
+static bool restore_cpu_affinity(void)
 {
 	return false;
 }
