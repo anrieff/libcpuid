@@ -1157,6 +1157,9 @@ static cpu_purpose_t cpu_ident_purpose(struct cpu_raw_data_t* raw)
 	}
 
 	switch (vendor) {
+		case VENDOR_AMD:
+			purpose = cpuid_identify_purpose_amd(raw);
+			break;
 		case VENDOR_INTEL:
 			purpose = cpuid_identify_purpose_intel(raw);
 			break;

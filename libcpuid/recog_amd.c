@@ -646,3 +646,28 @@ void cpuid_get_list_amd(struct cpu_list_t* list)
 {
 	generic_get_cpu_list(cpudb_amd, COUNT_OF(cpudb_amd), list);
 }
+
+cpu_purpose_t cpuid_identify_purpose_amd(struct cpu_raw_data_t* raw)
+{
+	/* Check for hybrid architecture
+	From Processor Programming Reference (PPR) for AMD Family 19h Model 70h, Revision A0 Processors
+	Available at https://www.amd.com/system/files/TechDocs/57019-A0-PUB_3.00.zip
+
+	- CPUID_Fn80000026_ECX [Extended CPU Topology][15:8] is LevelType.
+	  LevelType 01h is Core.
+
+	- CPUID_Fn80000026_EBX [Extended CPU Topology][31:28] is CoreType.
+	  Only valid while LevelType=Core.
+	*/
+	//FIXME: leaf CPUID_Fn80000026 needs to be added in cpu_raw_data_t
+	if (EXTRACTS_BITS(raw->ext_cpuid[0x26][ECX], 15, 8) == 0x1) {
+		debugf(3, "Detected AMD CPU hybrid architecture\n");
+		switch (EXTRACTS_BITS(raw->ext_cpuid[0x26][EBX], 31, 28)) {
+			case 0x0: return PURPOSE_PERFORMANCE;
+			case 0x1: return PURPOSE_EFFICIENCY;
+			default:  return PURPOSE_GENERAL;
+		}
+	}
+
+	return PURPOSE_GENERAL;
+}
