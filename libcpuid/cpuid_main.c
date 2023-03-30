@@ -49,13 +49,13 @@
 
 INTERNAL_SCOPE int _libcpuid_errno = ERR_OK;
 
-int set_error(cpu_error_t err)
+int cpuid_set_error(cpu_error_t err)
 {
 	_libcpuid_errno = (int) err;
 	return (int) err;
 }
 
-int get_error()
+int cpuid_get_error()
 {
 	return _libcpuid_errno;
 }
@@ -126,7 +126,7 @@ static void cpuid_grow_raw_data_array(struct cpu_raw_data_array_t* raw_array, lo
 	debugf(3, "Growing cpu_raw_data_array_t from %u to %u items\n", raw_array->num_raw, n);
 	tmp = realloc(raw_array->raw, sizeof(struct cpu_raw_data_t) * n);
 	if (tmp == NULL) { /* Memory allocation failure */
-		set_error(ERR_NO_MEM);
+		cpuid_set_error(ERR_NO_MEM);
 		return;
 	}
 
@@ -145,7 +145,7 @@ static void cpuid_grow_system_id(struct system_id_t* system, uint8_t n)
 	debugf(3, "Growing system_id_t from %u to %u items\n", system->num_cpu_types, n);
 	tmp = realloc(system->cpu_types, sizeof(struct cpu_id_t) * n);
 	if (tmp == NULL) { /* Memory allocation failure */
-		set_error(ERR_NO_MEM);
+		cpuid_set_error(ERR_NO_MEM);
 		return;
 	}
 
@@ -534,7 +534,7 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 	/* Open file descriptor */
 	f = !strcmp(filename, "") ? stdout : fopen(filename, "wt");
 	if (!f)
-		return set_error(ERR_OPEN);
+		return cpuid_set_error(ERR_OPEN);
 	debugf(1, "Writing raw CPUID dump to '%s'\n", f == stdout ? "stdout" : filename);
 
 	/* Write raw data to output file */
@@ -580,7 +580,7 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 	/* Close file descriptor */
 	if (strcmp(filename, ""))
 		fclose(f);
-	return set_error(ERR_OK);
+	return cpuid_set_error(ERR_OK);
 }
 
 #define RAW_ASSIGN_LINE(__line) __line[EAX] = eax ; __line[EBX] = ebx ; __line[ECX] = ecx ; __line[EDX] = edx
@@ -604,7 +604,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 	/* Open file descriptor */
 	f = !strcmp(filename, "") ? stdin : fopen(filename, "rt");
 	if (!f)
-		return set_error(ERR_OPEN);
+		return cpuid_set_error(ERR_OPEN);
 	debugf(1, "Opening raw dump from '%s'\n", f == stdin ? "stdin" : filename);
 
 	if (use_raw_array)
@@ -717,7 +717,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 	/* Close file descriptor */
 	if (strcmp(filename, ""))
 		fclose(f);
-	return set_error(ERR_OK);
+	return cpuid_set_error(ERR_OK);
 }
 #undef RAW_ASSIGN_LINE
 
@@ -859,7 +859,7 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	data->vendor = cpuid_vendor_identify(raw->basic_cpuid[0], data->vendor_str);
 
 	if (data->vendor == VENDOR_UNKNOWN)
-		return set_error(ERR_CPU_UNKN);
+		return cpuid_set_error(ERR_CPU_UNKN);
 	data->architecture = ARCHITECTURE_X86;
 	basic = raw->basic_cpuid[0][EAX];
 	if (basic >= 1) {
@@ -890,7 +890,7 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 	}
 	load_features_common(raw, data);
 	data->total_logical_cpus = get_total_cpus();
-	return set_error(ERR_OK);
+	return cpuid_set_error(ERR_OK);
 }
 
 static void make_list_from_string(const char* csv, struct cpu_list_t* list)
@@ -903,7 +903,7 @@ static void make_list_from_string(const char* csv, struct cpu_list_t* list)
 	list->names = (char**) malloc(sizeof(char*) * n);
 	if (!list->names) { /* Memory allocation failed */
 		list->num_entries = 0;
-		set_error(ERR_NO_MEM);
+		cpuid_set_error(ERR_NO_MEM);
 		return;
 	}
 	list->num_entries = n;
@@ -912,7 +912,7 @@ static void make_list_from_string(const char* csv, struct cpu_list_t* list)
 	for (i = 0; i <= l; i++) if (i == l || csv[i] == ',') {
 		list->names[n] = (char*) malloc(i - last);
 		if (!list->names[n]) { /* Memory allocation failed */
-			set_error(ERR_NO_MEM);
+			cpuid_set_error(ERR_NO_MEM);
 			for (j = 0; j < n; j++) free(list->names[j]);
 			free(list->names);
 			list->num_entries = 0;
@@ -946,7 +946,7 @@ static bool cpu_ident_apic_id(logical_cpu_t logical_cpu, struct cpu_raw_data_t* 
 			is_apic_id_supported = true;
 			break;
 		case VENDOR_UNKNOWN:
-			set_error(ERR_CPU_UNKN);
+			cpuid_set_error(ERR_CPU_UNKN);
 			/* Fall through */
 		default:
 			is_apic_id_supported = false;
@@ -1025,7 +1025,7 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 {
 	unsigned i;
 	if (!cpuid_present())
-		return set_error(ERR_NO_CPUID);
+		return cpuid_set_error(ERR_NO_CPUID);
 	for (i = 0; i < 32; i++)
 		cpu_exec_cpuid(i, data->basic_cpuid[i]);
 	for (i = 0; i < 32; i++)
@@ -1060,18 +1060,18 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 		data->amd_fn8000001dh[i][ECX] = i;
 		cpu_exec_cpuid_ext(data->amd_fn8000001dh[i]);
 	}
-	return set_error(ERR_OK);
+	return cpuid_set_error(ERR_OK);
 }
 
 int cpuid_get_all_raw_data(struct cpu_raw_data_array_t* data)
 {
-	int cur_error = set_error(ERR_OK);
-	int ret_error = set_error(ERR_OK);
+	int cur_error = cpuid_set_error(ERR_OK);
+	int ret_error = cpuid_set_error(ERR_OK);
 	logical_cpu_t logical_cpu = 0;
 	struct cpu_raw_data_t* raw_ptr = NULL;
 
 	if (data == NULL)
-		return set_error(ERR_HANDLE);
+		return cpuid_set_error(ERR_HANDLE);
 
 	bool affinity_saved = save_cpu_affinity();
 
@@ -1119,13 +1119,13 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 	struct cpu_raw_data_t myraw;
 	if (!raw) {
 		if ((r = cpuid_get_raw_data(&myraw)) < 0)
-			return set_error(r);
+			return cpuid_set_error(r);
 		raw = &myraw;
 	}
 	cpu_id_t_constructor(data);
 	memset(internal->cache_mask, 0, sizeof(internal->cache_mask));
 	if ((r = cpuid_basic_identify(raw, data)) < 0)
-		return set_error(r);
+		return cpuid_set_error(r);
 	switch (data->vendor) {
 		case VENDOR_INTEL:
 			r = cpuid_identify_intel(raw, data, internal);
@@ -1141,7 +1141,7 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 	/* - Deprecated since v0.5.0 */
 	data->l1_assoc     = data->l1_data_assoc;
 	data->l1_cacheline = data->l1_data_cacheline;
-	return set_error(r);
+	return cpuid_set_error(r);
 }
 
 static cpu_purpose_t cpu_ident_purpose(struct cpu_raw_data_t* raw)
@@ -1152,7 +1152,7 @@ static cpu_purpose_t cpu_ident_purpose(struct cpu_raw_data_t* raw)
 
 	vendor = cpuid_vendor_identify(raw->basic_cpuid[0], vendor_str);
 	if (vendor == VENDOR_UNKNOWN) {
-		set_error(ERR_CPU_UNKN);
+		cpuid_set_error(ERR_CPU_UNKN);
 		return purpose;
 	}
 
@@ -1233,8 +1233,8 @@ static void update_cache_instances(struct internal_cache_instances_t* caches,
 
 int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t* system)
 {
-	int cur_error = set_error(ERR_OK);
-	int ret_error = set_error(ERR_OK);
+	int cur_error = cpuid_set_error(ERR_OK);
+	int ret_error = cpuid_set_error(ERR_OK);
 	double smt_divisor;
 	bool is_new_cpu_type;
 	bool is_last_item;
@@ -1254,10 +1254,10 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 	struct internal_cache_instances_t caches_type, caches_all;
 
 	if (system == NULL)
-		return set_error(ERR_HANDLE);
+		return cpuid_set_error(ERR_HANDLE);
 	if (!raw_array) {
 		if ((ret_error = cpuid_get_all_raw_data(&my_raw_array)) < 0)
-			return set_error(ret_error);
+			return cpuid_set_error(ret_error);
 		raw_array = &my_raw_array;
 	}
 	system_id_t_constructor(system);
@@ -1324,7 +1324,7 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 				switch (event) {
 					case EVENT_NEW_CPU_TYPE: cpu_type_index = system->num_cpu_types - 2; break;
 					case EVENT_LAST_ITEM:    cpu_type_index = system->num_cpu_types - 1; break;
-					default: warnf("Warning: event %i in cpu_identify_all() not handled.\n", event); return set_error(ERR_NOT_IMP);
+					default: warnf("Warning: event %i in cpu_identify_all() not handled.\n", event); return cpuid_set_error(ERR_NOT_IMP);
 				}
 				copy_affinity_mask(&system->cpu_types[cpu_type_index].affinity_mask, &affinity_mask);
 				if (event != EVENT_LAST_ITEM) {
@@ -1385,18 +1385,18 @@ int cpu_request_core_type(cpu_purpose_t purpose, struct cpu_raw_data_array_t* ra
 
 	if (!raw_array) {
 		if ((error = cpuid_get_all_raw_data(&my_raw_array)) < 0)
-			return set_error(error);
+			return cpuid_set_error(error);
 		raw_array = &my_raw_array;
 	}
 
 	for (logical_cpu = 0; logical_cpu < raw_array->num_raw; logical_cpu++) {
 		if (cpu_ident_purpose(&raw_array->raw[logical_cpu]) == purpose) {
 			cpu_ident_internal(&raw_array->raw[logical_cpu], data, &throwaway);
-			return set_error(ERR_OK);
+			return cpuid_set_error(ERR_OK);
 		}
 	}
 
-	return set_error(ERR_NOT_FOUND);
+	return cpuid_set_error(ERR_NOT_FOUND);
 }
 
 const char* cpu_architecture_str(cpu_architecture_t architecture)
@@ -1648,7 +1648,7 @@ cpu_vendor_t cpuid_get_vendor(void)
 
 	if(vendor == VENDOR_UNKNOWN) {
 		if (!cpuid_present())
-			set_error(ERR_NO_CPUID);
+			cpuid_set_error(ERR_NO_CPUID);
 		else {
 			cpu_exec_cpuid(0, raw_vendor);
 			vendor = cpuid_vendor_identify(raw_vendor, vendor_str);
@@ -1693,7 +1693,7 @@ void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list)
 			break;
 		default:
 			warnf("Unknown vendor passed to cpuid_get_cpu_list()\n");
-			set_error(ERR_INVRANGE);
+			cpuid_set_error(ERR_INVRANGE);
 			list->num_entries = 0;
 			list->names = NULL;
 			break;
