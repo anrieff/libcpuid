@@ -260,7 +260,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 26,   4,    -1,    -1, NC, XEON_|_7      ,     0, "Bloomfield (Xeon)"        },
 	{  6, 10, -1, -1, 26,   4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Bloomfield (Core i7)"     },
 	{  6, 10, -1, -1, 30,   4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Lynnfield (Core i7)"      },
-	{  6,  5, -1, -1, 37,   4,    -1,  8192, NC, CORE_|_I_|_5  ,     0, "Lynnfield (Core i5)"      },
+	{  6,  5, -1, -1, 30,   4,    -1,  8192, NC, CORE_|_I_|_5  ,     0, "Lynnfield (Core i5)"      },
 
 	/* Westmere CPUs (32nm): */
 	{  6,  5, -1, -1, 37,   2,    -1,    -1, NC, 0             ,     0, "Unknown Core i3/i5"       },
