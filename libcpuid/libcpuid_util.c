@@ -153,7 +153,7 @@ void generic_get_cpu_list(const struct match_entry_t* matchtable, int count,
 	n = 0;
 	list->names = (char**) malloc(sizeof(char*) * count);
 	if (!list->names) { /* Memory allocation failure */
-		set_error(ERR_NO_MEM);
+		cpuid_set_error(ERR_NO_MEM);
 		list->num_entries = 0;
 		return;
 	}
@@ -172,7 +172,7 @@ void generic_get_cpu_list(const struct match_entry_t* matchtable, int count,
 		list->names[n] = strdup(matchtable[i].name);
 #endif
 		if (!list->names[n]) { /* Memory allocation failure */
-			set_error(ERR_NO_MEM);
+			cpuid_set_error(ERR_NO_MEM);
 			list->num_entries = 0;
 			for (j = 0; j < n; j++) {
 				free(list->names[j]);
