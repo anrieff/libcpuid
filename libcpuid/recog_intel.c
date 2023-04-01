@@ -463,6 +463,9 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, 191, -1,    -1,    -1, NC, CORE_|_I_|_3  ,_13xxx, "Raptor Lake-S (Core i3)"    }, // "Golden Cove" cores
 	{  6, 10,  2, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_7  ,_13xxx, "Raptor Lake-P (Core i7)"    },
 	{  6, 10,  2, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_5  ,_13xxx, "Raptor Lake-P (Core i5)"    },
+	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_7  ,_13xxx, "Raptor Lake-U (Core i7)"    },
+	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_5  ,_13xxx, "Raptor Lake-U (Core i5)"    },
+	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_3  ,_13xxx, "Raptor Lake-U (Core i3)"    },
 	/* F   M   S  EF   EM   C     L2     L3               Brand */
 
 
