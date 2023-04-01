@@ -454,6 +454,10 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_9|_H  ,  _12xxx, "Alder Lake-H (Core i9)"  },
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_7|_H  ,  _12xxx, "Alder Lake-H (Core i7)"  },
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_5|_H  ,  _12xxx, "Alder Lake-H (Core i5)"  },
+	{  6, 14, -1, -1, 190, -1,    -1,    -1, NC, CORE_|_I_|_3|_N  ,       0, "Alder Lake-N (Core i3)"  },
+	{  6, 14, -1, -1, 190, -1,    -1,    -1, NC, ATOM_            ,       0, "Alder Lake-N (Atom)"     },
+	{  6, 14, -1, -1, 190,  4,    -1,    -1, NC, _N               ,       0, "Alder Lake-N"            },
+	{  6, 14, -1, -1, 190,  2,    -1,    -1, NC, _N               ,       0, "Alder Lake-N"            },
 
 	/* Raptor Lake CPUs (2022, 13th gen, 7nm) => https://en.wikichip.org/wiki/intel/microarchitectures/raptor_lake */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_I_|_9  ,_13xxx, "Raptor Lake-S (Core i9)"    },
@@ -744,6 +748,7 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 				case 'K': bits |= _K; break;
 				case 'X': bits |= _X; break;
 				case 'P': bits |= _P; break;
+				case 'N': bits |= _N; break;
 			}
 		}
 	}
