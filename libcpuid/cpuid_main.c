@@ -573,6 +573,10 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 			fprintf(f, "amd_fn8000001dh[%d]=%08x %08x %08x %08x\n", i,
 				raw_ptr->amd_fn8000001dh[i][EAX], raw_ptr->amd_fn8000001dh[i][EBX],
 				raw_ptr->amd_fn8000001dh[i][ECX], raw_ptr->amd_fn8000001dh[i][EDX]);
+		for (i = 0; i < MAX_AMDFN80000026H_LEVEL; i++)
+			fprintf(f, "amd_fn80000026h[%d]=%08x %08x %08x %08x\n", i,
+				raw_ptr->amd_fn80000026h[i][EAX], raw_ptr->amd_fn80000026h[i][EBX],
+				raw_ptr->amd_fn80000026h[i][ECX], raw_ptr->amd_fn80000026h[i][EDX]);
 		logical_cpu++;
 		end_loop = ((use_raw_array && (logical_cpu >= raw_array->num_raw)) || !use_raw_array);
 	}
@@ -674,6 +678,9 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 			else if ((sscanf(line, "amd_fn8000001dh[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_AMDFN8000001DH_LEVEL)) {
 				RAW_ASSIGN_LINE(raw_ptr->amd_fn8000001dh[i]);
 			}
+			else if ((sscanf(line, "amd_fn80000026h[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_AMDFN80000026H_LEVEL)) {
+				RAW_ASSIGN_LINE(raw_ptr->amd_fn80000026h[i]);
+			}
 			else if (line[0] != '\0') {
 				warnf("Warning: file '%s', line %d: '%s' not understood!\n", filename, cur_line, line);
 			}
@@ -708,6 +715,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 					case 0x00000012: RAW_ASSIGN_LINE(raw_ptr->intel_fn12h[i]);     break;
 					case 0x00000014: RAW_ASSIGN_LINE(raw_ptr->intel_fn14h[i]);     break;
 					case 0x8000001D: RAW_ASSIGN_LINE(raw_ptr->amd_fn8000001dh[i]); break;
+					case 0x80000026: RAW_ASSIGN_LINE(raw_ptr->amd_fn80000026h[i]); break;
 					default: break;
 				}
 			}
@@ -1059,6 +1067,12 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 		data->amd_fn8000001dh[i][EAX] = 0x8000001d;
 		data->amd_fn8000001dh[i][ECX] = i;
 		cpu_exec_cpuid_ext(data->amd_fn8000001dh[i]);
+	}
+	for (i = 0; i < MAX_AMDFN80000026H_LEVEL; i++) {
+		memset(data->amd_fn80000026h[i], 0, sizeof(data->amd_fn80000026h[i]));
+		data->amd_fn80000026h[i][EAX] = 0x80000026;
+		data->amd_fn80000026h[i][ECX] = i;
+		cpu_exec_cpuid_ext(data->amd_fn80000026h[i]);
 	}
 	return cpuid_set_error(ERR_OK);
 }
