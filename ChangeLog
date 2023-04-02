@@ -141,3 +141,22 @@ Version 0.6.2 (2022-11-11):
 	* Support for Intel Ice Lake (Xeon-D)
 	* Support for AMD Zen 2 Desktop Kit CPUs (4700S + 4800S)
 	* Support for AMD Athlon 64 Sherman
+
+Version 0.6.3 (2023-04-02):
+	* Support for Intel Pentium and Celeron for Alder Lake-S
+	* Support for Intel Alder Lake-HX
+	* Support for Intel Alder Lake-X
+	* Fix detection of Intel Alder Lake-P
+	* Fix infinite loop in set_cpu_affinity() on macOS
+	* Fix a misprint of extended CPUID in cpuid_basic_identify()
+	* Restore previous thread CPU affinity before returning from cpuid_get_all_raw_data() (#184)
+	* Query CPU info at least once even if set_cpu_affinity() fails
+	* Support for AMD 19h family MSRs
+	* Fix detection of Intel Core i5 Lynnfield
+	* Rename set_error() to cpuid_set_error() and get_error() to cpuid_get_error() (#188)
+	* Support for Intel Alder Lake-N
+	* Support for AMD Rembrandt with Radeon Graphics
+	* Support for Intel Raptor Lake-S with "Golden Cove" cores
+	* Support for Intel Raptor Lake-P
+	* Support for Intel Raptor Lake-U
+	* Support for Intel Rocket Lake-E
