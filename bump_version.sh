@@ -1,7 +1,19 @@
 #!/bin/bash
 
+print_help() {
+	echo "$(basename "$0") NEW_VERSION SO_VERSION"
+	echo -e "\n\033[1mNEW_VERSION format: MAJOR.MINOR.PATCH\033[0m"
+	echo -e "\n\033[1mSO_VERSION format: C:A:R\033[0m"
+	echo -e "Versioning scheme shamelessly copied from libexif."
+	echo -e "Short walkthrough. C means CURRENT, A mean AGE, R means REVISION"
+	echo -e "1) When you make a change that breaks binary compatibility, increment CURRENT, reset REVISION to 0 and:"
+	echo -e "  1.1) If the change doesn't remove or change interfaces, increment AGE, otherwise reset to 0."
+	echo -e "2) When you make just a source change that doesn't break binary compatibility, increment REVISION."
+	echo -e "3) When you make a change that adds features, increment AGE, and set REVISION to 0"
+}
+
 if [[ $# -lt 2 ]]; then
-	echo "$0 NEW_VERSION SO_VERSION"
+	print_help
 	exit 1
 fi
 
@@ -11,12 +23,19 @@ NEW_VERSION="$1"
 SO_VERSION="$2"
 DATE="$(date '+%Y-%m-%d')"
 
-if ! [[ "$SO_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-	echo "$0: SO_VERSION must contain dots (e.g. '15.0.1')"
+if ! [[ "$NEW_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+	echo "NEW_VERSION must contain dots (e.g. '0.6.2')"
+	print_help
 	exit 1
 fi
 
-IFS='.' read -a so_version_array <<< "$SO_VERSION"
+if ! [[ "$SO_VERSION" =~ ^[0-9]+\:[0-9]+\:[0-9]+$ ]]; then
+	echo "SO_VERSION must contain colons (e.g. '16:0:2')"
+	print_help
+	exit 1
+fi
+
+IFS=':' read -a so_version_array <<< "$SO_VERSION"
 LIBCPUID_CURRENT="${so_version_array[0]}"
 LIBCPUID_AGE="${so_version_array[1]}"
 LIBCPUID_REVISION="${so_version_array[2]}"
@@ -25,7 +44,7 @@ echo "LIBCPUID_CURRENT=$LIBCPUID_CURRENT LIBCPUID_AGE=$LIBCPUID_AGE LIBCPUID_REV
 
 echo -e "\nVersion $NEW_VERSION ($DATE):" >> "$GIT_DIR/ChangeLog"
 sed -i "s|\[$OLD_VERSION\]|\[$NEW_VERSION\]|" "$GIT_DIR/configure.ac"
-sed -i "s|LIBCPUID_CURRENT=.*|dnl $(echo $SO_VERSION | tr . :)   Version $NEW_VERSION:\nLIBCPUID_CURRENT=$LIBCPUID_CURRENT|" "$GIT_DIR/configure.ac"
+sed -i "s|LIBCPUID_CURRENT=.*|dnl $SO_VERSION   Version $NEW_VERSION:\nLIBCPUID_CURRENT=$LIBCPUID_CURRENT|" "$GIT_DIR/configure.ac"
 sed -i "s|LIBCPUID_AGE=.*|LIBCPUID_AGE=$LIBCPUID_AGE|" "$GIT_DIR/configure.ac"
 sed -i "s|LIBCPUID_REVISION=.*|LIBCPUID_REVISION=$LIBCPUID_REVISION|" "$GIT_DIR/configure.ac"
 sed -i "s|VERSION \"$OLD_VERSION\"|VERSION \"$NEW_VERSION\"|" "$GIT_DIR/CMakeLists.txt"
