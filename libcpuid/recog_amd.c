@@ -639,6 +639,7 @@ int cpuid_identify_amd(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 		decode_amd_cache_info(raw, data);
 	decode_amd_number_of_cores(raw, data);
 	decode_amd_codename(data, internal);
+	data->purpose = cpuid_identify_purpose_amd(raw);
 	return 0;
 }
 
