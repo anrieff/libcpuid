@@ -12,7 +12,7 @@ if len(args) != 3:
 def readRawFile():
 	rawdata = []
 	for line in open(args[1], "rt").readlines():
-		lookfor = ["basic_cpuid", "ext_cpuid", "intel_fn4", "intel_fn11", "amd_fn8000001dh", "Logical CPU", "CPUID"]
+		lookfor = ["basic_cpuid", "ext_cpuid", "intel_fn4", "intel_fn11", "amd_fn8000001dh", "Logical CPU", "CPUID", "CPU#"]
 		ignore  = ["MSR Register"]
 		good = False
 		for match in lookfor:
