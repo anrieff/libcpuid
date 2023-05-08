@@ -422,10 +422,18 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, 12, -1, 142,  4,    -1,    -1, NC, CORE_|_I_|_5  ,_10xxx, "Comet Lake-U (Core i5)"   },
 	{  6, 14, 12, -1, 142,  2,    -1,    -1, NC, PENTIUM_      ,_10xxx, "Comet Lake-U (Pentium)"   },
 	{  6, 14, 12, -1, 142,  2,    -1,    -1, NC, CELERON_      ,_10xxx, "Comet Lake-U (Celeron)"   },
-	{  6, 12, -1, -1, 108,  4,    -1,    -1, NC, XEON_         ,     0, "Ice Lake (Xeon-D)"        },
+
+	/* Ice Lake (client) CPUs (2019, 10th Core i gen, 10nm) => https://en.wikichip.org/wiki/intel/microarchitectures/ice_lake_(client) */
 	{  6, 14, -1, -1, 126,  4,    -1,    -1, NC, CORE_|_I_|_7  ,_10xxx, "Ice Lake (Core i7)"       },
 	{  6, 14, -1, -1, 126,  4,    -1,    -1, NC, CORE_|_I_|_5  ,_10xxx, "Ice Lake (Core i5)"       },
 	{  6, 14, -1, -1, 126,  2,    -1,    -1, NC, CORE_|_I_|_3  ,_10xxx, "Ice Lake (Core i3)"       },
+	/* Ice Lake (server) CPUs (2021, 3rd Xeon Scalable gen, 10nm) => https://en.wikichip.org/wiki/intel/microarchitectures/ice_lake_(server) */
+	{  6, 12, -1, -1, 108,  4,    -1,    -1, NC, XEON_            ,      0, "Ice Lake-D (Xeon-D)"         },
+	{  6, 10, -1, -1, 106,  -1,   -1,    -1, NC, XEON_|_W_        ,  _x3xx, "Ice Lake-W (Xeon W)"         },
+	{  6, 10, -1, -1, 106,  -1,   -1,    -1, NC, XEON_|_PLATINIUM_,  _x3xx, "Ice Lake-SP (Xeon Platinum)" },
+	{  6, 10, -1, -1, 106,  -1,   -1,    -1, NC, XEON_|_GOLD_,       _x3xx, "Ice Lake-SP (Xeon Gold)"     },
+	{  6, 10, -1, -1, 106,  -1,   -1,    -1, NC, XEON_|_SILVER_,     _x3xx, "Ice Lake-SP (Xeon Silver)"   },
+	{  6, 10, -1, -1, 106,  -1,   -1,    -1, NC, XEON_|_BRONZE_,     _x3xx, "Ice Lake-SP (Xeon Bronze)"   },
 
 	/* Rocket Lake CPUs (11th gen, 14nm): */
 	{  6, 7, -1, -1, 167,  -1,    -1,    -1, NC, CORE_|_I_|_9  ,_11xxx, "Rocket Lake (Core i9)"    },
