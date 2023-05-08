@@ -134,6 +134,7 @@ enum _intel_bits_t {
 	_SILVER_                = LBIT( 24 ),
 	_GOLD_                  = LBIT( 25 ),
 	_PLATINIUM_             = LBIT( 26 ),
+	_MAX_                   = LBIT( 27 ),
 };
 typedef enum _intel_bits_t intel_bits_t;
 

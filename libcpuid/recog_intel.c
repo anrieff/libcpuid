@@ -69,7 +69,7 @@ enum _intel_model_t {
 	_x1xx,  /* Xeon Bronze/Silver/Gold/Platinum x1xx */
 	_x2xx,  /* Xeon Bronze/Silver/Gold/Platinum x2xx */
 	_x3xx,  /* Xeon Bronze/Silver/Gold/Platinum x3xx */
-	_x4xx,  /* Xeon Bronze/Silver/Gold/Platinum x4xx */
+	_x4xx,  /* Xeon Bronze/Silver/Gold/Platinum/Max x4xx */
 };
 typedef enum _intel_model_t intel_model_t;
 
@@ -499,11 +499,16 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_3  ,_13xxx, "Raptor Lake-U (Core i3)"    },
 
 	/* Sapphire Rapids CPUs (2023, 4th Xeon Scalable gen, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/sapphire_rapids */
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_W_|_9  ,     0, "Sapphire Rapids-WS (Xeon w9)"  },
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_W_|_7  ,     0, "Sapphire Rapids-WS (Xeon w7)"  },
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_W_|_5  ,     0, "Sapphire Rapids-WS (Xeon w5)"  },
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_W_|_3  ,     0, "Sapphire Rapids-WS (Xeon w3)"  },
-	/* F   M   S  EF   EM   C     L2     L3               Brand */
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_W_|_9     , _x4xx, "Sapphire Rapids-WS (Xeon w9)"       },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_W_|_7     , _x4xx, "Sapphire Rapids-WS (Xeon w7)"       },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_W_|_5     , _x4xx, "Sapphire Rapids-WS (Xeon w5)"       },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_W_|_3     , _x4xx, "Sapphire Rapids-WS (Xeon w3)"       },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_MAX_      , _x4xx, "Sapphire Rapids-SP (Xeon Max)"      },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_PLATINIUM_, _x4xx, "Sapphire Rapids-SP (Xeon Platinum)" },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_GOLD_     , _x4xx, "Sapphire Rapids-SP (Xeon Gold)"     },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_SILVER_   , _x4xx, "Sapphire Rapids-SP (Xeon Silver)"   },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_BRONZE_   , _x4xx, "Sapphire Rapids-SP (Xeon Bronze)"   },
+	/* F   M   S  EF   EM #cores L2$    L3$  BC       ModelBits ModelCode                                  Name */
 
 
 	/* Itaniums */
@@ -758,6 +763,7 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 		{ _SILVER_, "Silver" },
 		{ _GOLD_, "Gold" },
 		{ _PLATINIUM_, "Platinum" },
+		{ _MAX_, "Max" },
 	};
 
 	for (i = 0; i < COUNT_OF(bit_matchtable); i++) {
@@ -905,6 +911,7 @@ static intel_model_t get_model_code(struct cpu_id_t* data)
 		else if ((i == 0) && ((i = match_pattern(bs, "Xeon(R) Silver"))   != 0)) i += 15;
 		else if ((i == 0) && ((i = match_pattern(bs, "Xeon(R) Gold"))     != 0)) i += 13;
 		else if ((i == 0) && ((i = match_pattern(bs, "Xeon(R) Platinum")) != 0)) i += 17;
+		else if ((i == 0) && ((i = match_pattern(bs, "Xeon(R) Max"))      != 0)) i += 12;
 
 		if (i == 0) return UNKNOWN;
 		if (bs[i] == '1') return _x1xx;
