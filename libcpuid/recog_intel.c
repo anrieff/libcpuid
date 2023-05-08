@@ -273,10 +273,11 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 12, -1, -1, 44,   4,    -1, 12288, NC, CORE_|_I_|_7  ,     0, "Gulftown (Core i7)"       },
 	{  6,  5, -1, -1, 37,   2,    -1,  4096, NC, CORE_|_I_|_5  ,     0, "Clarkdale (Core i5)"      },
 	{  6,  5, -1, -1, 37,   2,    -1,  4096, NC, CORE_|_I_|_3  ,     0, "Clarkdale (Core i3)"      },
-	{  6,  5, -1, -1, 37,   2,    -1,    -1, NC, PENTIUM_      ,     0, "Arrandale"                },
 	{  6,  5, -1, -1, 37,   2,    -1,  4096, NC, CORE_|_I_|_7  ,     0, "Arrandale (Core i7)"      },
 	{  6,  5, -1, -1, 37,   2,    -1,  3072, NC, CORE_|_I_|_5  ,     0, "Arrandale (Core i5)"      },
 	{  6,  5, -1, -1, 37,   2,    -1,  3072, NC, CORE_|_I_|_3  ,     0, "Arrandale (Core i3)"      },
+	{  6,  5, -1, -1, 37,   2,    -1,    -1, NC, PENTIUM_      ,     0, "Arrandale (Pentium)"      },
+	{  6,  5, -1, -1, 37,   2,    -1,    -1, NC, CELERON_      ,     0, "Arrandale (Celeron)"      },
 
 	/* Sandy Bridge CPUs (2nd gen, 32nm): */
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, NC, 0             ,     0, "Unknown Sandy Bridge"     },
