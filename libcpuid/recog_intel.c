@@ -289,7 +289,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 42,   2,    -1,    -1, NC, PENTIUM_      ,     0, "Sandy Bridge (Pentium)"   },
 	{  6, 10, -1, -1, 42,   1,    -1,    -1, NC, CELERON_      ,     0, "Sandy Bridge (Celeron)"   },
 	{  6, 10, -1, -1, 42,   2,    -1,    -1, NC, CELERON_      ,     0, "Sandy Bridge (Celeron)"   },
-	{  6, 13, -1, -1, 45,  -1,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Sandy Bridge-E"           },
+	{  6, 13, -1, -1, 45,  -1,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Sandy Bridge-E (Core i7)" },
 	{  6, 13, -1, -1, 45,  -1,    -1,    -1, NC, XEON_         ,     0, "Sandy Bridge-E (Xeon)"    },
 
 	/* Ivy Bridge CPUs (3rd gen, 22nm): */
