@@ -66,6 +66,10 @@ enum _intel_model_t {
 	_11xxx, /* Core i[3579] 11xxx */
 	_12xxx, /* Core i[3579] 12xxx */
 	_13xxx, /* Core i[3579] 13xxx */
+	_x1xx,  /* Xeon Bronze/Silver/Gold/Platinum x1xx */
+	_x2xx,  /* Xeon Bronze/Silver/Gold/Platinum x2xx */
+	_x3xx,  /* Xeon Bronze/Silver/Gold/Platinum x3xx */
+	_x4xx,  /* Xeon Bronze/Silver/Gold/Platinum x4xx */
 };
 typedef enum _intel_model_t intel_model_t;
 
@@ -332,21 +336,27 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, 79,   2,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Broadwell-E (Core i7)"    },
 	{  6, 15, -1, -1, 79,   4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Broadwell-E (Core i7)"    },
 
-	/* Skylake CPUs (6th gen, 14nm): */
-	{  6, 14, -1, -1, 94,  -1,    -1,    -1, NC, XEON_         ,     0, "Skylake (Xeon)"           },
-	{  6, 14, -1, -1, 94,   4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Skylake (Core i7)"        },
-	{  6, 14, -1, -1, 94,   4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Skylake (Core i5)"        },
-	{  6, 14, -1, -1, 94,   2,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Skylake (Core i3)"        },
-	{  6, 14, -1, -1, 94,   2,    -1,    -1, NC, PENTIUM_      ,     0, "Skylake (Pentium)"        },
-	{  6, 14, -1, -1, 78,   2,    -1,    -1, NC, PENTIUM_      ,     0, "Skylake (Pentium)"        },
-	{  6, 14, -1, -1, 94,   2,    -1,    -1, NC, CELERON_      ,     0, "Skylake (Celeron)"        },
-	{  6, 14, -1, -1, 78,   2,    -1,    -1, NC, CELERON_      ,     0, "Skylake (Celeron)"        },
-	{  6, 14, -1, -1, 78,   2,    -1,    -1, NC, CORE_|_M_|_7  ,     0, "Skylake (Core m7)"        },
-	{  6, 14, -1, -1, 78,   2,    -1,    -1, NC, CORE_|_M_|_5  ,     0, "Skylake (Core m5)"        },
-	{  6, 14, -1, -1, 78,   2,    -1,    -1, NC, CORE_|_M_|_3  ,     0, "Skylake (Core m3)"        },
-	{  6,  5, -1, -1, 85,   8,    -1,    -1, NC, XEON_,              0, "Skylake (Xeon Scalable)"  },
-	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, CORE_|_I_|_9,       0, "Skylake-X (Core i9)"      }, /* 10 to 18 cores */
-	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, CORE_|_I_|_7,       0, "Skylake-X (Core i7)"      }, /* 6 to 8 cores */
+	/* Skylake (client) CPUs (2015, 6th Core i gen, 14nm) => https://en.wikichip.org/wiki/intel/microarchitectures/skylake_(client) */
+	{  6, 14, -1, -1, 94,  -1,    -1,    -1, NC, XEON_            ,     0, "Skylake (Xeon)"             },
+	{  6, 14, -1, -1, 94,   4,    -1,    -1, NC, CORE_|_I_|_7     ,     0, "Skylake (Core i7)"          },
+	{  6, 14, -1, -1, 94,   4,    -1,    -1, NC, CORE_|_I_|_5     ,     0, "Skylake (Core i5)"          },
+	{  6, 14, -1, -1, 94,   2,    -1,    -1, NC, CORE_|_I_|_3     ,     0, "Skylake (Core i3)"          },
+	{  6, 14, -1, -1, 94,   2,    -1,    -1, NC, PENTIUM_         ,     0, "Skylake (Pentium)"          },
+	{  6, 14, -1, -1, 78,   2,    -1,    -1, NC, PENTIUM_         ,     0, "Skylake (Pentium)"          },
+	{  6, 14, -1, -1, 94,   2,    -1,    -1, NC, CELERON_         ,     0, "Skylake (Celeron)"          },
+	{  6, 14, -1, -1, 78,   2,    -1,    -1, NC, CELERON_         ,     0, "Skylake (Celeron)"          },
+	{  6, 14, -1, -1, 78,   2,    -1,    -1, NC, CORE_|_M_|_7     ,     0, "Skylake (Core m7)"          },
+	{  6, 14, -1, -1, 78,   2,    -1,    -1, NC, CORE_|_M_|_5     ,     0, "Skylake (Core m5)"          },
+	{  6, 14, -1, -1, 78,   2,    -1,    -1, NC, CORE_|_M_|_3     ,     0, "Skylake (Core m3)"          },
+	/* Skylake (server) CPUs (2017, 1st Xeon Scalable gen, 14nm) => https://en.wikichip.org/wiki/intel/microarchitectures/skylake_(server) */
+	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, CORE_|_I_|_9     ,     0, "Skylake-X (Core i9)"        }, /* 10 to 18 cores */
+	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, CORE_|_I_|_7     ,     0, "Skylake-X (Core i7)"        }, /* 6 to 8 cores */
+	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, XEON_|_W_        , _x1xx, "Skylake-W (Xeon W)"         },
+	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, XEON_|_D_        , _x1xx, "Skylake-DE (Xeon D)"        },
+	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, XEON_|_PLATINIUM_, _x1xx, "Skylake-SP (Xeon Platinum)" },
+	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, XEON_|_GOLD_     , _x1xx, "Skylake-SP (Xeon Gold)"     },
+	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, XEON_|_SILVER_   , _x1xx, "Skylake-SP (Xeon Silver)"   },
+	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, XEON_|_BRONZE_   , _x1xx, "Skylake-SP (Xeon Bronze)"   },
 
 	/* Kaby Lake CPUs (7th gen, 14nm): */
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Kaby Lake (Core i7)"      },
@@ -728,6 +738,10 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 		{ MOBILE_, "Mobile" },
 		{ CELERON_, "Celeron" },
 		{ PENTIUM_, "Pentium" },
+		{ _BRONZE_, "Bronze" },
+		{ _SILVER_, "Silver" },
+		{ _GOLD_, "Gold" },
+		{ _PLATINIUM_, "Platinum" },
 	};
 
 	for (i = 0; i < COUNT_OF(bit_matchtable); i++) {
@@ -769,6 +783,14 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 			case '5': bits |= _5; break;
 			case '7': bits |= _7; break;
 			case '9': bits |= _9; break;
+		}
+	}
+	else if ((i = match_pattern(bs, "Xeon(R) [DW]")) != 0) {
+		bits |= XEON_;
+		i--;
+		switch (bs[i + 8]) {
+			case 'D': bits |= _D_; break;
+			case 'W': bits |= _W_; break;
 		}
 	}
 	for (i = 0; i < COUNT_OF(matchtable); i++)
@@ -858,6 +880,21 @@ static intel_model_t get_model_code(struct cpu_id_t* data)
 		if (bs[i] == '9') return _9xxx;
 		if ((bs[i] == '1') && (bs[i+1] == '0')) return _10xxx;
 		if ((bs[i] == '1') && (bs[i+1] == '1')) return _11xxx;
+		return UNKNOWN;
+	}
+	else if ((i = match_pattern(bs, "Xeon(R) [WBSGP]")) != 0) {
+		i = 0;
+		if                   ((i = match_pattern(bs, "Xeon(R) W-"))       != 0)  i += 10;
+		else if ((i == 0) && ((i = match_pattern(bs, "Xeon(R) Bronze"))   != 0)) i += 15;
+		else if ((i == 0) && ((i = match_pattern(bs, "Xeon(R) Silver"))   != 0)) i += 15;
+		else if ((i == 0) && ((i = match_pattern(bs, "Xeon(R) Gold"))     != 0)) i += 13;
+		else if ((i == 0) && ((i = match_pattern(bs, "Xeon(R) Platinum")) != 0)) i += 17;
+
+		if (i == 0) return UNKNOWN;
+		if (bs[i] == '1') return _x1xx;
+		if (bs[i] == '2') return _x2xx;
+		if (bs[i] == '3') return _x3xx;
+		if (bs[i] == '4') return _x4xx;
 		return UNKNOWN;
 	}
 
