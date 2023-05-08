@@ -142,7 +142,7 @@ int match_cpu_codename(const struct match_entry_t* matchtable, int count,
 			bestindex = i;
 		}
 	}
-	strcpy(data->cpu_codename, matchtable[bestindex].name);
+	strncpy(data->cpu_codename, matchtable[bestindex].name, CODENAME_STR_MAX);
 	return bestscore;
 }
 
