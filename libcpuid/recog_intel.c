@@ -402,6 +402,14 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, 13, -1, 158,  6,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Coffee Lake-R (Core i5)"  },
 	{  6, 14, 11, -1, 158,  4,    -1,    -1, NC, CORE_|_I_|_3  ,     0, "Coffee Lake-R (Core i3)"  },
 
+	/* Cascade Lake CPUs (2019, 2nd Xeon Scalable gen, 14nm) => https://en.wikichip.org/wiki/intel/microarchitectures/cascade_lake */
+	{  6,  5,  7, -1, 85,  -1,    -1,    -1, NC, CORE_|_I_|_9     , _10xxx, "Cascade Lake-X (Core i9)"        },
+	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, XEON_|_W_        ,  _x2xx, "Cascade Lake-W (Xeon W)"         },
+	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, XEON_|_PLATINIUM_,  _x2xx, "Cascade Lake-SP (Xeon Platinum)" },
+	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, XEON_|_GOLD_     ,  _x2xx, "Cascade Lake-SP (Xeon Gold)"     },
+	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, XEON_|_SILVER_   ,  _x2xx, "Cascade Lake-SP (Xeon Silver)"   },
+	{  6,  5, -1, -1, 85,  -1,    -1,    -1, NC, XEON_|_BRONZE_   ,  _x2xx, "Cascade Lake-SP (Xeon Bronze)"   },
+
 	/* Comet Lake CPUs (10th gen, 14nm): */
 	{  6,  5, -1, -1, 165, 10,    -1,    -1, NC, CORE_|_I_|_9  ,     0, "Comet Lake (Core i9)"     },
 	{  6,  5, -1, -1, 165,  8,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Comet Lake (Core i7)"     },
