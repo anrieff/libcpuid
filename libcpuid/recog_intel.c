@@ -218,10 +218,9 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, -1,   2,  2048,    -1, MEROM, 0          ,     0, "Merom (Core 2 Duo) 2048K"  },
 	{  6, 15, -1, -1, -1,   2,  4096,    -1, MEROM, 0          ,     0, "Merom (Core 2 Duo) 4096K"  },
 
-	{  6, 15, -1, -1, 15,   1,    -1,    -1, NC, CELERON_      ,     0, "Conroe-L (Celeron)"        },
+	{  6, 15, -1, -1, 15,   2,    -1,    -1, NC, PENTIUM_      ,     0, "Allendale (Pentium)"       },
+	{  6, 15, -1, -1, 15,   2,    -1,    -1, NC, CELERON_      ,     0, "Allendale (Celeron)"      },
 	{  6,  6, -1, -1, 22,   1,    -1,    -1, NC, CELERON_      ,     0, "Conroe-L (Celeron)"        },
-	{  6, 15, -1, -1, 15,   2,    -1,    -1, NC, CELERON_      ,     0, "Conroe-L (Allendale)"      },
-	{  6,  6, -1, -1, 22,   2,    -1,    -1, NC, CELERON_      ,     0, "Conroe-L (Allendale)"      },
 
 
 	{  6,  6, -1, -1, 22,   1,    -1,    -1, NC, 0             ,     0, "Unknown Core ?"           },
