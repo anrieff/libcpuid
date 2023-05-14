@@ -357,10 +357,10 @@ const struct match_entry_t cpudb_amd[] = {
 	//{ 15, -1, -1, 25,   ??,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Dragon Range)"        },
 	//{ 15, -1, -1, 25,   ??,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Dragon Range)"        },
 	//{ 15, -1, -1, 25,   ??,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Dragon Range)"        },
-	//{ 15, -1, -1, 25,   ??,  -1,    -1,    -1, NC, RYZEN_|_9           ,     0, "Ryzen 9 (Phoenix Point)"       },
-	//{ 15, -1, -1, 25,   ??,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Phoenix Point)"       },
-	//{ 15, -1, -1, 25,   ??,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Phoenix Point)"       },
-	//{ 15, -1, -1, 25,   ??,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Phoenix Point)"       },
+	{ 15, -1, -1, 25,  116,  -1,    -1,    -1, NC, RYZEN_|_9           ,     0, "Ryzen 9 (Phoenix)"             },
+	{ 15, -1, -1, 25,  116,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Phoenix)"             },
+	{ 15, -1, -1, 25,  116,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Phoenix)"             },
+	{ 15, -1, -1, 25,  116,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Phoenix)"             },
 	/* F   M   S  EF    EM  #cores  L2$   L3$  BC  ModelBits          ModelCode  Name                           */
 };
 
