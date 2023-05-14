@@ -474,9 +474,14 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CORE_|_I_|_9|_H|_X, _12xxx, "Alder Lake-HX (Core i9)" },
 	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CORE_|_I_|_7|_H|_X, _12xxx, "Alder Lake-HX (Core i7)" },
 	{  6,  7, -1, -1, 151, -1,    -1,    -1, NC, CORE_|_I_|_5|_H|_X, _12xxx, "Alder Lake-HX (Core i5)" },
-	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_7|_P  ,  _12xxx, "Alder Lake-P (Core i7)"  },
-	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_5|_P  ,  _12xxx, "Alder Lake-P (Core i5)"  },
-	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_3|_P  ,  _12xxx, "Alder Lake-P (Core i3)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_7|_P  ,       0, "Alder Lake-P (Core i7)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_5|_P  ,       0, "Alder Lake-P (Core i5)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_3|_P  ,       0, "Alder Lake-P (Core i3)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_7|_U  ,       0, "Alder Lake-U (Core i7)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_5|_U  ,       0, "Alder Lake-U (Core i5)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_3|_U  ,       0, "Alder Lake-U (Core i3)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, PENTIUM_      ,          0, "Alder Lake-U (Pentium)"  },
+	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CELERON_      ,          0, "Alder Lake-U (Celeron)"  },
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_9|_H  ,  _12xxx, "Alder Lake-H (Core i9)"  },
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_7|_H  ,  _12xxx, "Alder Lake-H (Core i7)"  },
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_5|_H  ,  _12xxx, "Alder Lake-H (Core i5)"  },
@@ -495,11 +500,11 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_I_|_9|_H|_X, _13xxx, "Raptor Lake-HX (Core i9)" },
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_I_|_7|_H|_X, _13xxx, "Raptor Lake-HX (Core i7)" },
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_I_|_5|_H|_X, _13xxx, "Raptor Lake-HX (Core i5)" },
-	{  6, 10,  2, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_7      , _13xxx, "Raptor Lake-P (Core i7)"  },
-	{  6, 10,  2, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_5      , _13xxx, "Raptor Lake-P (Core i5)"  },
-	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_7      , _13xxx, "Raptor Lake-U (Core i7)"  },
-	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_5      , _13xxx, "Raptor Lake-U (Core i5)"  },
-	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_3      , _13xxx, "Raptor Lake-U (Core i3)"  },
+	{  6, 10,  2, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_7|_P   ,      0, "Raptor Lake-P (Core i7)"  },
+	{  6, 10,  2, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_5|_P   ,      0, "Raptor Lake-P (Core i5)"  },
+	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_7|_U   ,      0, "Raptor Lake-U (Core i7)"  },
+	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_5|_U   ,      0, "Raptor Lake-U (Core i5)"  },
+	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_3|_U   ,      0, "Raptor Lake-U (Core i3)"  },
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_9|_H   , _13xxx, "Raptor Lake-H (Core i9)"  },
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_7|_H   , _13xxx, "Raptor Lake-H (Core i7)"  },
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_5|_H   , _13xxx, "Raptor Lake-H (Core i5)"  },
@@ -797,6 +802,7 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 				case 'X': bits |= _X; break;
 				case 'P': bits |= _P; break;
 				case 'N': bits |= _N; break;
+				case 'U': bits |= _U; break;
 			}
 		}
 	}
