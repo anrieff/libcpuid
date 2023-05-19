@@ -21,6 +21,18 @@ option(LIBCPUID_TESTS "Enable building tests" OFF)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 99)
 
+# pthreads library
+if(${CMAKE_SYSTEM_NAME} STREQUAL "DragonFly" OR ${CMAKE_SYSTEM_NAME} STREQUAL "NetBSD")
+  find_package(Threads REQUIRED)
+endif()
+
+# check if popcount64 is available
+include(CheckSymbolExists)
+check_symbol_exists(popcount64 "string.h" HAVE_POPCOUNT64)
+if(HAVE_POPCOUNT64)
+  add_definitions(-DHAVE_POPCOUNT64)
+endif(HAVE_POPCOUNT64)
+
 # Global variables
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 

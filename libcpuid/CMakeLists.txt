@@ -23,6 +23,7 @@ add_library(cpuid ${cpuid_sources})
 set_property(TARGET cpuid PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS ON)
 target_include_directories(cpuid SYSTEM PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
+target_link_libraries(cpuid ${CMAKE_THREAD_LIBS_INIT})
 target_compile_definitions(cpuid PRIVATE VERSION="${PROJECT_VERSION}")
 set_target_properties(cpuid PROPERTIES VERSION "${LIBCPUID_CURRENT}.${LIBCPUID_AGE}.${LIBCPUID_REVISION}")
 set_target_properties(cpuid PROPERTIES SOVERSION "${LIBCPUID_CURRENT}")

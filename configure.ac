@@ -62,16 +62,43 @@ fi
 
 AC_CANONICAL_HOST
 
+AC_MSG_CHECKING([Whether we need POSIX threads])
+AC_COMPILE_IFELSE([
+    AC_LANG_PROGRAM([
+        #if defined(__NetBSD__) || defined(__DragonFly__)
+        #else
+        #  error "no pthreads needed"
+        #endif
+    ])
+], [
+    AC_MSG_RESULT([yes])
+    AC_SUBST([LIBCPUID_LDFLAGS], ["-pthread"])
+], [
+    AC_MSG_RESULT([no])
+])
+
 build_windows=no
+build_netbsd=no
+build_dragonflybsd=no
 
 case "${host_os}" in
     cygwin*|mingw*)
         build_windows=yes
         ;;
+    netbsd*)
+        build_netbsd=yes
+        ;;
+    dragonfly*)
+        build_dragonflybsd=yes
+        ;;
 esac
 
 if test "$build_windows" = "no"; then
     AM_CPPFLAGS="$AM_CPPFLAGS -D_GNU_SOURCE"
+fi
+
+if test "$build_netbsd" = "yes" || test "$build_dragonflybsd" = "yes"; then
+    AM_LDFLAGS="$AM_LDFLAGS -pthread"
 fi
 
 AM_CONDITIONAL([WINDOWS], [test "$build_windows" = "yes"])
