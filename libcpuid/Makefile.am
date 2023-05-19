@@ -5,7 +5,8 @@ noinst_LTLIBRARIES =
 lib_LTLIBRARIES += libcpuid.la
 libcpuid_la_LDFLAGS = \
 	-export-symbols $(srcdir)/libcpuid.sym \
-	-no-undefined -version-info @LIBCPUID_VERSION_INFO@
+	-no-undefined -version-info @LIBCPUID_VERSION_INFO@ \
+	@LIBCPUID_LDFLAGS@
 libcpuid_la_SOURCES =		\
 	cpuid_main.c		\
 	recog_intel.c		\
