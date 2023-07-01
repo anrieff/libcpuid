@@ -115,6 +115,10 @@ SOURCE=.\recog_amd.c
 
 SOURCE=.\recog_intel.c
 # End Source File
+# Begin Source File
+
+SOURCE=.\recog_centaur.c
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -146,6 +150,10 @@ SOURCE=.\rdtsc.h
 # Begin Source File
 
 SOURCE=.\recog_amd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\recog_centaur.h
 # End Source File
 # Begin Source File
 

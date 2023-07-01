@@ -25,8 +25,9 @@
  */
 #include "libcpuid.h"
 #include "libcpuid_internal.h"
-#include "recog_intel.h"
 #include "recog_amd.h"
+#include "recog_centaur.h"
+#include "recog_intel.h"
 #include "asm-bits.h"
 #include "libcpuid_util.h"
 #ifdef HAVE_CONFIG_H
@@ -1138,6 +1139,9 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 		case VENDOR_HYGON:
 			r = cpuid_identify_amd(raw, data, internal);
 			break;
+		case VENDOR_CENTAUR:
+			r = cpuid_identify_centaur(raw, data, internal);
+			break;
 		default:
 			break;
 	}
@@ -1684,7 +1688,7 @@ void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list)
 			make_list_from_string("UMC x86 CPU", list);
 			break;
 		case VENDOR_CENTAUR:
-			make_list_from_string("VIA C3,VIA C7,VIA Nano", list);
+			cpuid_get_list_centaur(list);
 			break;
 		case VENDOR_RISE:
 			make_list_from_string("Rise mP6", list);

@@ -30,6 +30,9 @@
     <ClCompile Include="recog_amd.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="recog_centaur.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="recog_intel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="recog_amd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="recog_centaur.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="recog_intel.h">

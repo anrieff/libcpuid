@@ -8,8 +8,9 @@ libcpuid_la_LDFLAGS = \
 	-no-undefined -version-info @LIBCPUID_VERSION_INFO@
 libcpuid_la_SOURCES =		\
 	cpuid_main.c		\
-	recog_intel.c		\
 	recog_amd.c		\
+	recog_centaur.c		\
+	recog_intel.c		\
 	rdtsc.c			\
 	asm-bits.c		\
 	libcpuid_util.c		\
@@ -34,8 +35,9 @@ noinst_HEADERS = 		\
 	intel_code_t.h		\
 	libcpuid_internal.h	\
 	libcpuid_util.h		\
-	recog_intel.h		\
 	recog_amd.h		\
+	recog_centaur.h		\
+	recog_intel.h		\
 	rdtsc.h
 
 EXTRA_DIST += libcpuid.sym libcpuid_vc71.vcproj libcpuid_vc10.vcxproj libcpuid_vc10.vcxproj.filters
