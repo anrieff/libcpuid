@@ -1358,7 +1358,7 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 					/* Note: if SMT is disabled by BIOS, smt_divisor will no reflect the current state properly */
 					is_smt_supported = system->cpu_types[cpu_type_index].num_cores > 0 ? (system->cpu_types[cpu_type_index].num_logical_cpus % system->cpu_types[cpu_type_index].num_cores) == 0 : false;
 					smt_divisor      = is_smt_supported ? system->cpu_types[cpu_type_index].num_logical_cpus / system->cpu_types[cpu_type_index].num_cores : 1.0;
-					system->cpu_types[cpu_type_index].num_cores = (int32_t) num_logical_cpus / smt_divisor;
+					system->cpu_types[cpu_type_index].num_cores = (int32_t) (num_logical_cpus / smt_divisor);
 				}
 				/* Save current values in system->cpu_types[cpu_type_index] and reset values for the next purpose */
 				system->cpu_types[cpu_type_index].num_logical_cpus = num_logical_cpus;
