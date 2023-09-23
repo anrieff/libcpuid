@@ -62,21 +62,6 @@ fi
 
 AC_CANONICAL_HOST
 
-AC_MSG_CHECKING([Whether we need POSIX threads])
-AC_COMPILE_IFELSE([
-    AC_LANG_PROGRAM([
-        #if defined(__NetBSD__) || defined(__DragonFly__)
-        #else
-        #  error "no pthreads needed"
-        #endif
-    ])
-], [
-    AC_MSG_RESULT([yes])
-    AC_SUBST([LIBCPUID_LDFLAGS], ["-pthread"])
-], [
-    AC_MSG_RESULT([no])
-])
-
 build_windows=no
 build_netbsd=no
 build_dragonflybsd=no
