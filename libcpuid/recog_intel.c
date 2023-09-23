@@ -440,12 +440,13 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 7, -1, -1, 167,  -1,    -1,    -1, NC, CORE_|_I_|_7  ,_11xxx, "Rocket Lake (Core i7)"    },
 	{  6, 7, -1, -1, 167,  -1,    -1,    -1, NC, CORE_|_I_|_5  ,_11xxx, "Rocket Lake (Core i5)"    },
 	{  6, 7, -1, -1, 167,  -1,    -1,    -1, NC, CORE_|_I_|_3  ,_11xxx, "Rocket Lake (Core i3)"    },
-	{  6, 7, -1, -1, 167,  -1,    -1,    -1, NC, XEON_         ,     0, "Rocket Lake (Xeon-E)"        },
+	{  6, 7, -1, -1, 167,  -1,    -1,    -1, NC, XEON_         ,     0, "Rocket Lake (Xeon-E)"     },
 
 	/* Goldmont Plus CPUs (2017, 14nm, low-power) */
 	{  6, 10, -1, -1, 122,  4,    -1,    -1, NC, PENTIUM_      ,     0, "Gemini Lake (Pentium)"    },
 	{  6, 10, -1, -1, 122,  4,    -1,    -1, NC, CELERON_      ,     0, "Gemini Lake (Celeron)"    },
 	{  6, 10, -1, -1, 122,  2,    -1,    -1, NC, CELERON_      ,     0, "Gemini Lake (Celeron)"    },
+	{  6, 12, -1, -1,  92, -1,    -1,    -1, NC, ATOM_         ,     0, "Apollo Lake (Atom)"       },
 
 	/* Tremont CPUs (2020, 10nm, low-power) */
 	{  6,  6, -1, -1, 150, -1,    -1,    -1, NC, PENTIUM_      ,     0, "Elkhart Lake (Pentium)"   },
