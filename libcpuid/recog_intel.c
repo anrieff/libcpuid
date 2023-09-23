@@ -771,10 +771,11 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 			switch (bs[i]) {
 				case 'H': bits |= _H; break;
 				case 'K': bits |= _K; break;
-				case 'X': bits |= _X; break;
-				case 'P': bits |= _P; break;
 				case 'N': bits |= _N; break;
+				case 'P': bits |= _P; break;
+				case 'S': bits |= _S; break;
 				case 'U': bits |= _U; break;
+				case 'X': bits |= _X; break;
 			}
 		}
 	}
