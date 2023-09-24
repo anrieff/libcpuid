@@ -165,6 +165,7 @@ enum _amd_bits_t {
 	_FX          = LBIT( 25 ),
 	_APU_        = LBIT( 26 ),
 	C86_	     = LBIT( 27 ),
+	_Z           = LBIT( 28 ),
 };
 typedef enum _amd_bits_t amd_bits_t;
 
