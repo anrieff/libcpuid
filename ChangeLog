@@ -160,3 +160,22 @@ Version 0.6.3 (2023-04-02):
 	* Support for Intel Raptor Lake-P
 	* Support for Intel Raptor Lake-U
 	* Support for Intel Rocket Lake-E
+
+Version 0.6.4 (2023-10-08):
+	* Support for AMD Genoa
+	* Support for Intel Sapphire Rapids-WS
+	* Support for Intel Skylake (server)
+	* Support for Intel Cascade Lake
+	* Support for Intel Ice-Lake (server)
+	* Support for Intel Sapphire Rapids-SP
+	* Improve support for Intel Arrandale (Pentium and Celeron)
+	* Fix support for Intel Sandy Bridge-E (Core i7)
+	* Support for AMD Phoenix
+	* Support for Intel Raptor Lake-H/HX
+	* Improve support for Intel Alder-Lake and Raptor-Lake P/U
+	* Fix floating point exception in cpu_identify_all() for unsupported CPU vendor
+	* Initial support for Centaur CPUs (VIA and Zhaoxin)
+	* Support for Intel Apollo Lake
+	* Fix build for NetBSD and DragonFly BSD (#190)
+	* Support for AMD Dragon Range
+	* Support for AMD Ryzen Z1
