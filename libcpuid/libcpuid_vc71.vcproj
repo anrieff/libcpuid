@@ -188,6 +188,9 @@
 				RelativePath=".\asm-bits.h">
 			</File>
 			<File
+				RelativePath=".\centaur_code_t.h">
+			</File>
+			<File
 				RelativePath=".\intel_code_t.h">
 			</File>
 			<File
