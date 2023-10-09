@@ -937,7 +937,7 @@ static bool cpu_ident_apic_id(logical_cpu_t logical_cpu, struct cpu_raw_data_t* 
 	uint8_t subleaf;
 	uint8_t level_type = 0;
 	uint8_t mask_core_shift = 0;
-	uint32_t mask_smt_shift, core_plus_mask_width, package_mask, core_mask, smt_mask;
+	uint32_t mask_smt_shift, core_plus_mask_width, package_mask, core_mask, smt_mask = 0;
 	cpu_vendor_t vendor = VENDOR_UNKNOWN;
 	char vendor_str[VENDOR_STR_MAX];
 
