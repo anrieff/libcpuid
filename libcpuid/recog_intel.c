@@ -319,6 +319,10 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 12, -1, -1, 60,   1,    -1,    -1, NC, CELERON_      ,     0, "Haswell (Celeron)"        },
 	{  6, 15, -1, -1, 63,  -1,    -1,    -1, NC, 0             ,     0, "Haswell-E"                },
 
+	/* Silvermont CPUs (2013, 22nm, low-power) */
+	{  6,  7, -1, -1, 55,   4,    -1,    -1, NC, PENTIUM_      ,     0, "Bay Trail-M (Pentium)"    },
+	{  6,  7, -1, -1, 55,   2,    -1,    -1, NC, CELERON_      ,     0, "Bay Trail-M (Celeron)"    },
+
 	/* Broadwell CPUs (5th gen, 14nm): */
 	{  6,  7, -1, -1, 71,   4,    -1,    -1, NC, CORE_|_I_|_7  ,     0, "Broadwell (Core i7)"      },
 	{  6,  7, -1, -1, 71,   4,    -1,    -1, NC, CORE_|_I_|_5  ,     0, "Broadwell (Core i5)"      },
