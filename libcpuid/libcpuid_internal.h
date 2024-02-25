@@ -145,6 +145,7 @@ enum _intel_bits_t {
 	_MAX_                   = LBIT( 25 ),
 	_J_                     = LBIT( 26 ),
 	_N_                     = LBIT( 27 ),
+	_ULTRA_                 = LBIT( 28 ),
 };
 typedef enum _intel_bits_t intel_bits_t;
 
