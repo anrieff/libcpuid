@@ -109,6 +109,19 @@ struct internal_cache_instances_t {
 	struct internal_cache_id_t htable[NUM_CACHE_TYPES][CACHES_HTABLE_SIZE];
 };
 
+struct internal_type_info_t {
+	cpu_purpose_t purpose;
+	int32_t package_id;
+	struct internal_id_info_t id_info;
+	struct internal_core_instances_t core_instances;
+	struct internal_cache_instances_t cache_instances;
+};
+
+struct internal_type_info_array_t {
+	uint8_t num;
+	struct internal_type_info_t* data;
+};
+
 #define LBIT(x) (((long long) 1) << x)
 
 enum _common_bits_t {
