@@ -71,6 +71,7 @@ enum _intel_model_t {
 	_x2xx,  /* Xeon Bronze/Silver/Gold/Platinum x2xx */
 	_x3xx,  /* Xeon Bronze/Silver/Gold/Platinum x3xx */
 	_x4xx,  /* Xeon Bronze/Silver/Gold/Platinum/Max x4xx */
+	_1xx,   /* Core Ultra [579] 1xx */
 };
 typedef enum _intel_model_t intel_model_t;
 
@@ -536,6 +537,13 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_GOLD_     , _x4xx, "Sapphire Rapids-SP (Xeon Gold)"     },
 	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_SILVER_   , _x4xx, "Sapphire Rapids-SP (Xeon Silver)"   },
 	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_BRONZE_   , _x4xx, "Sapphire Rapids-SP (Xeon Bronze)"   },
+
+	/* Meteor Lake CPUs (2023, 1st Core Ultra gen, Intel 4) => https://en.wikichip.org/wiki/intel/microarchitectures/meteor_lake */
+	{  6, 10, -1, -1, 170, -1,    -1,    -1, NC, CORE_|_ULTRA_|_9|_H, _x1xx, "Meteor Lake-H (Core Ultra 9)" },
+	{  6, 10, -1, -1, 170, -1,    -1,    -1, NC, CORE_|_ULTRA_|_7|_H, _x1xx, "Meteor Lake-H (Core Ultra 7)" },
+	{  6, 10, -1, -1, 170, -1,    -1,    -1, NC, CORE_|_ULTRA_|_5|_H, _x1xx, "Meteor Lake-H (Core Ultra 5)" },
+	{  6, 10, -1, -1, 170, -1,    -1,    -1, NC, CORE_|_ULTRA_|_7|_U, _x1xx, "Meteor Lake-U (Core Ultra 7)" },
+	{  6, 10, -1, -1, 170, -1,    -1,    -1, NC, CORE_|_ULTRA_|_5|_U, _x1xx, "Meteor Lake-U (Core Ultra 5)" },
 	/* F   M   S  EF   EM #cores L2$    L3$  BC       ModelBits ModelCode                                  Name */
 
 
@@ -795,6 +803,27 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 			}
 		}
 	}
+	if ((i = match_pattern(bs, "Core(TM) Ultra [579]")) != 0) {
+		bits |= CORE_ | _ULTRA_;
+		i--;
+		switch (bs[i + 15]) {
+			//case '3': bits |= _3; break;
+			case '5': bits |= _5; break;
+			case '7': bits |= _7; break;
+			case '9': bits |= _9; break;
+		}
+		for(i = i + 16; i < n; i++) {
+			switch (bs[i]) {
+				case 'H': bits |= _H; break;
+				//case 'K': bits |= _K; break;
+				//case 'N': bits |= _N; break;
+				//case 'P': bits |= _P; break;
+				//case 'S': bits |= _S; break;
+				case 'U': bits |= _U; break;
+				//case 'X': bits |= _X; break;
+			}
+		}
+	}
 	else if ((i = match_pattern(bs, "Xeon(R) w[3579]")) != 0) {
 		bits |= XEON_;
 		i--;
@@ -915,6 +944,12 @@ static intel_model_t get_model_code(struct cpu_id_t* data)
 		if ((bs[i] == '1') && (bs[i+1] == '2')) return _12xxx;
 		if ((bs[i] == '1') && (bs[i+1] == '3')) return _13xxx;
 		if ((bs[i] == '1') && (bs[i+1] == '4')) return _14xxx;
+		return UNKNOWN;
+	}
+	else if ((i = match_pattern(bs, "Core(TM) Ultra [579]")) != 0) {
+		i += 16;
+		if (i + 3 >= l) return UNKNOWN;
+		if (bs[i] == '1') return _1xx;
 		return UNKNOWN;
 	}
 	else if ((i = match_pattern(bs, "Xeon(R) [WBSGP]")) != 0) {
