@@ -1448,9 +1448,10 @@ const char* cpu_purpose_str(cpu_purpose_t purpose)
 {
 	const struct { cpu_purpose_t purpose; const char* name; }
 	matchtable[] = {
-		{ PURPOSE_GENERAL,     "general"     },
-		{ PURPOSE_PERFORMANCE, "performance" },
-		{ PURPOSE_EFFICIENCY,  "efficiency"  },
+		{ PURPOSE_GENERAL,       "general"              },
+		{ PURPOSE_PERFORMANCE,   "performance"          },
+		{ PURPOSE_EFFICIENCY,    "efficiency"           },
+		{ PURPOSE_LP_EFFICIENCY, "low-power efficiency" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_PURPOSES) {
