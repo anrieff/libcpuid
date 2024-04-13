@@ -1145,9 +1145,16 @@ cpu_purpose_t cpuid_identify_purpose_intel(struct cpu_raw_data_t* raw)
 	if (EXTRACTS_BIT(raw->basic_cpuid[0x7][EDX], 15) == 0x1) {
 		debugf(3, "Detected Intel CPU hybrid architecture\n");
 		switch (EXTRACTS_BITS(raw->basic_cpuid[0x1a][EAX], 31, 24)) {
-			case 0x20: /* Atom */ return PURPOSE_EFFICIENCY;
-			case 0x40: /* Core */ return PURPOSE_PERFORMANCE;
-			default:              return PURPOSE_GENERAL;
+			case 0x20: /* Atom */
+				/* Acccording to Ramyer M. from Intel, LP E-Cores do not have a L3 cache
+				   https://community.intel.com/t5/Processors/Detecting-LP-E-Cores-on-Meteor-Lake-in-software/m-p/1584555/highlight/true#M70732
+				   If sub-leaf 3 is set, it is an E-Cores.
+				*/
+				return (EXTRACTS_BITS(raw->intel_fn4[3][EAX], 31, 0)) ? PURPOSE_EFFICIENCY : PURPOSE_LP_EFFICIENCY;
+			case 0x40: /* Core */
+				return PURPOSE_PERFORMANCE;
+			default:
+				return PURPOSE_GENERAL;
 		}
 	}
 

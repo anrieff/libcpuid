@@ -155,11 +155,12 @@ typedef enum {
  * @brief CPU purpose
  */
 typedef enum {
-	PURPOSE_GENERAL = 0,  /*!< general purpose CPU */
-	PURPOSE_PERFORMANCE,  /*!< performance CPU */
-	PURPOSE_EFFICIENCY,   /*!< efficiency CPU */
+	PURPOSE_GENERAL = 0,   /*!< general purpose CPU */
+	PURPOSE_PERFORMANCE,   /*!< performance CPU */
+	PURPOSE_EFFICIENCY,    /*!< efficiency CPU */
+	PURPOSE_LP_EFFICIENCY, /*!< low-power efficiency CPU */
 
-	NUM_CPU_PURPOSES,     /*!< Valid CPU purpose ids: 0..NUM_CPU_PURPOSES - 1 */
+	NUM_CPU_PURPOSES,      /*!< Valid CPU purpose ids: 0..NUM_CPU_PURPOSES - 1 */
 } cpu_purpose_t;
 #define NUM_CPU_PURPOSES NUM_CPU_PURPOSES
 
