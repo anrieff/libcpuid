@@ -318,7 +318,8 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 23,  104,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Lucienne)"            },
 	{ 15, -1, -1, 23,   71,  -1,    -1,    -1, NC, 0                   ,     0, "Desktop Kit (Zen 2)"           }, /* 4700S Desktop Kit */
 	{ 15, -1, -1, 23,  132,  -1,    -1,    -1, NC, 0                   ,     0, "Desktop Kit (Zen 2)"           }, /* 4800S Desktop Kit */
-	{ 15, -1,  2, 23,  144,  -1,    -1,    -1, NC, 0                   ,     0, "Van Gogh"                      },
+	{ 15, -1,  2, 23,  144,  -1,    -1,    -1, NC, 0                   ,     0, "Van Gogh"                      }, /* Custom APU 0405 */
+	{ 15, -1,  0, 23,  145,  -1,    -1,    -1, NC, 0                   ,     0, "Van Gogh"                      }, /* Custom APU 0932 */
 	{ 15, -1, -1, 23,  160,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Mendocino)"           },
 	{ 15, -1, -1, 23,  160,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Mendocino)"           },
 	{ 15, -1, -1, 23,  160,  -1,    -1,    -1, NC, ATHLON_             ,     0, "Athlon (Mendocino)"            },
