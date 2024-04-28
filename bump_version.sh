@@ -56,3 +56,5 @@ sed -i "s|\\\version  $OLD_VERSION|\\\version  $NEW_VERSION|" "$GIT_DIR/libcpuid
 
 echo "Model from https://github.com/anrieff/libcpuid/commit/a6123e8139ce73e26b5711c3e119b5b2bc9c9378"
 echo -e "Also, make appropriate changes in follow files:\n- ChangeLog\n- configure.ac\n- libcpuid/libcpuid.h"
+echo -e "\nCommits since last tag:"
+git log --graph --decorate --oneline --color --first-parent master $(git tag | tail -n1)..master
