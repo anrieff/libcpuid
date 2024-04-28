@@ -79,7 +79,7 @@ Users
 
 So far, I'm aware of the following projects which utilize libcpuid (listed alphabetically):
 
-* CPU-X (https://github.com/X0rg/CPU-X)
+* CPU-X (https://github.com/TheTumultuousUnicornOfDarkness/CPU-X)
 * fre:ac (https://www.freac.org/)
 * I-Nex (https://github.com/i-nex/I-Nex)
 * Multiprecision Computing Toolbox for MATLAB (https://www.advanpix.com/)
