@@ -179,3 +179,14 @@ Version 0.6.4 (2023-10-08):
 	* Fix build for NetBSD and DragonFly BSD (#190)
 	* Support for AMD Dragon Range
 	* Support for AMD Ryzen Z1
+
+Version 0.6.5 (2024-04-28):
+	* Support for Intel Bay Trail-M
+	* Support for Intel Bay Trail-T
+	* Support for Intel Bay Trail-D
+	* Support for AMD Storm Peak
+	* Support for Intel Raport Lake Refresh
+	* Support heterogeneous RAW dumps in cpu_identify_all()
+	* Support for Intel Meteor Lake, including detection of LP E-Cores
+	* Support for Intel Emerald Rapids-SP
+	* Support for more AMD Van Gogh

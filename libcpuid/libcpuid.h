@@ -29,7 +29,7 @@
  * \file     libcpuid.h
  * \author   Veselin Georgiev
  * \date     Oct 2008
- * \version  0.6.4
+ * \version  0.6.5
  *
  * Version history:
  *
@@ -77,6 +77,8 @@
  * * 0.6.4 (2023-10-08): A lot of DB updates, add support for Centaur CPUs (VIA and Zhaoxin),
  *                       fix floating point exception in cpu_identify_all(),
  *                       fix build for NetBSD and DragonFly BSD.
+ * * 0.6.5 (2024-04-28): A lot of DB updates, support heterogeneous RAW dumps in cpu_identify_all(),
+ *                       detection of LP E-Cores for Intel CPUs.
  */
 
 /** @mainpage A simple libcpuid introduction
