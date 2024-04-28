@@ -71,6 +71,7 @@ enum _intel_model_t {
 	_x2xx,  /* Xeon Bronze/Silver/Gold/Platinum x2xx */
 	_x3xx,  /* Xeon Bronze/Silver/Gold/Platinum x3xx */
 	_x4xx,  /* Xeon Bronze/Silver/Gold/Platinum/Max x4xx */
+	_x5xx,  /* Xeon Bronze/Silver/Gold/Platinum x5xx */
 	_1xx,   /* Core Ultra [579] 1xx */
 };
 typedef enum _intel_model_t intel_model_t;
@@ -538,6 +539,12 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_SILVER_   , _x4xx, "Sapphire Rapids-SP (Xeon Silver)"   },
 	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_BRONZE_   , _x4xx, "Sapphire Rapids-SP (Xeon Bronze)"   },
 
+	/* Emerald Rapids CPUs (2023, 5th Xeon Scalable gen, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/emerald_rapids */
+	{  6, 15, -1, -1, 207, -1,    -1,    -1, NC, XEON_|_PLATINIUM_, _x5xx, "Emerald Rapids-SP (Xeon Platinum)" }, // Xeon Platinum (8500)
+	{  6, 15, -1, -1, 207, -1,    -1,    -1, NC, XEON_|_GOLD_     , _x5xx, "Emerald Rapids-SP (Xeon Gold)"     }, // Xeon Gold (5500 and 6500)
+	{  6, 15, -1, -1, 207, -1,    -1,    -1, NC, XEON_|_SILVER_   , _x5xx, "Emerald Rapids-SP (Xeon Silver)"   }, // Xeon Silver (4500)
+	{  6, 15, -1, -1, 207, -1,    -1,    -1, NC, XEON_|_BRONZE_   , _x5xx, "Emerald Rapids-SP (Xeon Bronze)"   }, // Xeon Bronze (3500)
+
 	/* Meteor Lake CPUs (2023, 1st Core Ultra gen, Intel 4) => https://en.wikichip.org/wiki/intel/microarchitectures/meteor_lake */
 	{  6, 10, -1, -1, 170, -1,    -1,    -1, NC, CORE_|_ULTRA_|_9|_H, _x1xx, "Meteor Lake-H (Core Ultra 9)" },
 	{  6, 10, -1, -1, 170, -1,    -1,    -1, NC, CORE_|_ULTRA_|_7|_H, _x1xx, "Meteor Lake-H (Core Ultra 7)" },
@@ -966,6 +973,7 @@ static intel_model_t get_model_code(struct cpu_id_t* data)
 		if (bs[i] == '2') return _x2xx;
 		if (bs[i] == '3') return _x3xx;
 		if (bs[i] == '4') return _x4xx;
+		if (bs[i] == '5') return _x5xx;
 		return UNKNOWN;
 	}
 
