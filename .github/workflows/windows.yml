@@ -25,10 +25,10 @@ jobs:
       PTS: v142
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Build with MSBuild
       run: |
@@ -60,7 +60,7 @@ jobs:
         DESTDIR: ${{ github.workspace }}/installdir
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.platform.name }}
         path: installdir/*
