@@ -62,5 +62,24 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.platform.name }}
+        name: ${{ matrix.platform.name }}-${{ matrix.config }}
         path: installdir/*
+
+
+  merge_win_artifacts:
+    name: Merge artifacts
+    runs-on: windows-latest
+    needs: build_win
+    strategy:
+      matrix:
+        platform:
+          - win32
+          - win64
+
+    steps:
+    - name: Merge artifacts for ${{ matrix.platform }}
+      uses: actions/upload-artifact/merge@v4
+      with:
+        name: ${{ matrix.platform }}
+        pattern: ${{ matrix.platform }}-*
+        delete-merged: true
