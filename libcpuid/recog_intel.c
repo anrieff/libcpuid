@@ -533,7 +533,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_W_|_7     , _x4xx, "Sapphire Rapids-WS (Xeon w7)"       },
 	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_W_|_5     , _x4xx, "Sapphire Rapids-WS (Xeon w5)"       },
 	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_W_|_3     , _x4xx, "Sapphire Rapids-WS (Xeon w3)"       },
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_MAX_      , _x4xx, "Sapphire Rapids-SP (Xeon Max)"      },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_MAX_      , _x4xx, "Sapphire Rapids-HBM (Xeon Max)"     },
 	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_PLATINIUM_, _x4xx, "Sapphire Rapids-SP (Xeon Platinum)" },
 	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_GOLD_     , _x4xx, "Sapphire Rapids-SP (Xeon Gold)"     },
 	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_SILVER_   , _x4xx, "Sapphire Rapids-SP (Xeon Silver)"   },
