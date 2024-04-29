@@ -40,5 +40,9 @@ cpuid_tool/x32
 cpuid_tool/x64
 *.vcxproj.user
 build
-docs
+/docs
 .vscode
+*__pycache__
+python/docs/_build
+python/dist
+*.egg-info

@@ -96,6 +96,13 @@ Below, the full lists of repositories:
 
 * Vcpkg: `vcpkg install cpuid`
 
+
+### Python bindings
+
+The libcpuid library features Python bindings, which can be installed as a library
+using `python -m pip install libcpuid`.
+See [python/README.md](python/README.md) for details.
+
 ## Contributing
 
 Refer to the [dedicated page](CONTRIBUTING.md).

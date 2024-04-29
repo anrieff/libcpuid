@@ -1,0 +1,15 @@
+# Read the Docs configuration file
+
+version: 2
+
+build:
+  os: ubuntu-22.04
+  tools:
+    python: latest
+
+sphinx:
+  configuration: python/docs/conf.py
+
+python:
+  install:
+    - requirements: python/docs/requirements.txt
