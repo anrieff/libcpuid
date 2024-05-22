@@ -96,6 +96,7 @@ struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 	handle = (struct msr_driver_t*) malloc(sizeof(struct msr_driver_t));
 	if (!handle) {
 		cpuid_set_error(ERR_NO_MEM);
+		close(fd);
 		return NULL;
 	}
 	handle->fd = fd;
@@ -1069,8 +1070,10 @@ int msr_serialize_raw_data(struct msr_driver_t* handle, const char* filename)
 
 	/* Get cached decoded CPUID information */
 	id = get_cached_cpuid();
-	if (id->vendor == VENDOR_UNKNOWN)
+	if (id->vendor == VENDOR_UNKNOWN) {
+		fclose(f);
 		return cpuid_get_error();
+	}
 
 	/* Get CPU stock speed */
 	if (cpu_clock == 0)
@@ -1082,7 +1085,7 @@ int msr_serialize_raw_data(struct msr_driver_t* handle, const char* filename)
 		case VENDOR_HYGON:
 		case VENDOR_AMD:   msr = amd_msr;   break;
 		case VENDOR_INTEL: msr = intel_msr; break;
-		default: return cpuid_set_error(ERR_CPU_UNKN);
+		default: fclose(f); return cpuid_set_error(ERR_CPU_UNKN);
 	}
 
 	/* Print raw MSR values */
