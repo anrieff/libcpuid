@@ -721,7 +721,7 @@ static int decode_intel_extended_topology(struct cpu_raw_data_t* raw, struct cpu
 {
 	int i, level_type, num_smt = -1, num_core = -1;
 
-	for (i = 0; (raw->intel_fn11[i][EAX] != 0x0) && (raw->intel_fn11[i][EBX] != 0x0) && (i < MAX_INTELFN11_LEVEL); i++) {
+	for (i = 0; (i < MAX_INTELFN11_LEVEL) && (raw->intel_fn11[i][EAX] != 0x0) && (raw->intel_fn11[i][EBX] != 0x0); i++) {
 		level_type = EXTRACTS_BITS(raw->intel_fn11[i][ECX], 15, 8);
 		switch (level_type) {
 			case 0x01:
