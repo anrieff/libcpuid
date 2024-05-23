@@ -1748,7 +1748,7 @@ hypervisor_vendor_t cpuid_get_hypervisor(struct cpu_raw_data_t* raw, struct cpu_
 	};
 
 	if (!data) {
-		if ((r = cpu_identify(raw, data)) < 0)
+		if ((r = cpu_identify(raw, &mydata)) < 0)
 			return HYPERVISOR_UNKNOWN;
 		data = &mydata;
 	}
