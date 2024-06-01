@@ -364,6 +364,13 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 25,  116,  -1,    -1,    -1, NC, RYZEN_|_5|_U        ,     0, "Ryzen 5 (Phoenix)"             },
 	{ 15, -1, -1, 25,  116,  -1,    -1,    -1, NC, RYZEN_|_3|_U        ,     0, "Ryzen 3 (Phoenix)"             },
 	{ 15, -1, -1, 25,  116,  -1,    -1,    -1, NC, RYZEN_|_Z           ,     0, "Ryzen Z1 (Phoenix)"            },
+	/*  => 8040 series, Zen 4/RDNA3/XDNA based */
+	{ 15, -1, -1, 25,  117,  -1,    -1,    -1, NC, RYZEN_|_9|_H        ,     0, "Ryzen 9 (Hawk Point)"          },
+	{ 15, -1, -1, 25,  117,  -1,    -1,    -1, NC, RYZEN_|_7|_H        ,     0, "Ryzen 7 (Hawk Point)"          },
+	{ 15, -1, -1, 25,  117,  -1,    -1,    -1, NC, RYZEN_|_7|_U        ,     0, "Ryzen 7 (Hawk Point)"          },
+	{ 15, -1, -1, 25,  117,  -1,    -1,    -1, NC, RYZEN_|_5|_H        ,     0, "Ryzen 5 (Hawk Point)"          },
+	{ 15, -1, -1, 25,  117,  -1,    -1,    -1, NC, RYZEN_|_5|_U        ,     0, "Ryzen 5 (Hawk Point)"          },
+	{ 15, -1, -1, 25,  117,  -1,    -1,    -1, NC, RYZEN_|_3|_U        ,     0, "Ryzen 3 (Hawk Point)"          },
 	/* F   M   S  EF    EM  #cores  L2$   L3$  BC  ModelBits          ModelCode  Name                           */
 };
 
