@@ -132,10 +132,12 @@ enum _common_bits_t {
 	_5                      = LBIT(  4 ),
 	_7                      = LBIT(  5 ),
 	_9                      = LBIT(  6 ),
-	_H                      = LBIT(  7 ),
+	_H                      = LBIT(  7 ), // powerful mobile processors for laptop
 	_S                      = LBIT(  8 ),
-	_U                      = LBIT(  9 ),
-	_X                      = LBIT( 10 ),
+	_U                      = LBIT(  9 ), // ultra-low power
+	_X                      = LBIT( 10 ), // CPU with great amount of power
+	_F                      = LBIT( 11 ), // CPU that doesn’t have integrated graphics
+	_G                      = LBIT( 12 ), // CPU with additional built-in integrated graphics
 };
 
 // additional detection bits for Intel CPUs:
@@ -146,7 +148,7 @@ enum _intel_bits_t {
 	_I_                     = LBIT( 13 ),
 	XEON_                   = LBIT( 14 ),
 	ATOM_                   = LBIT( 15 ),
-	_K                      = LBIT( 16 ),
+	_K                      = LBIT( 16 ), // an unlocked desktop processor that allows for overclocking
 	_P                      = LBIT( 17 ),
 	_N                      = LBIT( 18 ),
 	_W_                     = LBIT( 19 ),
