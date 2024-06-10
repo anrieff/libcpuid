@@ -113,6 +113,10 @@ SOURCE=.\recog_amd.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\recog_arm.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\recog_intel.c
 # End Source File
 # Begin Source File
@@ -150,6 +154,10 @@ SOURCE=.\rdtsc.h
 # Begin Source File
 
 SOURCE=.\recog_amd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\recog_arm.h
 # End Source File
 # Begin Source File
 

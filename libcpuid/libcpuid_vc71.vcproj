@@ -171,6 +171,9 @@
 				RelativePath=".\recog_amd.c">
 			</File>
 			<File
+				RelativePath=".\recog_arm.c">
+			</File>
+			<File
 				RelativePath=".\recog_centaur.c">
 			</File>
 			<File
@@ -213,6 +216,9 @@
 			</File>
 			<File
 				RelativePath=".\recog_amd.h">
+			</File>
+			<File
+				RelativePath=".\recog_arm.h">
 			</File>
 			<File
 				RelativePath=".\recog_centaur.h">

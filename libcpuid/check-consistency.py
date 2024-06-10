@@ -108,7 +108,7 @@ firstError = True
 
 files_code = {}
 
-rexp = re.compile('\t+{ *[0-9]+, (CPU_FEATURE_[^ }]+).*')
+rexp = re.compile('.*(CPU_FEATURE_[^ }]+).*')
 
 for fn in glob.glob("%s/*.c" % sys.argv[1]):
 	f = open(fn, "rt")

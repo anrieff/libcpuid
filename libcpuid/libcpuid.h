@@ -135,6 +135,24 @@ typedef enum {
 	VENDOR_SIS,        /*!< x86 CPU by SiS */
 	VENDOR_NSC,        /*!< x86 CPU by National Semiconductor */
 	VENDOR_HYGON,	   /*!< Hygon CPU */
+	VENDOR_ARM,        /*!< ARM CPU */
+	VENDOR_BROADCOM,   /*!< Broadcom Corporation CPU */
+	VENDOR_CAVIUM,     /*!< Cavium Inc. CPU */
+	VENDOR_DEC,        /*!< Digital Equipment Corporation CPU */
+	VENDOR_FUJITSU,    /*!< Fujitsu Ltd. CPU */
+	VENDOR_HISILICON,  /*!< HiSilicon Technology Co., Ltd. CPU */
+	VENDOR_INFINEON,   /*!< Infineon Technologies AG CPU */
+	VENDOR_FREESCALE,  /*!< Motorola or Freescale Semiconductor Inc. CPU */
+	VENDOR_NVIDIA,     /*!< NVIDIA Corporation CPU */
+	VENDOR_APM,        /*!< Applied Micro Circuits Corporation CPU */
+	VENDOR_QUALCOMM,   /*!< Qualcomm Inc. CPU */
+	VENDOR_SAMSUNG,    /*!< Samsung Group CPU */
+	VENDOR_MARVELL,    /*!< Marvell International Ltd. CPU */
+	VENDOR_APPLE,      /*!< Apple Inc. CPU */
+	VENDOR_FARADAY,    /*!< Faraday Technology CPU */
+	VENDOR_MICROSOFT,  /*!< Microsoft Corporation CPU */
+	VENDOR_PHYTIUM,    /*!< Phytium Technology Co., Ltd CPU */
+	VENDOR_AMPERE,     /*!< Ampere Computing CPU */
 
 	NUM_CPU_VENDORS,   /*!< Valid CPU vendor ids: 0..NUM_CPU_VENDORS - 1 */
 	VENDOR_UNKNOWN = -1,
@@ -224,6 +242,38 @@ struct cpu_raw_data_t {
 	 * this stores the result of CPUID with eax = 8000001Dh and
 	 *  ecx = 0, 1, 2... */
 	uint32_t amd_fn8000001dh[MAX_AMDFN8000001DH_LEVEL][NUM_REGS];
+
+	/** when then CPU is ARM-based and supports MIDR
+	 * (Main ID Register) */
+	uint64_t arm_midr;
+
+	/** when then CPU is ARM-based and supports MPIDR
+	 * (Multiprocessor Affinity Register) */
+	uint64_t arm_mpidr;
+
+	/** when then CPU is ARM-based and supports REVIDR
+	 * (Revision ID Register) */
+	uint64_t arm_revidr;
+
+	/** when then CPU is ARM-based and supports ID_AA64DFR*
+	 * (AArch64 Debug Feature Register) */
+	uint64_t arm_id_aa64dfr[MAX_ARM_ID_AA64DFR_REGS];
+
+	/** when then CPU is ARM-based and supports D_AA64ISAR*
+	 * (AArch64 Instruction Set Attribute Register) */
+	uint64_t arm_id_aa64isar[MAX_ARM_ID_AA64ISAR_REGS];
+
+	/** when then CPU is ARM-based and supports ID_AA64MMFR*
+	 * (AArch64 Memory Model Feature Register) */
+	uint64_t arm_id_aa64mmfr[MAX_ARM_ID_AA64MMFR_REGS];
+
+	/** when then CPU is ARM-based and supports ID_AA64PFR*
+	 * (AArch64 Processor Feature Register) */
+	uint64_t arm_id_aa64pfr[MAX_ARM_ID_AA64PFR_REGS];
+
+	/** when then CPU is ARM-based and supports ID_AA64ZFR*
+	 * (SVE Feature ID register) */
+	uint64_t arm_id_aa64zfr[MAX_ARM_ID_AA64ZFR_REGS];
 };
 
 /**
@@ -495,6 +545,21 @@ struct cpu_id_t {
 
 	/** processor type purpose, relevant in case of hybrid CPU (e.g. PURPOSE_PERFORMANCE) */
 	cpu_purpose_t purpose;
+
+	/** ARM CPU implementer code */
+	uint8_t implementer;
+
+	/** ARM CPU architecture version */
+	uint8_t architecture_version;
+
+	/** ARM CPU variant number */
+	uint8_t variant;
+
+	/** ARM CPU primary part number */
+	uint16_t part_num;
+
+	/** ARM CPU revision number */
+	uint8_t revision;
 };
 
 /**
@@ -658,6 +723,23 @@ typedef enum {
 	CPU_FEATURE_AVX512VBMI, /*!< AVX-512 Vector Bit ManipulationInstructions (version 1) */
 	CPU_FEATURE_AVX512VBMI2, /*!< AVX-512 Vector Bit ManipulationInstructions (version 2) */
 	CPU_FEATURE_HYPERVISOR, /*!< Hypervisor present (always zero on physical CPUs) */
+	CPU_FEATURE_ASID16, /*!< ARM: 16 bit ASID (ARMv8.0 architecture extension) */
+	CPU_FEATURE_ADVSIMD, /*!< ARM: Advanced SIMD Extension (ARMv8.0 architecture extension) */
+	CPU_FEATURE_CRC32, /*!< ARM: CRC32 instructions (ARMv8.0 architecture extension) */
+	CPU_FEATURE_CSV2_1P1, /*!< ARM: Cache Speculation Variant 2 (ARMv8.0 architecture extension) */
+	CPU_FEATURE_CSV2_1P2, /*!< ARM: Cache Speculation Variant 2 version 1.2 (ARMv8.0 architecture extension) */
+	CPU_FEATURE_CSV2_2, /*!< ARM: Cache Speculation Variant 2 version 2 (ARMv8.0 architecture extension) */
+	CPU_FEATURE_CSV2_3, /*!< ARM: Cache Speculation Variant 2 version 3 (ARMv8.0 architecture extension) */
+	CPU_FEATURE_DOUBLELOCK, /*!< ARM: Double Lock (ARMv8.0 architecture extension) */
+	CPU_FEATURE_ETS2, /*!< ARM: Enhanced Translation Synchronization (ARMv8.0 architecture extension) */
+	CPU_FEATURE_FP, /*!< ARM: Floating Point extensions (ARMv8.0 architecture extension) */
+	CPU_FEATURE_MIXEDEND, /*!< ARM: Mixed-endian support at EL0 (ARMv8.0 architecture extension) */
+	CPU_FEATURE_PMULL, /*!< ARM: Advanced SIMD PMULL instructions (ARMv8.0 architecture extension) */
+	CPU_FEATURE_PMUV3, /*!< ARM: PMU extension version 3 (ARMv8.0 architecture extension) */
+	CPU_FEATURE_SHA1, /*!< ARM: Advanced SIMD SHA1 instructions (ARMv8.0 architecture extension) */
+	CPU_FEATURE_SHA256, /*!< ARM: Advanced SIMD SHA256 instructions (ARMv8.0 architecture extension) */
+	CPU_FEATURE_SHA512, /*!< ARM: Advanced SIMD SHA512 instructions (ARMv8.1 architecture extension) */
+	CPU_FEATURE_SHA3, /*!< ARM: Advanced SIMD SHA3 instructions (ARMv8.2 architecture extension) */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

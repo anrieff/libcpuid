@@ -548,7 +548,7 @@ static void print_cpulist(void)
 	struct cpu_list_t list;
 	const struct { const char *name; cpu_vendor_t vendor; } cpu_vendors[] = {
 		{ "Intel", VENDOR_INTEL },
-		{ "AMD", VENDOR_AMD },
+		{ "AMD/Hygon", VENDOR_AMD },
 		{ "Cyrix", VENDOR_CYRIX },
 		{ "NexGen", VENDOR_NEXGEN },
 		{ "Transmeta", VENDOR_TRANSMETA },
@@ -557,6 +557,24 @@ static void print_cpulist(void)
 		{ "Rise", VENDOR_RISE },
 		{ "SiS", VENDOR_SIS },
 		{ "NSC", VENDOR_NSC },
+		{ "ARM", VENDOR_ARM },
+		{ "Broadcom", VENDOR_BROADCOM },
+		{ "Cavium", VENDOR_CAVIUM },
+		{ "DEC", VENDOR_DEC },
+		{ "FUJITSU", VENDOR_FUJITSU },
+		{ "HiSilicon", VENDOR_HISILICON },
+		{ "Infineon", VENDOR_INFINEON },
+		{ "Motorola/Freescale", VENDOR_FREESCALE },
+		{ "NVIDIA" , VENDOR_NVIDIA },
+		{ "APM", VENDOR_APM },
+		{ "Qualcomm", VENDOR_QUALCOMM },
+		{ "Samsung", VENDOR_SAMSUNG },
+		{ "Marvell" , VENDOR_MARVELL },
+		{ "Apple", VENDOR_APPLE },
+		{ "Faraday", VENDOR_FARADAY },
+		{ "Microsoft" , VENDOR_MICROSOFT },
+		{ "Phytium", VENDOR_PHYTIUM },
+		{ "Ampere" , VENDOR_AMPERE },
 	};
 	for (i = 0; i < sizeof(cpu_vendors)/sizeof(cpu_vendors[0]); i++) {
 		fprintf(fout, "-----%s-----\n", cpu_vendors[i].name);
@@ -732,37 +750,48 @@ int main(int argc, char** argv)
 			fprintf(fout, "  vendor_str : `%s'\n", data.cpu_types[cpu_type_index].vendor_str);
 			fprintf(fout, "  vendor id  : %d\n", (int) data.cpu_types[cpu_type_index].vendor);
 			fprintf(fout, "  brand_str  : `%s'\n", data.cpu_types[cpu_type_index].brand_str);
-			fprintf(fout, "  family     : %d (%02Xh)\n", data.cpu_types[cpu_type_index].family, data.cpu_types[cpu_type_index].family);
-			fprintf(fout, "  model      : %d (%02Xh)\n", data.cpu_types[cpu_type_index].model, data.cpu_types[cpu_type_index].model);
-			fprintf(fout, "  stepping   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].stepping, data.cpu_types[cpu_type_index].stepping);
-			fprintf(fout, "  ext_family : %d (%02Xh)\n", data.cpu_types[cpu_type_index].ext_family, data.cpu_types[cpu_type_index].ext_family);
-			fprintf(fout, "  ext_model  : %d (%02Xh)\n", data.cpu_types[cpu_type_index].ext_model, data.cpu_types[cpu_type_index].ext_model);
+			if (data.cpu_types[cpu_type_index].architecture == ARCHITECTURE_X86) {
+				fprintf(fout, "  family     : %d (%02Xh)\n", data.cpu_types[cpu_type_index].family, data.cpu_types[cpu_type_index].family);
+				fprintf(fout, "  model      : %d (%02Xh)\n", data.cpu_types[cpu_type_index].model, data.cpu_types[cpu_type_index].model);
+				fprintf(fout, "  stepping   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].stepping, data.cpu_types[cpu_type_index].stepping);
+				fprintf(fout, "  ext_family : %d (%02Xh)\n", data.cpu_types[cpu_type_index].ext_family, data.cpu_types[cpu_type_index].ext_family);
+				fprintf(fout, "  ext_model  : %d (%02Xh)\n", data.cpu_types[cpu_type_index].ext_model, data.cpu_types[cpu_type_index].ext_model);
+			}
+			else if (data.cpu_types[cpu_type_index].architecture == ARCHITECTURE_ARM) {
+				fprintf(fout, "  implementer: %d (%02Xh)\n", data.cpu_types[cpu_type_index].implementer, data.cpu_types[cpu_type_index].implementer);
+				fprintf(fout, "  arch_ver   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].architecture_version, data.cpu_types[cpu_type_index].architecture_version);
+				fprintf(fout, "  variant    : %d (%02Xh)\n", data.cpu_types[cpu_type_index].variant, data.cpu_types[cpu_type_index].variant);
+				fprintf(fout, "  part_num   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].part_num, data.cpu_types[cpu_type_index].part_num);
+				fprintf(fout, "  revision   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].revision, data.cpu_types[cpu_type_index].revision);
+			}
 			fprintf(fout, "  num_cores  : %d\n", data.cpu_types[cpu_type_index].num_cores);
 			fprintf(fout, "  num_logical: %d\n", data.cpu_types[cpu_type_index].num_logical_cpus);
 			fprintf(fout, "  tot_logical: %d\n", data.cpu_types[cpu_type_index].total_logical_cpus);
 			fprintf(fout, "  affi_mask  : 0x%s\n", affinity_mask_str(&data.cpu_types[cpu_type_index].affinity_mask));
-			fprintf(fout, "  L1 D cache : %d KB\n", data.cpu_types[cpu_type_index].l1_data_cache);
-			fprintf(fout, "  L1 I cache : %d KB\n", data.cpu_types[cpu_type_index].l1_instruction_cache);
-			fprintf(fout, "  L2 cache   : %d KB\n", data.cpu_types[cpu_type_index].l2_cache);
-			fprintf(fout, "  L3 cache   : %d KB\n", data.cpu_types[cpu_type_index].l3_cache);
-			fprintf(fout, "  L4 cache   : %d KB\n", data.cpu_types[cpu_type_index].l4_cache);
-			fprintf(fout, "  L1D assoc. : %d-way\n", data.cpu_types[cpu_type_index].l1_data_assoc);
-			fprintf(fout, "  L1I assoc. : %d-way\n", data.cpu_types[cpu_type_index].l1_instruction_assoc);
-			fprintf(fout, "  L2 assoc.  : %d-way\n", data.cpu_types[cpu_type_index].l2_assoc);
-			fprintf(fout, "  L3 assoc.  : %d-way\n", data.cpu_types[cpu_type_index].l3_assoc);
-			fprintf(fout, "  L4 assoc.  : %d-way\n", data.cpu_types[cpu_type_index].l4_assoc);
-			fprintf(fout, "  L1D line sz: %d bytes\n", data.cpu_types[cpu_type_index].l1_data_cacheline);
-			fprintf(fout, "  L1I line sz: %d bytes\n", data.cpu_types[cpu_type_index].l1_instruction_cacheline);
-			fprintf(fout, "  L2 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l2_cacheline);
-			fprintf(fout, "  L3 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l3_cacheline);
-			fprintf(fout, "  L4 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l4_cacheline);
-			fprintf(fout, "  L1D inst.  : %d\n", data.cpu_types[cpu_type_index].l1_data_instances);
-			fprintf(fout, "  L1I inst.  : %d\n", data.cpu_types[cpu_type_index].l1_instruction_instances);
-			fprintf(fout, "  L2 inst.   : %d\n", data.cpu_types[cpu_type_index].l2_instances);
-			fprintf(fout, "  L3 inst.   : %d\n", data.cpu_types[cpu_type_index].l3_instances);
-			fprintf(fout, "  L4 inst.   : %d\n", data.cpu_types[cpu_type_index].l4_instances);
-			fprintf(fout, "  SSE units  : %d bits (%s)\n", data.cpu_types[cpu_type_index].sse_size, data.cpu_types[cpu_type_index].detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
-			fprintf(fout, "  code name  : `%s'\n", data.cpu_types[cpu_type_index].cpu_codename);
+			if (data.cpu_types[cpu_type_index].architecture == ARCHITECTURE_X86) {
+				fprintf(fout, "  L1 D cache : %d KB\n", data.cpu_types[cpu_type_index].l1_data_cache);
+				fprintf(fout, "  L1 I cache : %d KB\n", data.cpu_types[cpu_type_index].l1_instruction_cache);
+				fprintf(fout, "  L2 cache   : %d KB\n", data.cpu_types[cpu_type_index].l2_cache);
+				fprintf(fout, "  L3 cache   : %d KB\n", data.cpu_types[cpu_type_index].l3_cache);
+				fprintf(fout, "  L4 cache   : %d KB\n", data.cpu_types[cpu_type_index].l4_cache);
+				fprintf(fout, "  L1D assoc. : %d-way\n", data.cpu_types[cpu_type_index].l1_data_assoc);
+				fprintf(fout, "  L1I assoc. : %d-way\n", data.cpu_types[cpu_type_index].l1_instruction_assoc);
+				fprintf(fout, "  L2 assoc.  : %d-way\n", data.cpu_types[cpu_type_index].l2_assoc);
+				fprintf(fout, "  L3 assoc.  : %d-way\n", data.cpu_types[cpu_type_index].l3_assoc);
+				fprintf(fout, "  L4 assoc.  : %d-way\n", data.cpu_types[cpu_type_index].l4_assoc);
+				fprintf(fout, "  L1D line sz: %d bytes\n", data.cpu_types[cpu_type_index].l1_data_cacheline);
+				fprintf(fout, "  L1I line sz: %d bytes\n", data.cpu_types[cpu_type_index].l1_instruction_cacheline);
+				fprintf(fout, "  L2 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l2_cacheline);
+				fprintf(fout, "  L3 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l3_cacheline);
+				fprintf(fout, "  L4 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l4_cacheline);
+				fprintf(fout, "  L1D inst.  : %d\n", data.cpu_types[cpu_type_index].l1_data_instances);
+				fprintf(fout, "  L1I inst.  : %d\n", data.cpu_types[cpu_type_index].l1_instruction_instances);
+				fprintf(fout, "  L2 inst.   : %d\n", data.cpu_types[cpu_type_index].l2_instances);
+				fprintf(fout, "  L3 inst.   : %d\n", data.cpu_types[cpu_type_index].l3_instances);
+				fprintf(fout, "  L4 inst.   : %d\n", data.cpu_types[cpu_type_index].l4_instances);
+				fprintf(fout, "  SSE units  : %d bits (%s)\n", data.cpu_types[cpu_type_index].sse_size, data.cpu_types[cpu_type_index].detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
+				fprintf(fout, "  code name  : `%s'\n", data.cpu_types[cpu_type_index].cpu_codename);
+			}
 			fprintf(fout, "  features   :");
 			/*
 			* Here we enumerate all CPU feature bits, and when a feature

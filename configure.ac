@@ -67,6 +67,8 @@ AC_CANONICAL_HOST
 build_windows=no
 build_netbsd=no
 build_dragonflybsd=no
+build_freebsd=no
+build_linux=no
 
 case "${host_os}" in
     cygwin*|mingw*)
@@ -78,6 +80,12 @@ case "${host_os}" in
     dragonfly*)
         build_dragonflybsd=yes
         ;;
+    freebsd*)
+        build_freebsd=yes
+        ;;
+    linux*)
+        build_linux=yes
+        ;;
 esac
 
 if test "$build_windows" = "no"; then
@@ -86,6 +94,14 @@ fi
 
 if test "$build_netbsd" = "yes" || test "$build_dragonflybsd" = "yes"; then
     AM_LDFLAGS="$AM_LDFLAGS -pthread"
+fi
+
+if test "$build_linux" = "yes"; then
+    AC_CHECK_FUNCS([getauxval])
+fi
+
+if test "$build_freebsd" = "yes"; then
+    AC_CHECK_FUNCS([elf_aux_info])
 fi
 
 AM_CONDITIONAL([WINDOWS], [test "$build_windows" = "yes"])
