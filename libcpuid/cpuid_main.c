@@ -105,14 +105,14 @@ static void system_id_t_constructor(struct system_id_t* system)
 	system->l4_total_instances             = -1;
 }
 
-static void apic_info_t_constructor(struct internal_apic_info_t* apic_info, logical_cpu_t logical_cpu)
+static void topology_t_constructor(struct internal_topology_t* topology, logical_cpu_t logical_cpu)
 {
-	memset(apic_info, 0, sizeof(struct internal_apic_info_t));
-	apic_info->apic_id     = -1;
-	apic_info->package_id  = -1;
-	apic_info->core_id     = -1;
-	apic_info->smt_id      = -1;
-	apic_info->logical_cpu = logical_cpu;
+	memset(topology, 0, sizeof(struct internal_topology_t));
+	topology->apic_id     = -1;
+	topology->package_id  = -1;
+	topology->core_id     = -1;
+	topology->smt_id      = -1;
+	topology->logical_cpu = logical_cpu;
 }
 
 static void core_instances_t_constructor(struct internal_core_instances_t* data)
@@ -134,11 +134,11 @@ static void type_info_array_t_constructor(struct internal_type_info_array_t* dat
 }
 
 static int16_t cpuid_find_index_system_id(struct system_id_t* system, cpu_purpose_t purpose,
-                                          struct internal_type_info_array_t* type_info, int32_t package_id, bool is_apic_supported)
+                                          struct internal_type_info_array_t* type_info, int32_t package_id, bool is_topology_supported)
 {
 	int16_t i = 0;
 
-	if (is_apic_supported) {
+	if (is_topology_supported) {
 		for (i = 0; i < system->num_cpu_types; i++)
 			if ((system->cpu_types[i].purpose == purpose) && (type_info->data[i].package_id == package_id))
 				return i;
@@ -1053,40 +1053,27 @@ static void make_list_from_string(const char* csv, struct cpu_list_t* list)
 	}
 }
 
-static bool cpu_ident_apic_id(logical_cpu_t logical_cpu, struct cpu_raw_data_t* raw, struct internal_apic_info_t* apic_info)
+static bool cpu_ident_id_x86(struct cpu_raw_data_t* raw, struct internal_topology_t* topology)
 {
 	bool is_apic_id_supported = false;
 	uint8_t subleaf;
 	uint8_t level_type = 0;
 	uint8_t mask_core_shift = 0;
 	uint32_t mask_smt_shift, core_plus_mask_width, package_mask, core_mask, smt_mask = 0;
-	cpu_architecture_t architecture = ARCHITECTURE_UNKNOWN;
-	cpu_vendor_t vendor = VENDOR_UNKNOWN;
 	char vendor_str[VENDOR_STR_MAX];
 
-	apic_info_t_constructor(apic_info, logical_cpu);
-	architecture = cpuid_architecture_identify(raw);
-	switch (architecture) {
-		case ARCHITECTURE_X86:
-			/* Only AMD and Intel x86 CPUs support Extended Processor Topology Eumeration */
-			vendor = cpuid_vendor_identify(raw->basic_cpuid[0], vendor_str);
-			switch (vendor) {
-				case VENDOR_INTEL:
-				case VENDOR_AMD:
-					is_apic_id_supported = true;
-					break;
-				case VENDOR_UNKNOWN:
-					cpuid_set_error(ERR_CPU_UNKN);
-					/* Fall through */
-				default:
-					is_apic_id_supported = false;
-					break;
-			}
+	/* Only AMD and Intel x86 CPUs support Extended Processor Topology Eumeration */
+	const cpu_vendor_t vendor = cpuid_vendor_identify(raw->basic_cpuid[0], vendor_str);
+	switch (vendor) {
+		case VENDOR_INTEL:
+		case VENDOR_AMD:
+			is_apic_id_supported = true;
 			break;
-		case ARCHITECTURE_ARM:
-			/* Not supported for ARM CPUs */
-			return false;
+		case VENDOR_UNKNOWN:
+			cpuid_set_error(ERR_CPU_UNKN);
+			/* Fall through */
 		default:
+			is_apic_id_supported = false;
 			break;
 	}
 
@@ -1108,18 +1095,18 @@ static bool cpu_ident_apic_id(logical_cpu_t logical_cpu, struct cpu_raw_data_t* 
 
 	/* Find mask and ID for SMT and cores */
 	for (subleaf = 0; (raw->intel_fn11[subleaf][EAX] != 0x0) && (raw->intel_fn11[subleaf][EBX] != 0x0) && (subleaf < MAX_INTELFN11_LEVEL); subleaf++) {
-		level_type         = EXTRACTS_BITS(raw->intel_fn11[subleaf][ECX], 15, 8);
-		apic_info->apic_id = raw->intel_fn11[subleaf][EDX];
+		level_type        = EXTRACTS_BITS(raw->intel_fn11[subleaf][ECX], 15, 8);
+		topology->apic_id = raw->intel_fn11[subleaf][EDX];
 		switch (level_type) {
 			case 0x01:
 				mask_smt_shift    = EXTRACTS_BITS(raw->intel_fn11[subleaf][EAX], 4, 0);
 				smt_mask          = ~( (-1) << mask_smt_shift);
-				apic_info->smt_id = apic_info->apic_id & smt_mask;
+				topology->smt_id  = topology->apic_id & smt_mask;
 				break;
 			case 0x02:
 				core_plus_mask_width = ~( (-1) << mask_core_shift);
 				core_mask            = core_plus_mask_width ^ smt_mask;
-				apic_info->core_id   = apic_info->apic_id & core_mask;
+				topology->core_id    = topology->apic_id & core_mask;
 				break;
 			default:
 				break;
@@ -1128,11 +1115,51 @@ static bool cpu_ident_apic_id(logical_cpu_t logical_cpu, struct cpu_raw_data_t* 
 
 	/* Find mask and ID for packages */
 	package_mask          = (-1) << mask_core_shift;
-	apic_info->package_id = apic_info->apic_id & package_mask;
+	topology->package_id  = topology->apic_id & package_mask;
 
 	return (level_type > 0);
 }
 
+static bool cpu_ident_id_arm(struct cpu_raw_data_t* raw, struct internal_topology_t* topology)
+{
+	/* Documentation: Multiprocessor Affinity Register
+	   https://developer.arm.com/documentation/ddi0601/2020-12/AArch64-Registers/MPIDR-EL1--Multiprocessor-Affinity-Register
+	*/
+	const bool aff0_is_threads = EXTRACTS_BIT(raw->arm_mpidr, 24);
+	if (aff0_is_threads) {
+		/* Aff0: the level identifies individual threads within a multithreaded core
+		   On single-threaded CPUs this field has the value 0x00 */
+		topology->smt_id     = EXTRACTS_BITS(raw->arm_mpidr,  7,  0); // Aff0
+		topology->core_id    = EXTRACTS_BITS(raw->arm_mpidr, 15,  8); // Aff1
+		topology->package_id = EXTRACTS_BITS(raw->arm_mpidr, 23, 16); // Aff2
+	}
+	else {
+		topology->core_id    = EXTRACTS_BITS(raw->arm_mpidr,  7,  0); // Aff0
+		topology->package_id = EXTRACTS_BITS(raw->arm_mpidr, 15,  8); // Aff1
+	}
+
+	/* Always implemented since ARMv7
+	   https://developer.arm.com/documentation/ddi0406/c/System-Level-Architecture/System-Control-Registers-in-a-PMSA-implementation/PMSA-System-control-registers-descriptions--in-register-order/MPIDR--Multiprocessor-Affinity-Register--PMSA?lang=en
+	*/
+	return true;
+}
+
+static bool cpu_ident_id(logical_cpu_t logical_cpu, struct cpu_raw_data_t* raw, struct internal_topology_t* topology)
+{
+	topology_t_constructor(topology, logical_cpu);
+
+	const cpu_architecture_t architecture = cpuid_architecture_identify(raw);
+	switch (architecture) {
+		case ARCHITECTURE_X86:
+			return cpu_ident_id_x86(raw, topology);
+		case ARCHITECTURE_ARM:
+			return cpu_ident_id_arm(raw, topology);
+		default:
+			break;
+	}
+
+	return false;
+}
 
 /* Interface: */
 
@@ -1374,25 +1401,25 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 }
 
 static void update_core_instances(struct internal_core_instances_t* cores,
-                                   struct internal_apic_info_t* apic_info)
+                                   struct internal_topology_t* topology)
 {
 	uint32_t core_id_index = 0;
 
-	core_id_index = apic_info->core_id % CORES_HTABLE_SIZE;
-	if ((cores->htable[core_id_index].core_id == 0) || (cores->htable[core_id_index].core_id == apic_info->core_id)) {
+	core_id_index = topology->core_id % CORES_HTABLE_SIZE;
+	if ((cores->htable[core_id_index].core_id == 0) || (cores->htable[core_id_index].core_id == topology->core_id)) {
 		if (cores->htable[core_id_index].num_logical_cpu == 0)
 			cores->instances++;
-		cores->htable[core_id_index].core_id = apic_info->core_id;
+		cores->htable[core_id_index].core_id = topology->core_id;
 		cores->htable[core_id_index].num_logical_cpu++;
 	}
 	else {
 		warnf("update_core_instances: collision at index %u (core ID is %i, not %i)\n",
-			core_id_index, cores->htable[core_id_index].core_id, apic_info->core_id);
+			core_id_index, cores->htable[core_id_index].core_id, topology->core_id);
 	}
 }
 
 static void update_cache_instances(struct internal_cache_instances_t* caches,
-                                   struct internal_apic_info_t* apic_info,
+                                   struct internal_topology_t* topology,
                                    struct internal_id_info_t* id_info,
                                    bool debugf_is_needed)
 {
@@ -1401,27 +1428,27 @@ static void update_cache_instances(struct internal_cache_instances_t* caches,
 
 	for (level = 0; level < NUM_CACHE_TYPES; level++) {
 		if (id_info->cache_mask[level] == 0x00000000) {
-			apic_info->cache_id[level] = -1;
+			topology->cache_id[level] = -1;
 			continue;
 		}
-		apic_info->cache_id[level] = apic_info->apic_id & id_info->cache_mask[level];
-		cache_id_index             = apic_info->cache_id[level] % CACHES_HTABLE_SIZE;
-		if ((caches->htable[level][cache_id_index].cache_id == 0) || (caches->htable[level][cache_id_index].cache_id == apic_info->cache_id[level])) {
+		topology->cache_id[level] = topology->apic_id & id_info->cache_mask[level];
+		cache_id_index             = topology->cache_id[level] % CACHES_HTABLE_SIZE;
+		if ((caches->htable[level][cache_id_index].cache_id == 0) || (caches->htable[level][cache_id_index].cache_id == topology->cache_id[level])) {
 			if (caches->htable[level][cache_id_index].num_logical_cpu == 0)
 				caches->instances[level]++;
-			caches->htable[level][cache_id_index].cache_id = apic_info->cache_id[level];
+			caches->htable[level][cache_id_index].cache_id = topology->cache_id[level];
 			caches->htable[level][cache_id_index].num_logical_cpu++;
 		}
 		else {
 			warnf("update_cache_instances: collision at index %u (cache ID is %i, not %i)\n",
-				cache_id_index, caches->htable[level][cache_id_index].cache_id, apic_info->cache_id[level]);
+				cache_id_index, caches->htable[level][cache_id_index].cache_id, topology->cache_id[level]);
 		}
 	}
 
 	if (debugf_is_needed)
 		debugf(3, "Logical CPU %4u: APIC ID %4i, package ID %4i, core ID %4i, thread %i, L1I$ ID %4i, L1D$ ID %4i, L2$ ID %4i, L3$ ID %4i, L4$ ID %4i\n",
-			apic_info->logical_cpu, apic_info->apic_id, apic_info->package_id, apic_info->core_id, apic_info->smt_id,
-			apic_info->cache_id[L1I], apic_info->cache_id[L1D], apic_info->cache_id[L2], apic_info->cache_id[L3], apic_info->cache_id[L4]);
+			topology->logical_cpu, topology->apic_id, topology->package_id, topology->core_id, topology->smt_id,
+			topology->cache_id[L1I], topology->cache_id[L1D], topology->cache_id[L2], topology->cache_id[L3], topology->cache_id[L4]);
 }
 
 int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t* system)
@@ -1430,14 +1457,14 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 	int ret_error = cpuid_set_error(ERR_OK);
 	double smt_divisor;
 	bool is_smt_supported;
-	bool is_apic_supported = true;
+	bool is_topology_supported = true;
 	int16_t cpu_type_index = -1;
 	int32_t cur_package_id = 0;
 	logical_cpu_t logical_cpu = 0;
 	cpu_purpose_t purpose;
 	cpu_affinity_mask_t affinity_mask;
 	struct cpu_raw_data_array_t my_raw_array;
-	struct internal_apic_info_t apic_info;
+	struct internal_topology_t topology;
 	struct internal_type_info_array_t type_info;
 	struct internal_cache_instances_t caches_all;
 
@@ -1463,24 +1490,24 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 		   APIC ID are unique for each logical CPU cores.
 		*/
 		purpose = cpu_ident_purpose(&raw_array->raw[logical_cpu]);
-		if (raw_array->with_affinity && is_apic_supported) {
-			is_apic_supported = cpu_ident_apic_id(logical_cpu, &raw_array->raw[logical_cpu], &apic_info);
-			if (is_apic_supported)
-				cur_package_id = apic_info.package_id;
+		if (raw_array->with_affinity && is_topology_supported) {
+			is_topology_supported = cpu_ident_id(logical_cpu, &raw_array->raw[logical_cpu], &topology);
+			if (is_topology_supported)
+				cur_package_id = topology.package_id;
 		}
 
 		/* Put data to system->cpu_types on the first iteration or when purpose is new.
 		   For motherboards with multiple CPUs, we grow the array when package ID is different. */
-		cpu_type_index = cpuid_find_index_system_id(system, purpose, &type_info, cur_package_id, is_apic_supported);
+		cpu_type_index = cpuid_find_index_system_id(system, purpose, &type_info, cur_package_id, is_topology_supported);
 		if (cpu_type_index < 0) {
-			cpu_type_index  = system->num_cpu_types;
+			cpu_type_index = system->num_cpu_types;
 			cpuid_grow_system_id(system, system->num_cpu_types + 1);
 			cpuid_grow_type_info(&type_info, type_info.num + 1);
 			cur_error = cpu_ident_internal(&raw_array->raw[logical_cpu], &system->cpu_types[cpu_type_index], &type_info.data[cpu_type_index].id_info);
 			type_info.data[cpu_type_index].purpose = purpose;
 			if (ret_error == ERR_OK)
 				ret_error = cur_error;
-			if (is_apic_supported)
+			if (is_topology_supported)
 				type_info.data[cpu_type_index].package_id = cur_package_id;
 			if (raw_array->with_affinity)
 				system->cpu_types[cpu_type_index].num_logical_cpus = 0;
@@ -1490,10 +1517,10 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 		if (raw_array->with_affinity) {
 			set_affinity_mask_bit(logical_cpu, &system->cpu_types[cpu_type_index].affinity_mask);
 			system->cpu_types[cpu_type_index].num_logical_cpus++;
-			if (is_apic_supported) {
-				update_core_instances(&type_info.data[cpu_type_index].core_instances, &apic_info);
-				update_cache_instances(&type_info.data[cpu_type_index].cache_instances, &apic_info, &type_info.data[cpu_type_index].id_info, true);
-				update_cache_instances(&caches_all,  &apic_info, &type_info.data[cpu_type_index].id_info, false);
+			if (is_topology_supported) {
+				update_core_instances(&type_info.data[cpu_type_index].core_instances, &topology);
+				update_cache_instances(&type_info.data[cpu_type_index].cache_instances, &topology, &type_info.data[cpu_type_index].id_info, true);
+				update_cache_instances(&caches_all,  &topology, &type_info.data[cpu_type_index].id_info, false);
 			}
 		}
 	}
@@ -1502,7 +1529,7 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 	for (cpu_type_index = 0; cpu_type_index < system->num_cpu_types; cpu_type_index++) {
 		/* Overwrite core and cache counters when information is available per core */
 		if (raw_array->with_affinity) {
-			if (is_apic_supported) {
+			if (is_topology_supported) {
 				system->cpu_types[cpu_type_index].num_cores                = type_info.data[cpu_type_index].core_instances.instances;
 				system->cpu_types[cpu_type_index].l1_instruction_instances = type_info.data[cpu_type_index].cache_instances.instances[L1I];
 				system->cpu_types[cpu_type_index].l1_data_instances        = type_info.data[cpu_type_index].cache_instances.instances[L1D];
@@ -1524,7 +1551,7 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 	cpuid_free_type_info(&type_info);
 
 	/* Update the grand total of cache instances */
-	if (is_apic_supported) {
+	if (is_topology_supported) {
 		system->l1_instruction_total_instances = caches_all.instances[L1I];
 		system->l1_data_total_instances        = caches_all.instances[L1D];
 		system->l2_total_instances             = caches_all.instances[L2];
