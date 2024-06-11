@@ -119,7 +119,10 @@ for fn in glob.glob("%s/*.c" % sys.argv[1]):
 			files_code[fn].append(entry)
 	f.close()
 
-features_whitelist = ["CPU_FEATURE_SSE5"]
+features_whitelist = [
+	"CPU_FEATURE_SSE5", # deprecated, never defined
+	"CPU_FEATURE_AES", # defined twice (x86 + ARM)
+]
 for feature in allf:
 	matching_files = []
 	for fn in files_code:
@@ -131,7 +134,7 @@ for feature in allf:
 			firstError = False
 		err += 1
 		print("..No detection code for %s" % feature)
-	if len(matching_files) > 1:
+	if len(matching_files) > 1 and feature not in features_whitelist:
 		if firstError:
 			print("FAILED:")
 			firstError = False
