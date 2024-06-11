@@ -23,36 +23,45 @@ jobs:
         ./configure
         make dist
 
-    - name: Download macOS artifacts
+    - name: Download macOS x86_64 artifacts
       uses: dawidd6/action-download-artifact@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         workflow: unix.yml
         commit: ${{ github.sha }}
-        name: macos
-        path: macos
+        name: macos-x86_64
+        path: macos-x86_64
 
-    - name: Download Windows (32-bit) artifacts
+    - name: Download macOS AArch64 artifacts
+      uses: dawidd6/action-download-artifact@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        workflow: unix.yml
+        commit: ${{ github.sha }}
+        name: macos-aarch64
+        path: macos-aarch64
+
+    - name: Download Windows ix86 artifacts
       uses: dawidd6/action-download-artifact@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         workflow: windows.yml
         commit: ${{ github.sha }}
-        name: win32
-        path: win32
+        name: windows-ix86
+        path: windows-ix86
 
-    - name: Download Windows (64-bit) artifacts
+    - name: Download Windows x86_64 artifacts
       uses: dawidd6/action-download-artifact@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         workflow: windows.yml
         commit: ${{ github.sha }}
-        name: win64
-        path: win64
+        name: window-x86_64
+        path: window-x86_64
 
     - name: Compress artifacts
       run: |
-        for dir in macos win32 win64; do
+        for dir in macos-* windows-*; do
           zip -r "libcpuid-$VERSION-$dir.zip" "$dir"
         done
       env:
@@ -70,7 +79,8 @@ jobs:
 
           As a convenience, the following binaries are provided:
           - A source tarball;
-          - Build for 64-bit macOS (built under [macOS 14.X](https://github.com/actions/runner-images/blob/main/images/macos/macos-14-Readme.md));
-          - Build for 32-bit Windows, using MSVC XX.XX, in Debug, Release and Release DLL configurations (built under [Windows Server 2022](https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md));
-          - Build for 64-bit Windows, using MSVC XX.XX, in Debug, Release and Release DLL configurations (built under [Windows Server 2022](https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md)).
-        artifacts: "libcpuid-${{ env.VERSION }}.tar.gz,libcpuid-${{ env.VERSION }}-macos.zip,libcpuid-${{ env.VERSION }}-win32.zip,libcpuid-${{ env.VERSION }}-win64.zip"
+          - Build for x86_64 macOS (built under [macOS 13.X](https://github.com/actions/runner-images/blob/main/images/macos/macos-13-Readme.md));
+          - Build for AArch64 macOS (built under [macOS 14.X](https://github.com/actions/runner-images/blob/main/images/macos/macos-14-Readme.md));
+          - Build for ix86 Windows, using MSVC XX.XX, in Debug, Release and Release DLL configurations (built under [Windows Server 2022](https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md));
+          - Build for x86_64 Windows, using MSVC XX.XX, in Debug, Release and Release DLL configurations (built under [Windows Server 2022](https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md)).
+        artifacts: "libcpuid-${{ env.VERSION }}.tar.gz,libcpuid-${{ env.VERSION }}-macos-x86_64.zip,libcpuid-${{ env.VERSION }}-macos-aarch64.zip,libcpuid-${{ env.VERSION }}-windows-ix86.zip,libcpuid-${{ env.VERSION }}-window-x86_64.zip"

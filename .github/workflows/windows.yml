@@ -16,8 +16,8 @@ jobs:
       matrix:
         config: [Debug, Release, ReleaseDLL]
         platform:
-          - { bitness: x32, ms: Win32, name: win32 }
-          - { bitness: x64, ms: x64, name: win64 }
+          - { bitness: x32, ms: Win32, name: windows-ix86 }
+          - { bitness: x64, ms: x64, name: window-x86_64 }
     env:
       CONFIG: ${{ matrix.config }}
       BITNESS: ${{ matrix.platform.bitness }}
@@ -73,8 +73,8 @@ jobs:
     strategy:
       matrix:
         platform:
-          - win32
-          - win64
+          - windows-ix86
+          - window-x86_64
 
     steps:
     - name: Merge artifacts for ${{ matrix.platform }}
