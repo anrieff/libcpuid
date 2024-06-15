@@ -465,6 +465,7 @@ int cpuid_identify_arm(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	data->architecture_version = EXTRACTS_BITS(raw->arm_midr, 19, 16);
 	data->part_num             = EXTRACTS_BITS(raw->arm_midr, 15,  4);
 	data->revision             = EXTRACTS_BITS(raw->arm_midr,  3,  0);
+	data->purpose              = cpuid_identify_purpose_arm(raw);
 
 	/* Values decoding */
 	const struct arm_hw_impl* hw_impl = get_cpu_implementer_from_code(data->implementer);
@@ -528,4 +529,22 @@ void cpuid_get_list_arm(cpu_vendor_t vendor, struct cpu_list_t* list)
 		n++;
 	}
 	list->num_entries = n;
+}
+
+cpu_purpose_t cpuid_identify_purpose_arm(struct cpu_raw_data_t* raw)
+{
+	const uint8_t implementer         = EXTRACTS_BITS(raw->arm_midr, 31, 24);
+	const uint16_t part_num           = EXTRACTS_BITS(raw->arm_midr, 15,  4);
+	const struct arm_hw_impl* hw_impl = get_cpu_implementer_from_code(implementer);
+	const char* cpu_name              = get_cpu_name(part_num, hw_impl);
+
+	/* ARM big.LITTLE Typical Processor Combinations: https://www.arm.com/technologies/big-little */
+	if (match_pattern(cpu_name, "Cortex-X[012356789]"))
+		return PURPOSE_U_PERFORMANCE;
+	else if (match_pattern(cpu_name, "Cortex-A[67][012356789]") || match_pattern(cpu_name, "Cortex-A[5][6789]"))
+		return PURPOSE_PERFORMANCE;
+	else if (match_pattern(cpu_name, "Cortex-A[5][012345]") || match_pattern(cpu_name, "Cortex-A[3][0123456789]"))
+		return PURPOSE_EFFICIENCY;
+
+	return PURPOSE_GENERAL;
 }

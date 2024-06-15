@@ -1370,23 +1370,28 @@ static cpu_purpose_t cpu_ident_purpose(struct cpu_raw_data_t* raw)
 	cpu_purpose_t purpose = PURPOSE_GENERAL;
 	char vendor_str[VENDOR_STR_MAX];
 
-	vendor = cpuid_vendor_identify(raw->basic_cpuid[0], vendor_str);
-	if (vendor == VENDOR_UNKNOWN) {
-		cpuid_set_error(ERR_CPU_UNKN);
-		return purpose;
-	}
-
-	switch (vendor) {
-		case VENDOR_AMD:
-			purpose = cpuid_identify_purpose_amd(raw);
+	const cpu_architecture_t architecture = cpuid_architecture_identify(raw);
+	switch (architecture) {
+		case ARCHITECTURE_X86:
+			vendor = cpuid_vendor_identify(raw->basic_cpuid[0], vendor_str);
+			switch (vendor) {
+				case VENDOR_AMD:
+					purpose = cpuid_identify_purpose_amd(raw);
+					break;
+				case VENDOR_INTEL:
+					purpose = cpuid_identify_purpose_intel(raw);
+					break;
+				default:
+					break;
+			}
 			break;
-		case VENDOR_INTEL:
-			purpose = cpuid_identify_purpose_intel(raw);
+		case ARCHITECTURE_ARM:
+			purpose = cpuid_identify_purpose_arm(raw);
 			break;
 		default:
-			purpose = PURPOSE_GENERAL;
 			break;
 	}
+
 	debugf(3, "Identified a '%s' CPU core type\n", cpu_purpose_str(purpose));
 
 	return purpose;
@@ -1611,6 +1616,7 @@ const char* cpu_purpose_str(cpu_purpose_t purpose)
 		{ PURPOSE_PERFORMANCE,   "performance"          },
 		{ PURPOSE_EFFICIENCY,    "efficiency"           },
 		{ PURPOSE_LP_EFFICIENCY, "low-power efficiency" },
+		{ PURPOSE_U_PERFORMANCE, "ultimate performance" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_PURPOSES) {

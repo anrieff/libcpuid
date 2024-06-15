@@ -179,6 +179,7 @@ typedef enum {
 	PURPOSE_PERFORMANCE,   /*!< performance CPU */
 	PURPOSE_EFFICIENCY,    /*!< efficiency CPU */
 	PURPOSE_LP_EFFICIENCY, /*!< low-power efficiency CPU */
+	PURPOSE_U_PERFORMANCE, /*!< ultimate performance CPU */
 
 	NUM_CPU_PURPOSES,      /*!< Valid CPU purpose ids: 0..NUM_CPU_PURPOSES - 1 */
 } cpu_purpose_t;
