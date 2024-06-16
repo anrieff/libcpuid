@@ -1152,6 +1152,27 @@ int cpu_clock_measure(int millis, int quad_check);
 int cpu_clock_by_ic(int millis, int runs);
 
 /**
+ * @brief Measure the CPU clock frequency using TSC frequency from CPUID
+ *
+ * @param raw - Optional input - a pointer to the raw CPUID data, which is obtained
+ *              either by cpuid_get_raw_data or cpuid_deserialize_raw_data.
+ *              Can also be NULL, in which case the functions calls
+ *              cpuid_get_raw_data itself.
+ *
+ * The function read Time Stamp Counter and Nominal Core Crystal Clock
+ * Information Leaf from CPUID. It determines the processor base frequency.
+ *
+ * NOTE: only x86 Intel CPUs since Skylake (6th generation of Intel Core
+ * processors) are supported. Other vendors do not support this feature.
+ *
+ * @returns the CPU clock frequency in MHz.
+ * If TSC frequency is not supported, the result is -1.
+ * If the input parameters are incorrect, or some other internal fault is
+ * detected, the result is -2.
+ */
+int cpu_clock_by_tsc(struct cpu_raw_data_t* raw);
+
+/**
  * @brief Get the CPU clock frequency (all-in-one method)
  *
  * This is an all-in-one method for getting the CPU clock frequency.
