@@ -380,80 +380,125 @@ static const char* get_cpu_name(uint16_t part_num, const struct arm_hw_impl* hw_
 	return hw_impl->parts[i].name;
 }
 
-static void match_arm_features(const struct arm_feature_map_t* matchtable, int count, uint32_t reg, struct cpu_id_t* data)
+static void match_arm_features(const struct arm_feature_map_t* matchtable, uint32_t reg, struct cpu_id_t* data)
 {
 	int i;
-	for (i = 0; i < count; i++)
+
+	for (i = 0; matchtable[i].feature != -1; i++) {
 		if (EXTRACTS_BITS(reg, matchtable[i].highbit, matchtable[i].lowbit) == matchtable[i].value)
 			data->flags[matchtable[i].feature] = 1;
+	}
 }
 
+#define MAX_ARM_FIELDS_PER_REGISTER 16+1 // Add one extra item at end containing a sentinel value
+#define MATCH_FEATURES_TABLE_WITH_RAW(reg) match_arm_features(matchtable_id_##reg[i], raw->arm_id_##reg[i], data)
 static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
-	const struct arm_feature_map_t matchtable_id_aa64dfr0[] = {
-		{ 39, 36, 0b0000, CPU_FEATURE_DOUBLELOCK },
-		{ 11,  8, 0b0100, CPU_FEATURE_PMUV3 }, /* PMUv3 for Armv8.1 */
+	int i;
+
+	const struct arm_feature_map_t matchtable_id_aa64dfr[MAX_ARM_ID_AA64DFR_REGS][MAX_ARM_FIELDS_PER_REGISTER] = {
+		[0] /* ID_AA64DFR0 */ = {
+			{ 39, 36, 0b0000, CPU_FEATURE_DOUBLELOCK },
+			{ 11,  8, 0b0001, CPU_FEATURE_PMUV3 }, /* Performance Monitors Extension, PMUv3 implemented. */
+			{ 11,  8, 0b0100, CPU_FEATURE_PMUV3P1 }, /* PMUv3 for Armv8.1 */
+			{ -1, -1,     -1, -1 }
+		},
+		[1] /* ID_AA64DFR1 */ = {
+			{ -1, -1,     -1, -1 }
+		}
 	};
 
-	const struct arm_feature_map_t matchtable_id_aa64isar0[] = {
-		{ 35, 32, 0b0001, CPU_FEATURE_SHA3 },
-		{ 19, 16, 0b0001, CPU_FEATURE_CRC32 },
-		{ 15, 12, 0b0001, CPU_FEATURE_SHA256 },
-		{ 15, 12, 0b0010, CPU_FEATURE_SHA512 },
-		{ 11,  8, 0b0001, CPU_FEATURE_SHA1 },
-		{  7,  4, 0b0001, CPU_FEATURE_AES },
-		{  7,  4, 0b0010, CPU_FEATURE_PMULL },
+	const struct arm_feature_map_t matchtable_id_aa64isar[MAX_ARM_ID_AA64ISAR_REGS][MAX_ARM_FIELDS_PER_REGISTER] = {
+		[0] /* ID_A64ISAR0 */ = {
+			{ 35, 32, 0b0001, CPU_FEATURE_SHA3 },
+			{ 31, 28, 0b0001, CPU_FEATURE_RDM },
+			{ 23, 20, 0b0010, CPU_FEATURE_LSE },
+			{ 19, 16, 0b0001, CPU_FEATURE_CRC32 },
+			{ 15, 12, 0b0001, CPU_FEATURE_SHA256 },
+			{ 15, 12, 0b0010, CPU_FEATURE_SHA512 },
+			{ 11,  8, 0b0001, CPU_FEATURE_SHA1 },
+			{  7,  4, 0b0001, CPU_FEATURE_AES },
+			{  7,  4, 0b0010, CPU_FEATURE_PMULL },
+			{ -1, -1,     -1, -1 }
+		},
+		[1] /* ID_A64ISAR1 */ = {
+			{ -1, -1,     -1, -1 }
+		},
+		[2] /* ID_A64ISAR2 */ = {
+			{ -1, -1,     -1, -1 }
+		}
 	};
 
-	const struct arm_feature_map_t matchtable_id_aa64mmfr0[] = {
-		{ 19, 16, 0b0001, CPU_FEATURE_MIXEDEND },
-		{  7,  4, 0b0010, CPU_FEATURE_ASID16 },
+	const struct arm_feature_map_t matchtable_id_aa64mmfr[MAX_ARM_ID_AA64MMFR_REGS][MAX_ARM_FIELDS_PER_REGISTER] = {
+		[0] /* ID_AA64MMFR0 */ = {
+			{ 19, 16, 0b0001, CPU_FEATURE_MIXEDEND },
+			{  7,  4, 0b0010, CPU_FEATURE_ASID16 },
+			{ -1, -1,     -1, -1 }
+		},
+		[1] /* ID_AA64MMFR1 */ = {
+			{ 39, 36, 0b0010, CPU_FEATURE_ETS2 },
+			{ 23, 20, 0b0001, CPU_FEATURE_PAN },
+			{ 19, 16, 0b0001, CPU_FEATURE_LOR },
+			{ 15, 12, 0b0001, CPU_FEATURE_HPDS },
+			{ 11,  8, 0b0001, CPU_FEATURE_VHE },
+			{  7,  4, 0b0010, CPU_FEATURE_VMID16 },
+			{  3,  0, 0b0001, CPU_FEATURE_HAFDBS },
+			{  3,  0, 0b0010, CPU_FEATURE_HAFDBS }, /* as 0b0001, and adds support for hardware update of the Access flag for Block and Page descriptors */
+			{ -1, -1,     -1, -1 }
+		},
+		[2] /* ID_AA64MMFR2 */ = {
+			{ -1, -1,     -1, -1 }
+		},
+		[3] /* ID_AA64MMFR3 */ = {
+			{ -1, -1,     -1, -1 }
+		},
+		[4] /* ID_AA64MMFR4 */ = {
+			{ -1, -1,     -1, -1 }
+		}
 	};
-	const struct arm_feature_map_t matchtable_id_aa64mmfr1[] = {
-		{ 39, 36, 0b0010, CPU_FEATURE_ETS2 },
+
+	const struct arm_feature_map_t matchtable_id_aa64pfr[MAX_ARM_ID_AA64PFR_REGS][MAX_ARM_FIELDS_PER_REGISTER] = {
+		[0] /* ID_AA64PFR0 */ = {
+			{ 59, 56, 0b0010, CPU_FEATURE_CSV2_2 },
+			{ 59, 56, 0b0011, CPU_FEATURE_CSV2_3 },
+			{ 23, 20, 0b0000, CPU_FEATURE_ADVSIMD },
+			{ 23, 20, 0b0001, CPU_FEATURE_ADVSIMD }, /* as for 0b0000, and also includes support for half-precision floating-point arithmetic */
+			{ 19, 16, 0b0000, CPU_FEATURE_FP },
+			{ -1, -1,     -1, -1 }
+		},
+		[1] /* ID_AA64PFR1 */ = {
+			{ 35, 32, 0b0001, CPU_FEATURE_CSV2_1P1 },
+			{ 35, 32, 0b0010, CPU_FEATURE_CSV2_1P2 },
+			{ -1, -1,     -1, -1 }
+		},
+		[2] /* ID_AA64PFR2 */ = {
+			{ -1, -1,     -1, -1 }
+		}
 	};
 
-	const struct arm_feature_map_t matchtable_id_aa64pfr0[] = {
-		{ 59, 56, 0b0010, CPU_FEATURE_CSV2_2 },
-		{ 59, 56, 0b0011, CPU_FEATURE_CSV2_3 },
-		{ 23, 20, 0b0000, CPU_FEATURE_ADVSIMD },
-		{ 23, 20, 0b0001, CPU_FEATURE_ADVSIMD }, /* as for 0b0000, and also includes support for half-precision floating-point arithmetic */
-		{ 19, 16, 0b0000, CPU_FEATURE_FP },
-	};
-	const struct arm_feature_map_t matchtable_id_aa64pfr1[] = {
-		{ 35, 32, 0b0001, CPU_FEATURE_CSV2_1P1 },
-		{ 35, 32, 0b0010, CPU_FEATURE_CSV2_1P2 },
+	const struct arm_feature_map_t matchtable_id_aa64zfr[MAX_ARM_ID_AA64ZFR_REGS][MAX_ARM_FIELDS_PER_REGISTER] = {
+		[0] /* ID_AA64ZFR0 */ = {
+			{ -1, -1,     -1, -1 }
+		},
 	};
 
-	/*const struct arm_feature_map_t matchtable_id_aa64zfr0[] = {
-	};*/
+	for (i = 0; i < MAX_ARM_ID_AA64DFR_REGS; i++)
+		MATCH_FEATURES_TABLE_WITH_RAW(aa64dfr);
 
-	if (raw->arm_id_aa64dfr[0] >= 1) {
-		match_arm_features(matchtable_id_aa64dfr0, COUNT_OF(matchtable_id_aa64dfr0), raw->arm_id_aa64dfr[0], data);
-	}
+	for (i = 0; i < MAX_ARM_ID_AA64ISAR_REGS; i++)
+		MATCH_FEATURES_TABLE_WITH_RAW(aa64isar);
 
-	if (raw->arm_id_aa64isar[0] >= 1) {
-		match_arm_features(matchtable_id_aa64isar0, COUNT_OF(matchtable_id_aa64isar0), raw->arm_id_aa64isar[0], data);
-	}
+	for (i = 0; i < MAX_ARM_ID_AA64MMFR_REGS; i++)
+		MATCH_FEATURES_TABLE_WITH_RAW(aa64mmfr);
 
-	if (raw->arm_id_aa64mmfr[0] >= 1) {
-		match_arm_features(matchtable_id_aa64mmfr0, COUNT_OF(matchtable_id_aa64mmfr0), raw->arm_id_aa64mmfr[0], data);
-	}
-	if (raw->arm_id_aa64mmfr[1] >= 1) {
-		match_arm_features(matchtable_id_aa64mmfr1, COUNT_OF(matchtable_id_aa64mmfr1), raw->arm_id_aa64mmfr[1], data);
-	}
+	for (i = 0; i < MAX_ARM_ID_AA64PFR_REGS; i++)
+		MATCH_FEATURES_TABLE_WITH_RAW(aa64pfr);
 
-	if (raw->arm_id_aa64pfr[0] >= 1) {
-		match_arm_features(matchtable_id_aa64pfr0, COUNT_OF(matchtable_id_aa64pfr0), raw->arm_id_aa64pfr[0], data);
-	}
-	if (raw->arm_id_aa64pfr[1] >= 1) {
-		match_arm_features(matchtable_id_aa64pfr1, COUNT_OF(matchtable_id_aa64pfr1), raw->arm_id_aa64pfr[1], data);
-	}
-
-	/*if (raw->arm_id_aa64zfr[0] >= 1) {
-		match_arm_features(matchtable_id_aa64zfr0, COUNT_OF(matchtable_id_aa64zfr0), raw->arm_id_aa64zfr[0], data);
-	}*/
+	for (i = 0; i < MAX_ARM_ID_AA64ZFR_REGS; i++)
+		MATCH_FEATURES_TABLE_WITH_RAW(aa64zfr);
 }
+#undef MAX_ARM_FIELDS_PER_REGISTER
+#undef MATCH_FEATURES_TABLE_WITH_RAW
 
 int cpuid_identify_arm(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {

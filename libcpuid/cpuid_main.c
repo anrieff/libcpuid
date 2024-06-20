@@ -1791,6 +1791,15 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SHA256, "sha256" },
 		{ CPU_FEATURE_SHA512, "sha512" },
 		{ CPU_FEATURE_SHA3, "sha3" },
+		{ CPU_FEATURE_HAFDBS, "hafdbs" },
+		{ CPU_FEATURE_HPDS, "hpds" },
+		{ CPU_FEATURE_LOR, "lor" },
+		{ CPU_FEATURE_LSE, "lse" },
+		{ CPU_FEATURE_PAN, "pan" },
+		{ CPU_FEATURE_PMUV3P1, "pmuv3p1" },
+		{ CPU_FEATURE_RDM, "rdm" },
+		{ CPU_FEATURE_VHE, "vhe" },
+		{ CPU_FEATURE_VMID16, "vmid16" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {

@@ -741,6 +741,15 @@ typedef enum {
 	CPU_FEATURE_SHA256, /*!< ARM: Advanced SIMD SHA256 instructions (ARMv8.0 architecture extension) */
 	CPU_FEATURE_SHA512, /*!< ARM: Advanced SIMD SHA512 instructions (ARMv8.1 architecture extension) */
 	CPU_FEATURE_SHA3, /*!< ARM: Advanced SIMD SHA3 instructions (ARMv8.2 architecture extension) */
+	CPU_FEATURE_HAFDBS, /*!< ARM: Hardware management of the Access flag and dirty state */
+	CPU_FEATURE_HPDS, /*!< ARM: Hierarchical permission disables in translations tables */
+	CPU_FEATURE_LOR, /*!< ARM: Limited ordering regions */
+	CPU_FEATURE_LSE, /*!< ARM: Large System Extensions */
+	CPU_FEATURE_PAN, /*!< ARM: Privileged access never */
+	CPU_FEATURE_PMUV3P1, /*!< ARM: Armv8.1 PMU extensions */
+	CPU_FEATURE_RDM, /*!< ARM: Advanced SIMD rounding double multiply accumulate instructions */
+	CPU_FEATURE_VHE, /*!< ARM: Virtualization Host Extensions */
+	CPU_FEATURE_VMID16, /*!< ARM: 16-bit VMID */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;
