@@ -399,8 +399,10 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	const struct arm_feature_map_t matchtable_id_aa64dfr[MAX_ARM_ID_AA64DFR_REGS][MAX_ARM_FIELDS_PER_REGISTER] = {
 		[0] /* ID_AA64DFR0 */ = {
 			{ 39, 36, 0b0000, CPU_FEATURE_DOUBLELOCK },
+			{ 35, 32, 0b0001, CPU_FEATURE_SPE },
 			{ 11,  8, 0b0001, CPU_FEATURE_PMUV3 }, /* Performance Monitors Extension, PMUv3 implemented. */
 			{ 11,  8, 0b0100, CPU_FEATURE_PMUV3P1 }, /* PMUv3 for Armv8.1 */
+			{  3,  0, 0b1000, CPU_FEATURE_DEBUGV8P2 },
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_AA64DFR1 */ = {
@@ -410,6 +412,9 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 
 	const struct arm_feature_map_t matchtable_id_aa64isar[MAX_ARM_ID_AA64ISAR_REGS][MAX_ARM_FIELDS_PER_REGISTER] = {
 		[0] /* ID_A64ISAR0 */ = {
+			{ 55, 52, 0b0001, CPU_FEATURE_I8MM },
+			{ 43, 40, 0b0001, CPU_FEATURE_SM4 },
+			{ 39, 36, 0b0001, CPU_FEATURE_SM3 },
 			{ 35, 32, 0b0001, CPU_FEATURE_SHA3 },
 			{ 31, 28, 0b0001, CPU_FEATURE_RDM },
 			{ 23, 20, 0b0010, CPU_FEATURE_LSE },
@@ -422,6 +427,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_A64ISAR1 */ = {
+			{  3,  0, 0b0001, CPU_FEATURE_DPB },
 			{ -1, -1,     -1, -1 }
 		},
 		[2] /* ID_A64ISAR2 */ = {
@@ -433,13 +439,17 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		[0] /* ID_AA64MMFR0 */ = {
 			{ 19, 16, 0b0001, CPU_FEATURE_MIXEDEND },
 			{  7,  4, 0b0010, CPU_FEATURE_ASID16 },
+			{  3,  0, 0b0110, CPU_FEATURE_LPA },
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_AA64MMFR1 */ = {
 			{ 39, 36, 0b0010, CPU_FEATURE_ETS2 },
+			{ 31, 28, 0b0001, CPU_FEATURE_XNX },
 			{ 23, 20, 0b0001, CPU_FEATURE_PAN },
+			{ 23, 20, 0b0010, CPU_FEATURE_PAN2 },
 			{ 19, 16, 0b0001, CPU_FEATURE_LOR },
 			{ 15, 12, 0b0001, CPU_FEATURE_HPDS },
+			{ 15, 12, 0b0010, CPU_FEATURE_HPDS2 },
 			{ 11,  8, 0b0001, CPU_FEATURE_VHE },
 			{  7,  4, 0b0010, CPU_FEATURE_VMID16 },
 			{  3,  0, 0b0001, CPU_FEATURE_HAFDBS },
@@ -447,6 +457,11 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[2] /* ID_AA64MMFR2 */ = {
+			{ 19, 16, 0b0001, CPU_FEATURE_LVA },
+			{ 15, 12, 0b0001, CPU_FEATURE_IESB },
+			{ 11,  8, 0b0001, CPU_FEATURE_LSMAOC },
+			{  7,  4, 0b0001, CPU_FEATURE_UAO },
+			{  3,  0, 0b0001, CPU_FEATURE_TTCNP },
 			{ -1, -1,     -1, -1 }
 		},
 		[3] /* ID_AA64MMFR3 */ = {
@@ -461,9 +476,12 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		[0] /* ID_AA64PFR0 */ = {
 			{ 59, 56, 0b0010, CPU_FEATURE_CSV2_2 },
 			{ 59, 56, 0b0011, CPU_FEATURE_CSV2_3 },
+			{ 35, 32, 0b0001, CPU_FEATURE_SVE },
+			{ 31, 28, 0b0001, CPU_FEATURE_RAS },
 			{ 23, 20, 0b0000, CPU_FEATURE_ADVSIMD },
 			{ 23, 20, 0b0001, CPU_FEATURE_ADVSIMD }, /* as for 0b0000, and also includes support for half-precision floating-point arithmetic */
 			{ 19, 16, 0b0000, CPU_FEATURE_FP },
+			{ 19, 16, 0b0001, CPU_FEATURE_FP16 },
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_AA64PFR1 */ = {
@@ -478,6 +496,9 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 
 	const struct arm_feature_map_t matchtable_id_aa64zfr[MAX_ARM_ID_AA64ZFR_REGS][MAX_ARM_FIELDS_PER_REGISTER] = {
 		[0] /* ID_AA64ZFR0 */ = {
+			{ 59, 56, 0b0001, CPU_FEATURE_F64MM },
+			{ 55, 52, 0b0001, CPU_FEATURE_F32MM },
+			{ 47, 44, 0b0001, CPU_FEATURE_I8MM },
 			{ -1, -1,     -1, -1 }
 		},
 	};

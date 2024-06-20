@@ -739,8 +739,6 @@ typedef enum {
 	CPU_FEATURE_PMUV3, /*!< ARM: PMU extension version 3 (ARMv8.0 architecture extension) */
 	CPU_FEATURE_SHA1, /*!< ARM: Advanced SIMD SHA1 instructions (ARMv8.0 architecture extension) */
 	CPU_FEATURE_SHA256, /*!< ARM: Advanced SIMD SHA256 instructions (ARMv8.0 architecture extension) */
-	CPU_FEATURE_SHA512, /*!< ARM: Advanced SIMD SHA512 instructions (ARMv8.1 architecture extension) */
-	CPU_FEATURE_SHA3, /*!< ARM: Advanced SIMD SHA3 instructions (ARMv8.2 architecture extension) */
 	CPU_FEATURE_HAFDBS, /*!< ARM: Hardware management of the Access flag and dirty state */
 	CPU_FEATURE_HPDS, /*!< ARM: Hierarchical permission disables in translations tables */
 	CPU_FEATURE_LOR, /*!< ARM: Limited ordering regions */
@@ -750,6 +748,30 @@ typedef enum {
 	CPU_FEATURE_RDM, /*!< ARM: Advanced SIMD rounding double multiply accumulate instructions */
 	CPU_FEATURE_VHE, /*!< ARM: Virtualization Host Extensions */
 	CPU_FEATURE_VMID16, /*!< ARM: 16-bit VMID */
+	//CPU_FEATURE_AA32HPD, /*!< ARM: AArch32 Hierarchical permission disables */
+	//CPU_FEATURE_AA32I8MM, /*!< ARM: AArch32 Int8 matrix multiplication instructions */
+	CPU_FEATURE_DPB, /*!< ARM: DC CVAP instruction */
+	CPU_FEATURE_DEBUGV8P2, /*!< ARM: Debug v8.2 */
+	CPU_FEATURE_F32MM, /*!< ARM: Single-precision Matrix Multiplication */
+	CPU_FEATURE_F64MM, /*!< ARM: Double-precision Matrix Multiplication */
+	CPU_FEATURE_FP16, /*!< ARM: Half-precision floating-point data processing */
+	CPU_FEATURE_HPDS2, /*!< ARM: Hierarchical permission disables */
+	CPU_FEATURE_I8MM, /*!< ARM: AArch64 Int8 matrix multiplication instructions */
+	CPU_FEATURE_IESB, /*!< ARM: Implicit Error Synchronization event */
+	CPU_FEATURE_LPA, /*!< ARM: Large PA and IPA support */
+	CPU_FEATURE_LSMAOC, /*!< ARM: AArch32 Load/Store Multiple instruction atomicity and ordering controls */
+	CPU_FEATURE_LVA, /*!< ARM: Large VA support */
+	CPU_FEATURE_PAN2, /*!< ARM: AT S1E1R and AT S1E1W instruction variants affected by PSTATE.PAN */
+	CPU_FEATURE_RAS, /*!< ARM: Reliability, Availability and Serviceability (RAS) Extension */
+	CPU_FEATURE_SHA3, /*!< ARM: Advanced SIMD SHA3 instructions (ARMv8.2 architecture extension) */
+	CPU_FEATURE_SHA512, /*!< ARM: Advanced SIMD SHA512 instructions (ARMv8.1 architecture extension) */
+	CPU_FEATURE_SM3, /*!< ARM: Advanced SIMD SM3 instructions */
+	CPU_FEATURE_SM4, /*!< ARM: Advanced SIMD SM4 instructions */
+	CPU_FEATURE_SPE, /*!< ARM: Statistical Profiling Extension */
+	CPU_FEATURE_SVE, /*!< ARM: Scalable Vector Extension */
+	CPU_FEATURE_TTCNP, /*!< ARM: Translation table Common not private translations */
+	CPU_FEATURE_UAO, /*!< ARM: Unprivileged Access Override control */
+	CPU_FEATURE_XNX, /*!< ARM: Translation table stage 2 Unprivileged Execute-never */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;
