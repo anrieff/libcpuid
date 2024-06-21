@@ -108,15 +108,20 @@ firstError = True
 
 files_code = {}
 
-rexp = re.compile('.*(CPU_FEATURE_[^ }]+).*')
+rexp1 = re.compile('.*flags\[(CPU_FEATURE_[^\]]+)\]\s+=\s+1.*') # e.g. "data->flags[CPU_FEATURE_MPAM] = 1;"
+rexp2 = re.compile('.*(CPU_FEATURE_[^ }]+).*') # e.g. "{ 28, CPU_FEATURE_HT },"
 
 for fn in glob.glob("%s/*.c" % sys.argv[1]):
 	f = open(fn, "rt")
 	files_code[fn] = []
 	for s in f.readlines():
-		if rexp.match(s):
-			entry = rexp.findall(s)[0]
+		if rexp1.match(s):
+			entry = rexp1.findall(s)[0]
 			files_code[fn].append(entry)
+		elif rexp2.match(s):
+			entry = rexp2.findall(s)[0]
+			files_code[fn].append(entry)
+
 	f.close()
 
 features_whitelist = [

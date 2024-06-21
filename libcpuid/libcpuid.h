@@ -785,6 +785,27 @@ typedef enum {
 	CPU_FEATURE_PACQARMA5, /*!< ARM: Pointer authentication - QARMA5 algorithm */
 	CPU_FEATURE_PAUTH, /*!< ARM: Pointer authentication */
 	CPU_FEATURE_SPEV1P1, /*!< ARM: Statistical Profiling Extension version 1 */
+	CPU_FEATURE_AMUV1, /*!< ARM: Activity Monitors Extension version 1 */
+	CPU_FEATURE_BBM, /*!< ARM: Translation table break-before-make levels */
+	CPU_FEATURE_DIT, /*!< ARM: Data Independent Timing instructions */
+	CPU_FEATURE_DEBUGV8P4, /*!< ARM: Debug v8.4 */
+	CPU_FEATURE_DOTPROD, /*!< ARM: Advanced SIMD dot product instructions */
+	CPU_FEATURE_DOUBLEFAULT, /*!< ARM: Double Fault Extension */
+	CPU_FEATURE_FHM, /*!< ARM: Floating-point half-precision to single-precision multiply-add instructions */
+	CPU_FEATURE_FLAGM, /*!< ARM: Condition flag manipulation instructions */
+	CPU_FEATURE_IDST, /*!< ARM: ID space trap handling */
+	CPU_FEATURE_LRCPC2, /*!< ARM: Load-Acquire RCpc instructions version 2 */
+	CPU_FEATURE_LSE2, /*!< ARM: Large System Extensions version 2 */
+	CPU_FEATURE_MPAM, /*!< ARM: Memory Partitioning and Monitoring Extension */
+	CPU_FEATURE_PMUV3P4, /*!< ARM: Arm8.4 PMU extensions */
+	CPU_FEATURE_RASV1P1, /*!< ARM: RAS extension v1.1 */
+	CPU_FEATURE_S2FWB, /*!< ARM: Stage 2 forced Write-Back */
+	CPU_FEATURE_SEL2, /*!< ARM: Secure EL2 */
+	CPU_FEATURE_TLBIOS, /*!< ARM: TLB invalidate instructions in Outer Shareable domain */
+	CPU_FEATURE_TLBIRANGE, /*!< ARM: TLB invalidate range instructions */
+	CPU_FEATURE_TRF, /*!< ARM: Self-hosted Trace extensions */
+	CPU_FEATURE_TTL, /*!< ARM: Translation Table Level */
+	CPU_FEATURE_TTST, /*!< ARM: Small translation tables */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

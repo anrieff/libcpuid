@@ -390,20 +390,24 @@ static void match_arm_features(const struct arm_feature_map_t* matchtable, uint3
 	}
 }
 
-#define MAX_ARM_FIELDS_PER_REGISTER 16+1 // Add one extra item at end containing a sentinel value
+#define MAX_MATCHTABLE_ITEMS 32
 #define MATCH_FEATURES_TABLE_WITH_RAW(reg) match_arm_features(matchtable_id_##reg[i], raw->arm_id_##reg[i], data)
 static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
 	int i;
+	uint8_t mpam, mpam_frac;
 
-	const struct arm_feature_map_t matchtable_id_aa64dfr[MAX_ARM_ID_AA64DFR_REGS][MAX_ARM_FIELDS_PER_REGISTER] = {
+	const struct arm_feature_map_t matchtable_id_aa64dfr[MAX_ARM_ID_AA64DFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64DFR0 */ = {
+			{ 43, 40, 0b0001, CPU_FEATURE_TRF },
 			{ 39, 36, 0b0000, CPU_FEATURE_DOUBLELOCK },
 			{ 35, 32, 0b0001, CPU_FEATURE_SPE },
 			{ 35, 32, 0b0010, CPU_FEATURE_SPEV1P1 },
 			{ 11,  8, 0b0001, CPU_FEATURE_PMUV3 }, /* Performance Monitors Extension, PMUv3 implemented. */
 			{ 11,  8, 0b0100, CPU_FEATURE_PMUV3P1 }, /* PMUv3 for Armv8.1 */
+			{ 11,  8, 0b0101, CPU_FEATURE_PMUV3P4 }, /* PMUv3 for Armv8.4 */
 			{  3,  0, 0b1000, CPU_FEATURE_DEBUGV8P2 },
+			{  3,  0, 0b1001, CPU_FEATURE_DEBUGV8P4 },
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_AA64DFR1 */ = {
@@ -411,9 +415,14 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		}
 	};
 
-	const struct arm_feature_map_t matchtable_id_aa64isar[MAX_ARM_ID_AA64ISAR_REGS][MAX_ARM_FIELDS_PER_REGISTER] = {
+	const struct arm_feature_map_t matchtable_id_aa64isar[MAX_ARM_ID_AA64ISAR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_A64ISAR0 */ = {
-			{ 55, 52, 0b0001, CPU_FEATURE_I8MM },
+			{ 59, 56, 0b0001, CPU_FEATURE_TLBIOS }, /* Outer Shareable and TLB range maintenance instructions are not implemented */
+			{ 59, 56, 0b0010, CPU_FEATURE_TLBIOS }, /* Outer Shareable TLB maintenance instructions are implemented */
+			{ 59, 56, 0b0010, CPU_FEATURE_TLBIRANGE }, /* Outer Shareable TLB maintenance instructions are implemented */
+			{ 55, 52, 0b0001, CPU_FEATURE_FLAGM },
+			{ 51, 48, 0b0001, CPU_FEATURE_FHM },
+			{ 47, 44, 0b0001, CPU_FEATURE_DOTPROD },
 			{ 43, 40, 0b0001, CPU_FEATURE_SM4 },
 			{ 39, 36, 0b0001, CPU_FEATURE_SM3 },
 			{ 35, 32, 0b0001, CPU_FEATURE_SHA3 },
@@ -428,9 +437,12 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_A64ISAR1 */ = {
+			{ 55, 52, 0b0001, CPU_FEATURE_I8MM },
+			{ 35, 32, 0b0001, CPU_FEATURE_LSE2 },
 			{ 31, 28, 0b0001, CPU_FEATURE_PACIMP },
 			{ 27, 24, 0b0001, CPU_FEATURE_PACQARMA5 },
 			{ 23, 20, 0b0001, CPU_FEATURE_LRCPC },
+			{ 23, 20, 0b0010, CPU_FEATURE_LRCPC2 },
 			{ 19, 16, 0b0001, CPU_FEATURE_FCMA },
 			{ 15, 12, 0b0001, CPU_FEATURE_JSCVT },
 			{ 11,  8, 0b0001, CPU_FEATURE_PAUTH },
@@ -458,7 +470,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		}
 	};
 
-	const struct arm_feature_map_t matchtable_id_aa64mmfr[MAX_ARM_ID_AA64MMFR_REGS][MAX_ARM_FIELDS_PER_REGISTER] = {
+	const struct arm_feature_map_t matchtable_id_aa64mmfr[MAX_ARM_ID_AA64MMFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64MMFR0 */ = {
 			{ 19, 16, 0b0001, CPU_FEATURE_MIXEDEND },
 			{  7,  4, 0b0010, CPU_FEATURE_ASID16 },
@@ -480,6 +492,13 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[2] /* ID_AA64MMFR2 */ = {
+			{ 55, 52, 0b0000, CPU_FEATURE_BBM }, /* Level 0 support for changing block size is supported */
+			{ 55, 52, 0b0001, CPU_FEATURE_BBM }, /* Level 1 support for changing block size is supported */
+			{ 55, 52, 0b0010, CPU_FEATURE_BBM }, /* Level 2 support for changing block size is supported */
+			{ 51, 48, 0b0001, CPU_FEATURE_TTL },
+			{ 43, 40, 0b0001, CPU_FEATURE_S2FWB },
+			{ 39, 36, 0b0001, CPU_FEATURE_IDST },
+			{ 31, 28, 0b0001, CPU_FEATURE_TTST },
 			{ 23, 20, 0b0001, CPU_FEATURE_CCIDX },
 			{ 19, 16, 0b0001, CPU_FEATURE_LVA },
 			{ 15, 12, 0b0001, CPU_FEATURE_IESB },
@@ -496,12 +515,17 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		}
 	};
 
-	const struct arm_feature_map_t matchtable_id_aa64pfr[MAX_ARM_ID_AA64PFR_REGS][MAX_ARM_FIELDS_PER_REGISTER] = {
+	const struct arm_feature_map_t matchtable_id_aa64pfr[MAX_ARM_ID_AA64PFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64PFR0 */ = {
 			{ 59, 56, 0b0010, CPU_FEATURE_CSV2_2 },
 			{ 59, 56, 0b0011, CPU_FEATURE_CSV2_3 },
+			{ 51, 48, 0b0001, CPU_FEATURE_DIT },
+			{ 47, 44, 0b0001, CPU_FEATURE_AMUV1 },
+			{ 39, 36, 0b0001, CPU_FEATURE_SEL2 },
 			{ 35, 32, 0b0001, CPU_FEATURE_SVE },
 			{ 31, 28, 0b0001, CPU_FEATURE_RAS },
+			{ 31, 28, 0b0010, CPU_FEATURE_DOUBLEFAULT },
+			{ 31, 28, 0b0010, CPU_FEATURE_RASV1P1 },
 			{ 23, 20, 0b0000, CPU_FEATURE_ADVSIMD },
 			{ 23, 20, 0b0001, CPU_FEATURE_ADVSIMD }, /* as for 0b0000, and also includes support for half-precision floating-point arithmetic */
 			{ 19, 16, 0b0000, CPU_FEATURE_FP },
@@ -518,7 +542,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		}
 	};
 
-	const struct arm_feature_map_t matchtable_id_aa64zfr[MAX_ARM_ID_AA64ZFR_REGS][MAX_ARM_FIELDS_PER_REGISTER] = {
+	const struct arm_feature_map_t matchtable_id_aa64zfr[MAX_ARM_ID_AA64ZFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64ZFR0 */ = {
 			{ 59, 56, 0b0001, CPU_FEATURE_F64MM },
 			{ 55, 52, 0b0001, CPU_FEATURE_F32MM },
@@ -552,8 +576,21 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	- FEAT_PACQARMA3. */
 	if (data->flags[CPU_FEATURE_PACIMP] || data->flags[CPU_FEATURE_PACQARMA3] || data->flags[CPU_FEATURE_PACQARMA5])
 		data->flags[CPU_FEATURE_PAUTH] = 1;
+
+	/* FEAT_MPAM, Memory Partitioning and Monitoring Extension
+	MPAM Extension version: MPAM | MPAM_frac
+	Not implemented: 0b0000 | 0b0000
+	v0.1 is implemented: 0b0000 | 0b0001
+	v1.0 is implemented: 0b0001 | 0b0000
+	v1.1 is implemented: 0b0001 | 0b0001 */
+	mpam      = EXTRACTS_BITS(raw->arm_id_aa64pfr[0], 43, 40);
+	mpam_frac = EXTRACTS_BITS(raw->arm_id_aa64pfr[1], 19, 16);
+	if ((mpam != 0b0000) || (mpam_frac != 0b0000)) {
+		data->flags[CPU_FEATURE_MPAM] = 1;
+		debugf(2, "MPAM Extension version is %u.%u\n", mpam, mpam_frac);
+	}
 }
-#undef MAX_ARM_FIELDS_PER_REGISTER
+#undef MAX_MATCHTABLE_ITEMS
 #undef MATCH_FEATURES_TABLE_WITH_RAW
 
 int cpuid_identify_arm(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
