@@ -400,6 +400,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		[0] /* ID_AA64DFR0 */ = {
 			{ 39, 36, 0b0000, CPU_FEATURE_DOUBLELOCK },
 			{ 35, 32, 0b0001, CPU_FEATURE_SPE },
+			{ 35, 32, 0b0010, CPU_FEATURE_SPEV1P1 },
 			{ 11,  8, 0b0001, CPU_FEATURE_PMUV3 }, /* Performance Monitors Extension, PMUv3 implemented. */
 			{ 11,  8, 0b0100, CPU_FEATURE_PMUV3P1 }, /* PMUv3 for Armv8.1 */
 			{  3,  0, 0b1000, CPU_FEATURE_DEBUGV8P2 },
@@ -427,10 +428,32 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_A64ISAR1 */ = {
+			{ 31, 28, 0b0001, CPU_FEATURE_PACIMP },
+			{ 27, 24, 0b0001, CPU_FEATURE_PACQARMA5 },
+			{ 23, 20, 0b0001, CPU_FEATURE_LRCPC },
+			{ 19, 16, 0b0001, CPU_FEATURE_FCMA },
+			{ 15, 12, 0b0001, CPU_FEATURE_JSCVT },
+			{ 11,  8, 0b0001, CPU_FEATURE_PAUTH },
+			{ 11,  8, 0b0010, CPU_FEATURE_EPAC },
+			//{ 11,  8, 0b0011, CPU_FEATURE_PAUTH2 },
+			{ 11,  8, 0b0100, CPU_FEATURE_FPAC },
+			{ 11,  8, 0b0101, CPU_FEATURE_FPACCOMBINE },
+			{  7,  4, 0b0001, CPU_FEATURE_PAUTH },
+			{  7,  4, 0b0010, CPU_FEATURE_EPAC },
+			//{  7,  4, 0b0011, CPU_FEATURE_PAUTH2 },
+			{  7,  4, 0b0100, CPU_FEATURE_FPAC },
+			{  7,  4, 0b0101, CPU_FEATURE_FPACCOMBINE },
 			{  3,  0, 0b0001, CPU_FEATURE_DPB },
 			{ -1, -1,     -1, -1 }
 		},
 		[2] /* ID_A64ISAR2 */ = {
+			{ 27, 24, 0b0001, CPU_FEATURE_CONSTPACFIELD },
+			{ 15, 12, 0b0001, CPU_FEATURE_PAUTH },
+			{ 15, 12, 0b0010, CPU_FEATURE_EPAC },
+			//{ 15, 12, 0b0011, CPU_FEATURE_PAUTH2 },
+			{ 15, 12, 0b0100, CPU_FEATURE_FPAC },
+			{ 15, 12, 0b0101, CPU_FEATURE_FPACCOMBINE },
+			{ 11,  8, 0b0001, CPU_FEATURE_PACQARMA3 },
 			{ -1, -1,     -1, -1 }
 		}
 	};
@@ -457,6 +480,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[2] /* ID_AA64MMFR2 */ = {
+			{ 23, 20, 0b0001, CPU_FEATURE_CCIDX },
 			{ 19, 16, 0b0001, CPU_FEATURE_LVA },
 			{ 15, 12, 0b0001, CPU_FEATURE_IESB },
 			{ 11,  8, 0b0001, CPU_FEATURE_LSMAOC },
@@ -517,6 +541,17 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 
 	for (i = 0; i < MAX_ARM_ID_AA64ZFR_REGS; i++)
 		MATCH_FEATURES_TABLE_WITH_RAW(aa64zfr);
+
+	/* FEAT_PAuth, Pointer authentication
+	When FEAT_PAuth is implemented, one of the following must be true:
+	- Exactly one of the PAC algorithms is implemented.
+	- If the PACGA instruction and other Pointer authentication instructions use different PAC algorithms, exactly two PAC algorithms are implemented.
+	The PAC algorithm features are:
+	- FEAT_PACQARMA5.
+	- FEAT_PACIMP.
+	- FEAT_PACQARMA3. */
+	if (data->flags[CPU_FEATURE_PACIMP] || data->flags[CPU_FEATURE_PACQARMA3] || data->flags[CPU_FEATURE_PACQARMA5])
+		data->flags[CPU_FEATURE_PAUTH] = 1;
 }
 #undef MAX_ARM_FIELDS_PER_REGISTER
 #undef MATCH_FEATURES_TABLE_WITH_RAW

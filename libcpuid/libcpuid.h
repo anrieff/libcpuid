@@ -772,6 +772,19 @@ typedef enum {
 	CPU_FEATURE_TTCNP, /*!< ARM: Translation table Common not private translations */
 	CPU_FEATURE_UAO, /*!< ARM: Unprivileged Access Override control */
 	CPU_FEATURE_XNX, /*!< ARM: Translation table stage 2 Unprivileged Execute-never */
+	CPU_FEATURE_CCIDX, /*!< ARM: Extended cache index */
+	CPU_FEATURE_CONSTPACFIELD, /*!< ARM: PAC algorithm enhancement */
+	CPU_FEATURE_EPAC, /*!< ARM: Enhanced pointer authentication */
+	CPU_FEATURE_FCMA, /*!< ARM: Floating-point complex number instructions */
+	CPU_FEATURE_FPAC, /*!< ARM: Faulting on AUT* instructions */
+	CPU_FEATURE_FPACCOMBINE, /*!< ARM: Faulting on combined pointer authentication instructions */
+	CPU_FEATURE_JSCVT, /*!< ARM: JavaScript conversion instructions */
+	CPU_FEATURE_LRCPC, /*!< ARM: Load-Acquire RCpc instructions */
+	CPU_FEATURE_PACIMP, /*!< ARM: Pointer authentication - IMPLEMENTATION DEFINED algorithm */
+	CPU_FEATURE_PACQARMA3, /*!< ARM: Pointer authentication - QARMA3 algorithm */
+	CPU_FEATURE_PACQARMA5, /*!< ARM: Pointer authentication - QARMA5 algorithm */
+	CPU_FEATURE_PAUTH, /*!< ARM: Pointer authentication */
+	CPU_FEATURE_SPEV1P1, /*!< ARM: Statistical Profiling Extension version 1 */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

@@ -1822,6 +1822,19 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_TTCNP, "ttcnp" },
 		{ CPU_FEATURE_UAO, "uao" },
 		{ CPU_FEATURE_XNX, "xnx" },
+		{ CPU_FEATURE_CCIDX, "ccidx" },
+		{ CPU_FEATURE_CONSTPACFIELD, "constpacfield" },
+		{ CPU_FEATURE_EPAC, "epac" },
+		{ CPU_FEATURE_FCMA, "fcma" },
+		{ CPU_FEATURE_FPAC, "fpac" },
+		{ CPU_FEATURE_FPACCOMBINE, "fpaccombine" },
+		{ CPU_FEATURE_JSCVT, "jscvt" },
+		{ CPU_FEATURE_LRCPC, "lrcpc" },
+		{ CPU_FEATURE_PACIMP, "pacimp" },
+		{ CPU_FEATURE_PACQARMA3, "pacqarma3" },
+		{ CPU_FEATURE_PACQARMA5, "pacqarma5" },
+		{ CPU_FEATURE_PAUTH, "pauth" },
+		{ CPU_FEATURE_SPEV1P1, "spev1p1" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {
