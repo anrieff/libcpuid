@@ -662,6 +662,8 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 					fprintf(f, "arm_id_aa64mmfr%d=%016lx\n", i, raw_ptr->arm_id_aa64mmfr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64PFR_REGS; i++)
 					fprintf(f, "arm_id_aa64pfr%d=%016lx\n", i, raw_ptr->arm_id_aa64pfr[i]);
+				for (i = 0; i < MAX_ARM_ID_AA64SMFR_REGS; i++)
+					fprintf(f, "arm_id_aa64smfr%d=%016lx\n", i, raw_ptr->arm_id_aa64smfr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64ZFR_REGS; i++)
 					fprintf(f, "arm_id_aa64zfr%d=%016lx\n", i, raw_ptr->arm_id_aa64zfr[i]);
 				break;
@@ -795,6 +797,9 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 			}
 			else if ((sscanf(line, "arm_id_aa64pfr%d=%lx", &i, &arm_reg) >= 2)) {
 				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64pfr[i]);
+			}
+			else if ((sscanf(line, "arm_id_aa64smfr%d=%lx", &i, &arm_reg) >= 2)) {
+				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64smfr[i]);
 			}
 			else if ((sscanf(line, "arm_id_aa64zfr%d=%lx", &i, &arm_reg) >= 2)) {
 				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64zfr[i]);
@@ -1264,6 +1269,7 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 	cpu_exec_mrs(SYS_ID_AA64PFR0_EL1, data->arm_id_aa64pfr[0]);
 	cpu_exec_mrs(SYS_ID_AA64PFR1_EL1, data->arm_id_aa64pfr[1]);
 	cpu_exec_mrs(SYS_ID_AA64PFR2_EL1, data->arm_id_aa64pfr[2]);
+	cpu_exec_mrs(SYS_ID_AA64SMFR0_EL1, data->arm_id_aa64smfr[0]);
 	cpu_exec_mrs(SYS_ID_AA64ZFR0_EL1, data->arm_id_aa64zfr[0]);
 #endif
 	return cpuid_set_error(ERR_OK);
@@ -1952,6 +1958,12 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SVE_SM4, "sve_sm4" },
 		{ CPU_FEATURE_TME, "tme" },
 		{ CPU_FEATURE_TRBE, "trbe" },
+		{ CPU_FEATURE_BRBE, "brbe" },
+		{ CPU_FEATURE_RME, "rme" },
+		{ CPU_FEATURE_SME, "sme" },
+		{ CPU_FEATURE_SME_F64F64, "sme_f64f64" },
+		{ CPU_FEATURE_SME_FA64, "sme_fa64" },
+		{ CPU_FEATURE_SME_I16I64, "sme_i16i64" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {

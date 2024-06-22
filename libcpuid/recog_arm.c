@@ -402,6 +402,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 
 	const struct arm_feature_map_t matchtable_id_aa64dfr[MAX_ARM_ID_AA64DFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64DFR0 */ = {
+			{ 55, 52, 0b0001, CPU_FEATURE_BRBE },
 			{ 51, 48, 0b0001, CPU_FEATURE_MTPMU },
 			{ 47, 47, 0b0001, CPU_FEATURE_TRBE },
 			{ 43, 40, 0b0001, CPU_FEATURE_TRF },
@@ -593,6 +594,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 59, 56, 0b0001, CPU_FEATURE_CSV2 },
 			{ 59, 56, 0b0010, CPU_FEATURE_CSV2_2 },
 			{ 59, 56, 0b0011, CPU_FEATURE_CSV2_3 },
+			{ 55, 52, 0b0001, CPU_FEATURE_RME },
 			{ 51, 48, 0b0001, CPU_FEATURE_DIT },
 			{ 47, 44, 0b0001, CPU_FEATURE_AMUV1 },
 			{ 47, 44, 0b0010, CPU_FEATURE_AMUV1P1 },
@@ -616,6 +618,8 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 35, 32, 0b0001, CPU_FEATURE_CSV2_1P1 },
 			{ 35, 32, 0b0010, CPU_FEATURE_CSV2_1P2 },
 			{ 31, 28, 0b0001, CPU_FEATURE_RNG_TRAP },
+			{ 27, 24, 0b0001, CPU_FEATURE_SME },
+			{ 27, 24, 0b0010, CPU_FEATURE_SME }, /* As 0b0001, plus the SME2 ZT0 register */
 			{ 11,  8, 0b0001, CPU_FEATURE_MTE },
 			{ 11,  8, 0b0010, CPU_FEATURE_MTE2 },
 			{ 11,  8, 0b0011, CPU_FEATURE_MTE3 },
@@ -631,6 +635,15 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{  3,  0, 0b0001, CPU_FEATURE_MTE_PERM },
 			{ -1, -1,     -1, -1 }
 		}
+	};
+
+	const struct arm_feature_map_t matchtable_id_aa64smfr[MAX_ARM_ID_AA64SMFR_REGS][MAX_MATCHTABLE_ITEMS] = {
+		[0] /* ID_AA64SMFR0 */ = {
+			{ 63, 63,    0b1, CPU_FEATURE_SME_FA64 },
+			{ 55, 52, 0b1111, CPU_FEATURE_SME_I16I64 },
+			{ 48, 48,    0b1, CPU_FEATURE_SME_F64F64 },
+			{ -1, -1,     -1, -1 }
+		},
 	};
 
 	const struct arm_feature_map_t matchtable_id_aa64zfr[MAX_ARM_ID_AA64ZFR_REGS][MAX_MATCHTABLE_ITEMS] = {
@@ -664,6 +677,9 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 
 	for (i = 0; i < MAX_ARM_ID_AA64PFR_REGS; i++)
 		MATCH_FEATURES_TABLE_WITH_RAW(aa64pfr);
+
+	for (i = 0; i < MAX_ARM_ID_AA64SMFR_REGS; i++)
+		MATCH_FEATURES_TABLE_WITH_RAW(aa64smfr);
 
 	for (i = 0; i < MAX_ARM_ID_AA64ZFR_REGS; i++)
 		MATCH_FEATURES_TABLE_WITH_RAW(aa64zfr);

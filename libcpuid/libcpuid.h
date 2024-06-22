@@ -272,6 +272,10 @@ struct cpu_raw_data_t {
 	 * (AArch64 Processor Feature Register) */
 	uint64_t arm_id_aa64pfr[MAX_ARM_ID_AA64PFR_REGS];
 
+	/** when then CPU is ARM-based and supports ID_AA64SMFR*
+	 * (AArch64 SME Feature ID Register ) */
+	uint64_t arm_id_aa64smfr[MAX_ARM_ID_AA64SMFR_REGS];
+
 	/** when then CPU is ARM-based and supports ID_AA64ZFR*
 	 * (SVE Feature ID register) */
 	uint64_t arm_id_aa64zfr[MAX_ARM_ID_AA64ZFR_REGS];
@@ -902,6 +906,12 @@ typedef enum {
 	CPU_FEATURE_SVE_SM4, /*!< ARM: Scalable Vector SM4 instructions */
 	CPU_FEATURE_TME, /*!< ARM: Transactional Memory Extension */
 	CPU_FEATURE_TRBE, /*!< ARM: Trace Buffer Extension */
+	CPU_FEATURE_BRBE, /*!< ARM: Branch Record Buffer Extension */
+	CPU_FEATURE_RME, /*!< ARM: Realm Management Extension */
+	CPU_FEATURE_SME, /*!< ARM: Scalable Matrix Extension */
+	CPU_FEATURE_SME_F64F64, /*!< ARM: Double-precision floating-point outer product instructions */
+	CPU_FEATURE_SME_FA64, /*!< ARM: Full A64 instruction set support in Streaming SVE mode */
+	CPU_FEATURE_SME_I16I64, /*!< ARM: 16-bit to 64-bit integer widening outer product instructions */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;
