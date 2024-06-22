@@ -1884,6 +1884,21 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_MTPMU, "mtpmu" },
 		{ CPU_FEATURE_PAUTH2, "pauth2" },
 		{ CPU_FEATURE_TWED, "twed" },
+		{ CPU_FEATURE_AFP, "afp" },
+		{ CPU_FEATURE_EBF16, "ebf16" },
+		{ CPU_FEATURE_HCX, "hcx" },
+		{ CPU_FEATURE_LPA2, "lpa2" },
+		{ CPU_FEATURE_LS64, "ls64" },
+		{ CPU_FEATURE_LS64_ACCDATA, "ls64_accdata" },
+		{ CPU_FEATURE_LS64_V, "ls64_v" },
+		{ CPU_FEATURE_MTE3, "mte3" },
+		{ CPU_FEATURE_MTE_ASYM_FAULT, "mte_asym_fault" },
+		{ CPU_FEATURE_PAN3, "pan3" },
+		{ CPU_FEATURE_PMUV3P7, "pmuv3p7" },
+		{ CPU_FEATURE_RPRES, "rpres" },
+		{ CPU_FEATURE_SPEV1P2, "spev1p2" },
+		{ CPU_FEATURE_WFXT, "wfxt" },
+		{ CPU_FEATURE_XS, "xs" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {

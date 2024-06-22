@@ -834,6 +834,21 @@ typedef enum {
 	CPU_FEATURE_MTPMU, /*!< ARM: Multi-threaded PMU extensions */
 	CPU_FEATURE_PAUTH2, /*!< ARM: Enhancements to pointer authentication */
 	CPU_FEATURE_TWED, /*!< ARM: Delayed Trapping of WFE */
+	CPU_FEATURE_AFP, /*!< ARM: Alternate floating-point behavior */
+	CPU_FEATURE_EBF16, /*!< ARM: AArch64 Extended BFloat16 instructions */
+	CPU_FEATURE_HCX, /*!< ARM: Support for the HCRX_EL2 register */
+	CPU_FEATURE_LPA2, /*!< ARM: Larger physical address for 4KB and 16KB translation granules */
+	CPU_FEATURE_LS64, /*!< ARM: Support for 64-byte loads and stores without status */
+	CPU_FEATURE_LS64_ACCDATA, /*!< ARM: Support for 64-byte EL0 stores with status */
+	CPU_FEATURE_LS64_V, /*!< ARM: Support for 64-byte stores with status */
+	CPU_FEATURE_MTE3, /*!< ARM: MTE Asymmetric Fault Handling */
+	CPU_FEATURE_MTE_ASYM_FAULT, /*!< ARM: Memory tagging asymmetric faults */
+	CPU_FEATURE_PAN3, /*!< ARM: Support for SCTLR_ELx.EPAN */
+	CPU_FEATURE_PMUV3P7, /*!< ARM: Armv8.7 PMU extensions */
+	CPU_FEATURE_RPRES, /*!< ARM: Increased precision of FRECPE and FRSQRTE */
+	CPU_FEATURE_SPEV1P2, /*!< ARM: Statistical Profiling Extensions version 1.2 */
+	CPU_FEATURE_WFXT, /*!< ARM: WFE and WFI instructions with timeout */
+	CPU_FEATURE_XS, /*!< ARM: XS attribute */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

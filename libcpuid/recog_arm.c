@@ -406,10 +406,16 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 39, 36, 0b0000, CPU_FEATURE_DOUBLELOCK },
 			{ 35, 32, 0b0001, CPU_FEATURE_SPE },
 			{ 35, 32, 0b0010, CPU_FEATURE_SPEV1P1 },
+			{ 35, 32, 0b0011, CPU_FEATURE_SPEV1P2 },
+			//{ 35, 32, 0b0100, CPU_FEATURE_SPEV1P3 },
+			//{ 35, 32, 0b0101, CPU_FEATURE_SPEV1P4 },
 			{ 11,  8, 0b0001, CPU_FEATURE_PMUV3 }, /* Performance Monitors Extension, PMUv3 implemented. */
 			{ 11,  8, 0b0100, CPU_FEATURE_PMUV3P1 }, /* PMUv3 for Armv8.1 */
 			{ 11,  8, 0b0101, CPU_FEATURE_PMUV3P4 }, /* PMUv3 for Armv8.4 */
 			{ 11,  8, 0b0110, CPU_FEATURE_PMUV3P5 }, /* PMUv3 for Armv8.5 */
+			{ 11,  8, 0b0111, CPU_FEATURE_PMUV3P7 }, /* PMUv3 for Armv8.7 */
+			//{ 11,  8, 0b1000, CPU_FEATURE_PMUV3P8 }, /* PMUv3 for Armv8.8 */
+			//{ 11,  8, 0b1001, CPU_FEATURE_PMUV3P9 }, /* PMUv3 for Armv8.9 */
 			{  3,  0, 0b1000, CPU_FEATURE_DEBUGV8P2 },
 			{  3,  0, 0b1001, CPU_FEATURE_DEBUGV8P4 },
 			{ -1, -1,     -1, -1 }
@@ -443,9 +449,14 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_AA64ISAR1 */ = {
+			{ 63, 60, 0b0001, CPU_FEATURE_LS64 },
+			{ 63, 60, 0b0010, CPU_FEATURE_LS64_V },
+			{ 63, 60, 0b0011, CPU_FEATURE_LS64_ACCDATA },
+			{ 59, 56, 0b0001, CPU_FEATURE_XS },
 			{ 55, 52, 0b0001, CPU_FEATURE_I8MM },
 			{ 51, 48, 0b0001, CPU_FEATURE_DGH },
 			{ 47, 44, 0b0001, CPU_FEATURE_BF16 },
+			{ 47, 44, 0b0010, CPU_FEATURE_EBF16 },
 			{ 43, 40, 0b0001, CPU_FEATURE_SPECRES },
 			{ 39, 36, 0b0001, CPU_FEATURE_SB },
 			{ 35, 32, 0b0001, CPU_FEATURE_FRINTTS },
@@ -477,6 +488,8 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 15, 12, 0b0100, CPU_FEATURE_FPAC },
 			{ 15, 12, 0b0101, CPU_FEATURE_FPACCOMBINE },
 			{ 11,  8, 0b0001, CPU_FEATURE_PACQARMA3 },
+			{  7,  4, 0b0001, CPU_FEATURE_RPRES },
+			{  3,  0, 0b0010, CPU_FEATURE_WFXT },
 			{ -1, -1,     -1, -1 }
 		}
 	};
@@ -487,17 +500,22 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 63, 60, 0b0010, CPU_FEATURE_ECV },
 			{ 59, 56, 0b0001, CPU_FEATURE_FGT },
 			{ 47, 44, 0b0001, CPU_FEATURE_EXS },
+			{ 31, 28, 0b0001, CPU_FEATURE_LPA2 },
+			{ 23, 20, 0b0001, CPU_FEATURE_LPA2 },
 			{ 19, 16, 0b0001, CPU_FEATURE_MIXEDEND },
 			{  7,  4, 0b0010, CPU_FEATURE_ASID16 },
 			{  3,  0, 0b0110, CPU_FEATURE_LPA },
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_AA64MMFR1 */ = {
+			{ 47, 44, 0b0001, CPU_FEATURE_AFP },
+			{ 43, 40, 0b0001, CPU_FEATURE_HCX },
 			{ 39, 36, 0b0010, CPU_FEATURE_ETS2 },
 			{ 35, 32, 0b0001, CPU_FEATURE_TWED },
 			{ 31, 28, 0b0001, CPU_FEATURE_XNX },
 			{ 23, 20, 0b0001, CPU_FEATURE_PAN },
 			{ 23, 20, 0b0010, CPU_FEATURE_PAN2 },
+			{ 23, 20, 0b0011, CPU_FEATURE_PAN3 },
 			{ 19, 16, 0b0001, CPU_FEATURE_LOR },
 			{ 15, 12, 0b0001, CPU_FEATURE_HPDS },
 			{ 15, 12, 0b0010, CPU_FEATURE_HPDS2 },
@@ -561,6 +579,8 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 31, 28, 0b0001, CPU_FEATURE_RNG_TRAP },
 			{ 11,  8, 0b0001, CPU_FEATURE_MTE },
 			{ 11,  8, 0b0010, CPU_FEATURE_MTE2 },
+			{ 11,  8, 0b0011, CPU_FEATURE_MTE3 },
+			{ 11,  8, 0b0011, CPU_FEATURE_MTE_ASYM_FAULT }, /* FEAT_MTE3 is implemented if and only if FEAT_MTE_ASYM_FAULT is implemented */
 			{  7,  4, 0b0001, CPU_FEATURE_SSBS },
 			{  7,  4, 0b0010, CPU_FEATURE_SSBS2 },
 			{  3,  0, 0b0001, CPU_FEATURE_BTI },
@@ -577,6 +597,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 55, 52, 0b0001, CPU_FEATURE_F32MM },
 			{ 47, 44, 0b0001, CPU_FEATURE_I8MM },
 			{ 23, 20, 0b0001, CPU_FEATURE_BF16 },
+			{ 23, 20, 0b0010, CPU_FEATURE_EBF16 },
 			{ -1, -1,     -1, -1 }
 		},
 	};
