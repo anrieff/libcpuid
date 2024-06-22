@@ -1967,6 +1967,22 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_BRBEV1P1, "brbev1p1" },
 		{ CPU_FEATURE_MEC, "mec" },
 		{ CPU_FEATURE_SME2, "sme2" },
+		{ CPU_FEATURE_ABLE, "able" },
+		{ CPU_FEATURE_BWE, "bwe" },
+		{ CPU_FEATURE_D128, "d128" },
+		{ CPU_FEATURE_EBEP, "ebep" },
+		{ CPU_FEATURE_GCS, "gcs" },
+		{ CPU_FEATURE_ITE, "ite" },
+		{ CPU_FEATURE_LSE128, "lse128" },
+		{ CPU_FEATURE_LVA3, "lva3" },
+		{ CPU_FEATURE_SEBEP, "sebep" },
+		{ CPU_FEATURE_SME2P1, "sme2p1" },
+		{ CPU_FEATURE_SME_F16F16, "sme_f16f16" },
+		{ CPU_FEATURE_SVE2P1, "sve2p1" },
+		{ CPU_FEATURE_SVE_B16B16, "sve_b16b16" },
+		{ CPU_FEATURE_SYSINSTR128, "sysinstr128" },
+		{ CPU_FEATURE_SYSREG128, "sysreg128" },
+		{ CPU_FEATURE_TRBE_EXT, "trbe_ext" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {

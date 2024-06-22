@@ -402,6 +402,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 
 	const struct arm_feature_map_t matchtable_id_aa64dfr[MAX_ARM_ID_AA64DFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64DFR0 */ = {
+			{ 59, 56, 0b0001, CPU_FEATURE_TRBE_EXT },
 			{ 55, 52, 0b0001, CPU_FEATURE_BRBE },
 			{ 55, 52, 0b0010, CPU_FEATURE_BRBEV1P1 },
 			{ 51, 48, 0b0001, CPU_FEATURE_MTPMU },
@@ -413,6 +414,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 35, 32, 0b0011, CPU_FEATURE_SPEV1P2 },
 			{ 35, 32, 0b0100, CPU_FEATURE_SPEV1P3 },
 			{ 35, 32, 0b0101, CPU_FEATURE_SPEV1P4 },
+			{ 27, 24, 0b0001, CPU_FEATURE_SEBEP },
 			{ 19, 16, 0b0001, CPU_FEATURE_PMUV3_SS },
 			{ 11,  8, 0b0001, CPU_FEATURE_PMUV3 }, /* Performance Monitors Extension, PMUv3 implemented. */
 			{ 11,  8, 0b0100, CPU_FEATURE_PMUV3P1 }, /* PMUv3 for Armv8.1 */
@@ -429,6 +431,10 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		},
 		[1] /* ID_AA64DFR1 */ = {
 			{ 55, 52, 0b0001, CPU_FEATURE_SPE_DPFZS },
+			{ 51, 48, 0b0001, CPU_FEATURE_EBEP },
+			{ 47, 44, 0b0001, CPU_FEATURE_ITE },
+			{ 43, 40, 0b0001, CPU_FEATURE_ABLE },
+			{ 43, 40, 0b0001, CPU_FEATURE_BWE },
 			{ 39, 36, 0b0001, CPU_FEATURE_PMUV3_ICNTR },
 			{ 35, 32, 0b0001, CPU_FEATURE_SPMU },
 			{ -1, -1,     -1, -1 }
@@ -451,6 +457,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 31, 28, 0b0001, CPU_FEATURE_RDM },
 			{ 27, 24, 0b0001, CPU_FEATURE_TME },
 			{ 23, 20, 0b0010, CPU_FEATURE_LSE },
+			{ 23, 20, 0b0011, CPU_FEATURE_LSE128 },
 			{ 19, 16, 0b0001, CPU_FEATURE_CRC32 },
 			{ 15, 12, 0b0001, CPU_FEATURE_SHA256 },
 			{ 15, 12, 0b0010, CPU_FEATURE_SHA512 },
@@ -498,6 +505,8 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 55, 52, 0b0001, CPU_FEATURE_CSSC },
 			{ 51, 48, 0b0001, CPU_FEATURE_RPRFM },
 			{ 43, 40, 0b0001, CPU_FEATURE_PRFMSLC },
+			{ 39, 36, 0b0001, CPU_FEATURE_SYSINSTR128 },
+			{ 35, 32, 0b0001, CPU_FEATURE_SYSREG128 },
 			{ 31, 28, 0b0001, CPU_FEATURE_CLRBHB },
 			{ 27, 24, 0b0001, CPU_FEATURE_CONSTPACFIELD },
 			{ 23, 20, 0b0001, CPU_FEATURE_HBC },
@@ -564,6 +573,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 31, 28, 0b0001, CPU_FEATURE_TTST },
 			{ 23, 20, 0b0001, CPU_FEATURE_CCIDX },
 			{ 19, 16, 0b0001, CPU_FEATURE_LVA },
+			{ 19, 16, 0b0010, CPU_FEATURE_LVA3 },
 			{ 15, 12, 0b0001, CPU_FEATURE_IESB },
 			{ 11,  8, 0b0001, CPU_FEATURE_LSMAOC },
 			{  7,  4, 0b0001, CPU_FEATURE_UAO },
@@ -575,6 +585,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 55, 52, 0b0010, CPU_FEATURE_ADERR },
 			{ 47, 44, 0b0010, CPU_FEATURE_ANERR },
 			{ 43, 40, 0b0010, CPU_FEATURE_ANERR },
+			{ 35, 32, 0b0001, CPU_FEATURE_D128 },
 			{ 31, 28, 0b0001, CPU_FEATURE_MEC },
 			{ 27, 24, 0b0001, CPU_FEATURE_AIE },
 			{ 23, 20, 0b0001, CPU_FEATURE_S2POE },
@@ -616,6 +627,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 63, 60, 0b0001, CPU_FEATURE_PFAR },
 			{ 59, 56, 0b0001, CPU_FEATURE_DOUBLEFAULT2 },
 			{ 51, 48, 0b0001, CPU_FEATURE_THE },
+			{ 47, 44, 0b0001, CPU_FEATURE_GCS },
 			{ 39, 36, 0b0001, CPU_FEATURE_NMI },
 			{ 35, 32, 0b0001, CPU_FEATURE_CSV2_1P1 },
 			{ 35, 32, 0b0010, CPU_FEATURE_CSV2_1P2 },
@@ -643,9 +655,11 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		[0] /* ID_AA64SMFR0 */ = {
 			{ 63, 63,    0b1, CPU_FEATURE_SME_FA64 },
 			{ 59, 56, 0b0001, CPU_FEATURE_SME2 },
-			//{ 59, 56, 0b0010, CPU_FEATURE_SME2P1 },
+			{ 59, 56, 0b0010, CPU_FEATURE_SME2P1 },
 			{ 55, 52, 0b1111, CPU_FEATURE_SME_I16I64 },
 			{ 48, 48,    0b1, CPU_FEATURE_SME_F64F64 },
+			{ 43, 43,    0b1, CPU_FEATURE_SVE_B16B16 },
+			{ 42, 42,    0b1, CPU_FEATURE_SME_F16F16 },
 			{ -1, -1,     -1, -1 }
 		},
 	};
@@ -657,15 +671,16 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 47, 44, 0b0001, CPU_FEATURE_I8MM },
 			{ 43, 40, 0b0001, CPU_FEATURE_SVE_SM4 },
 			{ 35, 32, 0b0001, CPU_FEATURE_SVE_SHA3 },
+			{ 27, 24, 0b0001, CPU_FEATURE_SVE_B16B16 },
 			{ 23, 20, 0b0001, CPU_FEATURE_BF16 },
 			{ 23, 20, 0b0010, CPU_FEATURE_EBF16 },
 			{ 19, 16, 0b0001, CPU_FEATURE_SVE_BITPERM },
 			{  7,  4, 0b0001, CPU_FEATURE_SVE_AES },
 			{  7,  4, 0b0010, CPU_FEATURE_SVE_PMULL128 },
 			{  3,  0, 0b0001, CPU_FEATURE_SVE2 },
-			//{  3,  0, 0b0001, CPU_FEATURE_SME },
-			//{  3,  0, 0b0010, CPU_FEATURE_SME2P1 },
-			//{  3,  0, 0b0010, CPU_FEATURE_SVE2P1 },
+			{  3,  0, 0b0001, CPU_FEATURE_SME },
+			{  3,  0, 0b0010, CPU_FEATURE_SME2P1 },
+			{  3,  0, 0b0010, CPU_FEATURE_SVE2P1 },
 			{ -1, -1,     -1, -1 }
 		},
 	};

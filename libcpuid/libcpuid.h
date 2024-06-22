@@ -915,6 +915,22 @@ typedef enum {
 	CPU_FEATURE_BRBEV1P1, /*!< ARM: Branch Record Buffer Extension version 1.1 */
 	CPU_FEATURE_MEC, /*!< ARM: Memory Encryption Contexts */
 	CPU_FEATURE_SME2, /*!< ARM: Scalable Matrix Extensions version 2 */
+	CPU_FEATURE_ABLE, /*!< ARM: Address Breakpoint Linking Extension */
+	CPU_FEATURE_BWE, /*!< ARM: Breakpoint and watchpoint enhancements */
+	CPU_FEATURE_D128, /*!< ARM: 128-bit Translation Tables, 56 bit PA */
+	CPU_FEATURE_EBEP, /*!< ARM: Exception-based Event Profiling */
+	CPU_FEATURE_GCS, /*!< ARM: Guarded Control Stack Extension */
+	CPU_FEATURE_ITE, /*!< ARM: Instrumentation Trace Extension */
+	CPU_FEATURE_LSE128, /*!< ARM: 128-bit Atomics */
+	CPU_FEATURE_LVA3, /*!< ARM: 56-bit VA */
+	CPU_FEATURE_SEBEP, /*!< ARM: Synchronous Exception-based Event Profiling */
+	CPU_FEATURE_SME2P1, /*!< ARM: Scalable Matrix Extension version 2.1 */
+	CPU_FEATURE_SME_F16F16, /*!< ARM: Non-widening half-precision FP16 to FP16 arithmetic for SME2. */
+	CPU_FEATURE_SVE2P1, /*!< ARM: Scalable Vector Extensions version 2.1 */
+	CPU_FEATURE_SVE_B16B16, /*!< ARM: Non-widening BFloat16 to BFloat16 arithmetic for SVE2 and SME2. */
+	CPU_FEATURE_SYSINSTR128, /*!< ARM: 128-bit System instructions */
+	CPU_FEATURE_SYSREG128, /*!< ARM: 128-bit System registers */
+	CPU_FEATURE_TRBE_EXT, /*!< ARM: Trace Buffer external mode */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;
