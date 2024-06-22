@@ -407,17 +407,19 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 35, 32, 0b0001, CPU_FEATURE_SPE },
 			{ 35, 32, 0b0010, CPU_FEATURE_SPEV1P1 },
 			{ 35, 32, 0b0011, CPU_FEATURE_SPEV1P2 },
-			//{ 35, 32, 0b0100, CPU_FEATURE_SPEV1P3 },
+			{ 35, 32, 0b0100, CPU_FEATURE_SPEV1P3 },
 			//{ 35, 32, 0b0101, CPU_FEATURE_SPEV1P4 },
 			{ 11,  8, 0b0001, CPU_FEATURE_PMUV3 }, /* Performance Monitors Extension, PMUv3 implemented. */
 			{ 11,  8, 0b0100, CPU_FEATURE_PMUV3P1 }, /* PMUv3 for Armv8.1 */
 			{ 11,  8, 0b0101, CPU_FEATURE_PMUV3P4 }, /* PMUv3 for Armv8.4 */
 			{ 11,  8, 0b0110, CPU_FEATURE_PMUV3P5 }, /* PMUv3 for Armv8.5 */
 			{ 11,  8, 0b0111, CPU_FEATURE_PMUV3P7 }, /* PMUv3 for Armv8.7 */
-			//{ 11,  8, 0b1000, CPU_FEATURE_PMUV3P8 }, /* PMUv3 for Armv8.8 */
+			{ 11,  8, 0b1000, CPU_FEATURE_PMUV3P8 }, /* PMUv3 for Armv8.8 */
 			//{ 11,  8, 0b1001, CPU_FEATURE_PMUV3P9 }, /* PMUv3 for Armv8.9 */
-			{  3,  0, 0b1000, CPU_FEATURE_DEBUGV8P2 },
-			{  3,  0, 0b1001, CPU_FEATURE_DEBUGV8P4 },
+			{  3,  0, 0b1000, CPU_FEATURE_DEBUGV8P2 }, /* Armv8.2 debug architecture */
+			{  3,  0, 0b1001, CPU_FEATURE_DEBUGV8P4 }, /* Armv8.4 debug architecture */
+			{  3,  0, 0b1010, CPU_FEATURE_DEBUGV8P8 }, /* Armv8.8 debug architecture */
+			//{  3,  0, 0b1011, CPU_FEATURE_DEBUGV8P9 }, /* Armv8.9 debug architecture */
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_AA64DFR1 */ = {
@@ -482,6 +484,8 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		},
 		[2] /* ID_AA64ISAR2 */ = {
 			{ 27, 24, 0b0001, CPU_FEATURE_CONSTPACFIELD },
+			{ 23, 20, 0b0001, CPU_FEATURE_HBC },
+			{ 19, 16, 0b0001, CPU_FEATURE_MOPS },
 			{ 15, 12, 0b0001, CPU_FEATURE_PAUTH },
 			{ 15, 12, 0b0010, CPU_FEATURE_EPAC },
 			{ 15, 12, 0b0011, CPU_FEATURE_PAUTH2 },
@@ -508,6 +512,8 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_AA64MMFR1 */ = {
+			{ 59, 56, 0b0001, CPU_FEATURE_CMOW },
+			{ 55, 52, 0b0001, CPU_FEATURE_TIDCP1 },
 			{ 47, 44, 0b0001, CPU_FEATURE_AFP },
 			{ 43, 40, 0b0001, CPU_FEATURE_HCX },
 			{ 39, 36, 0b0010, CPU_FEATURE_ETS2 },
@@ -546,6 +552,8 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[3] /* ID_AA64MMFR3 */ = {
+			{  7,  4, 0b0001, CPU_FEATURE_SCTLR2 },
+			{  3,  0, 0b0001, CPU_FEATURE_TCR2 },
 			{ -1, -1,     -1, -1 }
 		},
 		[4] /* ID_AA64MMFR4 */ = {
@@ -574,6 +582,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_AA64PFR1 */ = {
+			{ 39, 36, 0b0001, CPU_FEATURE_NMI },
 			{ 35, 32, 0b0001, CPU_FEATURE_CSV2_1P1 },
 			{ 35, 32, 0b0010, CPU_FEATURE_CSV2_1P2 },
 			{ 31, 28, 0b0001, CPU_FEATURE_RNG_TRAP },

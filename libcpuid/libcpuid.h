@@ -849,6 +849,16 @@ typedef enum {
 	CPU_FEATURE_SPEV1P2, /*!< ARM: Statistical Profiling Extensions version 1.2 */
 	CPU_FEATURE_WFXT, /*!< ARM: WFE and WFI instructions with timeout */
 	CPU_FEATURE_XS, /*!< ARM: XS attribute */
+	CPU_FEATURE_CMOW, /*!< ARM: Control for cache maintenance permission */
+	CPU_FEATURE_DEBUGV8P8, /*!< ARM: Debug v8.8 */
+	CPU_FEATURE_HBC, /*!< ARM: Hinted conditional branches */
+	CPU_FEATURE_MOPS, /*!< ARM: Standardization of memory operations */
+	CPU_FEATURE_NMI, /*!< ARM: Non-maskable Interrupts */
+	CPU_FEATURE_PMUV3P8, /*!< ARM: Armv8.8 PMU extensions */
+	CPU_FEATURE_SCTLR2, /*!< ARM: Extension to SCTLR_ELx */
+	CPU_FEATURE_SPEV1P3, /*!< ARM: Statistical Profiling Extensions version 1.3 */
+	CPU_FEATURE_TCR2, /*!< ARM: Support for TCR2_ELx */
+	CPU_FEATURE_TIDCP1, /*!< ARM: EL0 use of IMPLEMENTATION DEFINED functionality */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

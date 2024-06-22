@@ -1899,6 +1899,16 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SPEV1P2, "spev1p2" },
 		{ CPU_FEATURE_WFXT, "wfxt" },
 		{ CPU_FEATURE_XS, "xs" },
+		{ CPU_FEATURE_CMOW, "cmow" },
+		{ CPU_FEATURE_DEBUGV8P8, "debugv8p8" },
+		{ CPU_FEATURE_HBC, "hbc" },
+		{ CPU_FEATURE_MOPS, "mops" },
+		{ CPU_FEATURE_NMI, "nmi" },
+		{ CPU_FEATURE_PMUV3P8, "pmuv3p8" },
+		{ CPU_FEATURE_SCTLR2, "sctlr2" },
+		{ CPU_FEATURE_SPEV1P3, "spev1p3" },
+		{ CPU_FEATURE_TCR2, "tcr2" },
+		{ CPU_FEATURE_TIDCP1, "tidcp1" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {
