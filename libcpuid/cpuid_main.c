@@ -1874,6 +1874,16 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SPECRES, "specres" },
 		{ CPU_FEATURE_SSBS, "ssbs" },
 		{ CPU_FEATURE_SSBS2, "ssbs2" },
+		{ CPU_FEATURE_AMUV1P1, "amuv1p1" },
+		{ CPU_FEATURE_BF16, "bf16" },
+		{ CPU_FEATURE_DGH, "dgh" },
+		{ CPU_FEATURE_ECV, "ecv" },
+		{ CPU_FEATURE_FGT, "fgt" },
+		{ CPU_FEATURE_MPAMV0P1, "mpamv0p1" },
+		{ CPU_FEATURE_MPAMV1P1, "mpamv1p1" },
+		{ CPU_FEATURE_MTPMU, "mtpmu" },
+		{ CPU_FEATURE_PAUTH2, "pauth2" },
+		{ CPU_FEATURE_TWED, "twed" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {

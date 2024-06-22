@@ -824,6 +824,16 @@ typedef enum {
 	CPU_FEATURE_SPECRES, /*!< ARM: Speculation restriction instructions */
 	CPU_FEATURE_SSBS, /*!< ARM: Speculative Store Bypass Safe */
 	CPU_FEATURE_SSBS2, /*!< ARM: MRS and MSR instructions for SSBS version 2 */
+	CPU_FEATURE_AMUV1P1, /*!< ARM: Activity Monitors Extension version 1.1 */
+	CPU_FEATURE_BF16, /*!< ARM: AArch64 BFloat16 instructions */
+	CPU_FEATURE_DGH, /*!< ARM: Data Gathering Hint */
+	CPU_FEATURE_ECV, /*!< ARM: Enhanced Counter Virtualization */
+	CPU_FEATURE_FGT, /*!< ARM: Fine Grain Traps */
+	CPU_FEATURE_MPAMV0P1, /*!< ARM: Memory Partitioning and Monitoring version 0.1 */
+	CPU_FEATURE_MPAMV1P1, /*!< ARM: Memory Partitioning and Monitoring version 1.1 */
+	CPU_FEATURE_MTPMU, /*!< ARM: Multi-threaded PMU extensions */
+	CPU_FEATURE_PAUTH2, /*!< ARM: Enhancements to pointer authentication */
+	CPU_FEATURE_TWED, /*!< ARM: Delayed Trapping of WFE */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

@@ -380,18 +380,20 @@ static const char* get_cpu_name(uint16_t part_num, const struct arm_hw_impl* hw_
 	return hw_impl->parts[i].name;
 }
 
-static void match_arm_features(const struct arm_feature_map_t* matchtable, uint32_t reg, struct cpu_id_t* data)
+static void match_arm_features(const struct arm_feature_map_t* matchtable, const char* reg_name, const int reg_number, uint32_t reg_value, struct cpu_id_t* data)
 {
 	int i;
 
 	for (i = 0; matchtable[i].feature != -1; i++) {
-		if (EXTRACTS_BITS(reg, matchtable[i].highbit, matchtable[i].lowbit) == matchtable[i].value)
+		if (EXTRACTS_BITS(reg_value, matchtable[i].highbit, matchtable[i].lowbit) == matchtable[i].value) {
 			data->flags[matchtable[i].feature] = 1;
+			debugf(3, "Register %8s%i (0x%016X): match value %u for bits [%2u:%2u]\n", reg_name, reg_number, reg_value, matchtable[i].value, matchtable[i].highbit, matchtable[i].lowbit);
+		}
 	}
 }
 
 #define MAX_MATCHTABLE_ITEMS 32
-#define MATCH_FEATURES_TABLE_WITH_RAW(reg) match_arm_features(matchtable_id_##reg[i], raw->arm_id_##reg[i], data)
+#define MATCH_FEATURES_TABLE_WITH_RAW(reg) match_arm_features(matchtable_id_##reg[i], #reg, i, raw->arm_id_##reg[i], data)
 static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
 	int i;
@@ -399,6 +401,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 
 	const struct arm_feature_map_t matchtable_id_aa64dfr[MAX_ARM_ID_AA64DFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64DFR0 */ = {
+			{ 51, 48, 0b0001, CPU_FEATURE_MTPMU },
 			{ 43, 40, 0b0001, CPU_FEATURE_TRF },
 			{ 39, 36, 0b0000, CPU_FEATURE_DOUBLELOCK },
 			{ 35, 32, 0b0001, CPU_FEATURE_SPE },
@@ -441,6 +444,8 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		},
 		[1] /* ID_AA64ISAR1 */ = {
 			{ 55, 52, 0b0001, CPU_FEATURE_I8MM },
+			{ 51, 48, 0b0001, CPU_FEATURE_DGH },
+			{ 47, 44, 0b0001, CPU_FEATURE_BF16 },
 			{ 43, 40, 0b0001, CPU_FEATURE_SPECRES },
 			{ 39, 36, 0b0001, CPU_FEATURE_SB },
 			{ 35, 32, 0b0001, CPU_FEATURE_FRINTTS },
@@ -452,12 +457,12 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 15, 12, 0b0001, CPU_FEATURE_JSCVT },
 			{ 11,  8, 0b0001, CPU_FEATURE_PAUTH },
 			{ 11,  8, 0b0010, CPU_FEATURE_EPAC },
-			//{ 11,  8, 0b0011, CPU_FEATURE_PAUTH2 },
+			{ 11,  8, 0b0011, CPU_FEATURE_PAUTH2 },
 			{ 11,  8, 0b0100, CPU_FEATURE_FPAC },
 			{ 11,  8, 0b0101, CPU_FEATURE_FPACCOMBINE },
 			{  7,  4, 0b0001, CPU_FEATURE_PAUTH },
 			{  7,  4, 0b0010, CPU_FEATURE_EPAC },
-			//{  7,  4, 0b0011, CPU_FEATURE_PAUTH2 },
+			{  7,  4, 0b0011, CPU_FEATURE_PAUTH2 },
 			{  7,  4, 0b0100, CPU_FEATURE_FPAC },
 			{  7,  4, 0b0101, CPU_FEATURE_FPACCOMBINE },
 			{  3,  0, 0b0001, CPU_FEATURE_DPB },
@@ -468,7 +473,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 27, 24, 0b0001, CPU_FEATURE_CONSTPACFIELD },
 			{ 15, 12, 0b0001, CPU_FEATURE_PAUTH },
 			{ 15, 12, 0b0010, CPU_FEATURE_EPAC },
-			//{ 15, 12, 0b0011, CPU_FEATURE_PAUTH2 },
+			{ 15, 12, 0b0011, CPU_FEATURE_PAUTH2 },
 			{ 15, 12, 0b0100, CPU_FEATURE_FPAC },
 			{ 15, 12, 0b0101, CPU_FEATURE_FPACCOMBINE },
 			{ 11,  8, 0b0001, CPU_FEATURE_PACQARMA3 },
@@ -478,6 +483,9 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 
 	const struct arm_feature_map_t matchtable_id_aa64mmfr[MAX_ARM_ID_AA64MMFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64MMFR0 */ = {
+			{ 63, 60, 0b0001, CPU_FEATURE_ECV },
+			{ 63, 60, 0b0010, CPU_FEATURE_ECV },
+			{ 59, 56, 0b0001, CPU_FEATURE_FGT },
 			{ 47, 44, 0b0001, CPU_FEATURE_EXS },
 			{ 19, 16, 0b0001, CPU_FEATURE_MIXEDEND },
 			{  7,  4, 0b0010, CPU_FEATURE_ASID16 },
@@ -486,6 +494,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		},
 		[1] /* ID_AA64MMFR1 */ = {
 			{ 39, 36, 0b0010, CPU_FEATURE_ETS2 },
+			{ 35, 32, 0b0001, CPU_FEATURE_TWED },
 			{ 31, 28, 0b0001, CPU_FEATURE_XNX },
 			{ 23, 20, 0b0001, CPU_FEATURE_PAN },
 			{ 23, 20, 0b0010, CPU_FEATURE_PAN2 },
@@ -534,6 +543,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 59, 56, 0b0011, CPU_FEATURE_CSV2_3 },
 			{ 51, 48, 0b0001, CPU_FEATURE_DIT },
 			{ 47, 44, 0b0001, CPU_FEATURE_AMUV1 },
+			{ 47, 44, 0b0010, CPU_FEATURE_AMUV1P1 },
 			{ 39, 36, 0b0001, CPU_FEATURE_SEL2 },
 			{ 35, 32, 0b0001, CPU_FEATURE_SVE },
 			{ 31, 28, 0b0001, CPU_FEATURE_RAS },
@@ -566,6 +576,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 59, 56, 0b0001, CPU_FEATURE_F64MM },
 			{ 55, 52, 0b0001, CPU_FEATURE_F32MM },
 			{ 47, 44, 0b0001, CPU_FEATURE_I8MM },
+			{ 23, 20, 0b0001, CPU_FEATURE_BF16 },
 			{ -1, -1,     -1, -1 }
 		},
 	};
@@ -606,6 +617,10 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	mpam_frac = EXTRACTS_BITS(raw->arm_id_aa64pfr[1], 19, 16);
 	if ((mpam != 0b0000) || (mpam_frac != 0b0000)) {
 		data->flags[CPU_FEATURE_MPAM] = 1;
+		if ((mpam == 0b0000) && (mpam_frac == 0b0001))
+			data->flags[CPU_FEATURE_MPAMV0P1] = 1;
+		else if ((mpam == 0b0001) && (mpam_frac == 0b0001))
+			data->flags[CPU_FEATURE_MPAMV1P1] = 1;
 		debugf(2, "MPAM Extension version is %u.%u\n", mpam, mpam_frac);
 	}
 }
