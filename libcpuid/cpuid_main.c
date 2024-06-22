@@ -1964,6 +1964,9 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SME_F64F64, "sme_f64f64" },
 		{ CPU_FEATURE_SME_FA64, "sme_fa64" },
 		{ CPU_FEATURE_SME_I16I64, "sme_i16i64" },
+		{ CPU_FEATURE_BRBEV1P1, "brbev1p1" },
+		{ CPU_FEATURE_MEC, "mec" },
+		{ CPU_FEATURE_SME2, "sme2" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {

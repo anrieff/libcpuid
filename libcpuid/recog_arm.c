@@ -403,6 +403,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	const struct arm_feature_map_t matchtable_id_aa64dfr[MAX_ARM_ID_AA64DFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64DFR0 */ = {
 			{ 55, 52, 0b0001, CPU_FEATURE_BRBE },
+			{ 55, 52, 0b0010, CPU_FEATURE_BRBEV1P1 },
 			{ 51, 48, 0b0001, CPU_FEATURE_MTPMU },
 			{ 47, 47, 0b0001, CPU_FEATURE_TRBE },
 			{ 43, 40, 0b0001, CPU_FEATURE_TRF },
@@ -574,6 +575,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 55, 52, 0b0010, CPU_FEATURE_ADERR },
 			{ 47, 44, 0b0010, CPU_FEATURE_ANERR },
 			{ 43, 40, 0b0010, CPU_FEATURE_ANERR },
+			{ 31, 28, 0b0001, CPU_FEATURE_MEC },
 			{ 27, 24, 0b0001, CPU_FEATURE_AIE },
 			{ 23, 20, 0b0001, CPU_FEATURE_S2POE },
 			{ 19, 16, 0b0001, CPU_FEATURE_S1POE },
@@ -640,6 +642,8 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	const struct arm_feature_map_t matchtable_id_aa64smfr[MAX_ARM_ID_AA64SMFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64SMFR0 */ = {
 			{ 63, 63,    0b1, CPU_FEATURE_SME_FA64 },
+			{ 59, 56, 0b0001, CPU_FEATURE_SME2 },
+			//{ 59, 56, 0b0010, CPU_FEATURE_SME2P1 },
 			{ 55, 52, 0b1111, CPU_FEATURE_SME_I16I64 },
 			{ 48, 48,    0b1, CPU_FEATURE_SME_F64F64 },
 			{ -1, -1,     -1, -1 }

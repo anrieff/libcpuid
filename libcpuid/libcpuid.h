@@ -912,6 +912,9 @@ typedef enum {
 	CPU_FEATURE_SME_F64F64, /*!< ARM: Double-precision floating-point outer product instructions */
 	CPU_FEATURE_SME_FA64, /*!< ARM: Full A64 instruction set support in Streaming SVE mode */
 	CPU_FEATURE_SME_I16I64, /*!< ARM: 16-bit to 64-bit integer widening outer product instructions */
+	CPU_FEATURE_BRBEV1P1, /*!< ARM: Branch Record Buffer Extension version 1.1 */
+	CPU_FEATURE_MEC, /*!< ARM: Memory Encryption Contexts */
+	CPU_FEATURE_SME2, /*!< ARM: Scalable Matrix Extensions version 2 */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;
