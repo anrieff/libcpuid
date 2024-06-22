@@ -894,6 +894,14 @@ typedef enum {
 	CPU_FEATURE_SPEV1P4, /*!< ARM: Statistical Profiling Extension version 1.4 */
 	CPU_FEATURE_SPMU, /*!< ARM: System Performance Monitors Extension */
 	CPU_FEATURE_THE, /*!< ARM: Translation Hardening Extension */
+	CPU_FEATURE_SVE2, /*!< ARM: Scalable Vector Extension version 2 */
+	CPU_FEATURE_SVE_AES, /*!< ARM: Scalable Vector AES instructions */
+	CPU_FEATURE_SVE_BITPERM, /*!< ARM: Scalable Vector Bit Permutes instructions */
+	CPU_FEATURE_SVE_PMULL128, /*!< ARM: Scalable Vector PMULL instructions */
+	CPU_FEATURE_SVE_SHA3, /*!< ARM: Scalable Vector SHA3 instructions */
+	CPU_FEATURE_SVE_SM4, /*!< ARM: Scalable Vector SM4 instructions */
+	CPU_FEATURE_TME, /*!< ARM: Transactional Memory Extension */
+	CPU_FEATURE_TRBE, /*!< ARM: Trace Buffer Extension */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

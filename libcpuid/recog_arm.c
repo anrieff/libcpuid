@@ -403,6 +403,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	const struct arm_feature_map_t matchtable_id_aa64dfr[MAX_ARM_ID_AA64DFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64DFR0 */ = {
 			{ 51, 48, 0b0001, CPU_FEATURE_MTPMU },
+			{ 47, 47, 0b0001, CPU_FEATURE_TRBE },
 			{ 43, 40, 0b0001, CPU_FEATURE_TRF },
 			{ 39, 36, 0b0000, CPU_FEATURE_DOUBLELOCK },
 			{ 35, 32, 0b0001, CPU_FEATURE_SPE },
@@ -446,6 +447,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 39, 36, 0b0001, CPU_FEATURE_SM3 },
 			{ 35, 32, 0b0001, CPU_FEATURE_SHA3 },
 			{ 31, 28, 0b0001, CPU_FEATURE_RDM },
+			{ 27, 24, 0b0001, CPU_FEATURE_TME },
 			{ 23, 20, 0b0010, CPU_FEATURE_LSE },
 			{ 19, 16, 0b0001, CPU_FEATURE_CRC32 },
 			{ 15, 12, 0b0001, CPU_FEATURE_SHA256 },
@@ -636,8 +638,17 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 59, 56, 0b0001, CPU_FEATURE_F64MM },
 			{ 55, 52, 0b0001, CPU_FEATURE_F32MM },
 			{ 47, 44, 0b0001, CPU_FEATURE_I8MM },
+			{ 43, 40, 0b0001, CPU_FEATURE_SVE_SM4 },
+			{ 35, 32, 0b0001, CPU_FEATURE_SVE_SHA3 },
 			{ 23, 20, 0b0001, CPU_FEATURE_BF16 },
 			{ 23, 20, 0b0010, CPU_FEATURE_EBF16 },
+			{ 19, 16, 0b0001, CPU_FEATURE_SVE_BITPERM },
+			{  7,  4, 0b0001, CPU_FEATURE_SVE_AES },
+			{  7,  4, 0b0010, CPU_FEATURE_SVE_PMULL128 },
+			{  3,  0, 0b0001, CPU_FEATURE_SVE2 },
+			//{  3,  0, 0b0001, CPU_FEATURE_SME },
+			//{  3,  0, 0b0010, CPU_FEATURE_SME2P1 },
+			//{  3,  0, 0b0010, CPU_FEATURE_SVE2P1 },
 			{ -1, -1,     -1, -1 }
 		},
 	};

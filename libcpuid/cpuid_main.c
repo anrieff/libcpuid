@@ -1944,6 +1944,14 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SPEV1P4, "spev1p4" },
 		{ CPU_FEATURE_SPMU, "spmu" },
 		{ CPU_FEATURE_THE, "the" },
+		{ CPU_FEATURE_SVE2, "sve2" },
+		{ CPU_FEATURE_SVE_AES, "sve_aes" },
+		{ CPU_FEATURE_SVE_BITPERM, "sve_bitperm" },
+		{ CPU_FEATURE_SVE_PMULL128, "sve_pmull128" },
+		{ CPU_FEATURE_SVE_SHA3, "sve_sha3" },
+		{ CPU_FEATURE_SVE_SM4, "sve_sm4" },
+		{ CPU_FEATURE_TME, "tme" },
+		{ CPU_FEATURE_TRBE, "trbe" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {
