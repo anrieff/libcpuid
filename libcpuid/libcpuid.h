@@ -859,6 +859,41 @@ typedef enum {
 	CPU_FEATURE_SPEV1P3, /*!< ARM: Statistical Profiling Extensions version 1.3 */
 	CPU_FEATURE_TCR2, /*!< ARM: Support for TCR2_ELx */
 	CPU_FEATURE_TIDCP1, /*!< ARM: EL0 use of IMPLEMENTATION DEFINED functionality */
+	CPU_FEATURE_ADERR, /*!< ARM: Asynchronous Device Error Exceptions */
+	CPU_FEATURE_AIE, /*!< ARM: Memory Attribute Index Enhancement */
+	CPU_FEATURE_ANERR, /*!< ARM: Asynchronous Normal Error Exceptions */
+	CPU_FEATURE_ATS1A, /*!< ARM: Address Translation operations that ignore stage 1 permissions */
+	CPU_FEATURE_CLRBHB, /*!< ARM: Support for Clear Branch History instruction */
+	CPU_FEATURE_CSSC, /*!< ARM: Common Short Sequence Compression instructions */
+	CPU_FEATURE_DEBUGV8P9, /*!< ARM: Debug v8.9 */
+	CPU_FEATURE_DOUBLEFAULT2, /*!< ARM: Double Fault Extension v2 */
+	CPU_FEATURE_ECBHB, /*!< ARM: Exploitative control using branch history information */
+	CPU_FEATURE_FGT2, /*!< ARM: Fine-grained traps 2 */
+	CPU_FEATURE_HAFT, /*!< ARM: Hardware managed Access Flag for Table descriptors */
+	CPU_FEATURE_LRCPC3, /*!< ARM: Load-Acquire RCpc instructions version 3 */
+	CPU_FEATURE_MTE4, /*!< ARM: Enhanced Memory Tagging Extension */
+	CPU_FEATURE_MTE_ASYNC, /*!< ARM: Asynchronous reporting of Tag Check Fault */
+	CPU_FEATURE_MTE_CANONICAL_TAGS, /*!< ARM: Canonical Tag checking for Untagged memory */
+	CPU_FEATURE_MTE_NO_ADDRESS_TAGS, /*!< ARM: Memory tagging with Address tagging disabled */
+	CPU_FEATURE_MTE_PERM, /*!< ARM: Allocation tag access permission */
+	CPU_FEATURE_MTE_STORE_ONLY, /*!< ARM: Store-only Tag Checking */
+	CPU_FEATURE_MTE_TAGGED_FAR, /*!< ARM: FAR_ELx on a Tag Check Fault */
+	CPU_FEATURE_PFAR, /*!< ARM: Physical Fault Address Register Extension */
+	CPU_FEATURE_PMUV3_ICNTR, /*!< ARM: Fixed-function instruction counter */
+	CPU_FEATURE_PMUV3_SS, /*!< ARM: PMU Snapshot extension */
+	CPU_FEATURE_PMUV3P9, /*!< ARM: Armv8.9 PMU extensions */
+	CPU_FEATURE_PRFMSLC, /*!< ARM: SLC target support for PRFM instructions */
+	CPU_FEATURE_RASV2, /*!< ARM: RAS Extension v2 */
+	CPU_FEATURE_RPRFM, /*!< ARM: Support for Range Prefetch Memory instruction */
+	CPU_FEATURE_S1PIE, /*!< ARM: Stage 1 permission indirections */
+	CPU_FEATURE_S1POE, /*!< ARM: Stage 1 permission overlays */
+	CPU_FEATURE_S2PIE, /*!< ARM: Stage 2 permission indirections */
+	CPU_FEATURE_S2POE, /*!< ARM: Stage 1 permission overlays */
+	CPU_FEATURE_SPECRES2, /*!< ARM: Enhanced speculation restriction instructions */
+	CPU_FEATURE_SPE_DPFZS, /*!< ARM: Disable Cycle Counter on SPE Freeze */
+	CPU_FEATURE_SPEV1P4, /*!< ARM: Statistical Profiling Extension version 1.4 */
+	CPU_FEATURE_SPMU, /*!< ARM: System Performance Monitors Extension */
+	CPU_FEATURE_THE, /*!< ARM: Translation Hardening Extension */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

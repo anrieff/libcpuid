@@ -398,6 +398,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
 	int i;
 	uint8_t mpam, mpam_frac;
+	uint8_t mte, mte_frac, mtex;
 
 	const struct arm_feature_map_t matchtable_id_aa64dfr[MAX_ARM_ID_AA64DFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64DFR0 */ = {
@@ -408,21 +409,25 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 35, 32, 0b0010, CPU_FEATURE_SPEV1P1 },
 			{ 35, 32, 0b0011, CPU_FEATURE_SPEV1P2 },
 			{ 35, 32, 0b0100, CPU_FEATURE_SPEV1P3 },
-			//{ 35, 32, 0b0101, CPU_FEATURE_SPEV1P4 },
+			{ 35, 32, 0b0101, CPU_FEATURE_SPEV1P4 },
+			{ 19, 16, 0b0001, CPU_FEATURE_PMUV3_SS },
 			{ 11,  8, 0b0001, CPU_FEATURE_PMUV3 }, /* Performance Monitors Extension, PMUv3 implemented. */
 			{ 11,  8, 0b0100, CPU_FEATURE_PMUV3P1 }, /* PMUv3 for Armv8.1 */
 			{ 11,  8, 0b0101, CPU_FEATURE_PMUV3P4 }, /* PMUv3 for Armv8.4 */
 			{ 11,  8, 0b0110, CPU_FEATURE_PMUV3P5 }, /* PMUv3 for Armv8.5 */
 			{ 11,  8, 0b0111, CPU_FEATURE_PMUV3P7 }, /* PMUv3 for Armv8.7 */
 			{ 11,  8, 0b1000, CPU_FEATURE_PMUV3P8 }, /* PMUv3 for Armv8.8 */
-			//{ 11,  8, 0b1001, CPU_FEATURE_PMUV3P9 }, /* PMUv3 for Armv8.9 */
+			{ 11,  8, 0b1001, CPU_FEATURE_PMUV3P9 }, /* PMUv3 for Armv8.9 */
 			{  3,  0, 0b1000, CPU_FEATURE_DEBUGV8P2 }, /* Armv8.2 debug architecture */
 			{  3,  0, 0b1001, CPU_FEATURE_DEBUGV8P4 }, /* Armv8.4 debug architecture */
 			{  3,  0, 0b1010, CPU_FEATURE_DEBUGV8P8 }, /* Armv8.8 debug architecture */
-			//{  3,  0, 0b1011, CPU_FEATURE_DEBUGV8P9 }, /* Armv8.9 debug architecture */
+			{  3,  0, 0b1011, CPU_FEATURE_DEBUGV8P9 }, /* Armv8.9 debug architecture */
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_AA64DFR1 */ = {
+			{ 55, 52, 0b0001, CPU_FEATURE_SPE_DPFZS },
+			{ 39, 36, 0b0001, CPU_FEATURE_PMUV3_ICNTR },
+			{ 35, 32, 0b0001, CPU_FEATURE_SPMU },
 			{ -1, -1,     -1, -1 }
 		}
 	};
@@ -460,12 +465,14 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 47, 44, 0b0001, CPU_FEATURE_BF16 },
 			{ 47, 44, 0b0010, CPU_FEATURE_EBF16 },
 			{ 43, 40, 0b0001, CPU_FEATURE_SPECRES },
+			{ 43, 40, 0b0010, CPU_FEATURE_SPECRES2 },
 			{ 39, 36, 0b0001, CPU_FEATURE_SB },
 			{ 35, 32, 0b0001, CPU_FEATURE_FRINTTS },
 			{ 31, 28, 0b0001, CPU_FEATURE_PACIMP },
 			{ 27, 24, 0b0001, CPU_FEATURE_PACQARMA5 },
 			{ 23, 20, 0b0001, CPU_FEATURE_LRCPC },
 			{ 23, 20, 0b0010, CPU_FEATURE_LRCPC2 },
+			{ 23, 20, 0b0011, CPU_FEATURE_LRCPC3 },
 			{ 19, 16, 0b0001, CPU_FEATURE_FCMA },
 			{ 15, 12, 0b0001, CPU_FEATURE_JSCVT },
 			{ 11,  8, 0b0001, CPU_FEATURE_PAUTH },
@@ -483,6 +490,11 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[2] /* ID_AA64ISAR2 */ = {
+			{ 63, 60, 0b0001, CPU_FEATURE_ATS1A },
+			{ 55, 52, 0b0001, CPU_FEATURE_CSSC },
+			{ 51, 48, 0b0001, CPU_FEATURE_RPRFM },
+			{ 43, 40, 0b0001, CPU_FEATURE_PRFMSLC },
+			{ 31, 28, 0b0001, CPU_FEATURE_CLRBHB },
 			{ 27, 24, 0b0001, CPU_FEATURE_CONSTPACFIELD },
 			{ 23, 20, 0b0001, CPU_FEATURE_HBC },
 			{ 19, 16, 0b0001, CPU_FEATURE_MOPS },
@@ -503,6 +515,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 63, 60, 0b0001, CPU_FEATURE_ECV },
 			{ 63, 60, 0b0010, CPU_FEATURE_ECV },
 			{ 59, 56, 0b0001, CPU_FEATURE_FGT },
+			{ 59, 56, 0b0010, CPU_FEATURE_FGT2 },
 			{ 47, 44, 0b0001, CPU_FEATURE_EXS },
 			{ 31, 28, 0b0001, CPU_FEATURE_LPA2 },
 			{ 23, 20, 0b0001, CPU_FEATURE_LPA2 },
@@ -512,6 +525,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_AA64MMFR1 */ = {
+			{ 63, 60, 0b0001, CPU_FEATURE_ECBHB },
 			{ 59, 56, 0b0001, CPU_FEATURE_CMOW },
 			{ 55, 52, 0b0001, CPU_FEATURE_TIDCP1 },
 			{ 47, 44, 0b0001, CPU_FEATURE_AFP },
@@ -529,6 +543,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{  7,  4, 0b0010, CPU_FEATURE_VMID16 },
 			{  3,  0, 0b0001, CPU_FEATURE_HAFDBS },
 			{  3,  0, 0b0010, CPU_FEATURE_HAFDBS }, /* as 0b0001, and adds support for hardware update of the Access flag for Block and Page descriptors */
+			{  3,  0, 0b0011, CPU_FEATURE_HAFT },
 			{ -1, -1,     -1, -1 }
 		},
 		[2] /* ID_AA64MMFR2 */ = {
@@ -552,6 +567,15 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[3] /* ID_AA64MMFR3 */ = {
+			{ 59, 56, 0b0010, CPU_FEATURE_ADERR },
+			{ 55, 52, 0b0010, CPU_FEATURE_ADERR },
+			{ 47, 44, 0b0010, CPU_FEATURE_ANERR },
+			{ 43, 40, 0b0010, CPU_FEATURE_ANERR },
+			{ 27, 24, 0b0001, CPU_FEATURE_AIE },
+			{ 23, 20, 0b0001, CPU_FEATURE_S2POE },
+			{ 19, 16, 0b0001, CPU_FEATURE_S1POE },
+			{ 15, 12, 0b0001, CPU_FEATURE_S2PIE },
+			{ 11,  8, 0b0001, CPU_FEATURE_S1PIE },
 			{  7,  4, 0b0001, CPU_FEATURE_SCTLR2 },
 			{  3,  0, 0b0001, CPU_FEATURE_TCR2 },
 			{ -1, -1,     -1, -1 }
@@ -575,6 +599,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 31, 28, 0b0001, CPU_FEATURE_RAS },
 			{ 31, 28, 0b0010, CPU_FEATURE_DOUBLEFAULT },
 			{ 31, 28, 0b0010, CPU_FEATURE_RASV1P1 },
+			{ 31, 28, 0b0011, CPU_FEATURE_RASV2 },
 			{ 23, 20, 0b0000, CPU_FEATURE_ADVSIMD },
 			{ 23, 20, 0b0001, CPU_FEATURE_ADVSIMD }, /* as for 0b0000, and also includes support for half-precision floating-point arithmetic */
 			{ 19, 16, 0b0000, CPU_FEATURE_FP },
@@ -582,6 +607,9 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[1] /* ID_AA64PFR1 */ = {
+			{ 63, 60, 0b0001, CPU_FEATURE_PFAR },
+			{ 59, 56, 0b0001, CPU_FEATURE_DOUBLEFAULT2 },
+			{ 51, 48, 0b0001, CPU_FEATURE_THE },
 			{ 39, 36, 0b0001, CPU_FEATURE_NMI },
 			{ 35, 32, 0b0001, CPU_FEATURE_CSV2_1P1 },
 			{ 35, 32, 0b0010, CPU_FEATURE_CSV2_1P2 },
@@ -596,6 +624,9 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[2] /* ID_AA64PFR2 */ = {
+			{ 11,  8, 0b0001, CPU_FEATURE_MTE_TAGGED_FAR },
+			{  7,  4, 0b0001, CPU_FEATURE_MTE_STORE_ONLY },
+			{  3,  0, 0b0001, CPU_FEATURE_MTE_PERM },
 			{ -1, -1,     -1, -1 }
 		}
 	};
@@ -653,6 +684,28 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			data->flags[CPU_FEATURE_MPAMV1P1] = 1;
 		debugf(2, "MPAM Extension version is %u.%u\n", mpam, mpam_frac);
 	}
+
+	/* FEAT_MTE4, Enhanced Memory Tagging Extension */
+	mte = EXTRACTS_BITS(raw->arm_id_aa64pfr[1], 11,  8);
+	if (mte >= 0b0010) {
+		mte_frac = EXTRACTS_BITS(raw->arm_id_aa64pfr[1], 43, 40); /* This field is valid only if ID_AA64PFR1_EL1.MTE >= 0b0010 */
+		if (mte_frac == 0b0000)
+			data->flags[CPU_FEATURE_MTE_ASYNC] = 1;
+
+		mtex = EXTRACTS_BITS(raw->arm_id_aa64pfr[1], 55, 52); /* This field is valid only if ID_AA64PFR1_EL1.MTE >= 0b0010 */
+		if (mtex == 0b0001) {
+			data->flags[CPU_FEATURE_MTE_CANONICAL_TAGS]  = 1;
+			data->flags[CPU_FEATURE_MTE_NO_ADDRESS_TAGS] = 1;
+		}
+	}
+	/* If FEAT_MTE4 is implemented, then FEAT_MTE_CANONICAL_TAGS,
+	FEAT_MTE_NO_ADDRESS_TAGS, FEAT_MTE_TAGGED_FAR, and
+	FEAT_MTE_STORE_ONLY are implemented. */
+	if (data->flags[CPU_FEATURE_MTE_CANONICAL_TAGS] &&
+	    data->flags[CPU_FEATURE_MTE_NO_ADDRESS_TAGS] &&
+	    data->flags[CPU_FEATURE_MTE_TAGGED_FAR] &&
+	    data->flags[CPU_FEATURE_MTE_STORE_ONLY])
+		data->flags[CPU_FEATURE_MTE4] = 1;
 }
 #undef MAX_MATCHTABLE_ITEMS
 #undef MATCH_FEATURES_TABLE_WITH_RAW
