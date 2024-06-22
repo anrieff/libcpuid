@@ -806,6 +806,24 @@ typedef enum {
 	CPU_FEATURE_TRF, /*!< ARM: Self-hosted Trace extensions */
 	CPU_FEATURE_TTL, /*!< ARM: Translation Table Level */
 	CPU_FEATURE_TTST, /*!< ARM: Small translation tables */
+	CPU_FEATURE_BTI, /*!< ARM: Branch Target Identification */
+	CPU_FEATURE_CSV2, /*!< ARM: Cache Speculation Variant 2 */
+	CPU_FEATURE_CSV3, /*!< ARM: Cache Speculation Variant 3 */
+	CPU_FEATURE_DPB2, /*!< ARM: DC CVADP instruction */
+	CPU_FEATURE_E0PD, /*!< ARM: Preventing EL0 access to halves of address maps */
+	CPU_FEATURE_EVT, /*!< ARM: Enhanced Virtualization Traps */
+	CPU_FEATURE_EXS, /*!< ARM: Context synchronization and exception handling */
+	CPU_FEATURE_FRINTTS, /*!< ARM: Floating-point to integer instructions */
+	CPU_FEATURE_FLAGM2, /*!< ARM: Enhancements to flag manipulation instructions */
+	CPU_FEATURE_MTE, /*!< ARM: Memory Tagging Extension */
+	CPU_FEATURE_MTE2, /*!< ARM: Memory Tagging Extension */
+	CPU_FEATURE_PMUV3P5, /*!< ARM: Arm8.5 PMU extensions */
+	CPU_FEATURE_RNG, /*!< ARM: Random number generator */
+	CPU_FEATURE_RNG_TRAP, /*!< ARM: Trapping support for RNDR/RNDRRS */
+	CPU_FEATURE_SB, /*!< ARM: Speculation Barrier */
+	CPU_FEATURE_SPECRES, /*!< ARM: Speculation restriction instructions */
+	CPU_FEATURE_SSBS, /*!< ARM: Speculative Store Bypass Safe */
+	CPU_FEATURE_SSBS2, /*!< ARM: MRS and MSR instructions for SSBS version 2 */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

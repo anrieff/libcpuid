@@ -406,6 +406,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ 11,  8, 0b0001, CPU_FEATURE_PMUV3 }, /* Performance Monitors Extension, PMUv3 implemented. */
 			{ 11,  8, 0b0100, CPU_FEATURE_PMUV3P1 }, /* PMUv3 for Armv8.1 */
 			{ 11,  8, 0b0101, CPU_FEATURE_PMUV3P4 }, /* PMUv3 for Armv8.4 */
+			{ 11,  8, 0b0110, CPU_FEATURE_PMUV3P5 }, /* PMUv3 for Armv8.5 */
 			{  3,  0, 0b1000, CPU_FEATURE_DEBUGV8P2 },
 			{  3,  0, 0b1001, CPU_FEATURE_DEBUGV8P4 },
 			{ -1, -1,     -1, -1 }
@@ -416,11 +417,13 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	};
 
 	const struct arm_feature_map_t matchtable_id_aa64isar[MAX_ARM_ID_AA64ISAR_REGS][MAX_MATCHTABLE_ITEMS] = {
-		[0] /* ID_A64ISAR0 */ = {
+		[0] /* ID_AA64ISAR0 */ = {
+			{ 63, 60, 0b0001, CPU_FEATURE_RNG },
 			{ 59, 56, 0b0001, CPU_FEATURE_TLBIOS }, /* Outer Shareable and TLB range maintenance instructions are not implemented */
 			{ 59, 56, 0b0010, CPU_FEATURE_TLBIOS }, /* Outer Shareable TLB maintenance instructions are implemented */
 			{ 59, 56, 0b0010, CPU_FEATURE_TLBIRANGE }, /* Outer Shareable TLB maintenance instructions are implemented */
 			{ 55, 52, 0b0001, CPU_FEATURE_FLAGM },
+			{ 55, 52, 0b0010, CPU_FEATURE_FLAGM2 },
 			{ 51, 48, 0b0001, CPU_FEATURE_FHM },
 			{ 47, 44, 0b0001, CPU_FEATURE_DOTPROD },
 			{ 43, 40, 0b0001, CPU_FEATURE_SM4 },
@@ -436,9 +439,11 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{  7,  4, 0b0010, CPU_FEATURE_PMULL },
 			{ -1, -1,     -1, -1 }
 		},
-		[1] /* ID_A64ISAR1 */ = {
+		[1] /* ID_AA64ISAR1 */ = {
 			{ 55, 52, 0b0001, CPU_FEATURE_I8MM },
-			{ 35, 32, 0b0001, CPU_FEATURE_LSE2 },
+			{ 43, 40, 0b0001, CPU_FEATURE_SPECRES },
+			{ 39, 36, 0b0001, CPU_FEATURE_SB },
+			{ 35, 32, 0b0001, CPU_FEATURE_FRINTTS },
 			{ 31, 28, 0b0001, CPU_FEATURE_PACIMP },
 			{ 27, 24, 0b0001, CPU_FEATURE_PACQARMA5 },
 			{ 23, 20, 0b0001, CPU_FEATURE_LRCPC },
@@ -456,9 +461,10 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{  7,  4, 0b0100, CPU_FEATURE_FPAC },
 			{  7,  4, 0b0101, CPU_FEATURE_FPACCOMBINE },
 			{  3,  0, 0b0001, CPU_FEATURE_DPB },
+			{  3,  0, 0b0010, CPU_FEATURE_DPB2 },
 			{ -1, -1,     -1, -1 }
 		},
-		[2] /* ID_A64ISAR2 */ = {
+		[2] /* ID_AA64ISAR2 */ = {
 			{ 27, 24, 0b0001, CPU_FEATURE_CONSTPACFIELD },
 			{ 15, 12, 0b0001, CPU_FEATURE_PAUTH },
 			{ 15, 12, 0b0010, CPU_FEATURE_EPAC },
@@ -472,6 +478,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 
 	const struct arm_feature_map_t matchtable_id_aa64mmfr[MAX_ARM_ID_AA64MMFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64MMFR0 */ = {
+			{ 47, 44, 0b0001, CPU_FEATURE_EXS },
 			{ 19, 16, 0b0001, CPU_FEATURE_MIXEDEND },
 			{  7,  4, 0b0010, CPU_FEATURE_ASID16 },
 			{  3,  0, 0b0110, CPU_FEATURE_LPA },
@@ -492,12 +499,16 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 			{ -1, -1,     -1, -1 }
 		},
 		[2] /* ID_AA64MMFR2 */ = {
+			{ 63, 60, 0b0001, CPU_FEATURE_E0PD },
+			{ 59, 56, 0b0001, CPU_FEATURE_EVT }, /* HCR_EL2.{TOCU, TICAB, TID4} traps are supported. HCR_EL2.{TTLBOS,TTLBIS} traps are not supported */
+			{ 59, 56, 0b0010, CPU_FEATURE_EVT }, /* HCR_EL2.{TTLBOS, TTLBIS, TOCU, TICAB, TID4} traps are supported */
 			{ 55, 52, 0b0000, CPU_FEATURE_BBM }, /* Level 0 support for changing block size is supported */
 			{ 55, 52, 0b0001, CPU_FEATURE_BBM }, /* Level 1 support for changing block size is supported */
 			{ 55, 52, 0b0010, CPU_FEATURE_BBM }, /* Level 2 support for changing block size is supported */
 			{ 51, 48, 0b0001, CPU_FEATURE_TTL },
 			{ 43, 40, 0b0001, CPU_FEATURE_S2FWB },
 			{ 39, 36, 0b0001, CPU_FEATURE_IDST },
+			{ 35, 32, 0b0001, CPU_FEATURE_LSE2 },
 			{ 31, 28, 0b0001, CPU_FEATURE_TTST },
 			{ 23, 20, 0b0001, CPU_FEATURE_CCIDX },
 			{ 19, 16, 0b0001, CPU_FEATURE_LVA },
@@ -517,6 +528,8 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 
 	const struct arm_feature_map_t matchtable_id_aa64pfr[MAX_ARM_ID_AA64PFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64PFR0 */ = {
+			{ 63, 60, 0b0001, CPU_FEATURE_CSV3 },
+			{ 59, 56, 0b0001, CPU_FEATURE_CSV2 },
 			{ 59, 56, 0b0010, CPU_FEATURE_CSV2_2 },
 			{ 59, 56, 0b0011, CPU_FEATURE_CSV2_3 },
 			{ 51, 48, 0b0001, CPU_FEATURE_DIT },
@@ -535,6 +548,12 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		[1] /* ID_AA64PFR1 */ = {
 			{ 35, 32, 0b0001, CPU_FEATURE_CSV2_1P1 },
 			{ 35, 32, 0b0010, CPU_FEATURE_CSV2_1P2 },
+			{ 31, 28, 0b0001, CPU_FEATURE_RNG_TRAP },
+			{ 11,  8, 0b0001, CPU_FEATURE_MTE },
+			{ 11,  8, 0b0010, CPU_FEATURE_MTE2 },
+			{  7,  4, 0b0001, CPU_FEATURE_SSBS },
+			{  7,  4, 0b0010, CPU_FEATURE_SSBS2 },
+			{  3,  0, 0b0001, CPU_FEATURE_BTI },
 			{ -1, -1,     -1, -1 }
 		},
 		[2] /* ID_AA64PFR2 */ = {
