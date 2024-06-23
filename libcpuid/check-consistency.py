@@ -108,8 +108,9 @@ firstError = True
 
 files_code = {}
 
-rexp1 = re.compile('.*flags\[(CPU_FEATURE_[^\]]+)\]\s+=\s+1.*') # e.g. "data->flags[CPU_FEATURE_MPAM] = 1;"
-rexp2 = re.compile('.*(CPU_FEATURE_[^ }]+).*') # e.g. "{ 28, CPU_FEATURE_HT },"
+rexp1 = re.compile(r'.*flags\[(CPU_FEATURE_[^\]]+)\]\s*=\s*1.*') # e.g. "data->flags[CPU_FEATURE_MPAM] = 1;"
+rexp2 = re.compile(r'.*(CPU_FEATURE_[^ ,]+)\s*,\s*FEATURE_LEVEL_ARM_.*') # e.g. "{ 35, 32, 0b0101, CPU_FEATURE_SPEV1P4,    FEATURE_LEVEL_ARM_V8_8_A, -1 },"
+rexp3 = re.compile(r'.*(CPU_FEATURE_[^ }]+).*') # e.g. "{ 28, CPU_FEATURE_HT },"
 
 for fn in glob.glob("%s/*.c" % sys.argv[1]):
 	f = open(fn, "rt")
@@ -120,6 +121,9 @@ for fn in glob.glob("%s/*.c" % sys.argv[1]):
 			files_code[fn].append(entry)
 		elif rexp2.match(s):
 			entry = rexp2.findall(s)[0]
+			files_code[fn].append(entry)
+		elif rexp3.match(s):
+			entry = rexp3.findall(s)[0]
 			files_code[fn].append(entry)
 
 	f.close()
@@ -151,7 +155,7 @@ if firstError:
 print("")
 
 print("Checking processor definitions:")
-cache_exp = re.compile(".*([\(/ ][0-9]+K).*")
+cache_exp = re.compile(r".*([\(/ ][0-9]+K).*")
 # Check whether CPU codenames for consistency:
 #   - Codenames should not exceed 31 characters
 #   - Check for common typos

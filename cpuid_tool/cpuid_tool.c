@@ -746,6 +746,7 @@ int main(int argc, char** argv)
 		for (cpu_type_index = 0; cpu_type_index < data.num_cpu_types; cpu_type_index++) {
 			fprintf(fout, "CPU Info for type #%d:\n------------------\n", cpu_type_index);
 			fprintf(fout, "  arch       : %s\n", cpu_architecture_str(data.cpu_types[cpu_type_index].architecture));
+			fprintf(fout, "  feat_level : %s\n", cpu_feature_level_str(data.cpu_types[cpu_type_index].feature_level));
 			fprintf(fout, "  purpose    : %s\n", cpu_purpose_str(data.cpu_types[cpu_type_index].purpose));
 			fprintf(fout, "  vendor_str : `%s'\n", data.cpu_types[cpu_type_index].vendor_str);
 			fprintf(fout, "  vendor id  : %d\n", (int) data.cpu_types[cpu_type_index].vendor);
@@ -759,7 +760,6 @@ int main(int argc, char** argv)
 			}
 			else if (data.cpu_types[cpu_type_index].architecture == ARCHITECTURE_ARM) {
 				fprintf(fout, "  implementer: %d (%02Xh)\n", data.cpu_types[cpu_type_index].implementer, data.cpu_types[cpu_type_index].implementer);
-				fprintf(fout, "  arch_ver   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].architecture_version, data.cpu_types[cpu_type_index].architecture_version);
 				fprintf(fout, "  variant    : %d (%02Xh)\n", data.cpu_types[cpu_type_index].variant, data.cpu_types[cpu_type_index].variant);
 				fprintf(fout, "  part_num   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].part_num, data.cpu_types[cpu_type_index].part_num);
 				fprintf(fout, "  revision   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].revision, data.cpu_types[cpu_type_index].revision);

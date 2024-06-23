@@ -42,3 +42,4 @@ affinity_mask_str
 cpuid_free_system_id
 affinity_mask_str_r
 cpuid_get_hypervisor
+cpu_feature_level_str

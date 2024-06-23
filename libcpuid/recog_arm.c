@@ -37,6 +37,15 @@ struct arm_feature_map_t {
 	uint8_t highbit, lowbit;
 	uint8_t value;
 	cpu_feature_t feature;
+	cpu_feature_level_t ver_optional, ver_mandatory;
+};
+
+struct arm_arch_feature_t {
+	uint8_t optional, mandatory;
+};
+
+struct arm_arch_extension_t {
+	struct arm_arch_feature_t present[NUM_CPU_FEATURE_LEVELS], total[NUM_CPU_FEATURE_LEVELS];
 };
 
 struct arm_id_part {
@@ -380,308 +389,461 @@ static const char* get_cpu_name(uint16_t part_num, const struct arm_hw_impl* hw_
 	return hw_impl->parts[i].name;
 }
 
-static void match_arm_features(const struct arm_feature_map_t* matchtable, const char* reg_name, const int reg_number, uint32_t reg_value, struct cpu_id_t* data)
+static void set_feature_status(struct cpu_id_t* data, struct arm_arch_extension_t* ext_status, bool is_present, cpu_feature_t feature, cpu_feature_level_t optional_from, cpu_feature_level_t mandatory_from)
 {
-	int i;
+	if (optional_from >= 0)
+		ext_status->total[optional_from].optional++;
+	if (mandatory_from >= 0)
+		ext_status->total[mandatory_from].mandatory++;
 
-	for (i = 0; matchtable[i].feature != -1; i++) {
-		if (EXTRACTS_BITS(reg_value, matchtable[i].highbit, matchtable[i].lowbit) == matchtable[i].value) {
-			data->flags[matchtable[i].feature] = 1;
-			debugf(3, "Register %8s%i (0x%016X): match value %u for bits [%2u:%2u]\n", reg_name, reg_number, reg_value, matchtable[i].value, matchtable[i].highbit, matchtable[i].lowbit);
+	if (is_present) {
+		data->flags[feature] = 1;
+		debugf(3, "feature %s is present", cpu_feature_str(feature));
+		if (optional_from >= 0) {
+			ext_status->present[optional_from].optional++;
+			debugf(3, " (optional from %s", cpu_feature_level_str(optional_from));
+			if (mandatory_from >= 0) {
+				ext_status->present[mandatory_from].mandatory++;
+				debugf(3, ", mandatory from %s", cpu_feature_level_str(mandatory_from));
+			}
+			debugf(3, ")");
 		}
+		debugf(3, "\n");
 	}
 }
 
-#define MAX_MATCHTABLE_ITEMS 32
-#define MATCH_FEATURES_TABLE_WITH_RAW(reg) match_arm_features(matchtable_id_##reg[i], #reg, i, raw->arm_id_##reg[i], data)
-static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
+static void match_arm_features(const struct arm_feature_map_t* matchtable, const char* reg_name, const int reg_number, uint32_t reg_value, struct cpu_id_t* data, struct arm_arch_extension_t* ext_status)
 {
 	int i;
-	uint8_t mpam, mpam_frac;
-	uint8_t mte, mte_frac, mtex;
+	bool feature_is_present;
+
+	for (i = 0; matchtable[i].feature != -1; i++) {
+		feature_is_present = (EXTRACTS_BITS(reg_value, matchtable[i].highbit, matchtable[i].lowbit) == matchtable[i].value);
+		if (feature_is_present)
+			debugf(3, "Register %8s%i (0x%016X): match value %u for bits [%2u:%2u], ", reg_name, reg_number, reg_value, matchtable[i].value, matchtable[i].highbit, matchtable[i].lowbit);
+		set_feature_status(data, ext_status, feature_is_present, matchtable[i].feature, matchtable[i].ver_optional, matchtable[i].ver_mandatory);
+	}
+}
+
+static void load_arm_feature_pauth(struct cpu_id_t* data, struct arm_arch_extension_t* ext_status)
+{
+	/* FEAT_PAuth, Pointer authentication
+	When FEAT_PAuth is implemented, one of the following must be true:
+	- Exactly one of the PAC algorithms is implemented.
+	- If the PACGA instruction and other Pointer authentication instructions use different PAC algorithms, exactly two PAC algorithms are implemented.
+	The PAC algorithm features are:
+	- FEAT_PACQARMA5.
+	- FEAT_PACIMP.
+	- FEAT_PACQARMA3. */
+	set_feature_status(data, ext_status,
+		(data->flags[CPU_FEATURE_PACIMP] ||
+		 data->flags[CPU_FEATURE_PACQARMA3] ||
+		 data->flags[CPU_FEATURE_PACQARMA5]),
+		CPU_FEATURE_PAUTH, FEATURE_LEVEL_ARM_V8_2_A, FEATURE_LEVEL_ARM_V8_3_A);
+}
+
+static void load_arm_feature_mpam(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct arm_arch_extension_t* ext_status)
+{
+	/* FEAT_MPAM, Memory Partitioning and Monitoring Extension
+	MPAM Extension version: MPAM | MPAM_frac
+	Not implemented: 0b0000 | 0b0000
+	v0.1 is implemented: 0b0000 | 0b0001
+	v1.0 is implemented: 0b0001 | 0b0000
+	v1.1 is implemented: 0b0001 | 0b0001 */
+	const uint8_t mpam      = EXTRACTS_BITS(raw->arm_id_aa64pfr[0], 43, 40);
+	const uint8_t mpam_frac = EXTRACTS_BITS(raw->arm_id_aa64pfr[1], 19, 16);
+	if ((mpam != 0b0000) || (mpam_frac != 0b0000)) {
+		debugf(2, "MPAM Extension version is %u.%u\n", mpam, mpam_frac);
+		set_feature_status(data, ext_status, true,                                      CPU_FEATURE_MPAM,     FEATURE_LEVEL_ARM_V8_2_A, -1);
+		set_feature_status(data, ext_status, (mpam == 0b0000) && (mpam_frac == 0b0001), CPU_FEATURE_MPAMV0P1, FEATURE_LEVEL_ARM_V8_5_A, -1);
+		set_feature_status(data, ext_status, (mpam == 0b0001) && (mpam_frac == 0b0001), CPU_FEATURE_MPAMV1P1, FEATURE_LEVEL_ARM_V8_5_A, -1);
+	}
+}
+
+static void load_arm_feature_mte4(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct arm_arch_extension_t* ext_status)
+{
+	/* FEAT_MTE4, Enhanced Memory Tagging Extension */
+	const uint8_t mte = EXTRACTS_BITS(raw->arm_id_aa64pfr[1], 11,  8);
+	if (mte >= 0b0010) {
+		/* These fields are valid only if ID_AA64PFR1_EL1.MTE >= 0b0010 */
+		const uint8_t mte_frac = EXTRACTS_BITS(raw->arm_id_aa64pfr[1], 43, 40);
+		const uint8_t mtex     = EXTRACTS_BITS(raw->arm_id_aa64pfr[1], 55, 52);
+		set_feature_status(data, ext_status, (mte_frac == 0b0000), CPU_FEATURE_MTE_ASYNC,           FEATURE_LEVEL_ARM_V8_5_A, -1);
+		set_feature_status(data, ext_status, (mtex == 0b0001),     CPU_FEATURE_MTE_CANONICAL_TAGS,  FEATURE_LEVEL_ARM_V8_7_A, -1);
+		set_feature_status(data, ext_status, (mtex == 0b0001),     CPU_FEATURE_MTE_NO_ADDRESS_TAGS, FEATURE_LEVEL_ARM_V8_7_A, -1);
+	}
+	/* If FEAT_MTE4 is implemented, then FEAT_MTE_CANONICAL_TAGS,
+	FEAT_MTE_NO_ADDRESS_TAGS, FEAT_MTE_TAGGED_FAR, and
+	FEAT_MTE_STORE_ONLY are implemented. */
+	set_feature_status(data, ext_status,
+		(data->flags[CPU_FEATURE_MTE_CANONICAL_TAGS] &&
+		 data->flags[CPU_FEATURE_MTE_NO_ADDRESS_TAGS] &&
+		 data->flags[CPU_FEATURE_MTE_TAGGED_FAR] &&
+		 data->flags[CPU_FEATURE_MTE_STORE_ONLY]),
+		CPU_FEATURE_MTE4, FEATURE_LEVEL_ARM_V8_7_A, -1);
+}
+
+static void decode_arm_architecture_version(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct arm_arch_extension_t* ext_status)
+{
+	int i;
+	cpu_feature_level_t feature_level;
+	const uint8_t architecture = EXTRACTS_BITS(raw->arm_midr, 19, 16);
+
+	const struct { uint8_t raw_value; cpu_feature_level_t enum_value; }
+	architecture_matchtable[] = {
+		{ 0b0000, FEATURE_LEVEL_UNKNOWN },
+		{ 0b0001, FEATURE_LEVEL_ARM_V4 },
+		{ 0b0010, FEATURE_LEVEL_ARM_V4T },
+		{ 0b0011, FEATURE_LEVEL_ARM_V5 },
+		{ 0b0100, FEATURE_LEVEL_ARM_V5T },
+		{ 0b0101, FEATURE_LEVEL_ARM_V5TE },
+		{ 0b0110, FEATURE_LEVEL_ARM_V5TEJ },
+		{ 0b0111, FEATURE_LEVEL_ARM_V6 },
+		{ 0b1000, FEATURE_LEVEL_UNKNOWN },
+		{ 0b1001, FEATURE_LEVEL_UNKNOWN },
+		{ 0b1010, FEATURE_LEVEL_UNKNOWN },
+		{ 0b1011, FEATURE_LEVEL_UNKNOWN },
+		{ 0b1100, FEATURE_LEVEL_ARM_V6_M },
+		{ 0b1101, FEATURE_LEVEL_UNKNOWN },
+		{ 0b1110, FEATURE_LEVEL_UNKNOWN }
+	};
+
+	const cpu_feature_level_t architecture_arm_v8a[] = {
+		FEATURE_LEVEL_ARM_V8_0_A, /*!< ARMv8.0-A */
+		FEATURE_LEVEL_ARM_V8_1_A, /*!< ARMv8.1-A */
+		FEATURE_LEVEL_ARM_V8_2_A, /*!< ARMv8.2-A */
+		FEATURE_LEVEL_ARM_V8_3_A, /*!< ARMv8.3-A */
+		FEATURE_LEVEL_ARM_V8_4_A, /*!< ARMv8.4-A */
+		FEATURE_LEVEL_ARM_V8_5_A, /*!< ARMv8.5-A */
+		FEATURE_LEVEL_ARM_V8_6_A, /*!< ARMv8.6-A */
+		FEATURE_LEVEL_ARM_V8_7_A, /*!< ARMv8.7-A */
+		FEATURE_LEVEL_ARM_V8_8_A, /*!< ARMv8.8-A */
+		FEATURE_LEVEL_ARM_V8_9_A, /*!< ARMv8.9-A */
+		FEATURE_LEVEL_ARM_V9_0_A, /*!< ARMv9.0-A */
+		FEATURE_LEVEL_ARM_V9_1_A, /*!< ARMv9.1-A */
+		FEATURE_LEVEL_ARM_V9_2_A, /*!< ARMv9.2-A */
+		FEATURE_LEVEL_ARM_V9_3_A, /*!< ARMv9.3-A */
+		FEATURE_LEVEL_ARM_V9_4_A, /*!< ARMv9.4-A */
+	};
+
+	/* Check if architecture level is explicit */
+	for (i = 0; i < COUNT_OF(architecture_matchtable); i++) {
+		if (architecture == architecture_matchtable[i].raw_value) {
+			feature_level = architecture_matchtable[i].enum_value;
+			goto found;
+		}
+	}
+
+	/* When architecture is 0b1111, architectural features are individually identified in the ID_* registers */
+	//FIXME: it works only for A-profile architecture, M-profile and R-profile are not supported yet
+	for (i = 0; i < COUNT_OF(architecture_arm_v8a); i++) {
+		feature_level = architecture_arm_v8a[i];
+		debugf(3, "Check if CPU is %s compliant: %2u/%2u optional features detected, %2u/%2u mandatory features required\n",
+			cpu_feature_level_str(feature_level),
+			ext_status->present[feature_level].optional, ext_status->total[feature_level].optional,
+			ext_status->present[feature_level].mandatory, ext_status->total[feature_level].mandatory);
+		/* CPU is compliant when it includes all of the architectural features that are mandatory */
+		if (ext_status->present[feature_level].mandatory < ext_status->total[feature_level].mandatory)
+			break;
+		/* If there are no mandatory features (like ARMv9.3-A), check that at least one optional feature is implemented */
+		if ((ext_status->total[feature_level].mandatory == 0) && (ext_status->present[feature_level].optional == 0))
+			break;
+	}
+
+found:
+	data->feature_level = feature_level;
+	debugf(2, "ARM architecture version is %s\n", cpu_feature_level_str(feature_level));
+}
+
+#define MAX_MATCHTABLE_ITEMS 32
+#define MATCH_FEATURES_TABLE_WITH_RAW(reg) match_arm_features(matchtable_id_##reg[i], #reg, i, raw->arm_id_##reg[i], data, ext_status)
+static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct arm_arch_extension_t* ext_status)
+{
+	int i;
 
 	const struct arm_feature_map_t matchtable_id_aa64dfr[MAX_ARM_ID_AA64DFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64DFR0 */ = {
-			{ 59, 56, 0b0001, CPU_FEATURE_TRBE_EXT },
-			{ 55, 52, 0b0001, CPU_FEATURE_BRBE },
-			{ 55, 52, 0b0010, CPU_FEATURE_BRBEV1P1 },
-			{ 51, 48, 0b0001, CPU_FEATURE_MTPMU },
-			{ 47, 47, 0b0001, CPU_FEATURE_TRBE },
-			{ 43, 40, 0b0001, CPU_FEATURE_TRF },
-			{ 39, 36, 0b0000, CPU_FEATURE_DOUBLELOCK },
-			{ 35, 32, 0b0001, CPU_FEATURE_SPE },
-			{ 35, 32, 0b0010, CPU_FEATURE_SPEV1P1 },
-			{ 35, 32, 0b0011, CPU_FEATURE_SPEV1P2 },
-			{ 35, 32, 0b0100, CPU_FEATURE_SPEV1P3 },
-			{ 35, 32, 0b0101, CPU_FEATURE_SPEV1P4 },
-			{ 27, 24, 0b0001, CPU_FEATURE_SEBEP },
-			{ 19, 16, 0b0001, CPU_FEATURE_PMUV3_SS },
-			{ 11,  8, 0b0001, CPU_FEATURE_PMUV3 }, /* Performance Monitors Extension, PMUv3 implemented. */
-			{ 11,  8, 0b0100, CPU_FEATURE_PMUV3P1 }, /* PMUv3 for Armv8.1 */
-			{ 11,  8, 0b0101, CPU_FEATURE_PMUV3P4 }, /* PMUv3 for Armv8.4 */
-			{ 11,  8, 0b0110, CPU_FEATURE_PMUV3P5 }, /* PMUv3 for Armv8.5 */
-			{ 11,  8, 0b0111, CPU_FEATURE_PMUV3P7 }, /* PMUv3 for Armv8.7 */
-			{ 11,  8, 0b1000, CPU_FEATURE_PMUV3P8 }, /* PMUv3 for Armv8.8 */
-			{ 11,  8, 0b1001, CPU_FEATURE_PMUV3P9 }, /* PMUv3 for Armv8.9 */
-			{  3,  0, 0b1000, CPU_FEATURE_DEBUGV8P2 }, /* Armv8.2 debug architecture */
-			{  3,  0, 0b1001, CPU_FEATURE_DEBUGV8P4 }, /* Armv8.4 debug architecture */
-			{  3,  0, 0b1010, CPU_FEATURE_DEBUGV8P8 }, /* Armv8.8 debug architecture */
-			{  3,  0, 0b1011, CPU_FEATURE_DEBUGV8P9 }, /* Armv8.9 debug architecture */
-			{ -1, -1,     -1, -1 }
+			{ 59, 56, 0b0001, CPU_FEATURE_TRBE_EXT,   FEATURE_LEVEL_ARM_V9_3_A, -1 },
+			{ 55, 52, 0b0001, CPU_FEATURE_BRBE,       FEATURE_LEVEL_ARM_V9_1_A, -1 },
+			{ 55, 52, 0b0010, CPU_FEATURE_BRBEV1P1,   FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{ 51, 48, 0b0001, CPU_FEATURE_MTPMU,      FEATURE_LEVEL_ARM_V8_5_A, -1 },
+			{ 47, 47, 0b0001, CPU_FEATURE_TRBE,       FEATURE_LEVEL_ARM_V9_0_A, -1 },
+			{ 43, 40, 0b0001, CPU_FEATURE_TRF,        FEATURE_LEVEL_ARM_V8_3_A, -1 },
+			{ 39, 36, 0b0000, CPU_FEATURE_DOUBLELOCK, FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ 35, 32, 0b0001, CPU_FEATURE_SPE,        FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{ 35, 32, 0b0010, CPU_FEATURE_SPEV1P1,    FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 35, 32, 0b0011, CPU_FEATURE_SPEV1P2,    FEATURE_LEVEL_ARM_V8_6_A, -1 },
+			{ 35, 32, 0b0100, CPU_FEATURE_SPEV1P3,    FEATURE_LEVEL_ARM_V8_7_A, -1 },
+			{ 35, 32, 0b0101, CPU_FEATURE_SPEV1P4,    FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 27, 24, 0b0001, CPU_FEATURE_SEBEP,      FEATURE_LEVEL_ARM_V9_3_A, -1 },
+			{ 19, 16, 0b0001, CPU_FEATURE_PMUV3_SS,   FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 11,  8, 0b0001, CPU_FEATURE_PMUV3,      FEATURE_LEVEL_ARM_V8_0_A, -1 }, /* Performance Monitors Extension, PMUv3 implemented. */
+			{ 11,  8, 0b0100, CPU_FEATURE_PMUV3P1,    FEATURE_LEVEL_ARM_V8_1_A, -1 }, /* PMUv3 for Armv8.1 */
+			{ 11,  8, 0b0101, CPU_FEATURE_PMUV3P4,    FEATURE_LEVEL_ARM_V8_3_A, -1 }, /* PMUv3 for Armv8.4 */
+			{ 11,  8, 0b0110, CPU_FEATURE_PMUV3P5,    FEATURE_LEVEL_ARM_V8_4_A, -1 }, /* PMUv3 for Armv8.5 */
+			{ 11,  8, 0b0111, CPU_FEATURE_PMUV3P7,    FEATURE_LEVEL_ARM_V8_6_A, -1 }, /* PMUv3 for Armv8.7 */
+			{ 11,  8, 0b1000, CPU_FEATURE_PMUV3P8,    FEATURE_LEVEL_ARM_V8_7_A, -1 }, /* PMUv3 for Armv8.8 */
+			{ 11,  8, 0b1001, CPU_FEATURE_PMUV3P9,    FEATURE_LEVEL_ARM_V8_8_A, -1 }, /* PMUv3 for Armv8.9 */
+			{  3,  0, 0b1000, CPU_FEATURE_DEBUGV8P2,  FEATURE_LEVEL_ARM_V8_1_A, FEATURE_LEVEL_ARM_V8_2_A }, /* Armv8.2 debug architecture */
+			{  3,  0, 0b1001, CPU_FEATURE_DEBUGV8P4,  FEATURE_LEVEL_ARM_V8_3_A, FEATURE_LEVEL_ARM_V8_4_A }, /* Armv8.4 debug architecture */
+			{  3,  0, 0b1010, CPU_FEATURE_DEBUGV8P8,  FEATURE_LEVEL_ARM_V8_7_A, FEATURE_LEVEL_ARM_V8_8_A }, /* Armv8.8 debug architecture */
+			{  3,  0, 0b1011, CPU_FEATURE_DEBUGV8P9,  FEATURE_LEVEL_ARM_V8_8_A, FEATURE_LEVEL_ARM_V8_9_A }, /* Armv8.9 debug architecture */
+			{ -1, -1,     -1, -1,                     -1,                       -1 }
 		},
 		[1] /* ID_AA64DFR1 */ = {
-			{ 55, 52, 0b0001, CPU_FEATURE_SPE_DPFZS },
-			{ 51, 48, 0b0001, CPU_FEATURE_EBEP },
-			{ 47, 44, 0b0001, CPU_FEATURE_ITE },
-			{ 43, 40, 0b0001, CPU_FEATURE_ABLE },
-			{ 43, 40, 0b0001, CPU_FEATURE_BWE },
-			{ 39, 36, 0b0001, CPU_FEATURE_PMUV3_ICNTR },
-			{ 35, 32, 0b0001, CPU_FEATURE_SPMU },
-			{ -1, -1,     -1, -1 }
+			{ 55, 52, 0b0001, CPU_FEATURE_SPE_DPFZS,   FEATURE_LEVEL_ARM_V8_6_A, -1 },
+			{ 51, 48, 0b0001, CPU_FEATURE_EBEP,        FEATURE_LEVEL_ARM_V9_3_A, -1 },
+			{ 47, 44, 0b0001, CPU_FEATURE_ITE,         FEATURE_LEVEL_ARM_V9_3_A, -1 },
+			{ 43, 40, 0b0001, CPU_FEATURE_ABLE,        FEATURE_LEVEL_ARM_V9_3_A, -1 },
+			{ 43, 40, 0b0001, CPU_FEATURE_BWE,         FEATURE_LEVEL_ARM_V9_3_A, -1 },
+			{ 39, 36, 0b0001, CPU_FEATURE_PMUV3_ICNTR, FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 35, 32, 0b0001, CPU_FEATURE_SPMU,        FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ -1, -1,     -1, -1,                      -1,                       -1 }
 		}
 	};
 
 	const struct arm_feature_map_t matchtable_id_aa64isar[MAX_ARM_ID_AA64ISAR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64ISAR0 */ = {
-			{ 63, 60, 0b0001, CPU_FEATURE_RNG },
-			{ 59, 56, 0b0001, CPU_FEATURE_TLBIOS }, /* Outer Shareable and TLB range maintenance instructions are not implemented */
-			{ 59, 56, 0b0010, CPU_FEATURE_TLBIOS }, /* Outer Shareable TLB maintenance instructions are implemented */
-			{ 59, 56, 0b0010, CPU_FEATURE_TLBIRANGE }, /* Outer Shareable TLB maintenance instructions are implemented */
-			{ 55, 52, 0b0001, CPU_FEATURE_FLAGM },
-			{ 55, 52, 0b0010, CPU_FEATURE_FLAGM2 },
-			{ 51, 48, 0b0001, CPU_FEATURE_FHM },
-			{ 47, 44, 0b0001, CPU_FEATURE_DOTPROD },
-			{ 43, 40, 0b0001, CPU_FEATURE_SM4 },
-			{ 39, 36, 0b0001, CPU_FEATURE_SM3 },
-			{ 35, 32, 0b0001, CPU_FEATURE_SHA3 },
-			{ 31, 28, 0b0001, CPU_FEATURE_RDM },
-			{ 27, 24, 0b0001, CPU_FEATURE_TME },
-			{ 23, 20, 0b0010, CPU_FEATURE_LSE },
-			{ 23, 20, 0b0011, CPU_FEATURE_LSE128 },
-			{ 19, 16, 0b0001, CPU_FEATURE_CRC32 },
-			{ 15, 12, 0b0001, CPU_FEATURE_SHA256 },
-			{ 15, 12, 0b0010, CPU_FEATURE_SHA512 },
-			{ 11,  8, 0b0001, CPU_FEATURE_SHA1 },
-			{  7,  4, 0b0001, CPU_FEATURE_AES },
-			{  7,  4, 0b0010, CPU_FEATURE_PMULL },
-			{ -1, -1,     -1, -1 }
+			{ 63, 60, 0b0001, CPU_FEATURE_RNG,       FEATURE_LEVEL_ARM_V8_4_A, -1 },
+			{ 59, 56, 0b0001, CPU_FEATURE_TLBIOS,    FEATURE_LEVEL_ARM_V8_3_A, FEATURE_LEVEL_ARM_V8_4_A }, /* Outer Shareable and TLB range maintenance instructions are not implemented */
+			{ 59, 56, 0b0010, CPU_FEATURE_TLBIOS,    FEATURE_LEVEL_ARM_V8_3_A, FEATURE_LEVEL_ARM_V8_4_A }, /* Outer Shareable TLB maintenance instructions are implemented */
+			{ 59, 56, 0b0010, CPU_FEATURE_TLBIRANGE, FEATURE_LEVEL_ARM_V8_3_A, FEATURE_LEVEL_ARM_V8_4_A }, /* Outer Shareable TLB maintenance instructions are implemented */
+			{ 55, 52, 0b0001, CPU_FEATURE_FLAGM,     FEATURE_LEVEL_ARM_V8_1_A, FEATURE_LEVEL_ARM_V8_4_A },
+			{ 55, 52, 0b0010, CPU_FEATURE_FLAGM2,    FEATURE_LEVEL_ARM_V8_4_A, -1 },
+			{ 51, 48, 0b0001, CPU_FEATURE_FHM,       FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{ 47, 44, 0b0001, CPU_FEATURE_DOTPROD,   FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{ 43, 40, 0b0001, CPU_FEATURE_SM4,       FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{ 39, 36, 0b0001, CPU_FEATURE_SM3,       FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{ 35, 32, 0b0001, CPU_FEATURE_SHA3,      FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{ 31, 28, 0b0001, CPU_FEATURE_RDM,       FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ 27, 24, 0b0001, CPU_FEATURE_TME,       FEATURE_LEVEL_ARM_V9_0_A, -1 },
+			{ 23, 20, 0b0010, CPU_FEATURE_LSE,       FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_1_A },
+			{ 23, 20, 0b0011, CPU_FEATURE_LSE128,    FEATURE_LEVEL_ARM_V9_3_A, -1 },
+			{ 19, 16, 0b0001, CPU_FEATURE_CRC32,     FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_1_A },
+			{ 15, 12, 0b0001, CPU_FEATURE_SHA256,    FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ 15, 12, 0b0010, CPU_FEATURE_SHA512,    FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{ 11,  8, 0b0001, CPU_FEATURE_SHA1,      FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{  7,  4, 0b0001, CPU_FEATURE_AES,       FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{  7,  4, 0b0010, CPU_FEATURE_PMULL,     FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ -1, -1,     -1, -1,                    -1,                       -1 }
 		},
 		[1] /* ID_AA64ISAR1 */ = {
-			{ 63, 60, 0b0001, CPU_FEATURE_LS64 },
-			{ 63, 60, 0b0010, CPU_FEATURE_LS64_V },
-			{ 63, 60, 0b0011, CPU_FEATURE_LS64_ACCDATA },
-			{ 59, 56, 0b0001, CPU_FEATURE_XS },
-			{ 55, 52, 0b0001, CPU_FEATURE_I8MM },
-			{ 51, 48, 0b0001, CPU_FEATURE_DGH },
-			{ 47, 44, 0b0001, CPU_FEATURE_BF16 },
-			{ 47, 44, 0b0010, CPU_FEATURE_EBF16 },
-			{ 43, 40, 0b0001, CPU_FEATURE_SPECRES },
-			{ 43, 40, 0b0010, CPU_FEATURE_SPECRES2 },
-			{ 39, 36, 0b0001, CPU_FEATURE_SB },
-			{ 35, 32, 0b0001, CPU_FEATURE_FRINTTS },
-			{ 31, 28, 0b0001, CPU_FEATURE_PACIMP },
-			{ 27, 24, 0b0001, CPU_FEATURE_PACQARMA5 },
-			{ 23, 20, 0b0001, CPU_FEATURE_LRCPC },
-			{ 23, 20, 0b0010, CPU_FEATURE_LRCPC2 },
-			{ 23, 20, 0b0011, CPU_FEATURE_LRCPC3 },
-			{ 19, 16, 0b0001, CPU_FEATURE_FCMA },
-			{ 15, 12, 0b0001, CPU_FEATURE_JSCVT },
-			{ 11,  8, 0b0001, CPU_FEATURE_PAUTH },
-			{ 11,  8, 0b0010, CPU_FEATURE_EPAC },
-			{ 11,  8, 0b0011, CPU_FEATURE_PAUTH2 },
-			{ 11,  8, 0b0100, CPU_FEATURE_FPAC },
-			{ 11,  8, 0b0101, CPU_FEATURE_FPACCOMBINE },
-			{  7,  4, 0b0001, CPU_FEATURE_PAUTH },
-			{  7,  4, 0b0010, CPU_FEATURE_EPAC },
-			{  7,  4, 0b0011, CPU_FEATURE_PAUTH2 },
-			{  7,  4, 0b0100, CPU_FEATURE_FPAC },
-			{  7,  4, 0b0101, CPU_FEATURE_FPACCOMBINE },
-			{  3,  0, 0b0001, CPU_FEATURE_DPB },
-			{  3,  0, 0b0010, CPU_FEATURE_DPB2 },
-			{ -1, -1,     -1, -1 }
+			{ 63, 60, 0b0001, CPU_FEATURE_LS64,         FEATURE_LEVEL_ARM_V8_6_A, -1 },
+			{ 63, 60, 0b0010, CPU_FEATURE_LS64_V,       FEATURE_LEVEL_ARM_V8_6_A, -1 },
+			{ 63, 60, 0b0011, CPU_FEATURE_LS64_ACCDATA, FEATURE_LEVEL_ARM_V8_6_A, -1 },
+			{ 59, 56, 0b0001, CPU_FEATURE_XS,           FEATURE_LEVEL_ARM_V8_6_A, FEATURE_LEVEL_ARM_V8_7_A },
+			{ 55, 52, 0b0001, CPU_FEATURE_I8MM,         FEATURE_LEVEL_ARM_V8_1_A, FEATURE_LEVEL_ARM_V8_6_A },
+			{ 51, 48, 0b0001, CPU_FEATURE_DGH,          FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ 47, 44, 0b0001, CPU_FEATURE_BF16,         FEATURE_LEVEL_ARM_V8_2_A, FEATURE_LEVEL_ARM_V8_6_A },
+			{ 47, 44, 0b0010, CPU_FEATURE_EBF16,        FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 43, 40, 0b0001, CPU_FEATURE_SPECRES,      FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_5_A },
+			{ 43, 40, 0b0010, CPU_FEATURE_SPECRES2,     FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_9_A },
+			{ 39, 36, 0b0001, CPU_FEATURE_SB,           FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_5_A },
+			{ 35, 32, 0b0001, CPU_FEATURE_FRINTTS,      FEATURE_LEVEL_ARM_V8_4_A, -1 },
+			{ 31, 28, 0b0001, CPU_FEATURE_PACIMP,       FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 27, 24, 0b0001, CPU_FEATURE_PACQARMA5,    FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 23, 20, 0b0001, CPU_FEATURE_LRCPC,        FEATURE_LEVEL_ARM_V8_2_A, FEATURE_LEVEL_ARM_V8_3_A },
+			{ 23, 20, 0b0010, CPU_FEATURE_LRCPC2,       FEATURE_LEVEL_ARM_V8_2_A, FEATURE_LEVEL_ARM_V8_4_A },
+			{ 23, 20, 0b0011, CPU_FEATURE_LRCPC3,       FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 19, 16, 0b0001, CPU_FEATURE_FCMA,         FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 15, 12, 0b0001, CPU_FEATURE_JSCVT,        FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 11,  8, 0b0001, CPU_FEATURE_PAUTH,        FEATURE_LEVEL_ARM_V8_2_A, FEATURE_LEVEL_ARM_V8_3_A },
+			{ 11,  8, 0b0010, CPU_FEATURE_EPAC,         FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 11,  8, 0b0011, CPU_FEATURE_PAUTH2,       FEATURE_LEVEL_ARM_V8_2_A, FEATURE_LEVEL_ARM_V8_6_A },
+			{ 11,  8, 0b0100, CPU_FEATURE_FPAC,         FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 11,  8, 0b0101, CPU_FEATURE_FPACCOMBINE,  FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{  7,  4, 0b0001, CPU_FEATURE_PAUTH,        FEATURE_LEVEL_ARM_V8_2_A, FEATURE_LEVEL_ARM_V8_3_A },
+			{  7,  4, 0b0010, CPU_FEATURE_EPAC,         FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{  7,  4, 0b0011, CPU_FEATURE_PAUTH2,       FEATURE_LEVEL_ARM_V8_2_A, FEATURE_LEVEL_ARM_V8_6_A },
+			{  7,  4, 0b0100, CPU_FEATURE_FPAC,         FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{  7,  4, 0b0101, CPU_FEATURE_FPACCOMBINE,  FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{  3,  0, 0b0001, CPU_FEATURE_DPB,          FEATURE_LEVEL_ARM_V8_1_A, FEATURE_LEVEL_ARM_V8_2_A },
+			{  3,  0, 0b0010, CPU_FEATURE_DPB2,         FEATURE_LEVEL_ARM_V8_1_A, FEATURE_LEVEL_ARM_V8_5_A },
+			{ -1, -1,     -1, -1,                       -1,                       -1 }
 		},
 		[2] /* ID_AA64ISAR2 */ = {
-			{ 63, 60, 0b0001, CPU_FEATURE_ATS1A },
-			{ 55, 52, 0b0001, CPU_FEATURE_CSSC },
-			{ 51, 48, 0b0001, CPU_FEATURE_RPRFM },
-			{ 43, 40, 0b0001, CPU_FEATURE_PRFMSLC },
-			{ 39, 36, 0b0001, CPU_FEATURE_SYSINSTR128 },
-			{ 35, 32, 0b0001, CPU_FEATURE_SYSREG128 },
-			{ 31, 28, 0b0001, CPU_FEATURE_CLRBHB },
-			{ 27, 24, 0b0001, CPU_FEATURE_CONSTPACFIELD },
-			{ 23, 20, 0b0001, CPU_FEATURE_HBC },
-			{ 19, 16, 0b0001, CPU_FEATURE_MOPS },
-			{ 15, 12, 0b0001, CPU_FEATURE_PAUTH },
-			{ 15, 12, 0b0010, CPU_FEATURE_EPAC },
-			{ 15, 12, 0b0011, CPU_FEATURE_PAUTH2 },
-			{ 15, 12, 0b0100, CPU_FEATURE_FPAC },
-			{ 15, 12, 0b0101, CPU_FEATURE_FPACCOMBINE },
-			{ 11,  8, 0b0001, CPU_FEATURE_PACQARMA3 },
-			{  7,  4, 0b0001, CPU_FEATURE_RPRES },
-			{  3,  0, 0b0010, CPU_FEATURE_WFXT },
-			{ -1, -1,     -1, -1 }
+			{ 63, 60, 0b0001, CPU_FEATURE_ATS1A,         FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 55, 52, 0b0001, CPU_FEATURE_CSSC,          FEATURE_LEVEL_ARM_V8_7_A, -1 },
+			{ 51, 48, 0b0001, CPU_FEATURE_RPRFM,         FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ 43, 40, 0b0001, CPU_FEATURE_PRFMSLC,       FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ 39, 36, 0b0001, CPU_FEATURE_SYSINSTR128,   FEATURE_LEVEL_ARM_V9_3_A, -1 },
+			{ 35, 32, 0b0001, CPU_FEATURE_SYSREG128,     FEATURE_LEVEL_ARM_V9_3_A, -1 },
+			{ 31, 28, 0b0001, CPU_FEATURE_CLRBHB,        FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_9_A },
+			{ 27, 24, 0b0001, CPU_FEATURE_CONSTPACFIELD, FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 23, 20, 0b0001, CPU_FEATURE_HBC,           FEATURE_LEVEL_ARM_V8_7_A, FEATURE_LEVEL_ARM_V8_8_A },
+			{ 19, 16, 0b0001, CPU_FEATURE_MOPS,          FEATURE_LEVEL_ARM_V8_7_A, FEATURE_LEVEL_ARM_V8_8_A },
+			{ 15, 12, 0b0001, CPU_FEATURE_PAUTH,         FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 15, 12, 0b0010, CPU_FEATURE_EPAC,          FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 15, 12, 0b0011, CPU_FEATURE_PAUTH2,        FEATURE_LEVEL_ARM_V8_2_A, FEATURE_LEVEL_ARM_V8_6_A },
+			{ 15, 12, 0b0100, CPU_FEATURE_FPAC,          FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 15, 12, 0b0101, CPU_FEATURE_FPACCOMBINE,   FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 11,  8, 0b0001, CPU_FEATURE_PACQARMA3,     FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{  7,  4, 0b0001, CPU_FEATURE_RPRES,         FEATURE_LEVEL_ARM_V8_6_A, -1 },
+			{  3,  0, 0b0010, CPU_FEATURE_WFXT,          FEATURE_LEVEL_ARM_V8_6_A, FEATURE_LEVEL_ARM_V8_7_A },
+			{ -1, -1,     -1, -1,                        -1,                       -1 }
 		}
 	};
 
 	const struct arm_feature_map_t matchtable_id_aa64mmfr[MAX_ARM_ID_AA64MMFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64MMFR0 */ = {
-			{ 63, 60, 0b0001, CPU_FEATURE_ECV },
-			{ 63, 60, 0b0010, CPU_FEATURE_ECV },
-			{ 59, 56, 0b0001, CPU_FEATURE_FGT },
-			{ 59, 56, 0b0010, CPU_FEATURE_FGT2 },
-			{ 47, 44, 0b0001, CPU_FEATURE_EXS },
-			{ 31, 28, 0b0001, CPU_FEATURE_LPA2 },
-			{ 23, 20, 0b0001, CPU_FEATURE_LPA2 },
-			{ 19, 16, 0b0001, CPU_FEATURE_MIXEDEND },
-			{  7,  4, 0b0010, CPU_FEATURE_ASID16 },
-			{  3,  0, 0b0110, CPU_FEATURE_LPA },
-			{ -1, -1,     -1, -1 }
+			{ 63, 60, 0b0001, CPU_FEATURE_ECV,         FEATURE_LEVEL_ARM_V8_5_A, FEATURE_LEVEL_ARM_V8_6_A },
+			{ 63, 60, 0b0010, CPU_FEATURE_ECV,         FEATURE_LEVEL_ARM_V8_5_A, FEATURE_LEVEL_ARM_V8_6_A },
+			{ 59, 56, 0b0001, CPU_FEATURE_FGT,         FEATURE_LEVEL_ARM_V8_5_A, -1 },
+			{ 59, 56, 0b0010, CPU_FEATURE_FGT2,        FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 47, 44, 0b0001, CPU_FEATURE_EXS,         FEATURE_LEVEL_ARM_V8_4_A, -1 },
+			{ 31, 28, 0b0001, CPU_FEATURE_LPA2,        FEATURE_LEVEL_ARM_V8_6_A, -1 },
+			{ 23, 20, 0b0001, CPU_FEATURE_LPA2,        FEATURE_LEVEL_ARM_V8_6_A, -1 },
+			{ 19, 16, 0b0001, CPU_FEATURE_MIXEDENDEL0, FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ 11,  8, 0b0001, CPU_FEATURE_MIXEDEND,    FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{  7,  4, 0b0010, CPU_FEATURE_ASID16,      FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{  3,  0, 0b0110, CPU_FEATURE_LPA,         FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{ -1, -1,     -1, -1,                      -1,                       -1 }
 		},
 		[1] /* ID_AA64MMFR1 */ = {
-			{ 63, 60, 0b0001, CPU_FEATURE_ECBHB },
-			{ 59, 56, 0b0001, CPU_FEATURE_CMOW },
-			{ 55, 52, 0b0001, CPU_FEATURE_TIDCP1 },
-			{ 47, 44, 0b0001, CPU_FEATURE_AFP },
-			{ 43, 40, 0b0001, CPU_FEATURE_HCX },
-			{ 39, 36, 0b0010, CPU_FEATURE_ETS2 },
-			{ 35, 32, 0b0001, CPU_FEATURE_TWED },
-			{ 31, 28, 0b0001, CPU_FEATURE_XNX },
-			{ 23, 20, 0b0001, CPU_FEATURE_PAN },
-			{ 23, 20, 0b0010, CPU_FEATURE_PAN2 },
-			{ 23, 20, 0b0011, CPU_FEATURE_PAN3 },
-			{ 19, 16, 0b0001, CPU_FEATURE_LOR },
-			{ 15, 12, 0b0001, CPU_FEATURE_HPDS },
-			{ 15, 12, 0b0010, CPU_FEATURE_HPDS2 },
-			{ 11,  8, 0b0001, CPU_FEATURE_VHE },
-			{  7,  4, 0b0010, CPU_FEATURE_VMID16 },
-			{  3,  0, 0b0001, CPU_FEATURE_HAFDBS },
-			{  3,  0, 0b0010, CPU_FEATURE_HAFDBS }, /* as 0b0001, and adds support for hardware update of the Access flag for Block and Page descriptors */
-			{  3,  0, 0b0011, CPU_FEATURE_HAFT },
-			{ -1, -1,     -1, -1 }
+			{ 63, 60, 0b0001, CPU_FEATURE_ECBHB,  FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_9_A },
+			{ 59, 56, 0b0001, CPU_FEATURE_CMOW,   FEATURE_LEVEL_ARM_V8_7_A, FEATURE_LEVEL_ARM_V8_8_A },
+			{ 55, 52, 0b0001, CPU_FEATURE_TIDCP1, FEATURE_LEVEL_ARM_V8_7_A, FEATURE_LEVEL_ARM_V8_8_A },
+			{ 47, 44, 0b0001, CPU_FEATURE_AFP,    FEATURE_LEVEL_ARM_V8_6_A, -1 },
+			{ 43, 40, 0b0001, CPU_FEATURE_HCX,    FEATURE_LEVEL_ARM_V8_6_A, -1 },
+			{ 39, 36, 0b0010, CPU_FEATURE_ETS2,   FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_8_A },
+			{ 35, 32, 0b0001, CPU_FEATURE_TWED,   FEATURE_LEVEL_ARM_V8_5_A, -1 },
+			{ 31, 28, 0b0001, CPU_FEATURE_XNX,    FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{ 23, 20, 0b0001, CPU_FEATURE_PAN,    FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_1_A },
+			{ 23, 20, 0b0010, CPU_FEATURE_PAN2,   FEATURE_LEVEL_ARM_V8_1_A, FEATURE_LEVEL_ARM_V8_2_A },
+			{ 23, 20, 0b0011, CPU_FEATURE_PAN3,   FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_7_A },
+			{ 19, 16, 0b0001, CPU_FEATURE_LOR,    FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_1_A },
+			{ 15, 12, 0b0001, CPU_FEATURE_HPDS,   FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_1_A },
+			{ 15, 12, 0b0010, CPU_FEATURE_HPDS2,  FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{ 11,  8, 0b0001, CPU_FEATURE_VHE,    FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{  7,  4, 0b0010, CPU_FEATURE_VMID16, FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{  3,  0, 0b0001, CPU_FEATURE_HAFDBS, FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{  3,  0, 0b0010, CPU_FEATURE_HAFDBS, FEATURE_LEVEL_ARM_V8_1_A, -1 }, /* as 0b0001, and adds support for hardware update of the Access flag for Block and Page descriptors */
+			{  3,  0, 0b0011, CPU_FEATURE_HAFT,   FEATURE_LEVEL_ARM_V8_7_A, -1 },
+			{ -1, -1,     -1, -1,                 -1,                       -1 }
 		},
 		[2] /* ID_AA64MMFR2 */ = {
-			{ 63, 60, 0b0001, CPU_FEATURE_E0PD },
-			{ 59, 56, 0b0001, CPU_FEATURE_EVT }, /* HCR_EL2.{TOCU, TICAB, TID4} traps are supported. HCR_EL2.{TTLBOS,TTLBIS} traps are not supported */
-			{ 59, 56, 0b0010, CPU_FEATURE_EVT }, /* HCR_EL2.{TTLBOS, TTLBIS, TOCU, TICAB, TID4} traps are supported */
-			{ 55, 52, 0b0000, CPU_FEATURE_BBM }, /* Level 0 support for changing block size is supported */
-			{ 55, 52, 0b0001, CPU_FEATURE_BBM }, /* Level 1 support for changing block size is supported */
-			{ 55, 52, 0b0010, CPU_FEATURE_BBM }, /* Level 2 support for changing block size is supported */
-			{ 51, 48, 0b0001, CPU_FEATURE_TTL },
-			{ 43, 40, 0b0001, CPU_FEATURE_S2FWB },
-			{ 39, 36, 0b0001, CPU_FEATURE_IDST },
-			{ 35, 32, 0b0001, CPU_FEATURE_LSE2 },
-			{ 31, 28, 0b0001, CPU_FEATURE_TTST },
-			{ 23, 20, 0b0001, CPU_FEATURE_CCIDX },
-			{ 19, 16, 0b0001, CPU_FEATURE_LVA },
-			{ 19, 16, 0b0010, CPU_FEATURE_LVA3 },
-			{ 15, 12, 0b0001, CPU_FEATURE_IESB },
-			{ 11,  8, 0b0001, CPU_FEATURE_LSMAOC },
-			{  7,  4, 0b0001, CPU_FEATURE_UAO },
-			{  3,  0, 0b0001, CPU_FEATURE_TTCNP },
-			{ -1, -1,     -1, -1 }
+			{ 63, 60, 0b0001, CPU_FEATURE_E0PD,   FEATURE_LEVEL_ARM_V8_4_A, FEATURE_LEVEL_ARM_V8_5_A },
+			{ 59, 56, 0b0001, CPU_FEATURE_EVT,    FEATURE_LEVEL_ARM_V8_2_A, -1 }, /* HCR_EL2.{TOCU, TICAB, TID4} traps are supported. HCR_EL2.{TTLBOS,TTLBIS} traps are not supported */
+			{ 59, 56, 0b0010, CPU_FEATURE_EVT,    FEATURE_LEVEL_ARM_V8_2_A, -1 }, /* HCR_EL2.{TTLBOS, TTLBIS, TOCU, TICAB, TID4} traps are supported */
+			{ 55, 52, 0b0000, CPU_FEATURE_BBM,    FEATURE_LEVEL_ARM_V8_3_A, FEATURE_LEVEL_ARM_V8_4_A }, /* Level 0 support for changing block size is supported */
+			{ 55, 52, 0b0001, CPU_FEATURE_BBM,    FEATURE_LEVEL_ARM_V8_3_A, FEATURE_LEVEL_ARM_V8_4_A }, /* Level 1 support for changing block size is supported */
+			{ 55, 52, 0b0010, CPU_FEATURE_BBM,    FEATURE_LEVEL_ARM_V8_3_A, FEATURE_LEVEL_ARM_V8_4_A }, /* Level 2 support for changing block size is supported */
+			{ 51, 48, 0b0001, CPU_FEATURE_TTL,    FEATURE_LEVEL_ARM_V8_3_A, FEATURE_LEVEL_ARM_V8_4_A },
+			{ 43, 40, 0b0001, CPU_FEATURE_S2FWB,  FEATURE_LEVEL_ARM_V8_3_A, -1 },
+			{ 39, 36, 0b0001, CPU_FEATURE_IDST,   FEATURE_LEVEL_ARM_V8_3_A, FEATURE_LEVEL_ARM_V8_4_A },
+			{ 35, 32, 0b0001, CPU_FEATURE_LSE2,   FEATURE_LEVEL_ARM_V8_2_A, FEATURE_LEVEL_ARM_V8_4_A },
+			{ 31, 28, 0b0001, CPU_FEATURE_TTST,   FEATURE_LEVEL_ARM_V8_3_A, -1 },
+			{ 23, 20, 0b0001, CPU_FEATURE_CCIDX,  FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 19, 16, 0b0001, CPU_FEATURE_LVA,    FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{ 19, 16, 0b0010, CPU_FEATURE_LVA3,   FEATURE_LEVEL_ARM_V9_3_A, -1 },
+			{ 15, 12, 0b0001, CPU_FEATURE_IESB,   FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{ 11,  8, 0b0001, CPU_FEATURE_LSMAOC, FEATURE_LEVEL_ARM_V8_1_A, -1 },
+			{  7,  4, 0b0001, CPU_FEATURE_UAO,    FEATURE_LEVEL_ARM_V8_1_A, FEATURE_LEVEL_ARM_V8_2_A },
+			{  3,  0, 0b0001, CPU_FEATURE_TTCNP,  FEATURE_LEVEL_ARM_V8_1_A, FEATURE_LEVEL_ARM_V8_2_A },
+			{ -1, -1,     -1, -1,                  -1,                       -1 }
 		},
 		[3] /* ID_AA64MMFR3 */ = {
-			{ 59, 56, 0b0010, CPU_FEATURE_ADERR },
-			{ 55, 52, 0b0010, CPU_FEATURE_ADERR },
-			{ 47, 44, 0b0010, CPU_FEATURE_ANERR },
-			{ 43, 40, 0b0010, CPU_FEATURE_ANERR },
-			{ 35, 32, 0b0001, CPU_FEATURE_D128 },
-			{ 31, 28, 0b0001, CPU_FEATURE_MEC },
-			{ 27, 24, 0b0001, CPU_FEATURE_AIE },
-			{ 23, 20, 0b0001, CPU_FEATURE_S2POE },
-			{ 19, 16, 0b0001, CPU_FEATURE_S1POE },
-			{ 15, 12, 0b0001, CPU_FEATURE_S2PIE },
-			{ 11,  8, 0b0001, CPU_FEATURE_S1PIE },
-			{  7,  4, 0b0001, CPU_FEATURE_SCTLR2 },
-			{  3,  0, 0b0001, CPU_FEATURE_TCR2 },
-			{ -1, -1,     -1, -1 }
+			{ 59, 56, 0b0010, CPU_FEATURE_ADERR,  FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 55, 52, 0b0010, CPU_FEATURE_ADERR,  FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 47, 44, 0b0010, CPU_FEATURE_ANERR,  FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 43, 40, 0b0010, CPU_FEATURE_ANERR,  FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 35, 32, 0b0001, CPU_FEATURE_D128,   FEATURE_LEVEL_ARM_V9_3_A, -1 },
+			{ 31, 28, 0b0001, CPU_FEATURE_MEC,    FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{ 27, 24, 0b0001, CPU_FEATURE_AIE,    FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 23, 20, 0b0001, CPU_FEATURE_S2POE,  FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 19, 16, 0b0001, CPU_FEATURE_S1POE,  FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 15, 12, 0b0001, CPU_FEATURE_S2PIE,  FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 11,  8, 0b0001, CPU_FEATURE_S1PIE,  FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{  7,  4, 0b0001, CPU_FEATURE_SCTLR2, FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_9_A },
+			{  3,  0, 0b0001, CPU_FEATURE_TCR2,   FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_9_A },
+			{ -1, -1,     -1, -1,                 -1,                       -1 }
 		},
 		[4] /* ID_AA64MMFR4 */ = {
-			{ -1, -1,     -1, -1 }
+			{ -1, -1,     -1, -1,                 -1,                       -1 }
 		}
 	};
 
 	const struct arm_feature_map_t matchtable_id_aa64pfr[MAX_ARM_ID_AA64PFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64PFR0 */ = {
-			{ 63, 60, 0b0001, CPU_FEATURE_CSV3 },
-			{ 59, 56, 0b0001, CPU_FEATURE_CSV2 },
-			{ 59, 56, 0b0010, CPU_FEATURE_CSV2_2 },
-			{ 59, 56, 0b0011, CPU_FEATURE_CSV2_3 },
-			{ 55, 52, 0b0001, CPU_FEATURE_RME },
-			{ 51, 48, 0b0001, CPU_FEATURE_DIT },
-			{ 47, 44, 0b0001, CPU_FEATURE_AMUV1 },
-			{ 47, 44, 0b0010, CPU_FEATURE_AMUV1P1 },
-			{ 39, 36, 0b0001, CPU_FEATURE_SEL2 },
-			{ 35, 32, 0b0001, CPU_FEATURE_SVE },
-			{ 31, 28, 0b0001, CPU_FEATURE_RAS },
-			{ 31, 28, 0b0010, CPU_FEATURE_DOUBLEFAULT },
-			{ 31, 28, 0b0010, CPU_FEATURE_RASV1P1 },
-			{ 31, 28, 0b0011, CPU_FEATURE_RASV2 },
-			{ 23, 20, 0b0000, CPU_FEATURE_ADVSIMD },
-			{ 23, 20, 0b0001, CPU_FEATURE_ADVSIMD }, /* as for 0b0000, and also includes support for half-precision floating-point arithmetic */
-			{ 19, 16, 0b0000, CPU_FEATURE_FP },
-			{ 19, 16, 0b0001, CPU_FEATURE_FP16 },
-			{ -1, -1,     -1, -1 }
+			{ 63, 60, 0b0001, CPU_FEATURE_CSV3,        FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_5_A },
+			{ 59, 56, 0b0001, CPU_FEATURE_CSV2,        FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_5_A },
+			{ 59, 56, 0b0010, CPU_FEATURE_CSV2_2,      FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ 59, 56, 0b0011, CPU_FEATURE_CSV2_3,      FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ 55, 52, 0b0001, CPU_FEATURE_RME,         FEATURE_LEVEL_ARM_V9_1_A, -1 },
+			{ 51, 48, 0b0001, CPU_FEATURE_DIT,         FEATURE_LEVEL_ARM_V8_3_A, FEATURE_LEVEL_ARM_V8_4_A },
+			{ 47, 44, 0b0001, CPU_FEATURE_AMUV1,       FEATURE_LEVEL_ARM_V8_3_A, -1 },
+			{ 47, 44, 0b0010, CPU_FEATURE_AMUV1P1,     FEATURE_LEVEL_ARM_V8_5_A, -1 },
+			{ 39, 36, 0b0001, CPU_FEATURE_SEL2,        FEATURE_LEVEL_ARM_V8_3_A, -1 },
+			{ 35, 32, 0b0001, CPU_FEATURE_SVE,         FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 31, 28, 0b0001, CPU_FEATURE_RAS,         FEATURE_LEVEL_ARM_V8_0_A, FEATURE_LEVEL_ARM_V8_2_A },
+			{ 31, 28, 0b0010, CPU_FEATURE_DOUBLEFAULT, FEATURE_LEVEL_ARM_V8_4_A, -1 },
+			{ 31, 28, 0b0010, CPU_FEATURE_RASV1P1,     FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 31, 28, 0b0011, CPU_FEATURE_RASV2,       FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 23, 20, 0b0000, CPU_FEATURE_ADVSIMD,     FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ 23, 20, 0b0001, CPU_FEATURE_ADVSIMD,     FEATURE_LEVEL_ARM_V8_0_A, -1 }, /* as for 0b0000, and also includes support for half-precision floating-point arithmetic */
+			{ 19, 16, 0b0000, CPU_FEATURE_FP,          FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ 19, 16, 0b0001, CPU_FEATURE_FP16,        FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ -1, -1,     -1, -1,                      -1,                       -1 }
 		},
 		[1] /* ID_AA64PFR1 */ = {
-			{ 63, 60, 0b0001, CPU_FEATURE_PFAR },
-			{ 59, 56, 0b0001, CPU_FEATURE_DOUBLEFAULT2 },
-			{ 51, 48, 0b0001, CPU_FEATURE_THE },
-			{ 47, 44, 0b0001, CPU_FEATURE_GCS },
-			{ 39, 36, 0b0001, CPU_FEATURE_NMI },
-			{ 35, 32, 0b0001, CPU_FEATURE_CSV2_1P1 },
-			{ 35, 32, 0b0010, CPU_FEATURE_CSV2_1P2 },
-			{ 31, 28, 0b0001, CPU_FEATURE_RNG_TRAP },
-			{ 27, 24, 0b0001, CPU_FEATURE_SME },
-			{ 27, 24, 0b0010, CPU_FEATURE_SME }, /* As 0b0001, plus the SME2 ZT0 register */
-			{ 11,  8, 0b0001, CPU_FEATURE_MTE },
-			{ 11,  8, 0b0010, CPU_FEATURE_MTE2 },
-			{ 11,  8, 0b0011, CPU_FEATURE_MTE3 },
-			{ 11,  8, 0b0011, CPU_FEATURE_MTE_ASYM_FAULT }, /* FEAT_MTE3 is implemented if and only if FEAT_MTE_ASYM_FAULT is implemented */
-			{  7,  4, 0b0001, CPU_FEATURE_SSBS },
-			{  7,  4, 0b0010, CPU_FEATURE_SSBS2 },
-			{  3,  0, 0b0001, CPU_FEATURE_BTI },
-			{ -1, -1,     -1, -1 }
+			{ 63, 60, 0b0001, CPU_FEATURE_PFAR,           FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 59, 56, 0b0001, CPU_FEATURE_DOUBLEFAULT2,   FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 51, 48, 0b0001, CPU_FEATURE_THE,            FEATURE_LEVEL_ARM_V8_8_A, -1 },
+			{ 47, 44, 0b0001, CPU_FEATURE_GCS,            FEATURE_LEVEL_ARM_V9_3_A, -1 },
+			{ 39, 36, 0b0001, CPU_FEATURE_NMI,            FEATURE_LEVEL_ARM_V8_7_A, FEATURE_LEVEL_ARM_V8_8_A },
+			{ 35, 32, 0b0001, CPU_FEATURE_CSV2_1P1,       FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ 35, 32, 0b0010, CPU_FEATURE_CSV2_1P2,       FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{ 31, 28, 0b0001, CPU_FEATURE_RNG_TRAP,       FEATURE_LEVEL_ARM_V8_4_A, -1 },
+			{ 27, 24, 0b0001, CPU_FEATURE_SME,            FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{ 27, 24, 0b0010, CPU_FEATURE_SME2,           FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{ 11,  8, 0b0001, CPU_FEATURE_MTE,            FEATURE_LEVEL_ARM_V8_4_A, -1 },
+			{ 11,  8, 0b0010, CPU_FEATURE_MTE2,           FEATURE_LEVEL_ARM_V8_4_A, -1 },
+			{ 11,  8, 0b0011, CPU_FEATURE_MTE3,           FEATURE_LEVEL_ARM_V8_5_A, -1 },
+			{ 11,  8, 0b0011, CPU_FEATURE_MTE_ASYM_FAULT, FEATURE_LEVEL_ARM_V8_7_A, -1 }, /* FEAT_MTE3 is implemented if and only if FEAT_MTE_ASYM_FAULT is implemented */
+			{  7,  4, 0b0001, CPU_FEATURE_SSBS,           FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{  7,  4, 0b0010, CPU_FEATURE_SSBS2,          FEATURE_LEVEL_ARM_V8_0_A, -1 },
+			{  3,  0, 0b0001, CPU_FEATURE_BTI,            FEATURE_LEVEL_ARM_V8_4_A, FEATURE_LEVEL_ARM_V8_5_A },
+			{ -1, -1,     -1, -1,                         -1,                       -1 }
 		},
 		[2] /* ID_AA64PFR2 */ = {
-			{ 11,  8, 0b0001, CPU_FEATURE_MTE_TAGGED_FAR },
-			{  7,  4, 0b0001, CPU_FEATURE_MTE_STORE_ONLY },
-			{  3,  0, 0b0001, CPU_FEATURE_MTE_PERM },
-			{ -1, -1,     -1, -1 }
+			{ 11,  8, 0b0001, CPU_FEATURE_MTE_TAGGED_FAR, FEATURE_LEVEL_ARM_V8_7_A, -1 },
+			{  7,  4, 0b0001, CPU_FEATURE_MTE_STORE_ONLY, FEATURE_LEVEL_ARM_V8_7_A, -1 },
+			{  3,  0, 0b0001, CPU_FEATURE_MTE_PERM,       FEATURE_LEVEL_ARM_V8_7_A, -1 },
+			{ -1, -1,     -1, -1,                         -1,                       -1 }
 		}
 	};
 
 	const struct arm_feature_map_t matchtable_id_aa64smfr[MAX_ARM_ID_AA64SMFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64SMFR0 */ = {
-			{ 63, 63,    0b1, CPU_FEATURE_SME_FA64 },
-			{ 59, 56, 0b0001, CPU_FEATURE_SME2 },
-			{ 59, 56, 0b0010, CPU_FEATURE_SME2P1 },
-			{ 55, 52, 0b1111, CPU_FEATURE_SME_I16I64 },
-			{ 48, 48,    0b1, CPU_FEATURE_SME_F64F64 },
-			{ 43, 43,    0b1, CPU_FEATURE_SVE_B16B16 },
-			{ 42, 42,    0b1, CPU_FEATURE_SME_F16F16 },
-			{ -1, -1,     -1, -1 }
+			{ 63, 63,    0b1, CPU_FEATURE_SME_FA64,   FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{ 59, 56, 0b0001, CPU_FEATURE_SME2,       FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{ 59, 56, 0b0010, CPU_FEATURE_SME2P1,     FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{ 55, 52, 0b1111, CPU_FEATURE_SME_I16I64, FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{ 48, 48,    0b1, CPU_FEATURE_SME_F64F64, FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{ 43, 43,    0b1, CPU_FEATURE_SVE_B16B16, FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{ 42, 42,    0b1, CPU_FEATURE_SME_F16F16, FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{ -1, -1,     -1, -1,                     -1,                       -1 }
 		},
 	};
 
 	const struct arm_feature_map_t matchtable_id_aa64zfr[MAX_ARM_ID_AA64ZFR_REGS][MAX_MATCHTABLE_ITEMS] = {
 		[0] /* ID_AA64ZFR0 */ = {
-			{ 59, 56, 0b0001, CPU_FEATURE_F64MM },
-			{ 55, 52, 0b0001, CPU_FEATURE_F32MM },
-			{ 47, 44, 0b0001, CPU_FEATURE_I8MM },
-			{ 43, 40, 0b0001, CPU_FEATURE_SVE_SM4 },
-			{ 35, 32, 0b0001, CPU_FEATURE_SVE_SHA3 },
-			{ 27, 24, 0b0001, CPU_FEATURE_SVE_B16B16 },
-			{ 23, 20, 0b0001, CPU_FEATURE_BF16 },
-			{ 23, 20, 0b0010, CPU_FEATURE_EBF16 },
-			{ 19, 16, 0b0001, CPU_FEATURE_SVE_BITPERM },
-			{  7,  4, 0b0001, CPU_FEATURE_SVE_AES },
-			{  7,  4, 0b0010, CPU_FEATURE_SVE_PMULL128 },
-			{  3,  0, 0b0001, CPU_FEATURE_SVE2 },
-			{  3,  0, 0b0001, CPU_FEATURE_SME },
-			{  3,  0, 0b0010, CPU_FEATURE_SME2P1 },
-			{  3,  0, 0b0010, CPU_FEATURE_SVE2P1 },
-			{ -1, -1,     -1, -1 }
+			{ 59, 56, 0b0001, CPU_FEATURE_F64MM,        FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 55, 52, 0b0001, CPU_FEATURE_F32MM,        FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 47, 44, 0b0001, CPU_FEATURE_I8MM,         FEATURE_LEVEL_ARM_V8_1_A, FEATURE_LEVEL_ARM_V8_6_A },
+			{ 43, 40, 0b0001, CPU_FEATURE_SVE_SM4,      FEATURE_LEVEL_ARM_V9_0_A, -1 },
+			{ 35, 32, 0b0001, CPU_FEATURE_SVE_SHA3,     FEATURE_LEVEL_ARM_V9_0_A, -1 },
+			{ 27, 24, 0b0001, CPU_FEATURE_SVE_B16B16,   FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{ 23, 20, 0b0001, CPU_FEATURE_BF16,         FEATURE_LEVEL_ARM_V8_2_A, FEATURE_LEVEL_ARM_V8_6_A },
+			{ 23, 20, 0b0010, CPU_FEATURE_EBF16,        FEATURE_LEVEL_ARM_V8_2_A, -1 },
+			{ 19, 16, 0b0001, CPU_FEATURE_SVE_BITPERM,  FEATURE_LEVEL_ARM_V9_0_A, -1 },
+			{  7,  4, 0b0001, CPU_FEATURE_SVE_AES,      FEATURE_LEVEL_ARM_V9_0_A, -1 },
+			{  7,  4, 0b0010, CPU_FEATURE_SVE_PMULL128, FEATURE_LEVEL_ARM_V9_0_A, -1 },
+			{  3,  0, 0b0001, CPU_FEATURE_SVE2,         FEATURE_LEVEL_ARM_V9_0_A, -1 },
+			{  3,  0, 0b0001, CPU_FEATURE_SME,          FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{  3,  0, 0b0010, CPU_FEATURE_SME2P1,       FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{  3,  0, 0b0010, CPU_FEATURE_SVE2P1,       FEATURE_LEVEL_ARM_V9_2_A, -1 },
+			{ -1, -1,     -1, -1,                       -1,                       -1 }
 		},
 	};
 
@@ -703,67 +865,24 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	for (i = 0; i < MAX_ARM_ID_AA64ZFR_REGS; i++)
 		MATCH_FEATURES_TABLE_WITH_RAW(aa64zfr);
 
-	/* FEAT_PAuth, Pointer authentication
-	When FEAT_PAuth is implemented, one of the following must be true:
-	- Exactly one of the PAC algorithms is implemented.
-	- If the PACGA instruction and other Pointer authentication instructions use different PAC algorithms, exactly two PAC algorithms are implemented.
-	The PAC algorithm features are:
-	- FEAT_PACQARMA5.
-	- FEAT_PACIMP.
-	- FEAT_PACQARMA3. */
-	if (data->flags[CPU_FEATURE_PACIMP] || data->flags[CPU_FEATURE_PACQARMA3] || data->flags[CPU_FEATURE_PACQARMA5])
-		data->flags[CPU_FEATURE_PAUTH] = 1;
-
-	/* FEAT_MPAM, Memory Partitioning and Monitoring Extension
-	MPAM Extension version: MPAM | MPAM_frac
-	Not implemented: 0b0000 | 0b0000
-	v0.1 is implemented: 0b0000 | 0b0001
-	v1.0 is implemented: 0b0001 | 0b0000
-	v1.1 is implemented: 0b0001 | 0b0001 */
-	mpam      = EXTRACTS_BITS(raw->arm_id_aa64pfr[0], 43, 40);
-	mpam_frac = EXTRACTS_BITS(raw->arm_id_aa64pfr[1], 19, 16);
-	if ((mpam != 0b0000) || (mpam_frac != 0b0000)) {
-		data->flags[CPU_FEATURE_MPAM] = 1;
-		if ((mpam == 0b0000) && (mpam_frac == 0b0001))
-			data->flags[CPU_FEATURE_MPAMV0P1] = 1;
-		else if ((mpam == 0b0001) && (mpam_frac == 0b0001))
-			data->flags[CPU_FEATURE_MPAMV1P1] = 1;
-		debugf(2, "MPAM Extension version is %u.%u\n", mpam, mpam_frac);
-	}
-
-	/* FEAT_MTE4, Enhanced Memory Tagging Extension */
-	mte = EXTRACTS_BITS(raw->arm_id_aa64pfr[1], 11,  8);
-	if (mte >= 0b0010) {
-		mte_frac = EXTRACTS_BITS(raw->arm_id_aa64pfr[1], 43, 40); /* This field is valid only if ID_AA64PFR1_EL1.MTE >= 0b0010 */
-		if (mte_frac == 0b0000)
-			data->flags[CPU_FEATURE_MTE_ASYNC] = 1;
-
-		mtex = EXTRACTS_BITS(raw->arm_id_aa64pfr[1], 55, 52); /* This field is valid only if ID_AA64PFR1_EL1.MTE >= 0b0010 */
-		if (mtex == 0b0001) {
-			data->flags[CPU_FEATURE_MTE_CANONICAL_TAGS]  = 1;
-			data->flags[CPU_FEATURE_MTE_NO_ADDRESS_TAGS] = 1;
-		}
-	}
-	/* If FEAT_MTE4 is implemented, then FEAT_MTE_CANONICAL_TAGS,
-	FEAT_MTE_NO_ADDRESS_TAGS, FEAT_MTE_TAGGED_FAR, and
-	FEAT_MTE_STORE_ONLY are implemented. */
-	if (data->flags[CPU_FEATURE_MTE_CANONICAL_TAGS] &&
-	    data->flags[CPU_FEATURE_MTE_NO_ADDRESS_TAGS] &&
-	    data->flags[CPU_FEATURE_MTE_TAGGED_FAR] &&
-	    data->flags[CPU_FEATURE_MTE_STORE_ONLY])
-		data->flags[CPU_FEATURE_MTE4] = 1;
+	/* Some fields do not follow the standard ID scheme */
+	load_arm_feature_pauth(data, ext_status);
+	load_arm_feature_mpam(raw, data, ext_status);
+	load_arm_feature_mte4(raw, data, ext_status);
 }
 #undef MAX_MATCHTABLE_ITEMS
 #undef MATCH_FEATURES_TABLE_WITH_RAW
 
 int cpuid_identify_arm(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
+	struct arm_arch_extension_t ext_status;
+	memset(&ext_status, 0, sizeof(struct arm_arch_extension_t));
+
 	/* Basic values extraction
 	   Based on "Arm Architecture Reference Manual for A-profile architecture", section D23.2.122 "MIDR_EL1, Main ID Register"
 	*/
 	data->implementer          = EXTRACTS_BITS(raw->arm_midr, 31, 24);
 	data->variant              = EXTRACTS_BITS(raw->arm_midr, 23, 20);
-	data->architecture_version = EXTRACTS_BITS(raw->arm_midr, 19, 16);
 	data->part_num             = EXTRACTS_BITS(raw->arm_midr, 15,  4);
 	data->revision             = EXTRACTS_BITS(raw->arm_midr,  3,  0);
 	data->purpose              = cpuid_identify_purpose_arm(raw);
@@ -774,7 +893,8 @@ int cpuid_identify_arm(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	data->vendor = hw_impl->vendor;
 	strncpy(data->vendor_str, hw_impl->name, VENDOR_STR_MAX);
 	strncpy(data->brand_str,  cpu_name,      BRAND_STR_MAX);
-	load_arm_features(raw, data);
+	load_arm_features(raw, data, &ext_status);
+	decode_arm_architecture_version(raw, data, &ext_status);
 
 	return 0;
 }

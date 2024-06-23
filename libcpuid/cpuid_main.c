@@ -77,6 +77,7 @@ static void cpu_id_t_constructor(struct cpu_id_t* id)
 {
 	memset(id, 0, sizeof(struct cpu_id_t));
 	id->architecture = ARCHITECTURE_UNKNOWN;
+	id->feature_level = FEATURE_LEVEL_UNKNOWN;
 	id->vendor = VENDOR_UNKNOWN;
 	id->l1_data_cache = id->l1_instruction_cache = id->l2_cache = id->l3_cache = id->l4_cache = -1;
 	id->l1_assoc = id->l1_data_assoc = id->l1_instruction_assoc = id->l2_assoc = id->l3_assoc = id->l4_assoc = -1;
@@ -1614,6 +1615,55 @@ const char* cpu_architecture_str(cpu_architecture_t architecture)
 	return "";
 }
 
+const char* cpu_feature_level_str(cpu_feature_level_t level)
+{
+	const struct { cpu_feature_level_t level; const char* name; }
+	matchtable[] = {
+		{ FEATURE_LEVEL_UNKNOWN,    "unknown"   },
+		{ FEATURE_LEVEL_ARM_V1,     "ARMv1"     },
+		{ FEATURE_LEVEL_ARM_V2,     "ARMv2"     },
+		{ FEATURE_LEVEL_ARM_V3,     "ARMv3"     },
+		{ FEATURE_LEVEL_ARM_V4,     "ARMv4"     },
+		{ FEATURE_LEVEL_ARM_V4T,    "ARMv4T"    },
+		{ FEATURE_LEVEL_ARM_V5,     "ARMv5"     },
+		{ FEATURE_LEVEL_ARM_V5T,    "ARMv5T"    },
+		{ FEATURE_LEVEL_ARM_V5TE,   "ARMv5TE"   },
+		{ FEATURE_LEVEL_ARM_V5TEJ,  "ARMv5TEJ"  },
+		{ FEATURE_LEVEL_ARM_V6,     "ARMv6"     },
+		{ FEATURE_LEVEL_ARM_V6_M,   "ARMv6-M"   },
+		{ FEATURE_LEVEL_ARM_V7_A,   "ARMv7-A"   },
+		{ FEATURE_LEVEL_ARM_V7_M,   "ARMv7-M"   },
+		{ FEATURE_LEVEL_ARM_V7_R,   "ARMv7-R"   },
+		{ FEATURE_LEVEL_ARM_V7E_M,  "ARMv7E-M"  },
+		{ FEATURE_LEVEL_ARM_V8_0_A, "ARMv8.0-A" },
+		{ FEATURE_LEVEL_ARM_V8_0_M, "ARMv8.0-M" },
+		{ FEATURE_LEVEL_ARM_V8_0_R, "ARMv8.0-R" },
+		{ FEATURE_LEVEL_ARM_V8_1_A, "ARMv8.1-A" },
+		{ FEATURE_LEVEL_ARM_V8_1_M, "ARMv8.1-M" },
+		{ FEATURE_LEVEL_ARM_V8_2_A, "ARMv8.2-A" },
+		{ FEATURE_LEVEL_ARM_V8_3_A, "ARMv8.3-A" },
+		{ FEATURE_LEVEL_ARM_V8_4_A, "ARMv8.4-A" },
+		{ FEATURE_LEVEL_ARM_V8_5_A, "ARMv8.5-A" },
+		{ FEATURE_LEVEL_ARM_V8_6_A, "ARMv8.6-A" },
+		{ FEATURE_LEVEL_ARM_V8_7_A, "ARMv8.7-A" },
+		{ FEATURE_LEVEL_ARM_V8_8_A, "ARMv8.8-A" },
+		{ FEATURE_LEVEL_ARM_V8_9_A, "ARMv8.9-A" },
+		{ FEATURE_LEVEL_ARM_V9_0_A, "ARMv9.0-A" },
+		{ FEATURE_LEVEL_ARM_V9_1_A, "ARMv9.1-A" },
+		{ FEATURE_LEVEL_ARM_V9_2_A, "ARMv9.2-A" },
+		{ FEATURE_LEVEL_ARM_V9_3_A, "ARMv9.3-A" },
+		{ FEATURE_LEVEL_ARM_V9_4_A, "ARMv9.4-A" },
+	};
+	unsigned i, n = COUNT_OF(matchtable);
+	if (n != (NUM_CPU_FEATURE_LEVELS - FEATURE_LEVEL_ARM_V1) + 1) {
+		warnf("Warning: incomplete library, feature level matchtable size differs from the actual number of levels.\n");
+	}
+	for (i = 0; i < n; i++)
+		if (matchtable[i].level == level)
+			return matchtable[i].name;
+	return "";
+}
+
 const char* cpu_purpose_str(cpu_purpose_t purpose)
 {
 	const struct { cpu_purpose_t purpose; const char* name; }
@@ -1791,6 +1841,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_ETS2, "ets2" },
 		{ CPU_FEATURE_FP, "fp" },
 		{ CPU_FEATURE_MIXEDEND, "mixedend" },
+		{ CPU_FEATURE_MIXEDENDEL0, "mixedendel0" },
 		{ CPU_FEATURE_PMULL, "pmull" },
 		{ CPU_FEATURE_PMUV3, "pmuv3" },
 		{ CPU_FEATURE_SHA1, "sha1" },

@@ -172,6 +172,50 @@ typedef enum {
 #define NUM_CPU_ARCHITECTURES NUM_CPU_ARCHITECTURES
 
 /**
+ * @brief CPU architecture
+ */
+typedef enum {
+	/* TODO: add x86 levels */
+	FEATURE_LEVEL_ARM_V1 = 100, /*!< ARMv1 */
+	FEATURE_LEVEL_ARM_V2, /*!< ARMv2 */
+	FEATURE_LEVEL_ARM_V3, /*!< ARMv3 */
+	FEATURE_LEVEL_ARM_V4, /*!< ARMv4 */
+	FEATURE_LEVEL_ARM_V4T, /*!< ARMv4T */
+	FEATURE_LEVEL_ARM_V5, /*!< ARMv5 (obsolete) */
+	FEATURE_LEVEL_ARM_V5T, /*!< ARMv5T */
+	FEATURE_LEVEL_ARM_V5TE, /*!< ARMv5TE */
+	FEATURE_LEVEL_ARM_V5TEJ, /*!< ARMv5TEJ */
+	FEATURE_LEVEL_ARM_V6, /*!< ARMv6 */
+	FEATURE_LEVEL_ARM_V6_M, /*!< ARMv6-M */
+	FEATURE_LEVEL_ARM_V7_A, /*!< ARMv7-A */
+	FEATURE_LEVEL_ARM_V7_M, /*!< ARMv7-M */
+	FEATURE_LEVEL_ARM_V7_R, /*!< ARMv7-R */
+	FEATURE_LEVEL_ARM_V7E_M, /*!< ARMv7E-M */
+	FEATURE_LEVEL_ARM_V8_0_A, /*!< ARMv8.0-A */
+	FEATURE_LEVEL_ARM_V8_0_M, /*!< ARMv8.0-M */
+	FEATURE_LEVEL_ARM_V8_0_R, /*!< ARMv8.0-R */
+	FEATURE_LEVEL_ARM_V8_1_A, /*!< ARMv8.1-A */
+	FEATURE_LEVEL_ARM_V8_1_M, /*!< ARMv8.1-M */
+	FEATURE_LEVEL_ARM_V8_2_A, /*!< ARMv8.2-A */
+	FEATURE_LEVEL_ARM_V8_3_A, /*!< ARMv8.3-A */
+	FEATURE_LEVEL_ARM_V8_4_A, /*!< ARMv8.4-A */
+	FEATURE_LEVEL_ARM_V8_5_A, /*!< ARMv8.5-A */
+	FEATURE_LEVEL_ARM_V8_6_A, /*!< ARMv8.6-A */
+	FEATURE_LEVEL_ARM_V8_7_A, /*!< ARMv8.7-A */
+	FEATURE_LEVEL_ARM_V8_8_A, /*!< ARMv8.8-A */
+	FEATURE_LEVEL_ARM_V8_9_A, /*!< ARMv8.9-A */
+	FEATURE_LEVEL_ARM_V9_0_A, /*!< ARMv9.0-A */
+	FEATURE_LEVEL_ARM_V9_1_A, /*!< ARMv9.1-A */
+	FEATURE_LEVEL_ARM_V9_2_A, /*!< ARMv9.2-A */
+	FEATURE_LEVEL_ARM_V9_3_A, /*!< ARMv9.3-A */
+	FEATURE_LEVEL_ARM_V9_4_A, /*!< ARMv9.4-A */
+
+	NUM_CPU_FEATURE_LEVELS, /*!< Valid feature level ids: 0..NUM_CPU_FEATURE_LEVELS - 1 */
+	FEATURE_LEVEL_UNKNOWN = -1,
+} cpu_feature_level_t;
+#define NUM_CPU_FEATURE_LEVELS NUM_CPU_FEATURE_LEVELS
+
+/**
  * @brief CPU purpose
  */
 typedef enum {
@@ -375,6 +419,13 @@ struct cpu_id_t {
 	/** contains the CPU architecture ID (e.g. ARCHITECTURE_X86) */
 	cpu_architecture_t architecture;
 
+	/**
+	 * contains the CPU feature level,
+	 * also know as microarchitecture levels (x86)
+	 * and architecture version (ARM)
+	 */
+	cpu_feature_level_t feature_level;
+
 	/** contains the CPU vendor string, e.g. "GenuineIntel" */
 	char vendor_str[VENDOR_STR_MAX];
 
@@ -554,9 +605,6 @@ struct cpu_id_t {
 	/** ARM CPU implementer code */
 	uint8_t implementer;
 
-	/** ARM CPU architecture version */
-	uint8_t architecture_version;
-
 	/** ARM CPU variant number */
 	uint8_t variant;
 
@@ -728,21 +776,22 @@ typedef enum {
 	CPU_FEATURE_AVX512VBMI, /*!< AVX-512 Vector Bit ManipulationInstructions (version 1) */
 	CPU_FEATURE_AVX512VBMI2, /*!< AVX-512 Vector Bit ManipulationInstructions (version 2) */
 	CPU_FEATURE_HYPERVISOR, /*!< Hypervisor present (always zero on physical CPUs) */
-	CPU_FEATURE_ASID16, /*!< ARM: 16 bit ASID (ARMv8.0 architecture extension) */
-	CPU_FEATURE_ADVSIMD, /*!< ARM: Advanced SIMD Extension (ARMv8.0 architecture extension) */
-	CPU_FEATURE_CRC32, /*!< ARM: CRC32 instructions (ARMv8.0 architecture extension) */
-	CPU_FEATURE_CSV2_1P1, /*!< ARM: Cache Speculation Variant 2 (ARMv8.0 architecture extension) */
-	CPU_FEATURE_CSV2_1P2, /*!< ARM: Cache Speculation Variant 2 version 1.2 (ARMv8.0 architecture extension) */
-	CPU_FEATURE_CSV2_2, /*!< ARM: Cache Speculation Variant 2 version 2 (ARMv8.0 architecture extension) */
-	CPU_FEATURE_CSV2_3, /*!< ARM: Cache Speculation Variant 2 version 3 (ARMv8.0 architecture extension) */
-	CPU_FEATURE_DOUBLELOCK, /*!< ARM: Double Lock (ARMv8.0 architecture extension) */
-	CPU_FEATURE_ETS2, /*!< ARM: Enhanced Translation Synchronization (ARMv8.0 architecture extension) */
-	CPU_FEATURE_FP, /*!< ARM: Floating Point extensions (ARMv8.0 architecture extension) */
-	CPU_FEATURE_MIXEDEND, /*!< ARM: Mixed-endian support at EL0 (ARMv8.0 architecture extension) */
-	CPU_FEATURE_PMULL, /*!< ARM: Advanced SIMD PMULL instructions (ARMv8.0 architecture extension) */
-	CPU_FEATURE_PMUV3, /*!< ARM: PMU extension version 3 (ARMv8.0 architecture extension) */
-	CPU_FEATURE_SHA1, /*!< ARM: Advanced SIMD SHA1 instructions (ARMv8.0 architecture extension) */
-	CPU_FEATURE_SHA256, /*!< ARM: Advanced SIMD SHA256 instructions (ARMv8.0 architecture extension) */
+	CPU_FEATURE_ASID16, /*!< ARM: 16 bit ASID */
+	CPU_FEATURE_ADVSIMD, /*!< ARM: Advanced SIMD Extension */
+	CPU_FEATURE_CRC32, /*!< ARM: CRC32 instructions */
+	CPU_FEATURE_CSV2_1P1, /*!< ARM: Cache Speculation Variant 2 */
+	CPU_FEATURE_CSV2_1P2, /*!< ARM: Cache Speculation Variant 2 version 1.2 */
+	CPU_FEATURE_CSV2_2, /*!< ARM: Cache Speculation Variant 2 version 2 */
+	CPU_FEATURE_CSV2_3, /*!< ARM: Cache Speculation Variant 2 version 3 */
+	CPU_FEATURE_DOUBLELOCK, /*!< ARM: Double Lock */
+	CPU_FEATURE_ETS2, /*!< ARM: Enhanced Translation Synchronization */
+	CPU_FEATURE_FP, /*!< ARM: Floating Point extensions */
+	CPU_FEATURE_MIXEDEND, /*!< ARM: Mixed-endian support */
+	CPU_FEATURE_MIXEDENDEL0, /*!< ARM: Mixed-endian support at EL0 */
+	CPU_FEATURE_PMULL, /*!< ARM: Advanced SIMD PMULL instructions */
+	CPU_FEATURE_PMUV3, /*!< ARM: PMU extension version 3 */
+	CPU_FEATURE_SHA1, /*!< ARM: Advanced SIMD SHA1 instructions */
+	CPU_FEATURE_SHA256, /*!< ARM: Advanced SIMD SHA256 instructions */
 	CPU_FEATURE_HAFDBS, /*!< ARM: Hardware management of the Access flag and dirty state */
 	CPU_FEATURE_HPDS, /*!< ARM: Hierarchical permission disables in translations tables */
 	CPU_FEATURE_LOR, /*!< ARM: Limited ordering regions */
@@ -1196,6 +1245,13 @@ int cpu_request_core_type(cpu_purpose_t purpose, struct cpu_raw_data_array_t* ra
  * @returns a constant string like "x86", "ARM", etc.
  */
 const char* cpu_architecture_str(cpu_architecture_t architecture);
+
+/**
+ * @brief Returns the short textual representation of a CPU feature level
+ * @param level - the feature level, whose textual representation is wanted.
+ * @returns a constant string like "ARMv8.0-A", "ARMv9.4-A", etc.
+ */
+const char* cpu_feature_level_str(cpu_feature_level_t level);
 
 /**
  * @brief Returns the short textual representation of a CPU purpose
