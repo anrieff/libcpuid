@@ -310,6 +310,99 @@ int cpu_clock_by_ic(int millis, int runs)
 	return max_value;
 }
 
+int cpu_clock_by_tsc(struct cpu_raw_data_t* raw)
+{
+	/* Documentation:
+	 * Intel® 64 and IA-32 Architectures Software Developer’s Manual
+	 * Combined Volumes: 1, 2A, 2B, 2C, 2D, 3A, 3B, 3C, 3D, and 4
+	 * 20.7.3 Determining the Processor Base Frequency
+	 */
+	uint16_t base_freq_mhz;
+	uint32_t denominator, numerator, nominal_freq_khz;
+	struct cpu_raw_data_t myraw;
+	struct cpu_id_t id;
+
+	/* Get CPUID raw data and identy CPU */
+	if (!raw) {
+		if (cpuid_get_raw_data(&myraw) < 0) {
+			warnf("cpu_clock_by_tsc: raw CPUID cannot be obtained\n");
+			return -2;
+		}
+		raw = &myraw;
+	}
+	if (cpu_identify(raw, &id) != ERR_OK) {
+		warnf("cpu_clock_by_tsc: CPU cannot be identified\n");
+		return -2;
+	}
+
+	/* Check if Time Stamp Counter and Nominal Core Crystal Clock Information Leaf is supported */
+	if ((id.vendor != VENDOR_INTEL) || (raw->basic_cpuid[0][EAX] < 0x15)) {
+		debugf(1, "cpu_clock_by_tsc: Time Stamp Counter and Nominal Core Crystal Clock Information Leaf is not supported\n");
+		return -1;
+	}
+
+	denominator      = raw->basic_cpuid[0x15][EAX]; // Bits 31-00: An unsigned integer which is the denominator of the TSC/”core crystal clock” ratio
+	numerator        = raw->basic_cpuid[0x15][EBX]; // Bits 31-00: An unsigned integer which is the numerator of the TSC/”core crystal clock” ratio
+	nominal_freq_khz = raw->basic_cpuid[0x15][ECX] / 1000; // Bits 31-00: An unsigned integer which is the nominal frequency of the core crystal clock in Hz
+
+	/* If EBX[31:0] (numerator) is 0, the TSC/”core crystal clock” ratio is not enumerated. */
+	if ((numerator == 0) || (denominator == 0)) {
+		debugf(1, "cpu_clock_by_tsc: TSC/”core crystal clock” ratio is not enumerated\n");
+		return -1;
+	}
+
+	/* If ECX is 0, the nominal core crystal clock frequency is not enumerated.
+	For Intel processors in which CPUID.15H.EBX[31:0] ÷ CPUID.0x15.EAX[31:0] is enumerated but CPUID.15H.ECX
+	is not enumerated, Table 20-91 can be used to look up the nominal core crystal clock frequency. */
+	if ((nominal_freq_khz == 0) && (id.ext_family == 0x6)) {
+		debugf(1, "cpu_clock_by_tsc: nominal core crystal clock frequency is not enumerated, looking for CPUID signature %02X_%02XH\n", id.ext_family, id.ext_model);
+		switch (id.ext_model) {
+			case 0x55:
+				/* Intel® Xeon® Scalable Processor Family with CPUID signature 06_55H */
+				nominal_freq_khz = 25000; // 25 MHz
+				break;
+			case 0x4e:
+			case 0x5e:
+			case 0x8e:
+			case 0x9e:
+				/* 6th and 7th generation Intel® CoreTM processors and Intel® Xeon® W Processor Family */
+				nominal_freq_khz = 24000; // 24 MHz
+				break;
+			case 0x5c:
+				/* Next Generation Intel Atom® processors based on Goldmont Microarchitecture with
+				CPUID signature 06_5CH (does not include Intel Xeon processors) */
+				nominal_freq_khz = 19200; // 19.2 MHz
+				break;
+			default:
+				break;
+		}
+	}
+
+	/* From native_calibrate_tsc() in Linux: https://github.com/torvalds/linux/blob/master/arch/x86/kernel/tsc.c#L696-L707
+	Some Intel SoCs like Skylake and Kabylake don't report the crystal
+	clock, but we can easily calculate it to a high degree of accuracy
+	by considering the crystal ratio and the CPU speed. */
+	if ((nominal_freq_khz == 0) && (raw->basic_cpuid[0][EAX] >= 0x16)) {
+		base_freq_mhz    = EXTRACTS_BITS(raw->basic_cpuid[0x16][EAX], 15, 0);
+		nominal_freq_khz = base_freq_mhz * 1000 * denominator / numerator;
+		debugf(1, "cpu_clock_by_tsc: no crystal clock frequency detected, using base frequency (%u MHz) to calculate it\n", base_freq_mhz);
+	}
+
+	if (nominal_freq_khz == 0) {
+		debugf(1, "cpu_clock_by_tsc: no crystal clock frequency detected\n");
+		return -1;
+	}
+
+	/* For Intel processors in which the nominal core crystal clock frequency is enumerated in CPUID.15H.ECX and the
+	core crystal clock ratio is encoded in CPUID.15H (see Table 3-8 “Information Returned by CPUID Instruction”), the
+	nominal TSC frequency can be determined by using the following equation:
+	Nominal TSC frequency = ( CPUID.15H.ECX[31:0] * CPUID.15H.EBX[31:0] ) ÷ CPUID.15H.EAX[31:0] */
+	debugf(1, "cpu_clock_by_tsc: denominator=%u, numerator=%u, nominal_freq_khz=%u\n", denominator, numerator, nominal_freq_khz);
+
+	/* Return TSC frequency in MHz */
+	return (nominal_freq_khz * numerator) / denominator / 1000;
+}
+
 int cpu_clock(void)
 {
 	int result;

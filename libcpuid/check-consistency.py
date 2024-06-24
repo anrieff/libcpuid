@@ -159,6 +159,9 @@ cache_exp = re.compile(r".*([\(/ ][0-9]+K).*")
 # Check whether CPU codenames for consistency:
 #   - Codenames should not exceed 31 characters
 #   - Check for common typos
+definitions = 0
+match_entry_fields = 12 # this number needs to change if the definition of match_entry_t ever changes
+codename_str_max = 64-1 # this number needs to change if the value of CODENAME_STR_MAX ever changes
 common_cache_sizes = ["8", "16", "32", "64", "128", "256", "512", "1024", "2048", "3072", "4096", "6144", "8192", "12288", "16384"]
 for fn in glob.glob("%s/*.c" % sys.argv[1]):
 	bfn = os.path.basename(fn)
@@ -179,18 +182,18 @@ for fn in glob.glob("%s/*.c" % sys.argv[1]):
 			continue
 		inner = line[i+1:j]
 		parts = inner.split(",")
-		if len(parts) == 11: #this number needs to change if the definition of match_entry_t ever changes
+		if len(parts) == match_entry_fields:
 			cdefs += 1
-			s = parts[10].strip()
+			s = parts[match_entry_fields-1].strip()
 			if s[0] != '"' or s[-1] != '"':
 				err += 1
 				print("..Warning, %s:%d - cannot correctly handle the cpu codename" % (bfn, nline))
 				allok = False
 				continue
 			s = s[1:-1]
-			if len(s) > 31:
+			if len(s) > codename_str_max:
 				err += 1
-				print("..%s:%d - codename (%s) is longer than 31 characters!" % (bfn, nline, s))
+				print("..%s:%d - codename (%s) is longer than %d characters!" % (bfn, nline, s, codename_str_max))
 				allok = False
 			if cache_exp.match(s):
 				cache_size = cache_exp.findall(s)[0][1:-1]
@@ -199,11 +202,15 @@ for fn in glob.glob("%s/*.c" % sys.argv[1]):
 					print("..Warning, %s:%d - suspicious cache size in codename [%s] (%s)" % (bfn, nline, s, cache_size))
 					allok = False
 	if cdefs:
+		definitions += 1
 		print("  %s: %d processor definitions," % (bfn, cdefs), end=' ')
 		if allok:
 			print("all OK")
 		else:
 			print("some errors/warnings")
 	f.close()
+if definitions == 0:
+	err += 1
+	print("..Warning, no processor definitions found")
 
 sys.exit(err)

@@ -45,4 +45,5 @@ affinity_mask_str @41
 cpuid_free_system_id @42
 affinity_mask_str_r @43
 cpuid_get_hypervisor @44
-cpu_feature_level_str @45
+cpu_clock_by_tsc @45
+cpu_feature_level_str @46
