@@ -460,6 +460,54 @@ struct cpu_id_t {
 	 */
 	int32_t ext_model;
 
+	/**
+	 * contains architecture specific info.
+	 * Use \ref cpu_id_t::architecture to know which member is valid.
+	 */
+	union {
+		/** x86/x86_64 specific info */
+		struct {
+			/** CPU family (BaseFamily[3:0]) */
+			int32_t family;
+
+			/** CPU model (BaseModel[3:0]) */
+			int32_t model;
+
+			/** CPU stepping */
+			int32_t stepping;
+
+			/** CPU display ("true") family (computed as BaseFamily[3:0]+ExtendedFamily[7:0]) */
+			int32_t ext_family;
+
+			/**
+			 * CPU display ("true") model (computed as (ExtendedModel[3:0]<<4) + BaseModel[3:0])
+			 * For detailed discussion about what BaseModel / ExtendedModel / Model are, see Github issue #150.
+			 */
+			int32_t ext_model;
+
+			/** SSE execution unit size (64 or 128; -1 if N/A) */
+			int32_t sse_size;
+
+			/** contains information about SGX features if the processor, if present */
+			struct cpu_sgx_t sgx;
+		} x86;
+
+		/** ARM/ARM64 specific info */
+		struct {
+			/** CPU implementer code */
+			uint8_t implementer;
+
+			/** CPU variant number */
+			uint8_t variant;
+
+			/** CPU primary part number */
+			uint16_t part_num;
+
+			/** CPU revision number */
+			uint8_t revision;
+		} arm;
+	};
+
 	/** Number of CPU cores on the current processor */
 	int32_t num_cores;
 
@@ -601,18 +649,6 @@ struct cpu_id_t {
 
 	/** processor type purpose, relevant in case of hybrid CPU (e.g. PURPOSE_PERFORMANCE) */
 	cpu_purpose_t purpose;
-
-	/** ARM CPU implementer code */
-	uint8_t implementer;
-
-	/** ARM CPU variant number */
-	uint8_t variant;
-
-	/** ARM CPU primary part number */
-	uint16_t part_num;
-
-	/** ARM CPU revision number */
-	uint8_t revision;
 };
 
 /**

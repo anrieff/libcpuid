@@ -759,10 +759,10 @@ int main(int argc, char** argv)
 				fprintf(fout, "  ext_model  : %d (%02Xh)\n", data.cpu_types[cpu_type_index].ext_model, data.cpu_types[cpu_type_index].ext_model);
 			}
 			else if (data.cpu_types[cpu_type_index].architecture == ARCHITECTURE_ARM) {
-				fprintf(fout, "  implementer: %d (%02Xh)\n", data.cpu_types[cpu_type_index].implementer, data.cpu_types[cpu_type_index].implementer);
-				fprintf(fout, "  variant    : %d (%02Xh)\n", data.cpu_types[cpu_type_index].variant, data.cpu_types[cpu_type_index].variant);
-				fprintf(fout, "  part_num   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].part_num, data.cpu_types[cpu_type_index].part_num);
-				fprintf(fout, "  revision   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].revision, data.cpu_types[cpu_type_index].revision);
+				fprintf(fout, "  implementer: %d (%02Xh)\n", data.cpu_types[cpu_type_index].arm.implementer, data.cpu_types[cpu_type_index].arm.implementer);
+				fprintf(fout, "  variant    : %d (%02Xh)\n", data.cpu_types[cpu_type_index].arm.variant, data.cpu_types[cpu_type_index].arm.variant);
+				fprintf(fout, "  part_num   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].arm.part_num, data.cpu_types[cpu_type_index].arm.part_num);
+				fprintf(fout, "  revision   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].arm.revision, data.cpu_types[cpu_type_index].arm.revision);
 			}
 			fprintf(fout, "  num_cores  : %d\n", data.cpu_types[cpu_type_index].num_cores);
 			fprintf(fout, "  num_logical: %d\n", data.cpu_types[cpu_type_index].num_logical_cpus);

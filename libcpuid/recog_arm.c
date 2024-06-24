@@ -882,15 +882,15 @@ int cpuid_identify_arm(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	/* Basic values extraction
 	   Based on "Arm Architecture Reference Manual for A-profile architecture", section D23.2.122 "MIDR_EL1, Main ID Register"
 	*/
-	data->implementer          = EXTRACTS_BITS(raw->arm_midr, 31, 24);
-	data->variant              = EXTRACTS_BITS(raw->arm_midr, 23, 20);
-	data->part_num             = EXTRACTS_BITS(raw->arm_midr, 15,  4);
-	data->revision             = EXTRACTS_BITS(raw->arm_midr,  3,  0);
-	data->purpose              = cpuid_identify_purpose_arm(raw);
+	data->arm.implementer = EXTRACTS_BITS(raw->arm_midr, 31, 24);
+	data->arm.variant     = EXTRACTS_BITS(raw->arm_midr, 23, 20);
+	data->arm.part_num    = EXTRACTS_BITS(raw->arm_midr, 15,  4);
+	data->arm.revision    = EXTRACTS_BITS(raw->arm_midr,  3,  0);
+	data->purpose         = cpuid_identify_purpose_arm(raw);
 
 	/* Values decoding */
-	const struct arm_hw_impl* hw_impl = get_cpu_implementer_from_code(data->implementer);
-	const char* cpu_name = get_cpu_name(data->part_num, hw_impl);
+	const struct arm_hw_impl* hw_impl = get_cpu_implementer_from_code(data->arm.implementer);
+	const char* cpu_name = get_cpu_name(data->arm.part_num, hw_impl);
 	data->vendor = hw_impl->vendor;
 	strncpy(data->vendor_str, hw_impl->name, VENDOR_STR_MAX);
 	strncpy(data->brand_str,  cpu_name,      BRAND_STR_MAX);
