@@ -537,17 +537,18 @@ static void decode_arm_architecture_version(struct cpu_raw_data_t* raw, struct c
 	/* When architecture is 0b1111, architectural features are individually identified in the ID_* registers */
 	//FIXME: it works only for A-profile architecture, M-profile and R-profile are not supported yet
 	for (i = 0; i < COUNT_OF(architecture_arm_v8a); i++) {
-		feature_level = architecture_arm_v8a[i];
 		debugf(3, "Check if CPU is %s compliant: %2u/%2u optional features detected, %2u/%2u mandatory features required\n",
-			cpu_feature_level_str(feature_level),
-			ext_status->present[feature_level].optional, ext_status->total[feature_level].optional,
-			ext_status->present[feature_level].mandatory, ext_status->total[feature_level].mandatory);
+			cpu_feature_level_str(architecture_arm_v8a[i]),
+			ext_status->present[ architecture_arm_v8a[i] ].optional, ext_status->total[ architecture_arm_v8a[i] ].optional,
+			ext_status->present[ architecture_arm_v8a[i] ].mandatory, ext_status->total[ architecture_arm_v8a[i] ].mandatory);
 		/* CPU is compliant when it includes all of the architectural features that are mandatory */
-		if (ext_status->present[feature_level].mandatory < ext_status->total[feature_level].mandatory)
+		if (ext_status->present[ architecture_arm_v8a[i] ].mandatory < ext_status->total[ architecture_arm_v8a[i] ].mandatory)
 			break;
 		/* If there are no mandatory features (like ARMv9.3-A), check that at least one optional feature is implemented */
-		if ((ext_status->total[feature_level].mandatory == 0) && (ext_status->present[feature_level].optional == 0))
+		else if ((ext_status->total[ architecture_arm_v8a[i] ].mandatory == 0) && (ext_status->present[ architecture_arm_v8a[i] ].optional == 0))
 			break;
+		else
+			feature_level = architecture_arm_v8a[i];
 	}
 
 found:
