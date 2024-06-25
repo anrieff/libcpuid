@@ -413,6 +413,56 @@ struct cpu_sgx_t {
 };
 
 /**
+ * @brief Contains x86 specific info.
+ *
+ * @note This is part of \ref cpu_id_t.
+ */
+struct x86_id_t {
+	/** CPU family (BaseFamily[3:0]) */
+	int32_t family;
+
+	/** CPU model (BaseModel[3:0]) */
+	int32_t model;
+
+	/** CPU stepping */
+	int32_t stepping;
+
+	/** CPU display ("true") family (computed as BaseFamily[3:0]+ExtendedFamily[7:0]) */
+	int32_t ext_family;
+
+	/**
+	 * CPU display ("true") model (computed as (ExtendedModel[3:0]<<4) + BaseModel[3:0])
+	 * For detailed discussion about what BaseModel / ExtendedModel / Model are, see Github issue #150.
+	 */
+	int32_t ext_model;
+
+	/** SSE execution unit size (64 or 128; -1 if N/A) */
+	int32_t sse_size;
+
+	/** contains information about SGX features if the processor, if present */
+	struct cpu_sgx_t sgx;
+};
+
+/**
+ * @brief Contains ARM specific info.
+ *
+ * @note This is part of \ref cpu_id_t.
+ */
+struct arm_id_t {
+	/** CPU implementer code */
+	uint8_t implementer;
+
+	/** CPU variant number */
+	uint8_t variant;
+
+	/** CPU primary part number */
+	uint16_t part_num;
+
+	/** CPU revision number */
+	uint8_t revision;
+};
+
+/**
  * @brief This contains the recognized CPU features/info
  */
 struct cpu_id_t {
@@ -442,21 +492,34 @@ struct cpu_id_t {
 	 */
 	uint8_t flags[CPU_FLAGS_MAX];
 
-	/** CPU family (BaseFamily[3:0]) */
+	/**
+	 * CPU family (BaseFamily[3:0])
+	 * @deprecated replaced by \ref x86_id_t::family (prefix member with `x86.`, e.g. `id.x86.family`)
+	 */
 	int32_t family;
 
-	/** CPU model (BaseModel[3:0]) */
+	/**
+	 * CPU model (BaseModel[3:0])
+	 * @deprecated replaced by \ref x86_id_t::model (prefix member with `x86.`, e.g. `id.x86.model`)
+	 */
 	int32_t model;
 
-	/** CPU stepping */
+	/**
+	 * CPU stepping
+	 * @deprecated replaced by \ref x86_id_t::stepping (prefix member with `x86.`, e.g. `id.x86.stepping`)
+	 */
 	int32_t stepping;
 
-	/** CPU display ("true") family (computed as BaseFamily[3:0]+ExtendedFamily[7:0]) */
+	/**
+	 * CPU display ("true") family (computed as BaseFamily[3:0]+ExtendedFamily[7:0])
+	 * @deprecated replaced by \ref x86_id_t::ext_family (prefix member with `x86.`, e.g. `id.x86.ext_family`)
+	 */
 	int32_t ext_family;
 
 	/**
 	 * CPU display ("true") model (computed as (ExtendedModel[3:0]<<4) + BaseModel[3:0])
 	 * For detailed discussion about what BaseModel / ExtendedModel / Model are, see Github issue #150.
+	 * @deprecated replaced by \ref x86_id_t::ext_model (prefix member with `x86.`, e.g. `id.x86.ext_model`)
 	 */
 	int32_t ext_model;
 
@@ -465,47 +528,8 @@ struct cpu_id_t {
 	 * Use \ref cpu_id_t::architecture to know which member is valid.
 	 */
 	union {
-		/** x86/x86_64 specific info */
-		struct {
-			/** CPU family (BaseFamily[3:0]) */
-			int32_t family;
-
-			/** CPU model (BaseModel[3:0]) */
-			int32_t model;
-
-			/** CPU stepping */
-			int32_t stepping;
-
-			/** CPU display ("true") family (computed as BaseFamily[3:0]+ExtendedFamily[7:0]) */
-			int32_t ext_family;
-
-			/**
-			 * CPU display ("true") model (computed as (ExtendedModel[3:0]<<4) + BaseModel[3:0])
-			 * For detailed discussion about what BaseModel / ExtendedModel / Model are, see Github issue #150.
-			 */
-			int32_t ext_model;
-
-			/** SSE execution unit size (64 or 128; -1 if N/A) */
-			int32_t sse_size;
-
-			/** contains information about SGX features if the processor, if present */
-			struct cpu_sgx_t sgx;
-		} x86;
-
-		/** ARM/ARM64 specific info */
-		struct {
-			/** CPU implementer code */
-			uint8_t implementer;
-
-			/** CPU variant number */
-			uint8_t variant;
-
-			/** CPU primary part number */
-			uint16_t part_num;
-
-			/** CPU revision number */
-			uint8_t revision;
-		} arm;
+		struct x86_id_t x86;
+		struct arm_id_t arm;
 	};
 
 	/** Number of CPU cores on the current processor */
@@ -631,7 +655,10 @@ struct cpu_id_t {
 	 */
 	char cpu_codename[CODENAME_STR_MAX];
 
-	/** SSE execution unit size (64 or 128; -1 if N/A) */
+	/**
+	 * SSE execution unit size (64 or 128; -1 if N/A)
+	 * @deprecated replaced by \ref x86_id_t::sse_size (prefix member with `x86.`, e.g. `id.x86.sse_size`)
+	 */
 	int32_t sse_size;
 
 	/**
@@ -641,7 +668,10 @@ struct cpu_id_t {
 	 */
 	uint8_t detection_hints[CPU_HINTS_MAX];
 
-	/** contains information about SGX features if the processor, if present */
+	/**
+	 * contains information about SGX features if the processor, if present
+	 * @deprecated replaced by \ref x86_id_t::sgx (prefix member with `x86.`, e.g. `id.x86.sgx`)
+	 */
 	struct cpu_sgx_t sgx;
 
 	/** bitmask of the affinity ids this processor type is occupying */

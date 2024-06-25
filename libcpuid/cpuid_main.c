@@ -83,7 +83,7 @@ static void cpu_id_t_constructor(struct cpu_id_t* id)
 	id->l1_assoc = id->l1_data_assoc = id->l1_instruction_assoc = id->l2_assoc = id->l3_assoc = id->l4_assoc = -1;
 	id->l1_cacheline = id->l1_data_cacheline = id->l1_instruction_cacheline = id->l2_cacheline = id->l3_cacheline = id->l4_cacheline = -1;
 	id->l1_data_instances = id->l1_instruction_instances = id->l2_instances = id->l3_instances = id->l4_instances = -1;
-	id->sse_size = -1;
+	id->x86.sse_size = -1;
 	init_affinity_mask(&id->affinity_mask);
 	id->purpose = PURPOSE_GENERAL;
 }
@@ -938,10 +938,10 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 		/* apply guesswork to check if the SSE unit width is 128 bit */
 		switch (data->vendor) {
 			case VENDOR_AMD:
-				data->sse_size = (data->ext_family >= 16 && data->ext_family != 17) ? 128 : 64;
+				data->x86.sse_size = (data->x86.ext_family >= 16 && data->x86.ext_family != 17) ? 128 : 64;
 				break;
 			case VENDOR_INTEL:
-				data->sse_size = (data->family == 6 && data->ext_model >= 15) ? 128 : 64;
+				data->x86.sse_size = (data->x86.family == 6 && data->x86.ext_model >= 15) ? 128 : 64;
 				break;
 			default:
 				break;
@@ -996,16 +996,16 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 
 	basic = raw->basic_cpuid[0][EAX];
 	if (basic >= 1) {
-		data->family = (raw->basic_cpuid[1][EAX] >> 8) & 0xf;
-		data->model = (raw->basic_cpuid[1][EAX] >> 4) & 0xf;
-		data->stepping = raw->basic_cpuid[1][EAX] & 0xf;
+		data->x86.family = (raw->basic_cpuid[1][EAX] >> 8) & 0xf;
+		data->x86.model = (raw->basic_cpuid[1][EAX] >> 4) & 0xf;
+		data->x86.stepping = raw->basic_cpuid[1][EAX] & 0xf;
 		xmodel = (raw->basic_cpuid[1][EAX] >> 16) & 0xf;
 		xfamily = (raw->basic_cpuid[1][EAX] >> 20) & 0xff;
-		if (data->vendor == VENDOR_AMD && data->family < 0xf)
-			data->ext_family = data->family;
+		if (data->vendor == VENDOR_AMD && data->x86.family < 0xf)
+			data->x86.ext_family = data->x86.family;
 		else
-			data->ext_family = data->family + xfamily;
-		data->ext_model = data->model + (xmodel << 4);
+			data->x86.ext_family = data->x86.family + xfamily;
+		data->x86.ext_model = data->x86.model + (xmodel << 4);
 	}
 	ext = raw->ext_cpuid[0][EAX] - 0x80000000;
 
@@ -1368,6 +1368,15 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 	/* - Deprecated since v0.5.0 */
 	data->l1_assoc     = data->l1_data_assoc;
 	data->l1_cacheline = data->l1_data_cacheline;
+	/* - Deprecated since v0.7.0 */
+	data->family     = data->x86.family;
+	data->model      = data->x86.model;
+	data->stepping   = data->x86.stepping;
+	data->ext_family = data->x86.ext_family;
+	data->ext_model  = data->x86.ext_model;
+	data->sse_size   = data->x86.sse_size;
+	data->sgx        = data->x86.sgx;
+
 	return cpuid_set_error(r);
 }
 

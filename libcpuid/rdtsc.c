@@ -241,7 +241,7 @@ static void adjust_march_ic_multiplier(const struct cpu_id_t* id, int* numerator
 	 * 4. For Skylake and later, it is 1.6 IPC (we multiply by 5/8)
 	 */
 	//
-	if (id->sse_size < 128) {
+	if (id->x86.sse_size < 128) {
 		debugf(1, "SSE execution path is 64-bit\n");
 		// on a CPU with half SSE unit length, SSE instructions execute at 0.5 IPC;
 		// the resulting value must be multiplied by 2:
@@ -251,14 +251,14 @@ static void adjust_march_ic_multiplier(const struct cpu_id_t* id, int* numerator
 	}
 	//
 	// Bulldozer or later: assume 1.4 IPC
-	if ((id->vendor == VENDOR_AMD && id->ext_family >= 21) || (id->vendor == VENDOR_HYGON)) {
+	if ((id->vendor == VENDOR_AMD && id->x86.ext_family >= 21) || (id->vendor == VENDOR_HYGON)) {
 		debugf(1, "cpu_clock_by_ic: Bulldozer (or later) detected, dividing result by 1.4\n");
 		*numerator = 5;
 		*denom = 7; // multiply by 5/7, to divide by 1.4
 	}
 	//
 	// Skylake or later: assume 1.6 IPC
-	if (id->vendor == VENDOR_INTEL && id->ext_model >= 94) {
+	if (id->vendor == VENDOR_INTEL && id->x86.ext_model >= 94) {
 		debugf(1, "cpu_clock_by_ic: Skylake (or later) detected, dividing result by 1.6\n");
 		*numerator = 5;
 		*denom = 8; // to divide by 1.6, multiply by 5/8
@@ -354,9 +354,9 @@ int cpu_clock_by_tsc(struct cpu_raw_data_t* raw)
 	/* If ECX is 0, the nominal core crystal clock frequency is not enumerated.
 	For Intel processors in which CPUID.15H.EBX[31:0] ÷ CPUID.0x15.EAX[31:0] is enumerated but CPUID.15H.ECX
 	is not enumerated, Table 20-91 can be used to look up the nominal core crystal clock frequency. */
-	if ((nominal_freq_khz == 0) && (id.ext_family == 0x6)) {
-		debugf(1, "cpu_clock_by_tsc: nominal core crystal clock frequency is not enumerated, looking for CPUID signature %02X_%02XH\n", id.ext_family, id.ext_model);
-		switch (id.ext_model) {
+	if ((nominal_freq_khz == 0) && (id.x86.ext_family == 0x6)) {
+		debugf(1, "cpu_clock_by_tsc: nominal core crystal clock frequency is not enumerated, looking for CPUID signature %02X_%02XH\n", id.x86.ext_family, id.x86.ext_model);
+		switch (id.x86.ext_model) {
 			case 0x55:
 				/* Intel® Xeon® Scalable Processor Family with CPUID signature 06_55H */
 				nominal_freq_khz = 25000; // 25 MHz

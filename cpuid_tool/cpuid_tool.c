@@ -384,19 +384,19 @@ static void print_info(output_data_switch query, struct cpu_id_t* data)
 			fprintf(fout, "%s\n", data->brand_str);
 			break;
 		case NEED_FAMILY:
-			fprintf(fout, "%d\n", data->family);
+			fprintf(fout, "%d\n", data->x86.family);
 			break;
 		case NEED_MODEL:
-			fprintf(fout, "%d\n", data->model);
+			fprintf(fout, "%d\n", data->x86.model);
 			break;
 		case NEED_STEPPING:
-			fprintf(fout, "%d\n", data->stepping);
+			fprintf(fout, "%d\n", data->x86.stepping);
 			break;
 		case NEED_EXT_FAMILY:
-			fprintf(fout, "%d\n", data->ext_family);
+			fprintf(fout, "%d\n", data->x86.ext_family);
 			break;
 		case NEED_EXT_MODEL:
-			fprintf(fout, "%d\n", data->ext_model);
+			fprintf(fout, "%d\n", data->x86.ext_model);
 			break;
 		case NEED_NUM_CORES:
 			fprintf(fout, "%d\n", data->num_cores);
@@ -532,7 +532,7 @@ static void print_info(output_data_switch query, struct cpu_id_t* data)
 		}
 		case NEED_SSE_UNIT_SIZE:
 		{
-			fprintf(fout, "%d (%s)\n", data->sse_size,
+			fprintf(fout, "%d (%s)\n", data->x86.sse_size,
 				data->detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
 			break;
 		}
@@ -588,17 +588,17 @@ static void print_cpulist(void)
 static void print_sgx_data(const struct cpu_raw_data_t* raw, const struct cpu_id_t* data)
 {
 	int i;
-	fprintf(fout, "SGX: %d (%s)\n", data->sgx.present, data->sgx.present ? "present" : "absent");
-	if (data->sgx.present) {
-		fprintf(fout, "SGX max enclave size (32-bit): 2^%d\n", data->sgx.max_enclave_32bit);
-		fprintf(fout, "SGX max enclave size (64-bit): 2^%d\n", data->sgx.max_enclave_64bit);
-		fprintf(fout, "SGX1 extensions              : %d (%s)\n", data->sgx.flags[INTEL_SGX1], data->sgx.flags[INTEL_SGX1] ? "present" : "absent");
-		fprintf(fout, "SGX2 extensions              : %d (%s)\n", data->sgx.flags[INTEL_SGX2], data->sgx.flags[INTEL_SGX2] ? "present" : "absent");
-		fprintf(fout, "SGX MISCSELECT               : %08x\n", data->sgx.misc_select);
-		fprintf(fout, "SGX SECS.ATTRIBUTES mask     : %016llx\n", (unsigned long long) data->sgx.secs_attributes);
-		fprintf(fout, "SGX SECS.XSAVE feature mask  : %016llx\n", (unsigned long long) data->sgx.secs_xfrm);
-		fprintf(fout, "SGX EPC sections count       : %d\n", data->sgx.num_epc_sections);
-		for (i = 0; i < data->sgx.num_epc_sections; i++) {
+	fprintf(fout, "SGX: %d (%s)\n", data->x86.sgx.present, data->x86.sgx.present ? "present" : "absent");
+	if (data->x86.sgx.present) {
+		fprintf(fout, "SGX max enclave size (32-bit): 2^%d\n", data->x86.sgx.max_enclave_32bit);
+		fprintf(fout, "SGX max enclave size (64-bit): 2^%d\n", data->x86.sgx.max_enclave_64bit);
+		fprintf(fout, "SGX1 extensions              : %d (%s)\n", data->x86.sgx.flags[INTEL_SGX1], data->x86.sgx.flags[INTEL_SGX1] ? "present" : "absent");
+		fprintf(fout, "SGX2 extensions              : %d (%s)\n", data->x86.sgx.flags[INTEL_SGX2], data->x86.sgx.flags[INTEL_SGX2] ? "present" : "absent");
+		fprintf(fout, "SGX MISCSELECT               : %08x\n", data->x86.sgx.misc_select);
+		fprintf(fout, "SGX SECS.ATTRIBUTES mask     : %016llx\n", (unsigned long long) data->x86.sgx.secs_attributes);
+		fprintf(fout, "SGX SECS.XSAVE feature mask  : %016llx\n", (unsigned long long) data->x86.sgx.secs_xfrm);
+		fprintf(fout, "SGX EPC sections count       : %d\n", data->x86.sgx.num_epc_sections);
+		for (i = 0; i < data->x86.sgx.num_epc_sections; i++) {
 			struct cpu_epc_t epc = cpuid_get_epc(i, raw);
 			fprintf(fout, "    SGX EPC section #%-8d: start = %llx, size = %llu\n", i,
 				(unsigned long long) epc.start_addr, (unsigned long long) epc.length);
@@ -752,11 +752,12 @@ int main(int argc, char** argv)
 			fprintf(fout, "  vendor id  : %d\n", (int) data.cpu_types[cpu_type_index].vendor);
 			fprintf(fout, "  brand_str  : `%s'\n", data.cpu_types[cpu_type_index].brand_str);
 			if (data.cpu_types[cpu_type_index].architecture == ARCHITECTURE_X86) {
-				fprintf(fout, "  family     : %d (%02Xh)\n", data.cpu_types[cpu_type_index].family, data.cpu_types[cpu_type_index].family);
-				fprintf(fout, "  model      : %d (%02Xh)\n", data.cpu_types[cpu_type_index].model, data.cpu_types[cpu_type_index].model);
-				fprintf(fout, "  stepping   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].stepping, data.cpu_types[cpu_type_index].stepping);
-				fprintf(fout, "  ext_family : %d (%02Xh)\n", data.cpu_types[cpu_type_index].ext_family, data.cpu_types[cpu_type_index].ext_family);
-				fprintf(fout, "  ext_model  : %d (%02Xh)\n", data.cpu_types[cpu_type_index].ext_model, data.cpu_types[cpu_type_index].ext_model);
+				fprintf(fout, "  family     : %d (%02Xh)\n", data.cpu_types[cpu_type_index].x86.family, data.cpu_types[cpu_type_index].x86.family);
+				fprintf(fout, "  model      : %d (%02Xh)\n", data.cpu_types[cpu_type_index].x86.model, data.cpu_types[cpu_type_index].x86.model);
+				fprintf(fout, "  stepping   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].x86.stepping, data.cpu_types[cpu_type_index].x86.stepping);
+				fprintf(fout, "  ext_family : %d (%02Xh)\n", data.cpu_types[cpu_type_index].x86.ext_family, data.cpu_types[cpu_type_index].x86.ext_family);
+				fprintf(fout, "  ext_model  : %d (%02Xh)\n", data.cpu_types[cpu_type_index].x86.ext_model, data.cpu_types[cpu_type_index].x86.ext_model);
+				fprintf(fout, "  SSE units  : %d bits (%s)\n", data.cpu_types[cpu_type_index].x86.sse_size, data.cpu_types[cpu_type_index].detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
 			}
 			else if (data.cpu_types[cpu_type_index].architecture == ARCHITECTURE_ARM) {
 				fprintf(fout, "  implementer: %d (%02Xh)\n", data.cpu_types[cpu_type_index].arm.implementer, data.cpu_types[cpu_type_index].arm.implementer);
@@ -789,7 +790,6 @@ int main(int argc, char** argv)
 				fprintf(fout, "  L2 inst.   : %d\n", data.cpu_types[cpu_type_index].l2_instances);
 				fprintf(fout, "  L3 inst.   : %d\n", data.cpu_types[cpu_type_index].l3_instances);
 				fprintf(fout, "  L4 inst.   : %d\n", data.cpu_types[cpu_type_index].l4_instances);
-				fprintf(fout, "  SSE units  : %d bits (%s)\n", data.cpu_types[cpu_type_index].sse_size, data.cpu_types[cpu_type_index].detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
 				fprintf(fout, "  code name  : `%s'\n", data.cpu_types[cpu_type_index].cpu_codename);
 			}
 			fprintf(fout, "  features   :");

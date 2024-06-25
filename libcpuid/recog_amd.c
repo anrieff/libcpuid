@@ -439,11 +439,11 @@ static void load_amd_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		- bit 0: FP128 */
 		data->detection_hints[CPU_HINT_SSE_SIZE_AUTH] = 1;
 		if ((raw->ext_cpuid[0x1a][EAX] >> 2) & 1)
-			data->sse_size = 256;
+			data->x86.sse_size = 256;
 		else if ((raw->ext_cpuid[0x1a][EAX]) & 1)
-			data->sse_size = 128;
+			data->x86.sse_size = 128;
 		else
-			data->sse_size = 64;
+			data->x86.sse_size = 64;
 	}
 }
 
@@ -496,7 +496,7 @@ static void decode_amd_number_of_cores(struct cpu_raw_data_t* raw, struct cpu_id
 	}
 	if (data->flags[CPU_FEATURE_HT]) {
 		if (num_cores > 1) {
-			if ((data->ext_family >= 23) && (raw->ext_cpuid[0][EAX] >= 30))
+			if ((data->x86.ext_family >= 23) && (raw->ext_cpuid[0][EAX] >= 30))
 				/* Ryzen 3 has SMT flag, but in fact cores count is equal to threads count.
 				Ryzen 5/7 reports twice as many "real" cores (e.g. 16 cores instead of 8) because of SMT. */
 				/* On PPR 17h, page 82:

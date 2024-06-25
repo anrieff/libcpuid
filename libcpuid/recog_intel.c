@@ -694,7 +694,7 @@ static void decode_intel_oldstyle_cache_info(struct cpu_raw_data_t* raw, struct 
 		 * CPUs (notably Conroe et al), this is L2 cache. In both cases
 		 * it means 4MB, 16-way associative, 64-byte line size.
 		 */
-		if (data->family == 0xf && data->model == 0x6) {
+		if (data->x86.family == 0xf && data->x86.model == 0x6) {
 			data->l3_cache = 4096;
 			data->l3_assoc = 16;
 			data->l3_cacheline = 64;
@@ -874,7 +874,7 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 			code = GAINESTOWN;
 		else if (match_pattern(bs, "[ELXW]56##"))
 			code = WESTMERE;
-		else if (data->l3_cache > 0 && data->family == 16)
+		else if (data->l3_cache > 0 && data->x86.family == 16)
 			/* restrict by family, since later Xeons also have L3 ... */
 			code = IRWIN;
 	}
@@ -911,14 +911,14 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 		}
 	}
 
-	if (code == CORE_DUO && (bits & MOBILE_) && data->model != 14) {
-		if (data->ext_model < 23) {
+	if (code == CORE_DUO && (bits & MOBILE_) && data->x86.model != 14) {
+		if (data->x86.ext_model < 23) {
 			code = MEROM;
 		} else {
 			code = PENRYN;
 		}
 	}
-	if (data->ext_model == 23 &&
+	if (data->x86.ext_model == 23 &&
 		(code == CORE_DUO || code == PENTIUM_D || (bits & CELERON_))) {
 		code = WOLFDALE;
 	}
@@ -1030,31 +1030,31 @@ static void decode_intel_sgx_features(const struct cpu_raw_data_t* raw, struct c
 	if (raw->basic_cpuid[0x12][EAX] == 0) return; // no sub-leafs available, probably it's disabled by BIOS
 
 	// decode sub-leaf 0:
-	if (raw->basic_cpuid[0x12][EAX] & 1) data->sgx.flags[INTEL_SGX1] = 1;
-	if (raw->basic_cpuid[0x12][EAX] & 2) data->sgx.flags[INTEL_SGX2] = 1;
-	if (data->sgx.flags[INTEL_SGX1] || data->sgx.flags[INTEL_SGX2])
-		data->sgx.present = 1;
-	data->sgx.misc_select = raw->basic_cpuid[0x12][EBX];
-	data->sgx.max_enclave_32bit = (raw->basic_cpuid[0x12][EDX]     ) & 0xff;
-	data->sgx.max_enclave_64bit = (raw->basic_cpuid[0x12][EDX] >> 8) & 0xff;
+	if (raw->basic_cpuid[0x12][EAX] & 1) data->x86.sgx.flags[INTEL_SGX1] = 1;
+	if (raw->basic_cpuid[0x12][EAX] & 2) data->x86.sgx.flags[INTEL_SGX2] = 1;
+	if (data->x86.sgx.flags[INTEL_SGX1] || data->x86.sgx.flags[INTEL_SGX2])
+		data->x86.sgx.present = 1;
+	data->x86.sgx.misc_select = raw->basic_cpuid[0x12][EBX];
+	data->x86.sgx.max_enclave_32bit = (raw->basic_cpuid[0x12][EDX]     ) & 0xff;
+	data->x86.sgx.max_enclave_64bit = (raw->basic_cpuid[0x12][EDX] >> 8) & 0xff;
 
 	// decode sub-leaf 1:
-	data->sgx.secs_attributes = raw->intel_fn12h[1][EAX] | (((uint64_t) raw->intel_fn12h[1][EBX]) << 32);
-	data->sgx.secs_xfrm       = raw->intel_fn12h[1][ECX] | (((uint64_t) raw->intel_fn12h[1][EDX]) << 32);
+	data->x86.sgx.secs_attributes = raw->intel_fn12h[1][EAX] | (((uint64_t) raw->intel_fn12h[1][EBX]) << 32);
+	data->x86.sgx.secs_xfrm       = raw->intel_fn12h[1][ECX] | (((uint64_t) raw->intel_fn12h[1][EDX]) << 32);
 
 	// decode higher-order subleafs, whenever present:
-	data->sgx.num_epc_sections = -1;
+	data->x86.sgx.num_epc_sections = -1;
 	for (i = 0; i < 1000000; i++) {
 		epc = cpuid_get_epc(i, raw);
 		if (epc.length == 0) {
 			debugf(2, "SGX: epc section request for %d returned null, no more EPC sections.\n", i);
-			data->sgx.num_epc_sections = i;
+			data->x86.sgx.num_epc_sections = i;
 			break;
 		}
 	}
-	if (data->sgx.num_epc_sections == -1) {
+	if (data->x86.sgx.num_epc_sections == -1) {
 		debugf(1, "SGX: warning: seems to be infinitude of EPC sections.\n");
-		data->sgx.num_epc_sections = 1000000;
+		data->x86.sgx.num_epc_sections = 1000000;
 	}
 }
 
