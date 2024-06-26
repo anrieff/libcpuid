@@ -59,6 +59,7 @@ char out_file[256] = "";
 typedef enum {
 	NEED_CPUID_PRESENT,
 	NEED_ARCHITECTURE,
+	NEED_FEATURE_LEVEL,
 	NEED_PURPOSE,
 	NEED_VENDOR_STR,
 	NEED_VENDOR_ID,
@@ -68,6 +69,10 @@ typedef enum {
 	NEED_STEPPING,
 	NEED_EXT_FAMILY,
 	NEED_EXT_MODEL,
+	NEED_IMPLEMENTER,
+	NEED_VARIANT,
+	NEED_PART_NUM,
+	NEED_REVISION,
 	NEED_NUM_CORES,
 	NEED_NUM_LOGICAL,
 	NEED_TOTAL_CPUS,
@@ -127,6 +132,7 @@ const struct { output_data_switch sw; const char* synopsis; int ident_required; 
 matchtable[] = {
 	{ NEED_CPUID_PRESENT, "--cpuid"        , 0},
 	{ NEED_ARCHITECTURE , "--architecture" , 1},
+	{ NEED_FEATURE_LEVEL, "--feature-level", 1},
 	{ NEED_PURPOSE      , "--purpose"      , 1},
 	{ NEED_VENDOR_STR   , "--vendorstr"    , 1},
 	{ NEED_VENDOR_ID    , "--vendorid"     , 1},
@@ -136,6 +142,10 @@ matchtable[] = {
 	{ NEED_STEPPING     , "--stepping"     , 1},
 	{ NEED_EXT_FAMILY   , "--extfamily"    , 1},
 	{ NEED_EXT_MODEL    , "--extmodel"     , 1},
+	{ NEED_IMPLEMENTER  , "--implementer"  , 1},
+	{ NEED_VARIANT      , "--variant"      , 1},
+	{ NEED_PART_NUM     , "--part-num"     , 1},
+	{ NEED_REVISION     , "--revision"     , 1},
 	{ NEED_NUM_CORES    , "--cores"        , 1},
 	{ NEED_NUM_LOGICAL  , "--logical"      , 1},
 	{ NEED_TOTAL_CPUS   , "--total-cpus"   , 1},
@@ -371,6 +381,9 @@ static void print_info(output_data_switch query, struct cpu_id_t* data)
 		case NEED_ARCHITECTURE:
 			fprintf(fout, "%s\n", cpu_architecture_str(data->architecture));
 			break;
+		case NEED_FEATURE_LEVEL:
+			fprintf(fout, "%s\n", cpu_feature_level_str(data->feature_level));
+			break;
 		case NEED_PURPOSE:
 			fprintf(fout, "%s\n", cpu_purpose_str(data->purpose));
 			break;
@@ -397,6 +410,18 @@ static void print_info(output_data_switch query, struct cpu_id_t* data)
 			break;
 		case NEED_EXT_MODEL:
 			fprintf(fout, "%d\n", data->x86.ext_model);
+			break;
+		case NEED_IMPLEMENTER:
+			fprintf(fout, "%d\n", data->arm.implementer);
+			break;
+		case NEED_VARIANT:
+			fprintf(fout, "%d\n", data->arm.variant);
+			break;
+		case NEED_PART_NUM:
+			fprintf(fout, "%d\n", data->arm.part_num);
+			break;
+		case NEED_REVISION:
+			fprintf(fout, "%d\n", data->arm.revision);
 			break;
 		case NEED_NUM_CORES:
 			fprintf(fout, "%d\n", data->num_cores);
