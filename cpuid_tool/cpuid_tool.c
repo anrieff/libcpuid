@@ -782,7 +782,6 @@ int main(int argc, char** argv)
 				fprintf(fout, "  stepping   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].x86.stepping, data.cpu_types[cpu_type_index].x86.stepping);
 				fprintf(fout, "  ext_family : %d (%02Xh)\n", data.cpu_types[cpu_type_index].x86.ext_family, data.cpu_types[cpu_type_index].x86.ext_family);
 				fprintf(fout, "  ext_model  : %d (%02Xh)\n", data.cpu_types[cpu_type_index].x86.ext_model, data.cpu_types[cpu_type_index].x86.ext_model);
-				fprintf(fout, "  SSE units  : %d bits (%s)\n", data.cpu_types[cpu_type_index].x86.sse_size, data.cpu_types[cpu_type_index].detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
 			}
 			else if (data.cpu_types[cpu_type_index].architecture == ARCHITECTURE_ARM) {
 				fprintf(fout, "  implementer: %d (%02Xh)\n", data.cpu_types[cpu_type_index].arm.implementer, data.cpu_types[cpu_type_index].arm.implementer);
@@ -815,8 +814,9 @@ int main(int argc, char** argv)
 				fprintf(fout, "  L2 inst.   : %d\n", data.cpu_types[cpu_type_index].l2_instances);
 				fprintf(fout, "  L3 inst.   : %d\n", data.cpu_types[cpu_type_index].l3_instances);
 				fprintf(fout, "  L4 inst.   : %d\n", data.cpu_types[cpu_type_index].l4_instances);
-				fprintf(fout, "  code name  : `%s'\n", data.cpu_types[cpu_type_index].cpu_codename);
+				fprintf(fout, "  SSE units  : %d bits (%s)\n", data.cpu_types[cpu_type_index].x86.sse_size, data.cpu_types[cpu_type_index].detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
 			}
+			fprintf(fout, "  code name  : `%s'\n", data.cpu_types[cpu_type_index].cpu_codename);
 			fprintf(fout, "  features   :");
 			/*
 			* Here we enumerate all CPU feature bits, and when a feature
