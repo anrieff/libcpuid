@@ -486,7 +486,8 @@ static void load_arm_feature_mte4(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 static void decode_arm_architecture_version(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct arm_arch_extension_t* ext_status)
 {
 	int i;
-	cpu_feature_level_t feature_level;
+	cpu_feature_level_t feature_level = FEATURE_LEVEL_UNKNOWN;
+	const cpu_feature_level_t *architecture_arm = NULL;
 	const uint8_t architecture = EXTRACTS_BITS(raw->arm_midr, 19, 16);
 
 	const struct { uint8_t raw_value; cpu_feature_level_t enum_value; }
@@ -508,6 +509,17 @@ static void decode_arm_architecture_version(struct cpu_raw_data_t* raw, struct c
 		{ 0b1110, FEATURE_LEVEL_UNKNOWN }
 	};
 
+	/**
+	 * The Armv8.0 architecture extension
+	 *
+	 * The original Armv8-A architecture is called Armv8.0. It contains mandatory and optional architectural features.
+	 * Some features must be implemented together. An implementation is Armv8.0 compliant if it includes all of the
+	 * Armv8.0 architectural features that are mandatory.
+	 *
+	 * An Armv8.0 compliant implementation can additionally include:
+	 * - Armv8.0 features that are optional.
+	 * - Any arbitrary subset of the architectural features of Armv8.1, subject only to those constraints that require that certain features be implemented together.
+	 */
 	const cpu_feature_level_t architecture_arm_v8a[] = {
 		FEATURE_LEVEL_ARM_V8_0_A, /*!< ARMv8.0-A */
 		FEATURE_LEVEL_ARM_V8_1_A, /*!< ARMv8.1-A */
@@ -519,11 +531,28 @@ static void decode_arm_architecture_version(struct cpu_raw_data_t* raw, struct c
 		FEATURE_LEVEL_ARM_V8_7_A, /*!< ARMv8.7-A */
 		FEATURE_LEVEL_ARM_V8_8_A, /*!< ARMv8.8-A */
 		FEATURE_LEVEL_ARM_V8_9_A, /*!< ARMv8.9-A */
+		FEATURE_LEVEL_UNKNOWN,
+	};
+
+	/**
+	 * The Armv9.0 architecture extension
+	 *
+	 * The Armv9.0 architecture extension adds mandatory and optional architectural features. Some features must be
+	 * implemented together. An implementation is Armv9.0 compliant if all of the following apply:
+	 * - It is Armv8.5 compliant.
+	 * - It includes all of the Armv9.0 architectural features that are mandatory.
+	 *
+	 * An Armv9.0 compliant implementation can additionally include:
+	 * - Armv9.0 features that are optional.
+	 * - Any arbitrary subset of the architectural features of Armv9.1, subject only to those constraints that require that certain features be implemented together.
+	 */
+	const cpu_feature_level_t architecture_arm_v9a[] = {
 		FEATURE_LEVEL_ARM_V9_0_A, /*!< ARMv9.0-A */
 		FEATURE_LEVEL_ARM_V9_1_A, /*!< ARMv9.1-A */
 		FEATURE_LEVEL_ARM_V9_2_A, /*!< ARMv9.2-A */
 		FEATURE_LEVEL_ARM_V9_3_A, /*!< ARMv9.3-A */
 		FEATURE_LEVEL_ARM_V9_4_A, /*!< ARMv9.4-A */
+		FEATURE_LEVEL_UNKNOWN,
 	};
 
 	/* Check if architecture level is explicit */
@@ -536,19 +565,26 @@ static void decode_arm_architecture_version(struct cpu_raw_data_t* raw, struct c
 
 	/* When architecture is 0b1111, architectural features are individually identified in the ID_* registers */
 	//FIXME: it works only for A-profile architecture, M-profile and R-profile are not supported yet
-	for (i = 0; i < COUNT_OF(architecture_arm_v8a); i++) {
+	if ((ext_status->present[FEATURE_LEVEL_ARM_V9_0_A].optional > 0) || (ext_status->present[FEATURE_LEVEL_ARM_V9_0_A].mandatory > 0))
+		architecture_arm = architecture_arm_v9a;
+	else if ((ext_status->present[FEATURE_LEVEL_ARM_V8_0_A].optional > 0) || (ext_status->present[FEATURE_LEVEL_ARM_V8_0_A].mandatory > 0))
+		architecture_arm = architecture_arm_v8a;
+	else
+		goto found;
+
+	for (i = 0; architecture_arm[i] != FEATURE_LEVEL_UNKNOWN; i++) {
 		debugf(3, "Check if CPU is %s compliant: %2u/%2u optional features detected, %2u/%2u mandatory features required\n",
-			cpu_feature_level_str(architecture_arm_v8a[i]),
-			ext_status->present[ architecture_arm_v8a[i] ].optional, ext_status->total[ architecture_arm_v8a[i] ].optional,
-			ext_status->present[ architecture_arm_v8a[i] ].mandatory, ext_status->total[ architecture_arm_v8a[i] ].mandatory);
+			cpu_feature_level_str(architecture_arm[i]),
+			ext_status->present[ architecture_arm[i] ].optional, ext_status->total[ architecture_arm[i] ].optional,
+			ext_status->present[ architecture_arm[i] ].mandatory, ext_status->total[ architecture_arm[i] ].mandatory);
 		/* CPU is compliant when it includes all of the architectural features that are mandatory */
-		if (ext_status->present[ architecture_arm_v8a[i] ].mandatory < ext_status->total[ architecture_arm_v8a[i] ].mandatory)
+		if (ext_status->present[ architecture_arm[i] ].mandatory < ext_status->total[ architecture_arm[i] ].mandatory)
 			break;
 		/* If there are no mandatory features (like ARMv9.3-A), check that at least one optional feature is implemented */
-		else if ((ext_status->total[ architecture_arm_v8a[i] ].mandatory == 0) && (ext_status->present[ architecture_arm_v8a[i] ].optional == 0))
+		else if ((ext_status->total[ architecture_arm[i] ].mandatory == 0) && (ext_status->present[ architecture_arm[i] ].optional == 0))
 			break;
 		else
-			feature_level = architecture_arm_v8a[i];
+			feature_level = architecture_arm[i];
 	}
 
 found:
