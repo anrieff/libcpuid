@@ -83,4 +83,5 @@ general
 3
 1
 4
+Perseus
 advsimd crc32 csv2_1p1 doublelock pmull sha1 lse rdm f32mm fp16 sha512 sm4 sve fcma fpaccombine jscvt pacqarma5 pauth bbm dit fhm lrcpc2 sel2 bti dpb2 flagm2 mte rng ssbs2 bf16 dgh xs sve2 sve_bitperm sve_pmull128 sve_sha3 rme sme

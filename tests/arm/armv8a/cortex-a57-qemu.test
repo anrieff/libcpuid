@@ -83,4 +83,5 @@ performance
 0
 1
 4
+Atlas
 advsimd crc32 doublelock fp pmull sha1 sha256 sm4 sve bbm dotprod fhm sel2

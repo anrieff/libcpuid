@@ -5,13 +5,16 @@ import os, sys, re, random
 
 
 ### Constants:
-fields = [ "architecture", "purpose", "family", "model", "stepping", "extfamily",
+fields_x86 = [ "architecture", "purpose", "family", "model", "stepping", "extfamily",
 	   "extmodel", "cores", "logical",
 	   "l1d-cache",     "l1i-cache",     "l2-cache",     "l3-cache",     "l4-cache",
 	   "l1d-assoc",     "l1i-assoc",     "l2-assoc",     "l3-assoc",     "l4-assoc",
 	   "l1d-cacheline", "l1i-cacheline", "l2-cacheline", "l3-cacheline", "l4-cacheline",
 	   "l1d-instances", "l1i-instances", "l2-instances", "l3-instances", "l4-instances",
 	   "sse-size", "codename", "flags" ]
+fields_arm = [ "architecture", "purpose", "implementer", "variant", "part-num", "revision",
+	   "cores", "logical",
+	   "codename", "flags" ]
 
 args = sys.argv
 fix = False
@@ -79,6 +82,13 @@ def do_test(inp, expected_out, binary, test_file_name, num_cpu_type):
 	f = open(fninp, "wt")
 	f.writelines([s + "\n" for s in inp])
 	f.close()
+	architecture = os.popen("%s --load=%s --architecture" % (binary, fninp)).read().splitlines()[-1]
+	if architecture == "x86":
+		fields = fields_x86
+	elif architecture == "ARM":
+		fields = fields_arm
+	else:
+		fields = []
 	cmd = "%s --load=%s --outfile=%s %s" % (binary, fninp, fnoutp, " ".join(["--" + s for s in fields]))
 	os.system(cmd)
 	os.unlink(fninp)
