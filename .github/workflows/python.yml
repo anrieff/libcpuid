@@ -19,16 +19,6 @@ jobs:
       with:
         python-version: '3.12'
 
-    - name: Check code formatting (black)
-      run: |
-        pip install black
-        black --check python
-
-    - name: Perform static analysis (pylint)
-      run: |
-        pip install pylint
-        pylint python/src/libcpuid
-
     - name: Build and install libcpuid
       run: |
         sudo apt-get install autoconf libtool automake
@@ -39,8 +29,18 @@ jobs:
         sudo make install
         sudo ldconfig
 
+    - name: Check code formatting (black)
+      run: |
+        pip install black
+        black --check python
+
     - name: Install the libcpuid Python package
       run: pip install ./python
+
+    - name: Perform static analysis (pylint)
+      run: |
+        pip install pylint
+        pylint python/src/libcpuid
 
     - name: Run tests
       run: |
