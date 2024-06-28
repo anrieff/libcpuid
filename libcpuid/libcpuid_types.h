@@ -62,7 +62,7 @@ typedef unsigned short		uint16_t;
 
 typedef uint16_t logical_cpu_t;
 #define __MASK_NCPUBITS 8
-#define __MASK_SETSIZE  (1ULL << (sizeof(logical_cpu_t) * __MASK_NCPUBITS)) / __MASK_NCPUBITS
+#define __MASK_SETSIZE  (1ULL << (2 * __MASK_NCPUBITS)) / __MASK_NCPUBITS
 /**
  * @brief Internal structure, used in affinity_mask_str_r and affinity_mask_str
  */
