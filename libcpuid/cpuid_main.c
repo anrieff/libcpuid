@@ -26,17 +26,24 @@
 #include "libcpuid.h"
 #include "libcpuid_internal.h"
 #include "recog_amd.h"
+#include "recog_arm.h"
 #include "recog_centaur.h"
 #include "recog_intel.h"
 #include "asm-bits.h"
 #include "libcpuid_util.h"
 #ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#ifdef HAVE_GETAUXVAL
+# include <sys/auxv.h>
+#endif /* HAVE_GETAUXVAL */
+#ifdef HAVE_ELF_AUX_INFO
+# include <sys/auxv.h>
+#endif /* HAVE_ELF_AUX_INFO */
 
 /* Implementation: */
 
@@ -69,11 +76,14 @@ static void raw_data_t_constructor(struct cpu_raw_data_t* raw)
 static void cpu_id_t_constructor(struct cpu_id_t* id)
 {
 	memset(id, 0, sizeof(struct cpu_id_t));
+	id->architecture = ARCHITECTURE_UNKNOWN;
+	id->feature_level = FEATURE_LEVEL_UNKNOWN;
+	id->vendor = VENDOR_UNKNOWN;
 	id->l1_data_cache = id->l1_instruction_cache = id->l2_cache = id->l3_cache = id->l4_cache = -1;
 	id->l1_assoc = id->l1_data_assoc = id->l1_instruction_assoc = id->l2_assoc = id->l3_assoc = id->l4_assoc = -1;
 	id->l1_cacheline = id->l1_data_cacheline = id->l1_instruction_cacheline = id->l2_cacheline = id->l3_cacheline = id->l4_cacheline = -1;
 	id->l1_data_instances = id->l1_instruction_instances = id->l2_instances = id->l3_instances = id->l4_instances = -1;
-	id->sse_size = -1;
+	id->x86.sse_size = -1;
 	init_affinity_mask(&id->affinity_mask);
 	id->purpose = PURPOSE_GENERAL;
 }
@@ -96,14 +106,14 @@ static void system_id_t_constructor(struct system_id_t* system)
 	system->l4_total_instances             = -1;
 }
 
-static void apic_info_t_constructor(struct internal_apic_info_t* apic_info, logical_cpu_t logical_cpu)
+static void topology_t_constructor(struct internal_topology_t* topology, logical_cpu_t logical_cpu)
 {
-	memset(apic_info, 0, sizeof(struct internal_apic_info_t));
-	apic_info->apic_id     = -1;
-	apic_info->package_id  = -1;
-	apic_info->core_id     = -1;
-	apic_info->smt_id      = -1;
-	apic_info->logical_cpu = logical_cpu;
+	memset(topology, 0, sizeof(struct internal_topology_t));
+	topology->apic_id     = -1;
+	topology->package_id  = -1;
+	topology->core_id     = -1;
+	topology->smt_id      = -1;
+	topology->logical_cpu = logical_cpu;
 }
 
 static void core_instances_t_constructor(struct internal_core_instances_t* data)
@@ -125,11 +135,11 @@ static void type_info_array_t_constructor(struct internal_type_info_array_t* dat
 }
 
 static int16_t cpuid_find_index_system_id(struct system_id_t* system, cpu_purpose_t purpose,
-                                          struct internal_type_info_array_t* type_info, int32_t package_id, bool is_apic_supported)
+                                          struct internal_type_info_array_t* type_info, int32_t package_id, bool is_topology_supported)
 {
 	int16_t i = 0;
 
-	if (is_apic_supported) {
+	if (is_topology_supported) {
 		for (i = 0; i < system->num_cpu_types; i++)
 			if ((system->cpu_types[i].purpose == purpose) && (type_info->data[i].package_id == package_id))
 				return i;
@@ -207,6 +217,16 @@ static void cpuid_free_type_info(struct internal_type_info_array_t* type_info)
 	if (type_info->num <= 0) return;
 	free(type_info->data);
 	type_info->num = 0;
+}
+
+static cpu_architecture_t cpuid_architecture_identify(struct cpu_raw_data_t* raw)
+{
+	if (raw->basic_cpuid[0][EAX] != 0x0 || raw->basic_cpuid[0][EBX] != 0x0 || raw->basic_cpuid[0][ECX] != 0x0 || raw->basic_cpuid[0][EDX] != 0x0)
+		return ARCHITECTURE_X86;
+	else if (raw->arm_midr != 0x0)
+		return ARCHITECTURE_ARM;
+
+	return ARCHITECTURE_UNKNOWN;
 }
 
 /* get_total_cpus() system specific code: uses OS routines to determine total number of CPUs */
@@ -583,6 +603,7 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 	const bool use_raw_array = (raw_array != NULL) && raw_array->num_raw > 0;
 	logical_cpu_t logical_cpu = 0;
 	struct cpu_raw_data_t* raw_ptr = use_raw_array ? &raw_array->raw[0] : single_raw;
+	const cpu_architecture_t architecture = cpuid_architecture_identify(raw_ptr);
 	FILE *f;
 
 	/* Open file descriptor */
@@ -599,34 +620,58 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 			fprintf(f, "\n_________________ Logical CPU #%i _________________\n", logical_cpu);
 			raw_ptr = &raw_array->raw[logical_cpu];
 		}
-		for (i = 0; i < MAX_CPUID_LEVEL; i++)
-			fprintf(f, "basic_cpuid[%d]=%08x %08x %08x %08x\n", i,
-				raw_ptr->basic_cpuid[i][EAX], raw_ptr->basic_cpuid[i][EBX],
-				raw_ptr->basic_cpuid[i][ECX], raw_ptr->basic_cpuid[i][EDX]);
-		for (i = 0; i < MAX_EXT_CPUID_LEVEL; i++)
-			fprintf(f, "ext_cpuid[%d]=%08x %08x %08x %08x\n", i,
-				raw_ptr->ext_cpuid[i][EAX], raw_ptr->ext_cpuid[i][EBX],
-				raw_ptr->ext_cpuid[i][ECX], raw_ptr->ext_cpuid[i][EDX]);
-		for (i = 0; i < MAX_INTELFN4_LEVEL; i++)
-			fprintf(f, "intel_fn4[%d]=%08x %08x %08x %08x\n", i,
-				raw_ptr->intel_fn4[i][EAX], raw_ptr->intel_fn4[i][EBX],
-				raw_ptr->intel_fn4[i][ECX], raw_ptr->intel_fn4[i][EDX]);
-		for (i = 0; i < MAX_INTELFN11_LEVEL; i++)
-			fprintf(f, "intel_fn11[%d]=%08x %08x %08x %08x\n", i,
-				raw_ptr->intel_fn11[i][EAX], raw_ptr->intel_fn11[i][EBX],
-				raw_ptr->intel_fn11[i][ECX], raw_ptr->intel_fn11[i][EDX]);
-		for (i = 0; i < MAX_INTELFN12H_LEVEL; i++)
-			fprintf(f, "intel_fn12h[%d]=%08x %08x %08x %08x\n", i,
-				raw_ptr->intel_fn12h[i][EAX], raw_ptr->intel_fn12h[i][EBX],
-				raw_ptr->intel_fn12h[i][ECX], raw_ptr->intel_fn12h[i][EDX]);
-		for (i = 0; i < MAX_INTELFN14H_LEVEL; i++)
-			fprintf(f, "intel_fn14h[%d]=%08x %08x %08x %08x\n", i,
-				raw_ptr->intel_fn14h[i][EAX], raw_ptr->intel_fn14h[i][EBX],
-				raw_ptr->intel_fn14h[i][ECX], raw_ptr->intel_fn14h[i][EDX]);
-		for (i = 0; i < MAX_AMDFN8000001DH_LEVEL; i++)
-			fprintf(f, "amd_fn8000001dh[%d]=%08x %08x %08x %08x\n", i,
-				raw_ptr->amd_fn8000001dh[i][EAX], raw_ptr->amd_fn8000001dh[i][EBX],
-				raw_ptr->amd_fn8000001dh[i][ECX], raw_ptr->amd_fn8000001dh[i][EDX]);
+		switch (architecture) {
+			case ARCHITECTURE_X86:
+				for (i = 0; i < MAX_CPUID_LEVEL; i++)
+					fprintf(f, "basic_cpuid[%d]=%08x %08x %08x %08x\n", i,
+						raw_ptr->basic_cpuid[i][EAX], raw_ptr->basic_cpuid[i][EBX],
+						raw_ptr->basic_cpuid[i][ECX], raw_ptr->basic_cpuid[i][EDX]);
+				for (i = 0; i < MAX_EXT_CPUID_LEVEL; i++)
+					fprintf(f, "ext_cpuid[%d]=%08x %08x %08x %08x\n", i,
+						raw_ptr->ext_cpuid[i][EAX], raw_ptr->ext_cpuid[i][EBX],
+						raw_ptr->ext_cpuid[i][ECX], raw_ptr->ext_cpuid[i][EDX]);
+				for (i = 0; i < MAX_INTELFN4_LEVEL; i++)
+					fprintf(f, "intel_fn4[%d]=%08x %08x %08x %08x\n", i,
+						raw_ptr->intel_fn4[i][EAX], raw_ptr->intel_fn4[i][EBX],
+						raw_ptr->intel_fn4[i][ECX], raw_ptr->intel_fn4[i][EDX]);
+				for (i = 0; i < MAX_INTELFN11_LEVEL; i++)
+					fprintf(f, "intel_fn11[%d]=%08x %08x %08x %08x\n", i,
+						raw_ptr->intel_fn11[i][EAX], raw_ptr->intel_fn11[i][EBX],
+						raw_ptr->intel_fn11[i][ECX], raw_ptr->intel_fn11[i][EDX]);
+				for (i = 0; i < MAX_INTELFN12H_LEVEL; i++)
+					fprintf(f, "intel_fn12h[%d]=%08x %08x %08x %08x\n", i,
+						raw_ptr->intel_fn12h[i][EAX], raw_ptr->intel_fn12h[i][EBX],
+						raw_ptr->intel_fn12h[i][ECX], raw_ptr->intel_fn12h[i][EDX]);
+				for (i = 0; i < MAX_INTELFN14H_LEVEL; i++)
+					fprintf(f, "intel_fn14h[%d]=%08x %08x %08x %08x\n", i,
+						raw_ptr->intel_fn14h[i][EAX], raw_ptr->intel_fn14h[i][EBX],
+						raw_ptr->intel_fn14h[i][ECX], raw_ptr->intel_fn14h[i][EDX]);
+				for (i = 0; i < MAX_AMDFN8000001DH_LEVEL; i++)
+					fprintf(f, "amd_fn8000001dh[%d]=%08x %08x %08x %08x\n", i,
+						raw_ptr->amd_fn8000001dh[i][EAX], raw_ptr->amd_fn8000001dh[i][EBX],
+						raw_ptr->amd_fn8000001dh[i][ECX], raw_ptr->amd_fn8000001dh[i][EDX]);
+				break;
+			case ARCHITECTURE_ARM:
+				fprintf(f, "arm_midr=%016lx\n", raw_ptr->arm_midr);
+				fprintf(f, "arm_mpidr=%016lx\n", raw_ptr->arm_mpidr);
+				fprintf(f, "arm_revidr=%016lx\n", raw_ptr->arm_revidr);
+				for (i = 0; i < MAX_ARM_ID_AA64DFR_REGS; i++)
+					fprintf(f, "arm_id_aa64dfr%d=%016lx\n", i, raw_ptr->arm_id_aa64dfr[i]);
+				for (i = 0; i < MAX_ARM_ID_AA64ISAR_REGS; i++)
+					fprintf(f, "arm_id_aa64isar%d=%016lx\n", i, raw_ptr->arm_id_aa64isar[i]);
+				for (i = 0; i < MAX_ARM_ID_AA64MMFR_REGS; i++)
+					fprintf(f, "arm_id_aa64mmfr%d=%016lx\n", i, raw_ptr->arm_id_aa64mmfr[i]);
+				for (i = 0; i < MAX_ARM_ID_AA64PFR_REGS; i++)
+					fprintf(f, "arm_id_aa64pfr%d=%016lx\n", i, raw_ptr->arm_id_aa64pfr[i]);
+				for (i = 0; i < MAX_ARM_ID_AA64SMFR_REGS; i++)
+					fprintf(f, "arm_id_aa64smfr%d=%016lx\n", i, raw_ptr->arm_id_aa64smfr[i]);
+				for (i = 0; i < MAX_ARM_ID_AA64ZFR_REGS; i++)
+					fprintf(f, "arm_id_aa64zfr%d=%016lx\n", i, raw_ptr->arm_id_aa64zfr[i]);
+				break;
+			default:
+				break;
+		}
+
 		logical_cpu++;
 		end_loop = ((use_raw_array && (logical_cpu >= raw_array->num_raw)) || !use_raw_array);
 	}
@@ -637,7 +682,8 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 	return cpuid_set_error(ERR_OK);
 }
 
-#define RAW_ASSIGN_LINE(__line) __line[EAX] = eax ; __line[EBX] = ebx ; __line[ECX] = ecx ; __line[EDX] = edx
+#define RAW_ASSIGN_LINE_X86(__line) __line[EAX] = eax ; __line[EBX] = ebx ; __line[ECX] = ecx ; __line[EDX] = edx
+#define RAW_ASSIGN_LINE_ARM(__line) __line = arm_reg
 static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw, struct cpu_raw_data_array_t* raw_array, const char* filename)
 {
 	int i;
@@ -650,6 +696,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 	const bool use_raw_array = (raw_array != NULL);
 	logical_cpu_t logical_cpu = 0;
 	uint32_t addr, eax, ebx, ecx, edx;
+	uint64_t arm_reg;
 	char version[8] = "";
 	char line[100];
 	struct cpu_raw_data_t* raw_ptr = single_raw;
@@ -711,25 +758,52 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 				raw_array->with_affinity = true;
 			}
 			else if ((sscanf(line, "basic_cpuid[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_CPUID_LEVEL)) {
-				RAW_ASSIGN_LINE(raw_ptr->basic_cpuid[i]);
+				RAW_ASSIGN_LINE_X86(raw_ptr->basic_cpuid[i]);
 			}
 			else if ((sscanf(line, "ext_cpuid[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_EXT_CPUID_LEVEL)) {
-				RAW_ASSIGN_LINE(raw_ptr->ext_cpuid[i]);
+				RAW_ASSIGN_LINE_X86(raw_ptr->ext_cpuid[i]);
 			}
 			else if ((sscanf(line, "intel_fn4[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN4_LEVEL)) {
-				RAW_ASSIGN_LINE(raw_ptr->intel_fn4[i]);
+				RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn4[i]);
 			}
 			else if ((sscanf(line, "intel_fn11[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN11_LEVEL)) {
-				RAW_ASSIGN_LINE(raw_ptr->intel_fn11[i]);
+				RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn11[i]);
 			}
 			else if ((sscanf(line, "intel_fn12h[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN12H_LEVEL)) {
-				RAW_ASSIGN_LINE(raw_ptr->intel_fn12h[i]);
+				RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn12h[i]);
 			}
 			else if ((sscanf(line, "intel_fn14h[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN14H_LEVEL)) {
-				RAW_ASSIGN_LINE(raw_ptr->intel_fn14h[i]);
+				RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn14h[i]);
 			}
 			else if ((sscanf(line, "amd_fn8000001dh[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_AMDFN8000001DH_LEVEL)) {
-				RAW_ASSIGN_LINE(raw_ptr->amd_fn8000001dh[i]);
+				RAW_ASSIGN_LINE_X86(raw_ptr->amd_fn8000001dh[i]);
+			}
+			else if ((sscanf(line, "arm_midr=%lx", &arm_reg) >= 1)) {
+				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_midr);
+			}
+			else if ((sscanf(line, "arm_mpidr=%lx", &arm_reg) >= 1)) {
+				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_mpidr);
+			}
+			else if ((sscanf(line, "arm_revidr=%lx", &arm_reg) >= 1)) {
+				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_revidr);
+			}
+			else if ((sscanf(line, "arm_id_aa64dfr%d=%lx", &i, &arm_reg) >= 2)) {
+				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64dfr[i]);
+			}
+			else if ((sscanf(line, "arm_id_aa64isar%d=%lx", &i, &arm_reg) >= 2)) {
+				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64isar[i]);
+			}
+			else if ((sscanf(line, "arm_id_aa64mmfr%d=%lx", &i, &arm_reg) >= 2)) {
+				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64mmfr[i]);
+			}
+			else if ((sscanf(line, "arm_id_aa64pfr%d=%lx", &i, &arm_reg) >= 2)) {
+				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64pfr[i]);
+			}
+			else if ((sscanf(line, "arm_id_aa64smfr%d=%lx", &i, &arm_reg) >= 2)) {
+				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64smfr[i]);
+			}
+			else if ((sscanf(line, "arm_id_aa64zfr%d=%lx", &i, &arm_reg) >= 2)) {
+				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64zfr[i]);
 			}
 			else if (line[0] != '\0') {
 				warnf("Warning: file '%s', line %d: '%s' not understood!\n", filename, cur_line, line);
@@ -751,21 +825,21 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 			if ((assigned >= 5) && (subleaf == 0)) {
 				if (addr < MAX_CPUID_LEVEL) {
 					i = (int) addr;
-					RAW_ASSIGN_LINE(raw_ptr->basic_cpuid[i]);
+					RAW_ASSIGN_LINE_X86(raw_ptr->basic_cpuid[i]);
 				}
 				else if ((addr >= ADDRESS_EXT_CPUID_START) && (addr < ADDRESS_EXT_CPUID_END)) {
 					i = (int) addr - ADDRESS_EXT_CPUID_START;
-					RAW_ASSIGN_LINE(raw_ptr->ext_cpuid[i]);
+					RAW_ASSIGN_LINE_X86(raw_ptr->ext_cpuid[i]);
 				}
 			}
 			if (assigned >= 6) {
 				i = subleaf;
 				switch (addr) {
-					case 0x00000004: RAW_ASSIGN_LINE(raw_ptr->intel_fn4[i]);       break;
-					case 0x0000000B: RAW_ASSIGN_LINE(raw_ptr->intel_fn11[i]);      break;
-					case 0x00000012: RAW_ASSIGN_LINE(raw_ptr->intel_fn12h[i]);     break;
-					case 0x00000014: RAW_ASSIGN_LINE(raw_ptr->intel_fn14h[i]);     break;
-					case 0x8000001D: RAW_ASSIGN_LINE(raw_ptr->amd_fn8000001dh[i]); break;
+					case 0x00000004: RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn4[i]);       break;
+					case 0x0000000B: RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn11[i]);      break;
+					case 0x00000012: RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn12h[i]);     break;
+					case 0x00000014: RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn14h[i]);     break;
+					case 0x8000001D: RAW_ASSIGN_LINE_X86(raw_ptr->amd_fn8000001dh[i]); break;
 					default: break;
 				}
 			}
@@ -777,7 +851,8 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 		fclose(f);
 	return cpuid_set_error(ERR_OK);
 }
-#undef RAW_ASSIGN_LINE
+#undef RAW_ASSIGN_LINE_X86
+#undef RAW_ASSIGN_LINE_ARM
 
 static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
@@ -863,10 +938,10 @@ static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* da
 		/* apply guesswork to check if the SSE unit width is 128 bit */
 		switch (data->vendor) {
 			case VENDOR_AMD:
-				data->sse_size = (data->ext_family >= 16 && data->ext_family != 17) ? 128 : 64;
+				data->x86.sse_size = (data->x86.ext_family >= 16 && data->x86.ext_family != 17) ? 128 : 64;
 				break;
 			case VENDOR_INTEL:
-				data->sse_size = (data->family == 6 && data->ext_model >= 15) ? 128 : 64;
+				data->x86.sse_size = (data->x86.family == 6 && data->x86.ext_model >= 15) ? 128 : 64;
 				break;
 			default:
 				break;
@@ -918,19 +993,19 @@ static int cpuid_basic_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* dat
 
 	if (data->vendor == VENDOR_UNKNOWN)
 		return cpuid_set_error(ERR_CPU_UNKN);
-	data->architecture = ARCHITECTURE_X86;
+
 	basic = raw->basic_cpuid[0][EAX];
 	if (basic >= 1) {
-		data->family = (raw->basic_cpuid[1][EAX] >> 8) & 0xf;
-		data->model = (raw->basic_cpuid[1][EAX] >> 4) & 0xf;
-		data->stepping = raw->basic_cpuid[1][EAX] & 0xf;
+		data->x86.family = (raw->basic_cpuid[1][EAX] >> 8) & 0xf;
+		data->x86.model = (raw->basic_cpuid[1][EAX] >> 4) & 0xf;
+		data->x86.stepping = raw->basic_cpuid[1][EAX] & 0xf;
 		xmodel = (raw->basic_cpuid[1][EAX] >> 16) & 0xf;
 		xfamily = (raw->basic_cpuid[1][EAX] >> 20) & 0xff;
-		if (data->vendor == VENDOR_AMD && data->family < 0xf)
-			data->ext_family = data->family;
+		if (data->vendor == VENDOR_AMD && data->x86.family < 0xf)
+			data->x86.ext_family = data->x86.family;
 		else
-			data->ext_family = data->family + xfamily;
-		data->ext_model = data->model + (xmodel << 4);
+			data->x86.ext_family = data->x86.family + xfamily;
+		data->x86.ext_model = data->x86.model + (xmodel << 4);
 	}
 	ext = raw->ext_cpuid[0][EAX] - 0x80000000;
 
@@ -984,20 +1059,17 @@ static void make_list_from_string(const char* csv, struct cpu_list_t* list)
 	}
 }
 
-static bool cpu_ident_apic_id(logical_cpu_t logical_cpu, struct cpu_raw_data_t* raw, struct internal_apic_info_t* apic_info)
+static bool cpu_ident_id_x86(struct cpu_raw_data_t* raw, struct internal_topology_t* topology)
 {
 	bool is_apic_id_supported = false;
 	uint8_t subleaf;
 	uint8_t level_type = 0;
 	uint8_t mask_core_shift = 0;
 	uint32_t mask_smt_shift, core_plus_mask_width, package_mask, core_mask, smt_mask = 0;
-	cpu_vendor_t vendor = VENDOR_UNKNOWN;
 	char vendor_str[VENDOR_STR_MAX];
 
-	apic_info_t_constructor(apic_info, logical_cpu);
-
 	/* Only AMD and Intel x86 CPUs support Extended Processor Topology Eumeration */
-	vendor = cpuid_vendor_identify(raw->basic_cpuid[0], vendor_str);
+	const cpu_vendor_t vendor = cpuid_vendor_identify(raw->basic_cpuid[0], vendor_str);
 	switch (vendor) {
 		case VENDOR_INTEL:
 		case VENDOR_AMD:
@@ -1029,18 +1101,18 @@ static bool cpu_ident_apic_id(logical_cpu_t logical_cpu, struct cpu_raw_data_t* 
 
 	/* Find mask and ID for SMT and cores */
 	for (subleaf = 0; (raw->intel_fn11[subleaf][EAX] != 0x0) && (raw->intel_fn11[subleaf][EBX] != 0x0) && (subleaf < MAX_INTELFN11_LEVEL); subleaf++) {
-		level_type         = EXTRACTS_BITS(raw->intel_fn11[subleaf][ECX], 15, 8);
-		apic_info->apic_id = raw->intel_fn11[subleaf][EDX];
+		level_type        = EXTRACTS_BITS(raw->intel_fn11[subleaf][ECX], 15, 8);
+		topology->apic_id = raw->intel_fn11[subleaf][EDX];
 		switch (level_type) {
 			case 0x01:
 				mask_smt_shift    = EXTRACTS_BITS(raw->intel_fn11[subleaf][EAX], 4, 0);
 				smt_mask          = ~( (-1) << mask_smt_shift);
-				apic_info->smt_id = apic_info->apic_id & smt_mask;
+				topology->smt_id  = topology->apic_id & smt_mask;
 				break;
 			case 0x02:
 				core_plus_mask_width = ~( (-1) << mask_core_shift);
 				core_mask            = core_plus_mask_width ^ smt_mask;
-				apic_info->core_id   = apic_info->apic_id & core_mask;
+				topology->core_id    = topology->apic_id & core_mask;
 				break;
 			default:
 				break;
@@ -1049,11 +1121,51 @@ static bool cpu_ident_apic_id(logical_cpu_t logical_cpu, struct cpu_raw_data_t* 
 
 	/* Find mask and ID for packages */
 	package_mask          = (-1) << mask_core_shift;
-	apic_info->package_id = apic_info->apic_id & package_mask;
+	topology->package_id  = topology->apic_id & package_mask;
 
 	return (level_type > 0);
 }
 
+static bool cpu_ident_id_arm(struct cpu_raw_data_t* raw, struct internal_topology_t* topology)
+{
+	/* Documentation: Multiprocessor Affinity Register
+	   https://developer.arm.com/documentation/ddi0601/2020-12/AArch64-Registers/MPIDR-EL1--Multiprocessor-Affinity-Register
+	*/
+	const bool aff0_is_threads = EXTRACTS_BIT(raw->arm_mpidr, 24);
+	if (aff0_is_threads) {
+		/* Aff0: the level identifies individual threads within a multithreaded core
+		   On single-threaded CPUs this field has the value 0x00 */
+		topology->smt_id     = EXTRACTS_BITS(raw->arm_mpidr,  7,  0); // Aff0
+		topology->core_id    = EXTRACTS_BITS(raw->arm_mpidr, 15,  8); // Aff1
+		topology->package_id = EXTRACTS_BITS(raw->arm_mpidr, 23, 16); // Aff2
+	}
+	else {
+		topology->core_id    = EXTRACTS_BITS(raw->arm_mpidr,  7,  0); // Aff0
+		topology->package_id = EXTRACTS_BITS(raw->arm_mpidr, 15,  8); // Aff1
+	}
+
+	/* Always implemented since ARMv7
+	   https://developer.arm.com/documentation/ddi0406/c/System-Level-Architecture/System-Control-Registers-in-a-PMSA-implementation/PMSA-System-control-registers-descriptions--in-register-order/MPIDR--Multiprocessor-Affinity-Register--PMSA?lang=en
+	*/
+	return true;
+}
+
+static bool cpu_ident_id(logical_cpu_t logical_cpu, struct cpu_raw_data_t* raw, struct internal_topology_t* topology)
+{
+	topology_t_constructor(topology, logical_cpu);
+
+	const cpu_architecture_t architecture = cpuid_architecture_identify(raw);
+	switch (architecture) {
+		case ARCHITECTURE_X86:
+			return cpu_ident_id_x86(raw, topology);
+		case ARCHITECTURE_ARM:
+			return cpu_ident_id_arm(raw, topology);
+		default:
+			break;
+	}
+
+	return false;
+}
 
 /* Interface: */
 
@@ -1064,7 +1176,21 @@ int cpuid_get_total_cpus(void)
 
 int cpuid_present(void)
 {
+#if defined(PLATFORM_X86) || defined(PLATFORM_X64)
 	return cpuid_exists_by_eflags();
+#elif defined(PLATFORM_AARCH64)
+# if defined(HAVE_GETAUXVAL) /* Linux */
+	return (getauxval(AT_HWCAP) & HWCAP_CPUID);
+# elif defined(HAVE_ELF_AUX_INFO) /* FreeBSD */
+	unsigned long hwcap = 0;
+	if (elf_aux_info(AT_HWCAP, &hwcap, sizeof(hwcap)) == 0)
+		return ((hwcap & HWCAP_CPUID) != 0);
+# endif /* HAVE_GETAUXVAL */
+	/* On AArch64, return 0 by default */
+	return 0;
+#else
+	return 0;
+#endif
 }
 
 void cpu_exec_cpuid(uint32_t eax, uint32_t* regs)
@@ -1081,9 +1207,10 @@ void cpu_exec_cpuid_ext(uint32_t* regs)
 
 int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 {
-	unsigned i;
 	if (!cpuid_present())
 		return cpuid_set_error(ERR_NO_CPUID);
+#if defined(PLATFORM_X86) || defined(PLATFORM_X64)
+	unsigned i;
 	for (i = 0; i < 32; i++)
 		cpu_exec_cpuid(i, data->basic_cpuid[i]);
 	for (i = 0; i < 32; i++)
@@ -1118,6 +1245,34 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 		data->amd_fn8000001dh[i][ECX] = i;
 		cpu_exec_cpuid_ext(data->amd_fn8000001dh[i]);
 	}
+#elif defined(PLATFORM_ARM)
+	/* We cannot support ARM CPUs running in 32-bit mode, because the Main ID Register is accessible only in privileged modes
+	   Some related links:
+	   - https://github.com/anrieff/libcpuid/issues/96
+	   - https://developer.arm.com/documentation/ddi0406/b/System-Level-Architecture/Protected-Memory-System-Architecture--PMSA-/CP15-registers-for-a-PMSA-implementation/c0--Main-ID-Register--MIDR-
+	*/
+# warning The 32-bit ARM platform is not supported (Main ID Register is accessible only in privileged modes)
+	UNUSED(data);
+#elif defined(PLATFORM_AARCH64)
+	cpu_exec_mrs("MIDR_EL1", data->arm_midr);
+	cpu_exec_mrs("MPIDR_EL1", data->arm_mpidr);
+	cpu_exec_mrs("REVIDR_EL1", data->arm_revidr);
+	cpu_exec_mrs(SYS_ID_AA64DFR0_EL1, data->arm_id_aa64dfr[0]);
+	cpu_exec_mrs(SYS_ID_AA64DFR1_EL1, data->arm_id_aa64dfr[1]);
+	cpu_exec_mrs(SYS_ID_AA64ISAR0_EL1, data->arm_id_aa64isar[0]);
+	cpu_exec_mrs(SYS_ID_AA64ISAR1_EL1, data->arm_id_aa64isar[1]);
+	cpu_exec_mrs(SYS_ID_AA64ISAR2_EL1, data->arm_id_aa64isar[2]);
+	cpu_exec_mrs(SYS_ID_AA64MMFR0_EL1, data->arm_id_aa64mmfr[0]);
+	cpu_exec_mrs(SYS_ID_AA64MMFR1_EL1, data->arm_id_aa64mmfr[1]);
+	cpu_exec_mrs(SYS_ID_AA64MMFR2_EL1, data->arm_id_aa64mmfr[2]);
+	cpu_exec_mrs(SYS_ID_AA64MMFR3_EL1, data->arm_id_aa64mmfr[3]);
+	cpu_exec_mrs(SYS_ID_AA64MMFR4_EL1, data->arm_id_aa64mmfr[4]);
+	cpu_exec_mrs(SYS_ID_AA64PFR0_EL1, data->arm_id_aa64pfr[0]);
+	cpu_exec_mrs(SYS_ID_AA64PFR1_EL1, data->arm_id_aa64pfr[1]);
+	cpu_exec_mrs(SYS_ID_AA64PFR2_EL1, data->arm_id_aa64pfr[2]);
+	cpu_exec_mrs(SYS_ID_AA64SMFR0_EL1, data->arm_id_aa64smfr[0]);
+	cpu_exec_mrs(SYS_ID_AA64ZFR0_EL1, data->arm_id_aa64zfr[0]);
+#endif
 	return cpuid_set_error(ERR_OK);
 }
 
@@ -1182,26 +1337,46 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 	}
 	cpu_id_t_constructor(data);
 	memset(internal->cache_mask, 0, sizeof(internal->cache_mask));
-	if ((r = cpuid_basic_identify(raw, data)) < 0)
-		return cpuid_set_error(r);
-	switch (data->vendor) {
-		case VENDOR_INTEL:
-			r = cpuid_identify_intel(raw, data, internal);
+	data->architecture = cpuid_architecture_identify(raw);
+
+	switch (data->architecture) {
+		case ARCHITECTURE_X86:
+			if ((r = cpuid_basic_identify(raw, data)) < 0)
+				return cpuid_set_error(r);
+			switch (data->vendor) {
+				case VENDOR_INTEL:
+					r = cpuid_identify_intel(raw, data, internal);
+					break;
+				case VENDOR_AMD:
+				case VENDOR_HYGON:
+					r = cpuid_identify_amd(raw, data, internal);
+					break;
+				case VENDOR_CENTAUR:
+					r = cpuid_identify_centaur(raw, data, internal);
+					break;
+				default:
+					break;
+			}
 			break;
-		case VENDOR_AMD:
-		case VENDOR_HYGON:
-			r = cpuid_identify_amd(raw, data, internal);
-			break;
-		case VENDOR_CENTAUR:
-			r = cpuid_identify_centaur(raw, data, internal);
+		case ARCHITECTURE_ARM:
+			r = cpuid_identify_arm(raw, data);
 			break;
 		default:
-			break;
+			return cpuid_set_error(ERR_CPU_UNKN);
 	}
 	/* Backward compatibility */
 	/* - Deprecated since v0.5.0 */
 	data->l1_assoc     = data->l1_data_assoc;
 	data->l1_cacheline = data->l1_data_cacheline;
+	/* - Deprecated since v0.7.0 */
+	data->family     = data->x86.family;
+	data->model      = data->x86.model;
+	data->stepping   = data->x86.stepping;
+	data->ext_family = data->x86.ext_family;
+	data->ext_model  = data->x86.ext_model;
+	data->sse_size   = data->x86.sse_size;
+	data->sgx        = data->x86.sgx;
+
 	return cpuid_set_error(r);
 }
 
@@ -1211,23 +1386,28 @@ static cpu_purpose_t cpu_ident_purpose(struct cpu_raw_data_t* raw)
 	cpu_purpose_t purpose = PURPOSE_GENERAL;
 	char vendor_str[VENDOR_STR_MAX];
 
-	vendor = cpuid_vendor_identify(raw->basic_cpuid[0], vendor_str);
-	if (vendor == VENDOR_UNKNOWN) {
-		cpuid_set_error(ERR_CPU_UNKN);
-		return purpose;
-	}
-
-	switch (vendor) {
-		case VENDOR_AMD:
-			purpose = cpuid_identify_purpose_amd(raw);
+	const cpu_architecture_t architecture = cpuid_architecture_identify(raw);
+	switch (architecture) {
+		case ARCHITECTURE_X86:
+			vendor = cpuid_vendor_identify(raw->basic_cpuid[0], vendor_str);
+			switch (vendor) {
+				case VENDOR_AMD:
+					purpose = cpuid_identify_purpose_amd(raw);
+					break;
+				case VENDOR_INTEL:
+					purpose = cpuid_identify_purpose_intel(raw);
+					break;
+				default:
+					break;
+			}
 			break;
-		case VENDOR_INTEL:
-			purpose = cpuid_identify_purpose_intel(raw);
+		case ARCHITECTURE_ARM:
+			purpose = cpuid_identify_purpose_arm(raw);
 			break;
 		default:
-			purpose = PURPOSE_GENERAL;
 			break;
 	}
+
 	debugf(3, "Identified a '%s' CPU core type\n", cpu_purpose_str(purpose));
 
 	return purpose;
@@ -1242,25 +1422,25 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 }
 
 static void update_core_instances(struct internal_core_instances_t* cores,
-                                   struct internal_apic_info_t* apic_info)
+                                   struct internal_topology_t* topology)
 {
 	uint32_t core_id_index = 0;
 
-	core_id_index = apic_info->core_id % CORES_HTABLE_SIZE;
-	if ((cores->htable[core_id_index].core_id == 0) || (cores->htable[core_id_index].core_id == apic_info->core_id)) {
+	core_id_index = topology->core_id % CORES_HTABLE_SIZE;
+	if ((cores->htable[core_id_index].core_id == 0) || (cores->htable[core_id_index].core_id == topology->core_id)) {
 		if (cores->htable[core_id_index].num_logical_cpu == 0)
 			cores->instances++;
-		cores->htable[core_id_index].core_id = apic_info->core_id;
+		cores->htable[core_id_index].core_id = topology->core_id;
 		cores->htable[core_id_index].num_logical_cpu++;
 	}
 	else {
 		warnf("update_core_instances: collision at index %u (core ID is %i, not %i)\n",
-			core_id_index, cores->htable[core_id_index].core_id, apic_info->core_id);
+			core_id_index, cores->htable[core_id_index].core_id, topology->core_id);
 	}
 }
 
 static void update_cache_instances(struct internal_cache_instances_t* caches,
-                                   struct internal_apic_info_t* apic_info,
+                                   struct internal_topology_t* topology,
                                    struct internal_id_info_t* id_info,
                                    bool debugf_is_needed)
 {
@@ -1269,27 +1449,27 @@ static void update_cache_instances(struct internal_cache_instances_t* caches,
 
 	for (level = 0; level < NUM_CACHE_TYPES; level++) {
 		if (id_info->cache_mask[level] == 0x00000000) {
-			apic_info->cache_id[level] = -1;
+			topology->cache_id[level] = -1;
 			continue;
 		}
-		apic_info->cache_id[level] = apic_info->apic_id & id_info->cache_mask[level];
-		cache_id_index             = apic_info->cache_id[level] % CACHES_HTABLE_SIZE;
-		if ((caches->htable[level][cache_id_index].cache_id == 0) || (caches->htable[level][cache_id_index].cache_id == apic_info->cache_id[level])) {
+		topology->cache_id[level] = topology->apic_id & id_info->cache_mask[level];
+		cache_id_index             = topology->cache_id[level] % CACHES_HTABLE_SIZE;
+		if ((caches->htable[level][cache_id_index].cache_id == 0) || (caches->htable[level][cache_id_index].cache_id == topology->cache_id[level])) {
 			if (caches->htable[level][cache_id_index].num_logical_cpu == 0)
 				caches->instances[level]++;
-			caches->htable[level][cache_id_index].cache_id = apic_info->cache_id[level];
+			caches->htable[level][cache_id_index].cache_id = topology->cache_id[level];
 			caches->htable[level][cache_id_index].num_logical_cpu++;
 		}
 		else {
 			warnf("update_cache_instances: collision at index %u (cache ID is %i, not %i)\n",
-				cache_id_index, caches->htable[level][cache_id_index].cache_id, apic_info->cache_id[level]);
+				cache_id_index, caches->htable[level][cache_id_index].cache_id, topology->cache_id[level]);
 		}
 	}
 
 	if (debugf_is_needed)
 		debugf(3, "Logical CPU %4u: APIC ID %4i, package ID %4i, core ID %4i, thread %i, L1I$ ID %4i, L1D$ ID %4i, L2$ ID %4i, L3$ ID %4i, L4$ ID %4i\n",
-			apic_info->logical_cpu, apic_info->apic_id, apic_info->package_id, apic_info->core_id, apic_info->smt_id,
-			apic_info->cache_id[L1I], apic_info->cache_id[L1D], apic_info->cache_id[L2], apic_info->cache_id[L3], apic_info->cache_id[L4]);
+			topology->logical_cpu, topology->apic_id, topology->package_id, topology->core_id, topology->smt_id,
+			topology->cache_id[L1I], topology->cache_id[L1D], topology->cache_id[L2], topology->cache_id[L3], topology->cache_id[L4]);
 }
 
 int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t* system)
@@ -1298,14 +1478,14 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 	int ret_error = cpuid_set_error(ERR_OK);
 	double smt_divisor;
 	bool is_smt_supported;
-	bool is_apic_supported = true;
+	bool is_topology_supported = true;
 	int16_t cpu_type_index = -1;
 	int32_t cur_package_id = 0;
 	logical_cpu_t logical_cpu = 0;
 	cpu_purpose_t purpose;
 	cpu_affinity_mask_t affinity_mask;
 	struct cpu_raw_data_array_t my_raw_array;
-	struct internal_apic_info_t apic_info;
+	struct internal_topology_t topology;
 	struct internal_type_info_array_t type_info;
 	struct internal_cache_instances_t caches_all;
 
@@ -1331,24 +1511,24 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 		   APIC ID are unique for each logical CPU cores.
 		*/
 		purpose = cpu_ident_purpose(&raw_array->raw[logical_cpu]);
-		if (raw_array->with_affinity && is_apic_supported) {
-			is_apic_supported = cpu_ident_apic_id(logical_cpu, &raw_array->raw[logical_cpu], &apic_info);
-			if (is_apic_supported)
-				cur_package_id = apic_info.package_id;
+		if (raw_array->with_affinity && is_topology_supported) {
+			is_topology_supported = cpu_ident_id(logical_cpu, &raw_array->raw[logical_cpu], &topology);
+			if (is_topology_supported)
+				cur_package_id = topology.package_id;
 		}
 
 		/* Put data to system->cpu_types on the first iteration or when purpose is new.
 		   For motherboards with multiple CPUs, we grow the array when package ID is different. */
-		cpu_type_index = cpuid_find_index_system_id(system, purpose, &type_info, cur_package_id, is_apic_supported);
+		cpu_type_index = cpuid_find_index_system_id(system, purpose, &type_info, cur_package_id, is_topology_supported);
 		if (cpu_type_index < 0) {
-			cpu_type_index  = system->num_cpu_types;
+			cpu_type_index = system->num_cpu_types;
 			cpuid_grow_system_id(system, system->num_cpu_types + 1);
 			cpuid_grow_type_info(&type_info, type_info.num + 1);
 			cur_error = cpu_ident_internal(&raw_array->raw[logical_cpu], &system->cpu_types[cpu_type_index], &type_info.data[cpu_type_index].id_info);
 			type_info.data[cpu_type_index].purpose = purpose;
 			if (ret_error == ERR_OK)
 				ret_error = cur_error;
-			if (is_apic_supported)
+			if (is_topology_supported)
 				type_info.data[cpu_type_index].package_id = cur_package_id;
 			if (raw_array->with_affinity)
 				system->cpu_types[cpu_type_index].num_logical_cpus = 0;
@@ -1358,10 +1538,10 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 		if (raw_array->with_affinity) {
 			set_affinity_mask_bit(logical_cpu, &system->cpu_types[cpu_type_index].affinity_mask);
 			system->cpu_types[cpu_type_index].num_logical_cpus++;
-			if (is_apic_supported) {
-				update_core_instances(&type_info.data[cpu_type_index].core_instances, &apic_info);
-				update_cache_instances(&type_info.data[cpu_type_index].cache_instances, &apic_info, &type_info.data[cpu_type_index].id_info, true);
-				update_cache_instances(&caches_all,  &apic_info, &type_info.data[cpu_type_index].id_info, false);
+			if (is_topology_supported) {
+				update_core_instances(&type_info.data[cpu_type_index].core_instances, &topology);
+				update_cache_instances(&type_info.data[cpu_type_index].cache_instances, &topology, &type_info.data[cpu_type_index].id_info, true);
+				update_cache_instances(&caches_all,  &topology, &type_info.data[cpu_type_index].id_info, false);
 			}
 		}
 	}
@@ -1370,7 +1550,7 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 	for (cpu_type_index = 0; cpu_type_index < system->num_cpu_types; cpu_type_index++) {
 		/* Overwrite core and cache counters when information is available per core */
 		if (raw_array->with_affinity) {
-			if (is_apic_supported) {
+			if (is_topology_supported) {
 				system->cpu_types[cpu_type_index].num_cores                = type_info.data[cpu_type_index].core_instances.instances;
 				system->cpu_types[cpu_type_index].l1_instruction_instances = type_info.data[cpu_type_index].cache_instances.instances[L1I];
 				system->cpu_types[cpu_type_index].l1_data_instances        = type_info.data[cpu_type_index].cache_instances.instances[L1D];
@@ -1392,7 +1572,7 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 	cpuid_free_type_info(&type_info);
 
 	/* Update the grand total of cache instances */
-	if (is_apic_supported) {
+	if (is_topology_supported) {
 		system->l1_instruction_total_instances = caches_all.instances[L1I];
 		system->l1_data_total_instances        = caches_all.instances[L1D];
 		system->l2_total_instances             = caches_all.instances[L2];
@@ -1444,6 +1624,55 @@ const char* cpu_architecture_str(cpu_architecture_t architecture)
 	return "";
 }
 
+const char* cpu_feature_level_str(cpu_feature_level_t level)
+{
+	const struct { cpu_feature_level_t level; const char* name; }
+	matchtable[] = {
+		{ FEATURE_LEVEL_UNKNOWN,    "unknown"   },
+		{ FEATURE_LEVEL_ARM_V1,     "ARMv1"     },
+		{ FEATURE_LEVEL_ARM_V2,     "ARMv2"     },
+		{ FEATURE_LEVEL_ARM_V3,     "ARMv3"     },
+		{ FEATURE_LEVEL_ARM_V4,     "ARMv4"     },
+		{ FEATURE_LEVEL_ARM_V4T,    "ARMv4T"    },
+		{ FEATURE_LEVEL_ARM_V5,     "ARMv5"     },
+		{ FEATURE_LEVEL_ARM_V5T,    "ARMv5T"    },
+		{ FEATURE_LEVEL_ARM_V5TE,   "ARMv5TE"   },
+		{ FEATURE_LEVEL_ARM_V5TEJ,  "ARMv5TEJ"  },
+		{ FEATURE_LEVEL_ARM_V6,     "ARMv6"     },
+		{ FEATURE_LEVEL_ARM_V6_M,   "ARMv6-M"   },
+		{ FEATURE_LEVEL_ARM_V7_A,   "ARMv7-A"   },
+		{ FEATURE_LEVEL_ARM_V7_M,   "ARMv7-M"   },
+		{ FEATURE_LEVEL_ARM_V7_R,   "ARMv7-R"   },
+		{ FEATURE_LEVEL_ARM_V7E_M,  "ARMv7E-M"  },
+		{ FEATURE_LEVEL_ARM_V8_0_A, "ARMv8.0-A" },
+		{ FEATURE_LEVEL_ARM_V8_0_M, "ARMv8.0-M" },
+		{ FEATURE_LEVEL_ARM_V8_0_R, "ARMv8.0-R" },
+		{ FEATURE_LEVEL_ARM_V8_1_A, "ARMv8.1-A" },
+		{ FEATURE_LEVEL_ARM_V8_1_M, "ARMv8.1-M" },
+		{ FEATURE_LEVEL_ARM_V8_2_A, "ARMv8.2-A" },
+		{ FEATURE_LEVEL_ARM_V8_3_A, "ARMv8.3-A" },
+		{ FEATURE_LEVEL_ARM_V8_4_A, "ARMv8.4-A" },
+		{ FEATURE_LEVEL_ARM_V8_5_A, "ARMv8.5-A" },
+		{ FEATURE_LEVEL_ARM_V8_6_A, "ARMv8.6-A" },
+		{ FEATURE_LEVEL_ARM_V8_7_A, "ARMv8.7-A" },
+		{ FEATURE_LEVEL_ARM_V8_8_A, "ARMv8.8-A" },
+		{ FEATURE_LEVEL_ARM_V8_9_A, "ARMv8.9-A" },
+		{ FEATURE_LEVEL_ARM_V9_0_A, "ARMv9.0-A" },
+		{ FEATURE_LEVEL_ARM_V9_1_A, "ARMv9.1-A" },
+		{ FEATURE_LEVEL_ARM_V9_2_A, "ARMv9.2-A" },
+		{ FEATURE_LEVEL_ARM_V9_3_A, "ARMv9.3-A" },
+		{ FEATURE_LEVEL_ARM_V9_4_A, "ARMv9.4-A" },
+	};
+	unsigned i, n = COUNT_OF(matchtable);
+	if (n != (NUM_CPU_FEATURE_LEVELS - FEATURE_LEVEL_ARM_V1) + 1) {
+		warnf("Warning: incomplete library, feature level matchtable size differs from the actual number of levels.\n");
+	}
+	for (i = 0; i < n; i++)
+		if (matchtable[i].level == level)
+			return matchtable[i].name;
+	return "";
+}
+
 const char* cpu_purpose_str(cpu_purpose_t purpose)
 {
 	const struct { cpu_purpose_t purpose; const char* name; }
@@ -1452,6 +1681,7 @@ const char* cpu_purpose_str(cpu_purpose_t purpose)
 		{ PURPOSE_PERFORMANCE,   "performance"          },
 		{ PURPOSE_EFFICIENCY,    "efficiency"           },
 		{ PURPOSE_LP_EFFICIENCY, "low-power efficiency" },
+		{ PURPOSE_U_PERFORMANCE, "ultimate performance" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_PURPOSES) {
@@ -1609,6 +1839,210 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_AVX512VBMI, "avx512vbmi" },
 		{ CPU_FEATURE_AVX512VBMI2, "avx512vbmi2" },
 		{ CPU_FEATURE_HYPERVISOR, "hypervisor" },
+		{ CPU_FEATURE_ASID16, "asid16" },
+		{ CPU_FEATURE_ADVSIMD, "advsimd" },
+		{ CPU_FEATURE_CRC32, "crc32" },
+		{ CPU_FEATURE_CSV2_1P1, "csv2_1p1" },
+		{ CPU_FEATURE_CSV2_1P2, "csv2_1p2" },
+		{ CPU_FEATURE_CSV2_2, "csv2_2" },
+		{ CPU_FEATURE_CSV2_3, "csv2_3" },
+		{ CPU_FEATURE_DOUBLELOCK, "doublelock" },
+		{ CPU_FEATURE_ETS2, "ets2" },
+		{ CPU_FEATURE_FP, "fp" },
+		{ CPU_FEATURE_MIXEDEND, "mixedend" },
+		{ CPU_FEATURE_MIXEDENDEL0, "mixedendel0" },
+		{ CPU_FEATURE_PMULL, "pmull" },
+		{ CPU_FEATURE_PMUV3, "pmuv3" },
+		{ CPU_FEATURE_SHA1, "sha1" },
+		{ CPU_FEATURE_SHA256, "sha256" },
+		{ CPU_FEATURE_HAFDBS, "hafdbs" },
+		{ CPU_FEATURE_HPDS, "hpds" },
+		{ CPU_FEATURE_LOR, "lor" },
+		{ CPU_FEATURE_LSE, "lse" },
+		{ CPU_FEATURE_PAN, "pan" },
+		{ CPU_FEATURE_PMUV3P1, "pmuv3p1" },
+		{ CPU_FEATURE_RDM, "rdm" },
+		{ CPU_FEATURE_VHE, "vhe" },
+		{ CPU_FEATURE_VMID16, "vmid16" },
+		//{ CPU_FEATURE_AA32HPD, "aa32hpd" },
+		//{ CPU_FEATURE_AA32I8MM, "aa32i8mm" },
+		{ CPU_FEATURE_DPB, "dpb" },
+		{ CPU_FEATURE_DEBUGV8P2, "debugv8p2" },
+		{ CPU_FEATURE_F32MM, "f32mm" },
+		{ CPU_FEATURE_F64MM, "f64mm" },
+		{ CPU_FEATURE_FP16, "fp16" },
+		{ CPU_FEATURE_HPDS2, "hpds2" },
+		{ CPU_FEATURE_I8MM, "i8mm" },
+		{ CPU_FEATURE_IESB, "iesb" },
+		{ CPU_FEATURE_LPA, "lpa" },
+		{ CPU_FEATURE_LSMAOC, "lsmaoc" },
+		{ CPU_FEATURE_LVA, "lva" },
+		{ CPU_FEATURE_PAN2, "pan2" },
+		{ CPU_FEATURE_RAS, "ras" },
+		{ CPU_FEATURE_SHA3, "sha3" },
+		{ CPU_FEATURE_SHA512, "sha512" },
+		{ CPU_FEATURE_SM3, "sm3" },
+		{ CPU_FEATURE_SM4, "sm4" },
+		{ CPU_FEATURE_SPE, "spe" },
+		{ CPU_FEATURE_SVE, "sve" },
+		{ CPU_FEATURE_TTCNP, "ttcnp" },
+		{ CPU_FEATURE_UAO, "uao" },
+		{ CPU_FEATURE_XNX, "xnx" },
+		{ CPU_FEATURE_CCIDX, "ccidx" },
+		{ CPU_FEATURE_CONSTPACFIELD, "constpacfield" },
+		{ CPU_FEATURE_EPAC, "epac" },
+		{ CPU_FEATURE_FCMA, "fcma" },
+		{ CPU_FEATURE_FPAC, "fpac" },
+		{ CPU_FEATURE_FPACCOMBINE, "fpaccombine" },
+		{ CPU_FEATURE_JSCVT, "jscvt" },
+		{ CPU_FEATURE_LRCPC, "lrcpc" },
+		{ CPU_FEATURE_PACIMP, "pacimp" },
+		{ CPU_FEATURE_PACQARMA3, "pacqarma3" },
+		{ CPU_FEATURE_PACQARMA5, "pacqarma5" },
+		{ CPU_FEATURE_PAUTH, "pauth" },
+		{ CPU_FEATURE_SPEV1P1, "spev1p1" },
+		{ CPU_FEATURE_AMUV1, "amuv1" },
+		{ CPU_FEATURE_BBM, "bbm" },
+		{ CPU_FEATURE_DIT, "dit" },
+		{ CPU_FEATURE_DEBUGV8P4, "debugv8p4" },
+		{ CPU_FEATURE_DOTPROD, "dotprod" },
+		{ CPU_FEATURE_DOUBLEFAULT, "doublefault" },
+		{ CPU_FEATURE_FHM, "fhm" },
+		{ CPU_FEATURE_FLAGM, "flagm" },
+		{ CPU_FEATURE_IDST, "idst" },
+		{ CPU_FEATURE_LRCPC2, "lrcpc2" },
+		{ CPU_FEATURE_LSE2, "lse2" },
+		{ CPU_FEATURE_MPAM, "mpam" },
+		{ CPU_FEATURE_PMUV3P4, "pmuv3p4" },
+		{ CPU_FEATURE_RASV1P1, "rasv1p1" },
+		{ CPU_FEATURE_S2FWB, "s2fwb" },
+		{ CPU_FEATURE_SEL2, "sel2" },
+		{ CPU_FEATURE_TLBIOS, "tlbios" },
+		{ CPU_FEATURE_TLBIRANGE, "tlbirange" },
+		{ CPU_FEATURE_TRF, "trf" },
+		{ CPU_FEATURE_TTL, "ttl" },
+		{ CPU_FEATURE_TTST, "ttst" },
+		{ CPU_FEATURE_BTI, "bti" },
+		{ CPU_FEATURE_CSV2, "csv2" },
+		{ CPU_FEATURE_CSV3, "csv3" },
+		{ CPU_FEATURE_DPB2, "dpb2" },
+		{ CPU_FEATURE_E0PD, "e0pd" },
+		{ CPU_FEATURE_EVT, "evt" },
+		{ CPU_FEATURE_EXS, "exs" },
+		{ CPU_FEATURE_FRINTTS, "frintts" },
+		{ CPU_FEATURE_FLAGM2, "flagm2" },
+		{ CPU_FEATURE_MTE, "mte" },
+		{ CPU_FEATURE_MTE2, "mte2" },
+		{ CPU_FEATURE_PMUV3P5, "pmuv3p5" },
+		{ CPU_FEATURE_RNG, "rng" },
+		{ CPU_FEATURE_RNG_TRAP, "rng_trap" },
+		{ CPU_FEATURE_SB, "sb" },
+		{ CPU_FEATURE_SPECRES, "specres" },
+		{ CPU_FEATURE_SSBS, "ssbs" },
+		{ CPU_FEATURE_SSBS2, "ssbs2" },
+		{ CPU_FEATURE_AMUV1P1, "amuv1p1" },
+		{ CPU_FEATURE_BF16, "bf16" },
+		{ CPU_FEATURE_DGH, "dgh" },
+		{ CPU_FEATURE_ECV, "ecv" },
+		{ CPU_FEATURE_FGT, "fgt" },
+		{ CPU_FEATURE_MPAMV0P1, "mpamv0p1" },
+		{ CPU_FEATURE_MPAMV1P1, "mpamv1p1" },
+		{ CPU_FEATURE_MTPMU, "mtpmu" },
+		{ CPU_FEATURE_PAUTH2, "pauth2" },
+		{ CPU_FEATURE_TWED, "twed" },
+		{ CPU_FEATURE_AFP, "afp" },
+		{ CPU_FEATURE_EBF16, "ebf16" },
+		{ CPU_FEATURE_HCX, "hcx" },
+		{ CPU_FEATURE_LPA2, "lpa2" },
+		{ CPU_FEATURE_LS64, "ls64" },
+		{ CPU_FEATURE_LS64_ACCDATA, "ls64_accdata" },
+		{ CPU_FEATURE_LS64_V, "ls64_v" },
+		{ CPU_FEATURE_MTE3, "mte3" },
+		{ CPU_FEATURE_MTE_ASYM_FAULT, "mte_asym_fault" },
+		{ CPU_FEATURE_PAN3, "pan3" },
+		{ CPU_FEATURE_PMUV3P7, "pmuv3p7" },
+		{ CPU_FEATURE_RPRES, "rpres" },
+		{ CPU_FEATURE_SPEV1P2, "spev1p2" },
+		{ CPU_FEATURE_WFXT, "wfxt" },
+		{ CPU_FEATURE_XS, "xs" },
+		{ CPU_FEATURE_CMOW, "cmow" },
+		{ CPU_FEATURE_DEBUGV8P8, "debugv8p8" },
+		{ CPU_FEATURE_HBC, "hbc" },
+		{ CPU_FEATURE_MOPS, "mops" },
+		{ CPU_FEATURE_NMI, "nmi" },
+		{ CPU_FEATURE_PMUV3P8, "pmuv3p8" },
+		{ CPU_FEATURE_SCTLR2, "sctlr2" },
+		{ CPU_FEATURE_SPEV1P3, "spev1p3" },
+		{ CPU_FEATURE_TCR2, "tcr2" },
+		{ CPU_FEATURE_TIDCP1, "tidcp1" },
+		{ CPU_FEATURE_ADERR, "aderr" },
+		{ CPU_FEATURE_AIE, "aie" },
+		{ CPU_FEATURE_ANERR, "anerr" },
+		{ CPU_FEATURE_ATS1A, "ats1a" },
+		{ CPU_FEATURE_CLRBHB, "clrbhb" },
+		{ CPU_FEATURE_CSSC, "cssc" },
+		{ CPU_FEATURE_DEBUGV8P9, "debugv8p9" },
+		{ CPU_FEATURE_DOUBLEFAULT2, "doublefault2" },
+		{ CPU_FEATURE_ECBHB, "ecbhb" },
+		{ CPU_FEATURE_FGT2, "fgt2" },
+		{ CPU_FEATURE_HAFT, "haft" },
+		{ CPU_FEATURE_LRCPC3, "lrcpc3" },
+		{ CPU_FEATURE_MTE4, "mte4" },
+		{ CPU_FEATURE_MTE_ASYNC, "mte_async" },
+		{ CPU_FEATURE_MTE_CANONICAL_TAGS, "mte_canonical_tags" },
+		{ CPU_FEATURE_MTE_NO_ADDRESS_TAGS, "mte_no_address_tags" },
+		{ CPU_FEATURE_MTE_PERM, "mte_perm" },
+		{ CPU_FEATURE_MTE_STORE_ONLY, "mte_store_only" },
+		{ CPU_FEATURE_MTE_TAGGED_FAR, "mte_tagged_far" },
+		{ CPU_FEATURE_PFAR, "pfar" },
+		{ CPU_FEATURE_PMUV3_ICNTR, "pmuv3_icntr" },
+		{ CPU_FEATURE_PMUV3_SS, "pmuv3_ss" },
+		{ CPU_FEATURE_PMUV3P9, "pmuv3p9" },
+		{ CPU_FEATURE_PRFMSLC, "prfmslc" },
+		{ CPU_FEATURE_RASV2, "rasv2" },
+		{ CPU_FEATURE_RPRFM, "rprfm" },
+		{ CPU_FEATURE_S1PIE, "s1pie" },
+		{ CPU_FEATURE_S1POE, "s1poe" },
+		{ CPU_FEATURE_S2PIE, "s2pie" },
+		{ CPU_FEATURE_S2POE, "s2poe" },
+		{ CPU_FEATURE_SPECRES2, "specres2" },
+		{ CPU_FEATURE_SPE_DPFZS, "spe_dpfzs" },
+		{ CPU_FEATURE_SPEV1P4, "spev1p4" },
+		{ CPU_FEATURE_SPMU, "spmu" },
+		{ CPU_FEATURE_THE, "the" },
+		{ CPU_FEATURE_SVE2, "sve2" },
+		{ CPU_FEATURE_SVE_AES, "sve_aes" },
+		{ CPU_FEATURE_SVE_BITPERM, "sve_bitperm" },
+		{ CPU_FEATURE_SVE_PMULL128, "sve_pmull128" },
+		{ CPU_FEATURE_SVE_SHA3, "sve_sha3" },
+		{ CPU_FEATURE_SVE_SM4, "sve_sm4" },
+		{ CPU_FEATURE_TME, "tme" },
+		{ CPU_FEATURE_TRBE, "trbe" },
+		{ CPU_FEATURE_BRBE, "brbe" },
+		{ CPU_FEATURE_RME, "rme" },
+		{ CPU_FEATURE_SME, "sme" },
+		{ CPU_FEATURE_SME_F64F64, "sme_f64f64" },
+		{ CPU_FEATURE_SME_FA64, "sme_fa64" },
+		{ CPU_FEATURE_SME_I16I64, "sme_i16i64" },
+		{ CPU_FEATURE_BRBEV1P1, "brbev1p1" },
+		{ CPU_FEATURE_MEC, "mec" },
+		{ CPU_FEATURE_SME2, "sme2" },
+		{ CPU_FEATURE_ABLE, "able" },
+		{ CPU_FEATURE_BWE, "bwe" },
+		{ CPU_FEATURE_D128, "d128" },
+		{ CPU_FEATURE_EBEP, "ebep" },
+		{ CPU_FEATURE_GCS, "gcs" },
+		{ CPU_FEATURE_ITE, "ite" },
+		{ CPU_FEATURE_LSE128, "lse128" },
+		{ CPU_FEATURE_LVA3, "lva3" },
+		{ CPU_FEATURE_SEBEP, "sebep" },
+		{ CPU_FEATURE_SME2P1, "sme2p1" },
+		{ CPU_FEATURE_SME_F16F16, "sme_f16f16" },
+		{ CPU_FEATURE_SVE2P1, "sve2p1" },
+		{ CPU_FEATURE_SVE_B16B16, "sve_b16b16" },
+		{ CPU_FEATURE_SYSINSTR128, "sysinstr128" },
+		{ CPU_FEATURE_SYSREG128, "sysreg128" },
+		{ CPU_FEATURE_TRBE_EXT, "trbe_ext" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {
@@ -1690,6 +2124,7 @@ void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list)
 	switch (vendor) {
 		case VENDOR_INTEL:
 			cpuid_get_list_intel(list);
+			cpuid_get_list_arm(vendor, list);
 			break;
 		case VENDOR_AMD:
 		case VENDOR_HYGON:
@@ -1718,6 +2153,26 @@ void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list)
 			break;
 		case VENDOR_NSC:
 			make_list_from_string("Geode GXm,Geode GXLV,Geode GX1,Geode GX2", list);
+			break;
+		case VENDOR_ARM:
+		case VENDOR_BROADCOM:
+		case VENDOR_CAVIUM:
+		case VENDOR_DEC:
+		case VENDOR_FUJITSU:
+		case VENDOR_HISILICON:
+		case VENDOR_INFINEON:
+		case VENDOR_FREESCALE:
+		case VENDOR_NVIDIA:
+		case VENDOR_APM:
+		case VENDOR_QUALCOMM:
+		case VENDOR_SAMSUNG:
+		case VENDOR_MARVELL:
+		case VENDOR_APPLE:
+		case VENDOR_FARADAY:
+		case VENDOR_MICROSOFT:
+		case VENDOR_PHYTIUM:
+		case VENDOR_AMPERE:
+			cpuid_get_list_arm(vendor, list);
 			break;
 		default:
 			warnf("Unknown vendor passed to cpuid_get_cpu_list()\n");
@@ -1794,6 +2249,8 @@ void cpuid_free_cpu_list(struct cpu_list_t* list)
 	for (i = 0; i < list->num_entries; i++)
 		free(list->names[i]);
 	free(list->names);
+	list->names = NULL;
+	list->num_entries = 0;
 }
 
 void cpuid_free_raw_data_array(struct cpu_raw_data_array_t* raw_array)

@@ -9,6 +9,7 @@ libcpuid_la_LDFLAGS = \
 libcpuid_la_SOURCES =		\
 	cpuid_main.c		\
 	recog_amd.c		\
+	recog_arm.c		\
 	recog_centaur.c		\
 	recog_intel.c		\
 	rdtsc.c			\
@@ -37,6 +38,7 @@ noinst_HEADERS = 		\
 	libcpuid_internal.h	\
 	libcpuid_util.h		\
 	recog_amd.h		\
+	recog_arm.h		\
 	recog_centaur.h		\
 	recog_intel.h		\
 	rdtsc.h

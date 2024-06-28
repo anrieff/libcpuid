@@ -863,7 +863,7 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, double 
 	const int num_dids = (int) COUNT_OF(divisor_t);
 
 	/* Constant values for common families */
-	const int magic_constant = (info->id->ext_family == 0x11) ? 0x8 : 0x10;
+	const int magic_constant = (info->id->x86.ext_family == 0x11) ? 0x8 : 0x10;
 	const int is_apu = ((FUSION_C <= info->internal->code.amd) && (info->internal->code.amd <= FUSION_A)) || (info->internal->bits & _APU_);
 	const double divisor = is_apu ? 1.0 : 2.0;
 
@@ -872,7 +872,7 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, double 
 		return 1;
 
 	/* Overview of AMD CPU microarchitectures: https://en.wikipedia.org/wiki/List_of_AMD_CPU_microarchitectures#Nomenclature */
-	switch (info->id->ext_family) {
+	switch (info->id->x86.ext_family) {
 		case 0x12: /* K10 (Llano) / K12 */
 			/* BKDG 12h, page 469
 			MSRC001_00[6B:64][8:4] is CpuFid
@@ -952,7 +952,7 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, double 
 			*multiplier = ((double) CpuFid / CpuDid) * 2;
 			break;
 		default:
-			warnf("get_amd_multipliers(): unsupported CPU extended family: %xh\n", info->id->ext_family);
+			warnf("get_amd_multipliers(): unsupported CPU extended family: %xh\n", info->id->x86.ext_family);
 			err = 1;
 			break;
 	}
@@ -1131,9 +1131,9 @@ static double get_info_voltage(struct msr_info_t *info)
 		BKDG 10h, page 49: voltage = 1.550V - 0.0125V * SviVid (SVI1)
 		BKDG 15h, page 50: Voltage = 1.5500 - 0.00625 * Vid[7:0] (SVI2)
 		SVI2 since Piledriver (Family 15h, 2nd-gen): Models 10h-1Fh Processors */
-		VIDStep = ((info->id->ext_family < 0x15) || ((info->id->ext_family == 0x15) && (info->id->ext_model < 0x10))) ? 0.0125 : 0.00625;
+		VIDStep = ((info->id->x86.ext_family < 0x15) || ((info->id->x86.ext_family == 0x15) && (info->id->x86.ext_model < 0x10))) ? 0.0125 : 0.00625;
 		err = cpu_rdmsr_range(info->handle, MSR_PSTATE_S, 2, 0, &reg);
-		if(info->id->ext_family < 0x17)
+		if(info->id->x86.ext_family < 0x17)
 			err += cpu_rdmsr_range(info->handle, MSR_PSTATE_0 + (uint32_t) reg, 15, 9, &CpuVid);
 		else
 			err += cpu_rdmsr_range(info->handle, MSR_PSTATE_0 + (uint32_t) reg, 21, 14, &CpuVid);

@@ -29,6 +29,7 @@
 #include "libcpuid_internal.h"
 
 #define COUNT_OF(array) (sizeof(array) / sizeof(array[0]))
+#define UNUSED(x) (void)(x)
 
 struct feature_map_t {
 	unsigned bit;

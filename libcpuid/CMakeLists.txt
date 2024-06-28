@@ -1,6 +1,7 @@
 set(cpuid_sources
     cpuid_main.c
     recog_amd.c
+    recog_arm.c
     recog_centaur.c
     recog_intel.c
     rdtsc.c

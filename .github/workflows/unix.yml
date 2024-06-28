@@ -15,8 +15,9 @@ jobs:
     strategy:
       matrix:
         os:
-          - { label: macos-latest, name: macos }
-          - { label: ubuntu-latest, name: linux }
+          - { label: macos-latest, name: macos-aarch64 }
+          - { label: macos-13, name: macos-x86_64 }
+          - { label: ubuntu-latest, name: linux-x86_64 }
     env:
       OS_NAME: ${{ matrix.os.name }}
 
@@ -28,6 +29,13 @@ jobs:
 
     - name: Build
       run: cmake --build build
+
+    # - name: Run cpuid_tool
+    #   run: |
+    #     echo "RAW dump"
+    #     ./build/cpuid_tool/cpuid_tool --save=-
+    #     echo "Report"
+    #     ./build/cpuid_tool/cpuid_tool --all
 
     - name: Run tests
       run: |

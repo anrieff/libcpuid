@@ -59,6 +59,7 @@ char out_file[256] = "";
 typedef enum {
 	NEED_CPUID_PRESENT,
 	NEED_ARCHITECTURE,
+	NEED_FEATURE_LEVEL,
 	NEED_PURPOSE,
 	NEED_VENDOR_STR,
 	NEED_VENDOR_ID,
@@ -68,6 +69,10 @@ typedef enum {
 	NEED_STEPPING,
 	NEED_EXT_FAMILY,
 	NEED_EXT_MODEL,
+	NEED_IMPLEMENTER,
+	NEED_VARIANT,
+	NEED_PART_NUM,
+	NEED_REVISION,
 	NEED_NUM_CORES,
 	NEED_NUM_LOGICAL,
 	NEED_TOTAL_CPUS,
@@ -127,6 +132,7 @@ const struct { output_data_switch sw; const char* synopsis; int ident_required; 
 matchtable[] = {
 	{ NEED_CPUID_PRESENT, "--cpuid"        , 0},
 	{ NEED_ARCHITECTURE , "--architecture" , 1},
+	{ NEED_FEATURE_LEVEL, "--feature-level", 1},
 	{ NEED_PURPOSE      , "--purpose"      , 1},
 	{ NEED_VENDOR_STR   , "--vendorstr"    , 1},
 	{ NEED_VENDOR_ID    , "--vendorid"     , 1},
@@ -136,6 +142,10 @@ matchtable[] = {
 	{ NEED_STEPPING     , "--stepping"     , 1},
 	{ NEED_EXT_FAMILY   , "--extfamily"    , 1},
 	{ NEED_EXT_MODEL    , "--extmodel"     , 1},
+	{ NEED_IMPLEMENTER  , "--implementer"  , 1},
+	{ NEED_VARIANT      , "--variant"      , 1},
+	{ NEED_PART_NUM     , "--part-num"     , 1},
+	{ NEED_REVISION     , "--revision"     , 1},
 	{ NEED_NUM_CORES    , "--cores"        , 1},
 	{ NEED_NUM_LOGICAL  , "--logical"      , 1},
 	{ NEED_TOTAL_CPUS   , "--total-cpus"   , 1},
@@ -371,6 +381,9 @@ static void print_info(output_data_switch query, struct cpu_id_t* data)
 		case NEED_ARCHITECTURE:
 			fprintf(fout, "%s\n", cpu_architecture_str(data->architecture));
 			break;
+		case NEED_FEATURE_LEVEL:
+			fprintf(fout, "%s\n", cpu_feature_level_str(data->feature_level));
+			break;
 		case NEED_PURPOSE:
 			fprintf(fout, "%s\n", cpu_purpose_str(data->purpose));
 			break;
@@ -384,19 +397,31 @@ static void print_info(output_data_switch query, struct cpu_id_t* data)
 			fprintf(fout, "%s\n", data->brand_str);
 			break;
 		case NEED_FAMILY:
-			fprintf(fout, "%d\n", data->family);
+			fprintf(fout, "%d\n", data->x86.family);
 			break;
 		case NEED_MODEL:
-			fprintf(fout, "%d\n", data->model);
+			fprintf(fout, "%d\n", data->x86.model);
 			break;
 		case NEED_STEPPING:
-			fprintf(fout, "%d\n", data->stepping);
+			fprintf(fout, "%d\n", data->x86.stepping);
 			break;
 		case NEED_EXT_FAMILY:
-			fprintf(fout, "%d\n", data->ext_family);
+			fprintf(fout, "%d\n", data->x86.ext_family);
 			break;
 		case NEED_EXT_MODEL:
-			fprintf(fout, "%d\n", data->ext_model);
+			fprintf(fout, "%d\n", data->x86.ext_model);
+			break;
+		case NEED_IMPLEMENTER:
+			fprintf(fout, "%d\n", data->arm.implementer);
+			break;
+		case NEED_VARIANT:
+			fprintf(fout, "%d\n", data->arm.variant);
+			break;
+		case NEED_PART_NUM:
+			fprintf(fout, "%d\n", data->arm.part_num);
+			break;
+		case NEED_REVISION:
+			fprintf(fout, "%d\n", data->arm.revision);
 			break;
 		case NEED_NUM_CORES:
 			fprintf(fout, "%d\n", data->num_cores);
@@ -532,7 +557,7 @@ static void print_info(output_data_switch query, struct cpu_id_t* data)
 		}
 		case NEED_SSE_UNIT_SIZE:
 		{
-			fprintf(fout, "%d (%s)\n", data->sse_size,
+			fprintf(fout, "%d (%s)\n", data->x86.sse_size,
 				data->detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
 			break;
 		}
@@ -548,7 +573,7 @@ static void print_cpulist(void)
 	struct cpu_list_t list;
 	const struct { const char *name; cpu_vendor_t vendor; } cpu_vendors[] = {
 		{ "Intel", VENDOR_INTEL },
-		{ "AMD", VENDOR_AMD },
+		{ "AMD/Hygon", VENDOR_AMD },
 		{ "Cyrix", VENDOR_CYRIX },
 		{ "NexGen", VENDOR_NEXGEN },
 		{ "Transmeta", VENDOR_TRANSMETA },
@@ -557,6 +582,24 @@ static void print_cpulist(void)
 		{ "Rise", VENDOR_RISE },
 		{ "SiS", VENDOR_SIS },
 		{ "NSC", VENDOR_NSC },
+		{ "ARM", VENDOR_ARM },
+		{ "Broadcom", VENDOR_BROADCOM },
+		{ "Cavium", VENDOR_CAVIUM },
+		{ "DEC", VENDOR_DEC },
+		{ "FUJITSU", VENDOR_FUJITSU },
+		{ "HiSilicon", VENDOR_HISILICON },
+		{ "Infineon", VENDOR_INFINEON },
+		{ "Motorola/Freescale", VENDOR_FREESCALE },
+		{ "NVIDIA" , VENDOR_NVIDIA },
+		{ "APM", VENDOR_APM },
+		{ "Qualcomm", VENDOR_QUALCOMM },
+		{ "Samsung", VENDOR_SAMSUNG },
+		{ "Marvell" , VENDOR_MARVELL },
+		{ "Apple", VENDOR_APPLE },
+		{ "Faraday", VENDOR_FARADAY },
+		{ "Microsoft" , VENDOR_MICROSOFT },
+		{ "Phytium", VENDOR_PHYTIUM },
+		{ "Ampere" , VENDOR_AMPERE },
 	};
 	for (i = 0; i < sizeof(cpu_vendors)/sizeof(cpu_vendors[0]); i++) {
 		fprintf(fout, "-----%s-----\n", cpu_vendors[i].name);
@@ -570,17 +613,17 @@ static void print_cpulist(void)
 static void print_sgx_data(const struct cpu_raw_data_t* raw, const struct cpu_id_t* data)
 {
 	int i;
-	fprintf(fout, "SGX: %d (%s)\n", data->sgx.present, data->sgx.present ? "present" : "absent");
-	if (data->sgx.present) {
-		fprintf(fout, "SGX max enclave size (32-bit): 2^%d\n", data->sgx.max_enclave_32bit);
-		fprintf(fout, "SGX max enclave size (64-bit): 2^%d\n", data->sgx.max_enclave_64bit);
-		fprintf(fout, "SGX1 extensions              : %d (%s)\n", data->sgx.flags[INTEL_SGX1], data->sgx.flags[INTEL_SGX1] ? "present" : "absent");
-		fprintf(fout, "SGX2 extensions              : %d (%s)\n", data->sgx.flags[INTEL_SGX2], data->sgx.flags[INTEL_SGX2] ? "present" : "absent");
-		fprintf(fout, "SGX MISCSELECT               : %08x\n", data->sgx.misc_select);
-		fprintf(fout, "SGX SECS.ATTRIBUTES mask     : %016llx\n", (unsigned long long) data->sgx.secs_attributes);
-		fprintf(fout, "SGX SECS.XSAVE feature mask  : %016llx\n", (unsigned long long) data->sgx.secs_xfrm);
-		fprintf(fout, "SGX EPC sections count       : %d\n", data->sgx.num_epc_sections);
-		for (i = 0; i < data->sgx.num_epc_sections; i++) {
+	fprintf(fout, "SGX: %d (%s)\n", data->x86.sgx.present, data->x86.sgx.present ? "present" : "absent");
+	if (data->x86.sgx.present) {
+		fprintf(fout, "SGX max enclave size (32-bit): 2^%d\n", data->x86.sgx.max_enclave_32bit);
+		fprintf(fout, "SGX max enclave size (64-bit): 2^%d\n", data->x86.sgx.max_enclave_64bit);
+		fprintf(fout, "SGX1 extensions              : %d (%s)\n", data->x86.sgx.flags[INTEL_SGX1], data->x86.sgx.flags[INTEL_SGX1] ? "present" : "absent");
+		fprintf(fout, "SGX2 extensions              : %d (%s)\n", data->x86.sgx.flags[INTEL_SGX2], data->x86.sgx.flags[INTEL_SGX2] ? "present" : "absent");
+		fprintf(fout, "SGX MISCSELECT               : %08x\n", data->x86.sgx.misc_select);
+		fprintf(fout, "SGX SECS.ATTRIBUTES mask     : %016llx\n", (unsigned long long) data->x86.sgx.secs_attributes);
+		fprintf(fout, "SGX SECS.XSAVE feature mask  : %016llx\n", (unsigned long long) data->x86.sgx.secs_xfrm);
+		fprintf(fout, "SGX EPC sections count       : %d\n", data->x86.sgx.num_epc_sections);
+		for (i = 0; i < data->x86.sgx.num_epc_sections; i++) {
 			struct cpu_epc_t epc = cpuid_get_epc(i, raw);
 			fprintf(fout, "    SGX EPC section #%-8d: start = %llx, size = %llu\n", i,
 				(unsigned long long) epc.start_addr, (unsigned long long) epc.length);
@@ -728,40 +771,51 @@ int main(int argc, char** argv)
 		for (cpu_type_index = 0; cpu_type_index < data.num_cpu_types; cpu_type_index++) {
 			fprintf(fout, "CPU Info for type #%d:\n------------------\n", cpu_type_index);
 			fprintf(fout, "  arch       : %s\n", cpu_architecture_str(data.cpu_types[cpu_type_index].architecture));
+			fprintf(fout, "  feat_level : %s\n", cpu_feature_level_str(data.cpu_types[cpu_type_index].feature_level));
 			fprintf(fout, "  purpose    : %s\n", cpu_purpose_str(data.cpu_types[cpu_type_index].purpose));
 			fprintf(fout, "  vendor_str : `%s'\n", data.cpu_types[cpu_type_index].vendor_str);
 			fprintf(fout, "  vendor id  : %d\n", (int) data.cpu_types[cpu_type_index].vendor);
 			fprintf(fout, "  brand_str  : `%s'\n", data.cpu_types[cpu_type_index].brand_str);
-			fprintf(fout, "  family     : %d (%02Xh)\n", data.cpu_types[cpu_type_index].family, data.cpu_types[cpu_type_index].family);
-			fprintf(fout, "  model      : %d (%02Xh)\n", data.cpu_types[cpu_type_index].model, data.cpu_types[cpu_type_index].model);
-			fprintf(fout, "  stepping   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].stepping, data.cpu_types[cpu_type_index].stepping);
-			fprintf(fout, "  ext_family : %d (%02Xh)\n", data.cpu_types[cpu_type_index].ext_family, data.cpu_types[cpu_type_index].ext_family);
-			fprintf(fout, "  ext_model  : %d (%02Xh)\n", data.cpu_types[cpu_type_index].ext_model, data.cpu_types[cpu_type_index].ext_model);
+			if (data.cpu_types[cpu_type_index].architecture == ARCHITECTURE_X86) {
+				fprintf(fout, "  family     : %d (%02Xh)\n", data.cpu_types[cpu_type_index].x86.family, data.cpu_types[cpu_type_index].x86.family);
+				fprintf(fout, "  model      : %d (%02Xh)\n", data.cpu_types[cpu_type_index].x86.model, data.cpu_types[cpu_type_index].x86.model);
+				fprintf(fout, "  stepping   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].x86.stepping, data.cpu_types[cpu_type_index].x86.stepping);
+				fprintf(fout, "  ext_family : %d (%02Xh)\n", data.cpu_types[cpu_type_index].x86.ext_family, data.cpu_types[cpu_type_index].x86.ext_family);
+				fprintf(fout, "  ext_model  : %d (%02Xh)\n", data.cpu_types[cpu_type_index].x86.ext_model, data.cpu_types[cpu_type_index].x86.ext_model);
+			}
+			else if (data.cpu_types[cpu_type_index].architecture == ARCHITECTURE_ARM) {
+				fprintf(fout, "  implementer: %d (%02Xh)\n", data.cpu_types[cpu_type_index].arm.implementer, data.cpu_types[cpu_type_index].arm.implementer);
+				fprintf(fout, "  variant    : %d (%02Xh)\n", data.cpu_types[cpu_type_index].arm.variant, data.cpu_types[cpu_type_index].arm.variant);
+				fprintf(fout, "  part_num   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].arm.part_num, data.cpu_types[cpu_type_index].arm.part_num);
+				fprintf(fout, "  revision   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].arm.revision, data.cpu_types[cpu_type_index].arm.revision);
+			}
 			fprintf(fout, "  num_cores  : %d\n", data.cpu_types[cpu_type_index].num_cores);
 			fprintf(fout, "  num_logical: %d\n", data.cpu_types[cpu_type_index].num_logical_cpus);
 			fprintf(fout, "  tot_logical: %d\n", data.cpu_types[cpu_type_index].total_logical_cpus);
 			fprintf(fout, "  affi_mask  : 0x%s\n", affinity_mask_str(&data.cpu_types[cpu_type_index].affinity_mask));
-			fprintf(fout, "  L1 D cache : %d KB\n", data.cpu_types[cpu_type_index].l1_data_cache);
-			fprintf(fout, "  L1 I cache : %d KB\n", data.cpu_types[cpu_type_index].l1_instruction_cache);
-			fprintf(fout, "  L2 cache   : %d KB\n", data.cpu_types[cpu_type_index].l2_cache);
-			fprintf(fout, "  L3 cache   : %d KB\n", data.cpu_types[cpu_type_index].l3_cache);
-			fprintf(fout, "  L4 cache   : %d KB\n", data.cpu_types[cpu_type_index].l4_cache);
-			fprintf(fout, "  L1D assoc. : %d-way\n", data.cpu_types[cpu_type_index].l1_data_assoc);
-			fprintf(fout, "  L1I assoc. : %d-way\n", data.cpu_types[cpu_type_index].l1_instruction_assoc);
-			fprintf(fout, "  L2 assoc.  : %d-way\n", data.cpu_types[cpu_type_index].l2_assoc);
-			fprintf(fout, "  L3 assoc.  : %d-way\n", data.cpu_types[cpu_type_index].l3_assoc);
-			fprintf(fout, "  L4 assoc.  : %d-way\n", data.cpu_types[cpu_type_index].l4_assoc);
-			fprintf(fout, "  L1D line sz: %d bytes\n", data.cpu_types[cpu_type_index].l1_data_cacheline);
-			fprintf(fout, "  L1I line sz: %d bytes\n", data.cpu_types[cpu_type_index].l1_instruction_cacheline);
-			fprintf(fout, "  L2 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l2_cacheline);
-			fprintf(fout, "  L3 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l3_cacheline);
-			fprintf(fout, "  L4 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l4_cacheline);
-			fprintf(fout, "  L1D inst.  : %d\n", data.cpu_types[cpu_type_index].l1_data_instances);
-			fprintf(fout, "  L1I inst.  : %d\n", data.cpu_types[cpu_type_index].l1_instruction_instances);
-			fprintf(fout, "  L2 inst.   : %d\n", data.cpu_types[cpu_type_index].l2_instances);
-			fprintf(fout, "  L3 inst.   : %d\n", data.cpu_types[cpu_type_index].l3_instances);
-			fprintf(fout, "  L4 inst.   : %d\n", data.cpu_types[cpu_type_index].l4_instances);
-			fprintf(fout, "  SSE units  : %d bits (%s)\n", data.cpu_types[cpu_type_index].sse_size, data.cpu_types[cpu_type_index].detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
+			if (data.cpu_types[cpu_type_index].architecture == ARCHITECTURE_X86) {
+				fprintf(fout, "  L1 D cache : %d KB\n", data.cpu_types[cpu_type_index].l1_data_cache);
+				fprintf(fout, "  L1 I cache : %d KB\n", data.cpu_types[cpu_type_index].l1_instruction_cache);
+				fprintf(fout, "  L2 cache   : %d KB\n", data.cpu_types[cpu_type_index].l2_cache);
+				fprintf(fout, "  L3 cache   : %d KB\n", data.cpu_types[cpu_type_index].l3_cache);
+				fprintf(fout, "  L4 cache   : %d KB\n", data.cpu_types[cpu_type_index].l4_cache);
+				fprintf(fout, "  L1D assoc. : %d-way\n", data.cpu_types[cpu_type_index].l1_data_assoc);
+				fprintf(fout, "  L1I assoc. : %d-way\n", data.cpu_types[cpu_type_index].l1_instruction_assoc);
+				fprintf(fout, "  L2 assoc.  : %d-way\n", data.cpu_types[cpu_type_index].l2_assoc);
+				fprintf(fout, "  L3 assoc.  : %d-way\n", data.cpu_types[cpu_type_index].l3_assoc);
+				fprintf(fout, "  L4 assoc.  : %d-way\n", data.cpu_types[cpu_type_index].l4_assoc);
+				fprintf(fout, "  L1D line sz: %d bytes\n", data.cpu_types[cpu_type_index].l1_data_cacheline);
+				fprintf(fout, "  L1I line sz: %d bytes\n", data.cpu_types[cpu_type_index].l1_instruction_cacheline);
+				fprintf(fout, "  L2 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l2_cacheline);
+				fprintf(fout, "  L3 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l3_cacheline);
+				fprintf(fout, "  L4 line sz : %d bytes\n", data.cpu_types[cpu_type_index].l4_cacheline);
+				fprintf(fout, "  L1D inst.  : %d\n", data.cpu_types[cpu_type_index].l1_data_instances);
+				fprintf(fout, "  L1I inst.  : %d\n", data.cpu_types[cpu_type_index].l1_instruction_instances);
+				fprintf(fout, "  L2 inst.   : %d\n", data.cpu_types[cpu_type_index].l2_instances);
+				fprintf(fout, "  L3 inst.   : %d\n", data.cpu_types[cpu_type_index].l3_instances);
+				fprintf(fout, "  L4 inst.   : %d\n", data.cpu_types[cpu_type_index].l4_instances);
+				fprintf(fout, "  SSE units  : %d bits (%s)\n", data.cpu_types[cpu_type_index].x86.sse_size, data.cpu_types[cpu_type_index].detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
+			}
 			fprintf(fout, "  code name  : `%s'\n", data.cpu_types[cpu_type_index].cpu_codename);
 			fprintf(fout, "  features   :");
 			/*

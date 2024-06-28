@@ -12,7 +12,11 @@ if len(args) != 3:
 def readRawFile():
 	rawdata = []
 	for line in open(args[1], "rt").readlines():
-		lookfor = ["basic_cpuid", "ext_cpuid", "intel_fn4", "intel_fn11", "amd_fn8000001dh", "Logical CPU", "CPUID", "CPU#"]
+		lookfor = [
+			"Logical CPU", "CPUID", "CPU#", # common
+			"basic_cpuid", "ext_cpuid", "intel_fn4", "intel_fn11", "amd_fn8000001dh", # x86
+			"arm_midr", "arm_mpidr", "arm_revidr", "arm_id_aa64dfr", "arm_id_aa64isar", "arm_id_aa64mmfr", "arm_id_aa64pfr", "arm_id_aa64smfr", "arm_id_aa64zfr" # ARM
+		]
 		ignore  = ["MSR Register"]
 		good = False
 		for match in lookfor:
@@ -35,6 +39,7 @@ def readResultFile():
 		if s.find(":") == -1:
 			continue
 		numeric = ["family", "model", "stepping", "ext_family", "ext_model",
+				"implementer", "variant", "part_num", "revision",
 				"num_cores", "num_logical",
 				"L1 D cache",  "L1 I cache",  "L2 cache",   "L3 cache",   "L4 cache",
 				"L1D assoc.",  "L1I assoc.",  "L2 assoc.",  "L3 assoc.",  "L4 assoc.",

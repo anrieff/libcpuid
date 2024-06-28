@@ -33,6 +33,19 @@ if(HAVE_POPCOUNT64)
   add_definitions(-DHAVE_POPCOUNT64)
 endif(HAVE_POPCOUNT64)
 
+# check if auxiliary vector is available
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  check_symbol_exists(getauxval "sys/auxv.h" HAVE_GETAUXVAL)
+  if(HAVE_GETAUXVAL)
+    add_definitions(-DHAVE_GETAUXVAL)
+  endif(HAVE_GETAUXVAL)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+  check_symbol_exists(elf_aux_info "sys/auxv.h" HAVE_ELF_AUX_INFO)
+  if(HAVE_ELF_AUX_INFO)
+    add_definitions(-DHAVE_ELF_AUX_INFO)
+  endif(HAVE_ELF_AUX_INFO)
+endif()
+
 # Global variables
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
@@ -42,7 +55,7 @@ if(UNIX)
   set(exec_prefix "\${prefix}")
   set(libdir "\${exec_prefix}/lib")
   set(includedir "\${prefix}/include")
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -Wuninitialized -Wstrict-prototypes -Wformat -Wformat-security -Wunused-parameter")
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -Wuninitialized -Wstrict-prototypes -Wformat -Wformat-security -Wunused-parameter -Wno-deprecated-declarations")
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/libcpuid.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/libcpuid.pc" ESCAPE_QUOTES
                  @ONLY)
   install(FILES "${PROJECT_BINARY_DIR}/libcpuid.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")

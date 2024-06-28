@@ -97,16 +97,16 @@ static int score(const struct match_entry_t* entry, const struct cpu_id_t* data,
 {
 	int i, tmp, res = 0;
 	const struct { const char *field; int entry; int data; int score; } array[] = {
-		{ "family",     entry->family,     data->family,     2 },
-		{ "model",      entry->model,      data->model,      2 },
-		{ "stepping",   entry->stepping,   data->stepping,   2 },
-		{ "ext_family", entry->ext_family, data->ext_family, 2 },
-		{ "ext_model",  entry->ext_model,  data->ext_model,  2 },
-		{ "ncores",     entry->ncores,     data->num_cores,  2 },
-		{ "l2cache",    entry->l2cache,    data->l2_cache,   1 },
-		{ "l3cache",    entry->l3cache,    data->l3_cache,   1 },
-		{ "brand_code", entry->brand_code, brand_code,       2 },
-		{ "model_code", entry->model_code, model_code,       2 },
+		{ "family",     entry->family,     data->x86.family,     2 },
+		{ "model",      entry->model,      data->x86.model,      2 },
+		{ "stepping",   entry->stepping,   data->x86.stepping,   2 },
+		{ "ext_family", entry->ext_family, data->x86.ext_family, 2 },
+		{ "ext_model",  entry->ext_model,  data->x86.ext_model,  2 },
+		{ "ncores",     entry->ncores,     data->num_cores,      2 },
+		{ "l2cache",    entry->l2cache,    data->l2_cache,       1 },
+		{ "l3cache",    entry->l3cache,    data->l3_cache,       1 },
+		{ "brand_code", entry->brand_code, brand_code,           2 },
+		{ "model_code", entry->model_code, model_code,           2 },
 	};
 	for (i = 0; i < sizeof(array) / sizeof(array[0]); i++) {
 		if(array[i].entry == array[i].data) {
@@ -130,8 +130,8 @@ int match_cpu_codename(const struct match_entry_t* matchtable, int count,
 	int i, t;
 
 	debugf(3, "Matching cpu f:%d, m:%d, s:%d, xf:%d, xm:%d, ncore:%d, l2:%d, bcode:%d, bits:%llu, code:%d\n",
-		data->family, data->model, data->stepping, data->ext_family,
-		data->ext_model, data->num_cores, data->l2_cache, brand_code, (unsigned long long) bits, model_code);
+		data->x86.family, data->x86.model, data->x86.stepping, data->x86.ext_family,
+		data->x86.ext_model, data->num_cores, data->l2_cache, brand_code, (unsigned long long) bits, model_code);
 
 	for (i = 0; i < count; i++) {
 		t = score(&matchtable[i], data, brand_code, bits, model_code);
