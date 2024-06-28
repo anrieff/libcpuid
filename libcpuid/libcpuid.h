@@ -116,6 +116,21 @@
 /* Some limits and other constants */
 #include "libcpuid_constants.h"
 
+#ifndef LIBCPUID_DEPRECATED
+#  if defined (__cplusplus) && (__cplusplus >= 201402) /* C++14 or greater */
+#    define LIBCPUID_DEPRECATED(message) [[deprecated(message)]]
+#  elif (defined(GNUC) && (GNUC > 4 || (GNUC == 4 && GNUC_MINOR >= 5))) || defined(__clang__)
+#    define LIBCPUID_DEPRECATED(message) __attribute__((deprecated(message)))
+#  elif defined(__GNUC__) && (__GNUC__ >= 3)
+#    define LIBCPUID_DEPRECATED(message) __attribute__((deprecated))
+#  elif defined(_MSC_VER)
+#    define LIBCPUID_DEPRECATED(message) __declspec(deprecated(message))
+#  else
+#    pragma message("WARNING: You need to implement LIBCPUID_DEPRECATED for this compiler")
+#    define LIBCPUID_DEPRECATED(message)
+#  endif
+#endif /* LIBCPUID_DEPRECATED */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -496,24 +511,28 @@ struct cpu_id_t {
 	 * CPU family (BaseFamily[3:0])
 	 * @deprecated replaced by \ref x86_id_t::family (prefix member with `x86.`, e.g. `id.x86.family`)
 	 */
+	LIBCPUID_DEPRECATED("replace with '.x86.family' in your code to fix the warning")
 	int32_t family;
 
 	/**
 	 * CPU model (BaseModel[3:0])
 	 * @deprecated replaced by \ref x86_id_t::model (prefix member with `x86.`, e.g. `id.x86.model`)
 	 */
+	LIBCPUID_DEPRECATED("replace with '.x86.model' in your code to fix the warning")
 	int32_t model;
 
 	/**
 	 * CPU stepping
 	 * @deprecated replaced by \ref x86_id_t::stepping (prefix member with `x86.`, e.g. `id.x86.stepping`)
 	 */
+	LIBCPUID_DEPRECATED("replace with '.x86.stepping' in your code to fix the warning")
 	int32_t stepping;
 
 	/**
 	 * CPU display ("true") family (computed as BaseFamily[3:0]+ExtendedFamily[7:0])
 	 * @deprecated replaced by \ref x86_id_t::ext_family (prefix member with `x86.`, e.g. `id.x86.ext_family`)
 	 */
+	LIBCPUID_DEPRECATED("replace with '.x86.ext_family' in your code to fix the warning")
 	int32_t ext_family;
 
 	/**
@@ -521,6 +540,7 @@ struct cpu_id_t {
 	 * For detailed discussion about what BaseModel / ExtendedModel / Model are, see Github issue #150.
 	 * @deprecated replaced by \ref x86_id_t::ext_model (prefix member with `x86.`, e.g. `id.x86.ext_model`)
 	 */
+	LIBCPUID_DEPRECATED("replace with '.x86.ext_model' in your code to fix the warning")
 	int32_t ext_model;
 
 	/**
@@ -587,6 +607,7 @@ struct cpu_id_t {
 	/** Cache associativity for the L1 data cache. -1 if undetermined
 	 * @deprecated replaced by \ref cpu_id_t::l1_data_assoc
 	 */
+	LIBCPUID_DEPRECATED("replace with 'l1_data_assoc' in your code to fix the warning")
 	int32_t l1_assoc;
 
 	/** Cache associativity for the L1 data cache. -1 if undetermined */
@@ -607,6 +628,7 @@ struct cpu_id_t {
 	/** Cache-line size for L1 data cache. -1 if undetermined
 	 * @deprecated replaced by \ref cpu_id_t::l1_data_cacheline
 	 */
+	LIBCPUID_DEPRECATED("replace with 'l1_data_cacheline' in your code to fix the warning")
 	int32_t l1_cacheline;
 
 	/** Cache-line size for L1 data cache. -1 if undetermined */
@@ -659,6 +681,7 @@ struct cpu_id_t {
 	 * SSE execution unit size (64 or 128; -1 if N/A)
 	 * @deprecated replaced by \ref x86_id_t::sse_size (prefix member with `x86.`, e.g. `id.x86.sse_size`)
 	 */
+	LIBCPUID_DEPRECATED("replace with '.x86.sse_size' in your code to fix the warning")
 	int32_t sse_size;
 
 	/**
@@ -672,6 +695,7 @@ struct cpu_id_t {
 	 * contains information about SGX features if the processor, if present
 	 * @deprecated replaced by \ref x86_id_t::sgx (prefix member with `x86.`, e.g. `id.x86.sgx`)
 	 */
+	LIBCPUID_DEPRECATED("replace with '.x86.sgx' in your code to fix the warning")
 	struct cpu_sgx_t sgx;
 
 	/** bitmask of the affinity ids this processor type is occupying */
