@@ -313,6 +313,12 @@ struct cpu_raw_data_t {
 	 *  ecx = 0, 1, 2... */
 	uint32_t amd_fn8000001dh[MAX_AMDFN8000001DH_LEVEL][NUM_REGS];
 
+	/** when the CPU is AMD and supports leaf 80000026h
+	 * (Extended CPU Topology leaf)
+	 * this stores the result of CPUID with eax = 80000026h and
+	 *  ecx = 0, 1, 2... */
+	uint32_t amd_fn80000026h[MAX_AMDFN80000026H_LEVEL][NUM_REGS];
+
 	/** when then CPU is ARM-based and supports MIDR
 	 * (Main ID Register) */
 	uint64_t arm_midr;

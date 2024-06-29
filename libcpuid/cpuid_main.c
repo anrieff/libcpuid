@@ -650,6 +650,10 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 					fprintf(f, "amd_fn8000001dh[%d]=%08x %08x %08x %08x\n", i,
 						raw_ptr->amd_fn8000001dh[i][EAX], raw_ptr->amd_fn8000001dh[i][EBX],
 						raw_ptr->amd_fn8000001dh[i][ECX], raw_ptr->amd_fn8000001dh[i][EDX]);
+				for (i = 0; i < MAX_AMDFN80000026H_LEVEL; i++)
+					fprintf(f, "amd_fn80000026h[%d]=%08x %08x %08x %08x\n", i,
+						raw_ptr->amd_fn80000026h[i][EAX], raw_ptr->amd_fn80000026h[i][EBX],
+						raw_ptr->amd_fn80000026h[i][ECX], raw_ptr->amd_fn80000026h[i][EDX]);
 				break;
 			case ARCHITECTURE_ARM:
 				fprintf(f, "arm_midr=%016lx\n", raw_ptr->arm_midr);
@@ -778,6 +782,9 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 			else if ((sscanf(line, "amd_fn8000001dh[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_AMDFN8000001DH_LEVEL)) {
 				RAW_ASSIGN_LINE_X86(raw_ptr->amd_fn8000001dh[i]);
 			}
+			else if ((sscanf(line, "amd_fn80000026h[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_AMDFN80000026H_LEVEL)) {
+				RAW_ASSIGN_LINE_X86(raw_ptr->amd_fn80000026h[i]);
+			}
 			else if ((sscanf(line, "arm_midr=%lx", &arm_reg) >= 1)) {
 				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_midr);
 			}
@@ -840,6 +847,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 					case 0x00000012: RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn12h[i]);     break;
 					case 0x00000014: RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn14h[i]);     break;
 					case 0x8000001D: RAW_ASSIGN_LINE_X86(raw_ptr->amd_fn8000001dh[i]); break;
+					case 0x80000026: RAW_ASSIGN_LINE_X86(raw_ptr->amd_fn80000026h[i]); break;
 					default: break;
 				}
 			}
@@ -1244,6 +1252,12 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 		data->amd_fn8000001dh[i][EAX] = 0x8000001d;
 		data->amd_fn8000001dh[i][ECX] = i;
 		cpu_exec_cpuid_ext(data->amd_fn8000001dh[i]);
+	}
+	for (i = 0; i < MAX_AMDFN80000026H_LEVEL; i++) {
+		memset(data->amd_fn80000026h[i], 0, sizeof(data->amd_fn80000026h[i]));
+		data->amd_fn80000026h[i][EAX] = 0x80000026;
+		data->amd_fn80000026h[i][ECX] = i;
+		cpu_exec_cpuid_ext(data->amd_fn80000026h[i]);
 	}
 #elif defined(PLATFORM_ARM)
 	/* We cannot support ARM CPUs running in 32-bit mode, because the Main ID Register is accessible only in privileged modes
