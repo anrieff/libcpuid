@@ -413,3 +413,104 @@ void decode_deterministic_cache_info_x86(uint32_t cache_regs[][NUM_REGS],
 		assign_cache_data(1, type, size, ways, linesize, data);
 	}
 }
+
+void decode_architecture_version_x86(struct cpu_id_t* data)
+{
+	bool is_compliant, has_all_features;
+	int i, j;
+	cpu_feature_level_t feature_level = FEATURE_LEVEL_UNKNOWN;
+
+	const struct { const int family; const cpu_feature_level_t feature_level; }
+	architecture_matchtable_ia_32[] = {
+		{ 4,  CPU_FEATURE_LEVEL_I486 },
+		{ 5,  CPU_FEATURE_LEVEL_I586 },
+		{ 6,  CPU_FEATURE_LEVEL_I686  },
+		{ 15, CPU_FEATURE_LEVEL_I686  }, // Intel Pentium 4, AMD K8
+	};
+
+	const cpu_feature_t architecture_x86_64_v1[] = {
+		CPU_FEATURE_CMOV,
+		CPU_FEATURE_CX8,
+		CPU_FEATURE_FPU,
+		CPU_FEATURE_FXSR,
+		CPU_FEATURE_MMX,
+		CPU_FEATURE_SSE,
+		CPU_FEATURE_SSE2,
+		-1
+	};
+
+	const cpu_feature_t architecture_x86_64_v2[] = {
+		CPU_FEATURE_CX16,
+		CPU_FEATURE_LAHF_LM,
+		CPU_FEATURE_POPCNT,
+		CPU_FEATURE_PNI,
+		CPU_FEATURE_SSE4_1,
+		CPU_FEATURE_SSE4_2,
+		CPU_FEATURE_SSSE3,
+		-1
+	};
+
+	const cpu_feature_t architecture_x86_64_v3[] = {
+		CPU_FEATURE_AVX,
+		CPU_FEATURE_AVX2,
+		CPU_FEATURE_BMI1,
+		CPU_FEATURE_BMI2,
+		CPU_FEATURE_F16C,
+		CPU_FEATURE_FMA3,
+		CPU_FEATURE_ABM,
+		CPU_FEATURE_MOVBE,
+		CPU_FEATURE_OSXSAVE,
+		-1
+	};
+
+	const cpu_feature_t architecture_x86_64_v4[] = {
+		CPU_FEATURE_AVX512F,
+		CPU_FEATURE_AVX512BW,
+		CPU_FEATURE_AVX512CD,
+		CPU_FEATURE_AVX512DQ,
+		CPU_FEATURE_AVX512VL,
+		-1
+	};
+
+	const struct { const cpu_feature_t* features_array; const cpu_feature_level_t feature_level; }
+	architecture_matchtable_x86_64[] = {
+		{ architecture_x86_64_v1, CPU_FEATURE_LEVEL_X86_64_V1 },
+		{ architecture_x86_64_v2, CPU_FEATURE_LEVEL_X86_64_V2 },
+		{ architecture_x86_64_v3, CPU_FEATURE_LEVEL_X86_64_V3 },
+		{ architecture_x86_64_v4, CPU_FEATURE_LEVEL_X86_64_V4 },
+	};
+
+	if (!data->flags[CPU_FEATURE_LM]) {
+		/* Check Intel Architecture, 32-bit */
+		for (i = 0; i < COUNT_OF(architecture_matchtable_ia_32); i++) {
+			is_compliant = (data->x86.family == architecture_matchtable_ia_32[i].family);
+			debugf(3, "Check if CPU is %s compliant: %s for family %i\n", cpu_feature_level_str(architecture_matchtable_ia_32[i].feature_level), is_compliant ? "yes" : "no", architecture_matchtable_ia_32[i].family);
+			if (is_compliant) {
+				feature_level = architecture_matchtable_ia_32[i].feature_level;
+				break;
+			}
+		}
+	}
+	else {
+		/* Check Intel Architecture, 64-bit */
+		for (i = 0; i < COUNT_OF(architecture_matchtable_x86_64); i++) {
+			debugf(3, "Check if CPU is %s compliant:\n", cpu_feature_level_str(architecture_matchtable_x86_64[i].feature_level));
+			has_all_features = true;
+			for (j = 0; architecture_matchtable_x86_64[i].features_array[j] != -1; j++) {
+				is_compliant     = data->flags[ architecture_matchtable_x86_64[i].features_array[j] ];
+				has_all_features = has_all_features && is_compliant;
+				debugf(3, " - feature %s is %s\n", cpu_feature_str(architecture_matchtable_x86_64[i].features_array[j]), is_compliant ? "present" : "absent");
+			}
+			if (is_compliant)
+				feature_level = architecture_matchtable_x86_64[i].feature_level;
+			else
+				break;
+		}
+	}
+
+	data->feature_level = feature_level;
+	if (feature_level == FEATURE_LEVEL_UNKNOWN)
+		warnf("Warning: CPU with CPUID signature %02X_%02XH has an unkown architecture version (LM=%i).\n", data->x86.ext_family, data->x86.ext_model, data->flags[CPU_FEATURE_LM]);
+	else
+		debugf(2, "x86 architecture version is %s\n", cpu_feature_level_str(feature_level));
+}

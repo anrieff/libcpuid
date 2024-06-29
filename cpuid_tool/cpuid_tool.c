@@ -121,7 +121,7 @@ int need_input = 0,
     need_hypervisor = 0,
     need_identify = 0;
 
-#define MAX_REQUESTS 32
+#define MAX_REQUESTS 64
 int num_requests = 0;
 output_data_switch requests[MAX_REQUESTS];
 
@@ -866,7 +866,7 @@ int main(int argc, char** argv)
 		}
 
 		for (cpu_type_index = 0; cpu_type_index < data.num_cpu_types; cpu_type_index++) {
-			if (raw_array.with_affinity)
+			if (raw_array.with_affinity && (cpu_type_index > 0))
 				fprintf(fout, "--------------------------------------------------------------------------------\n");
 			for (i = 0; i < num_requests; i++)
 				print_info(requests[i], &data.cpu_types[cpu_type_index]);

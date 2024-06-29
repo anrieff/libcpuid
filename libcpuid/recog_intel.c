@@ -1100,6 +1100,7 @@ int cpuid_identify_intel(struct cpu_raw_data_t* raw, struct cpu_id_t* data, stru
 	if ((raw->basic_cpuid[0][EAX] < 11) || (decode_intel_extended_topology(raw, data) == 0))
 		decode_number_of_cores_x86(raw, data);
 	data->purpose = cpuid_identify_purpose_intel(raw);
+	decode_architecture_version_x86(data);
 
 	brand = get_brand_code_and_bits(data);
 	model_code = get_model_code(data);

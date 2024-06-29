@@ -190,7 +190,17 @@ typedef enum {
  * @brief CPU architecture
  */
 typedef enum {
-	/* TODO: add x86 levels */
+	/* x86: https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels */
+	CPU_FEATURE_LEVEL_I386, /*!< i386 */
+	CPU_FEATURE_LEVEL_I486, /*!< i486 */
+	CPU_FEATURE_LEVEL_I586, /*!< i586 */
+	CPU_FEATURE_LEVEL_I686, /*!< i686 */
+	CPU_FEATURE_LEVEL_X86_64_V1, /*!< x86-64-v1 */
+	CPU_FEATURE_LEVEL_X86_64_V2, /*!< x86-64-v2 */
+	CPU_FEATURE_LEVEL_X86_64_V3, /*!< x86-64-v3 */
+	CPU_FEATURE_LEVEL_X86_64_V4, /*!< x86-64-v4 */
+
+	/* ARM: https://en.wikipedia.org/wiki/ARM_architecture_family#Cores */
 	FEATURE_LEVEL_ARM_V1 = 100, /*!< ARMv1 */
 	FEATURE_LEVEL_ARM_V2, /*!< ARMv2 */
 	FEATURE_LEVEL_ARM_V3, /*!< ARMv3 */
