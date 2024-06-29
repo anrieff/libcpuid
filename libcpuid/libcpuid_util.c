@@ -422,10 +422,11 @@ void decode_architecture_version_x86(struct cpu_id_t* data)
 
 	const struct { const int family; const cpu_feature_level_t feature_level; }
 	architecture_matchtable_ia_32[] = {
-		{ 4,  CPU_FEATURE_LEVEL_I486 },
-		{ 5,  CPU_FEATURE_LEVEL_I586 },
-		{ 6,  CPU_FEATURE_LEVEL_I686  },
-		{ 15, CPU_FEATURE_LEVEL_I686  }, // Intel Pentium 4, AMD K8
+		{  3, CPU_FEATURE_LEVEL_I386 },
+		{  4, CPU_FEATURE_LEVEL_I486 },
+		{  5, CPU_FEATURE_LEVEL_I586 },
+		{  6, CPU_FEATURE_LEVEL_I686 },
+		{ 15, CPU_FEATURE_LEVEL_I686 }, // Intel Pentium 4, AMD K8
 	};
 
 	const cpu_feature_t architecture_x86_64_v1[] = {

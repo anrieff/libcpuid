@@ -60,7 +60,7 @@ for fn in glob.glob("%s/*.c" % sys.argv[1]):
 	line = 1
 	nfeat = 0
 	for s in f.readlines():
-		if rexp.match(s):
+		if rexp.match(s) and "CPU_FEATURE_LEVEL_" not in s:
 			nfeat += 1
 			res = rexp.findall(s)
 			assert len(res) == 1, "Too many matches"
