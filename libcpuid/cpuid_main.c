@@ -1381,6 +1381,11 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 	}
 
 #ifndef LIBCPUID_DISABLE_DEPRECATED
+#  if defined(__GNUC__) || defined(GNUC)
+#    pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#  elif defined(__clang__)
+#    pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#  endif
 	/* Backward compatibility */
 	/* - Deprecated since v0.5.0 */
 	data->l1_assoc     = data->l1_data_assoc;
