@@ -734,13 +734,13 @@ static int msr_platform_info_supported(struct msr_info_t *info)
 
 	if(info->id->vendor == VENDOR_INTEL) {
 		for(i = 0; i < COUNT_OF(msr_platform_info); i++) {
-			if((info->id->ext_family == msr_platform_info[i].ext_family) && (info->id->ext_model == msr_platform_info[i].ext_model)) {
-				debugf(2, "Intel CPU with CPUID signature %02X_%02XH supports MSR_PLATFORM_INFO.\n", info->id->ext_family, info->id->ext_model);
+			if((info->id->x86.ext_family == msr_platform_info[i].ext_family) && (info->id->x86.ext_model == msr_platform_info[i].ext_model)) {
+				debugf(2, "Intel CPU with CPUID signature %02X_%02XH supports MSR_PLATFORM_INFO.\n", info->id->x86.ext_family, info->id->x86.ext_model);
 				supported = 1;
 				return supported;
 			}
 		}
-		debugf(2, "Intel CPU with CPUID signature %02X_%02XH does not support MSR_PLATFORM_INFO.\n", info->id->ext_family, info->id->ext_model);
+		debugf(2, "Intel CPU with CPUID signature %02X_%02XH does not support MSR_PLATFORM_INFO.\n", info->id->x86.ext_family, info->id->x86.ext_model);
 	}
 
 	supported = 0;
@@ -830,13 +830,13 @@ static int msr_perf_status_supported(struct msr_info_t *info)
 
 	if(info->id->vendor == VENDOR_INTEL) {
 		for(i = 0; i < COUNT_OF(msr_perf_status); i++) {
-			if((info->id->ext_family == msr_perf_status[i].ext_family) && (info->id->ext_model == msr_perf_status[i].ext_model)) {
-				debugf(2, "Intel CPU with CPUID signature %02X_%02XH supports MSR_PERF_STATUS.\n", info->id->ext_family, info->id->ext_model);
+			if((info->id->x86.ext_family == msr_perf_status[i].ext_family) && (info->id->x86.ext_model == msr_perf_status[i].ext_model)) {
+				debugf(2, "Intel CPU with CPUID signature %02X_%02XH supports MSR_PERF_STATUS.\n", info->id->x86.ext_family, info->id->x86.ext_model);
 				supported = 1;
 				return supported;
 			}
 		}
-		debugf(2, "Intel CPU with CPUID signature %02X_%02XH does not support MSR_PERF_STATUS.\n", info->id->ext_family, info->id->ext_model);
+		debugf(2, "Intel CPU with CPUID signature %02X_%02XH does not support MSR_PERF_STATUS.\n", info->id->x86.ext_family, info->id->x86.ext_model);
 	}
 
 	supported = 0;

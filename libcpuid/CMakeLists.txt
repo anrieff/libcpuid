@@ -20,6 +20,12 @@ if("${MSVC_CXX_ARCHITECTURE_ID}" MATCHES "x64")
   list(APPEND cpuid_sources masm-x64.asm)
 endif()
 
+option(SUPPORT_DEPRECATED "Build support of deprecated attributes" ON)
+if(NOT SUPPORT_DEPRECATED)
+  message(AUTHOR_WARNING "Deprecated attributes will not be available, the library will be not backward compatible")
+  add_compile_definitions(LIBCPUID_DISABLE_DEPRECATED)
+endif(NOT SUPPORT_DEPRECATED)
+
 add_library(cpuid ${cpuid_sources})
 set_property(TARGET cpuid PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS ON)
 target_include_directories(cpuid SYSTEM PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)

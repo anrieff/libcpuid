@@ -80,8 +80,8 @@ static void cpu_id_t_constructor(struct cpu_id_t* id)
 	id->feature_level = FEATURE_LEVEL_UNKNOWN;
 	id->vendor = VENDOR_UNKNOWN;
 	id->l1_data_cache = id->l1_instruction_cache = id->l2_cache = id->l3_cache = id->l4_cache = -1;
-	id->l1_assoc = id->l1_data_assoc = id->l1_instruction_assoc = id->l2_assoc = id->l3_assoc = id->l4_assoc = -1;
-	id->l1_cacheline = id->l1_data_cacheline = id->l1_instruction_cacheline = id->l2_cacheline = id->l3_cacheline = id->l4_cacheline = -1;
+	id->l1_data_assoc = id->l1_instruction_assoc = id->l2_assoc = id->l3_assoc = id->l4_assoc = -1;
+	id->l1_data_cacheline = id->l1_instruction_cacheline = id->l2_cacheline = id->l3_cacheline = id->l4_cacheline = -1;
 	id->l1_data_instances = id->l1_instruction_instances = id->l2_instances = id->l3_instances = id->l4_instances = -1;
 	id->x86.sse_size = -1;
 	init_affinity_mask(&id->affinity_mask);
@@ -1376,8 +1376,11 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 			r = cpuid_identify_arm(raw, data);
 			break;
 		default:
-			return cpuid_set_error(ERR_CPU_UNKN);
+			r = ERR_CPU_UNKN;
+			break;
 	}
+
+#ifndef LIBCPUID_DISABLE_DEPRECATED
 	/* Backward compatibility */
 	/* - Deprecated since v0.5.0 */
 	data->l1_assoc     = data->l1_data_assoc;
@@ -1390,6 +1393,7 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 	data->ext_model  = data->x86.ext_model;
 	data->sse_size   = data->x86.sse_size;
 	data->sgx        = data->x86.sgx;
+#endif /* LIBCPUID_DISABLE_DEPRECATED */
 
 	return cpuid_set_error(r);
 }

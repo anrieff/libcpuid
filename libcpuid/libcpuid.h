@@ -523,6 +523,7 @@ struct cpu_id_t {
 	 */
 	uint8_t flags[CPU_FLAGS_MAX];
 
+#ifndef LIBCPUID_DISABLE_DEPRECATED
 	/**
 	 * CPU family (BaseFamily[3:0])
 	 * @deprecated replaced by \ref x86_id_t::family (prefix member with `x86.`, e.g. `id.x86.family`)
@@ -558,6 +559,7 @@ struct cpu_id_t {
 	 */
 	LIBCPUID_DEPRECATED("replace with '.x86.ext_model' in your code to fix the warning")
 	int32_t ext_model;
+#endif /* LIBCPUID_DISABLE_DEPRECATED */
 
 	/**
 	 * contains architecture specific info.
@@ -620,11 +622,13 @@ struct cpu_id_t {
 	/** L4 cache size in KB. Zero on most systems */
 	int32_t l4_cache;
 
+#ifndef LIBCPUID_DISABLE_DEPRECATED
 	/** Cache associativity for the L1 data cache. -1 if undetermined
 	 * @deprecated replaced by \ref cpu_id_t::l1_data_assoc
 	 */
 	LIBCPUID_DEPRECATED("replace with 'l1_data_assoc' in your code to fix the warning")
 	int32_t l1_assoc;
+#endif /* LIBCPUID_DISABLE_DEPRECATED */
 
 	/** Cache associativity for the L1 data cache. -1 if undetermined */
 	int32_t l1_data_assoc;
@@ -641,11 +645,13 @@ struct cpu_id_t {
 	/** Cache associativity for the L4 cache. -1 if undetermined */
 	int32_t l4_assoc;
 
+#ifndef LIBCPUID_DISABLE_DEPRECATED
 	/** Cache-line size for L1 data cache. -1 if undetermined
 	 * @deprecated replaced by \ref cpu_id_t::l1_data_cacheline
 	 */
 	LIBCPUID_DEPRECATED("replace with 'l1_data_cacheline' in your code to fix the warning")
 	int32_t l1_cacheline;
+#endif /* LIBCPUID_DISABLE_DEPRECATED */
 
 	/** Cache-line size for L1 data cache. -1 if undetermined */
 	int32_t l1_data_cacheline;
