@@ -491,33 +491,47 @@ struct msr_driver_t* cpu_msr_driver_open(void)
 
 struct msr_driver_t* cpu_msr_driver_open_core(unsigned core_num)
 {
+	UNUSED(core_num);
 	cpuid_set_error(ERR_NOT_IMP);
 	return NULL;
 }
 
 int cpu_rdmsr(struct msr_driver_t* driver, uint32_t msr_index, uint64_t* result)
 {
+	UNUSED(driver);
+	UNUSED(msr_index);
+	UNUSED(result);
 	return cpuid_set_error(ERR_NOT_IMP);
 }
 
 int cpu_msr_driver_close(struct msr_driver_t* driver)
 {
+	UNUSED(driver);
 	return cpuid_set_error(ERR_NOT_IMP);
 }
 
 int cpu_rdmsr_range(struct msr_driver_t* handle, uint32_t msr_index, uint8_t highbit,
                     uint8_t lowbit, uint64_t* result)
 {
+	UNUSED(handle);
+	UNUSED(msr_index);
+	UNUSED(highbit);
+	UNUSED(lowbit);
+	UNUSED(result);
 	return cpuid_set_error(ERR_NOT_IMP);
 }
 
 int cpu_msrinfo(struct msr_driver_t* driver, cpu_msrinfo_request_t which)
 {
+	UNUSED(driver);
+	UNUSED(which);
 	return cpuid_set_error(ERR_NOT_IMP);
 }
 
 int msr_serialize_raw_data(struct msr_driver_t* handle, const char* filename)
 {
+	UNUSED(handle);
+	UNUSED(filename);
 	return cpuid_set_error(ERR_NOT_IMP);
 }
 

@@ -38,6 +38,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <inttypes.h>
 #ifdef HAVE_GETAUXVAL
 # include <sys/auxv.h>
 #endif /* HAVE_GETAUXVAL */
@@ -63,7 +64,7 @@ int cpuid_set_error(cpu_error_t err)
 	return (int) err;
 }
 
-int cpuid_get_error()
+int cpuid_get_error(void)
 {
 	return _libcpuid_errno;
 }
@@ -617,60 +618,60 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 	while (!end_loop) {
 		if (use_raw_array) {
 			debugf(2, "Writing raw dump for logical CPU %i\n", logical_cpu);
-			fprintf(f, "\n_________________ Logical CPU #%i _________________\n", logical_cpu);
+			fprintf(f, "\n_________________ Logical CPU #%" PRIi16 " _________________\n", logical_cpu);
 			raw_ptr = &raw_array->raw[logical_cpu];
 		}
 		switch (architecture) {
 			case ARCHITECTURE_X86:
 				for (i = 0; i < MAX_CPUID_LEVEL; i++)
-					fprintf(f, "basic_cpuid[%d]=%08x %08x %08x %08x\n", i,
+					fprintf(f, "basic_cpuid[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
 						raw_ptr->basic_cpuid[i][EAX], raw_ptr->basic_cpuid[i][EBX],
 						raw_ptr->basic_cpuid[i][ECX], raw_ptr->basic_cpuid[i][EDX]);
 				for (i = 0; i < MAX_EXT_CPUID_LEVEL; i++)
-					fprintf(f, "ext_cpuid[%d]=%08x %08x %08x %08x\n", i,
+					fprintf(f, "ext_cpuid[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
 						raw_ptr->ext_cpuid[i][EAX], raw_ptr->ext_cpuid[i][EBX],
 						raw_ptr->ext_cpuid[i][ECX], raw_ptr->ext_cpuid[i][EDX]);
 				for (i = 0; i < MAX_INTELFN4_LEVEL; i++)
-					fprintf(f, "intel_fn4[%d]=%08x %08x %08x %08x\n", i,
+					fprintf(f, "intel_fn4[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
 						raw_ptr->intel_fn4[i][EAX], raw_ptr->intel_fn4[i][EBX],
 						raw_ptr->intel_fn4[i][ECX], raw_ptr->intel_fn4[i][EDX]);
 				for (i = 0; i < MAX_INTELFN11_LEVEL; i++)
-					fprintf(f, "intel_fn11[%d]=%08x %08x %08x %08x\n", i,
+					fprintf(f, "intel_fn11[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
 						raw_ptr->intel_fn11[i][EAX], raw_ptr->intel_fn11[i][EBX],
 						raw_ptr->intel_fn11[i][ECX], raw_ptr->intel_fn11[i][EDX]);
 				for (i = 0; i < MAX_INTELFN12H_LEVEL; i++)
-					fprintf(f, "intel_fn12h[%d]=%08x %08x %08x %08x\n", i,
+					fprintf(f, "intel_fn12h[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
 						raw_ptr->intel_fn12h[i][EAX], raw_ptr->intel_fn12h[i][EBX],
 						raw_ptr->intel_fn12h[i][ECX], raw_ptr->intel_fn12h[i][EDX]);
 				for (i = 0; i < MAX_INTELFN14H_LEVEL; i++)
-					fprintf(f, "intel_fn14h[%d]=%08x %08x %08x %08x\n", i,
+					fprintf(f, "intel_fn14h[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
 						raw_ptr->intel_fn14h[i][EAX], raw_ptr->intel_fn14h[i][EBX],
 						raw_ptr->intel_fn14h[i][ECX], raw_ptr->intel_fn14h[i][EDX]);
 				for (i = 0; i < MAX_AMDFN8000001DH_LEVEL; i++)
-					fprintf(f, "amd_fn8000001dh[%d]=%08x %08x %08x %08x\n", i,
+					fprintf(f, "amd_fn8000001dh[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
 						raw_ptr->amd_fn8000001dh[i][EAX], raw_ptr->amd_fn8000001dh[i][EBX],
 						raw_ptr->amd_fn8000001dh[i][ECX], raw_ptr->amd_fn8000001dh[i][EDX]);
 				for (i = 0; i < MAX_AMDFN80000026H_LEVEL; i++)
-					fprintf(f, "amd_fn80000026h[%d]=%08x %08x %08x %08x\n", i,
+					fprintf(f, "amd_fn80000026h[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
 						raw_ptr->amd_fn80000026h[i][EAX], raw_ptr->amd_fn80000026h[i][EBX],
 						raw_ptr->amd_fn80000026h[i][ECX], raw_ptr->amd_fn80000026h[i][EDX]);
 				break;
 			case ARCHITECTURE_ARM:
-				fprintf(f, "arm_midr=%016lx\n", raw_ptr->arm_midr);
-				fprintf(f, "arm_mpidr=%016lx\n", raw_ptr->arm_mpidr);
-				fprintf(f, "arm_revidr=%016lx\n", raw_ptr->arm_revidr);
+				fprintf(f, "arm_midr=%" PRIx64 "\n", raw_ptr->arm_midr);
+				fprintf(f, "arm_mpidr=%" PRIx64 "\n", raw_ptr->arm_mpidr);
+				fprintf(f, "arm_revidr=%" PRIx64 "\n", raw_ptr->arm_revidr);
 				for (i = 0; i < MAX_ARM_ID_AA64DFR_REGS; i++)
-					fprintf(f, "arm_id_aa64dfr%d=%016lx\n", i, raw_ptr->arm_id_aa64dfr[i]);
+					fprintf(f, "arm_id_aa64dfr%d=%" PRIx64 "\n", i, raw_ptr->arm_id_aa64dfr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64ISAR_REGS; i++)
-					fprintf(f, "arm_id_aa64isar%d=%016lx\n", i, raw_ptr->arm_id_aa64isar[i]);
+					fprintf(f, "arm_id_aa64isar%d=%" PRIx64 "\n", i, raw_ptr->arm_id_aa64isar[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64MMFR_REGS; i++)
-					fprintf(f, "arm_id_aa64mmfr%d=%016lx\n", i, raw_ptr->arm_id_aa64mmfr[i]);
+					fprintf(f, "arm_id_aa64mmfr%d=%" PRIx64 "\n", i, raw_ptr->arm_id_aa64mmfr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64PFR_REGS; i++)
-					fprintf(f, "arm_id_aa64pfr%d=%016lx\n", i, raw_ptr->arm_id_aa64pfr[i]);
+					fprintf(f, "arm_id_aa64pfr%d=%" PRIx64 "\n", i, raw_ptr->arm_id_aa64pfr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64SMFR_REGS; i++)
-					fprintf(f, "arm_id_aa64smfr%d=%016lx\n", i, raw_ptr->arm_id_aa64smfr[i]);
+					fprintf(f, "arm_id_aa64smfr%d=%" PRIx64 "\n", i, raw_ptr->arm_id_aa64smfr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64ZFR_REGS; i++)
-					fprintf(f, "arm_id_aa64zfr%d=%016lx\n", i, raw_ptr->arm_id_aa64zfr[i]);
+					fprintf(f, "arm_id_aa64zfr%d=%" PRIx64 "\n", i, raw_ptr->arm_id_aa64zfr[i]);
 				break;
 			default:
 				break;
@@ -731,7 +732,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 				is_aida64_dump = false;
 				continue;
 			}
-			else if (sscanf(line, "basic_cpuid[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) {
+			else if (sscanf(line, "basic_cpuid[%d]=%" SCNx32 "%" SCNx32 "%" SCNx32 "%" SCNx32, &i, &eax, &ebx, &ecx, &edx) >= 5) {
 				debugf(2, "Parsing raw dump for a single CPU dump\n");
 				is_header = false;
 				is_libcpuid_dump = true;
@@ -754,62 +755,62 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 		}
 
 		if (is_libcpuid_dump) {
-			if (use_raw_array && (sscanf(line, "_________________ Logical CPU #%hi _________________", &logical_cpu) >= 1)) {
+			if (use_raw_array && (sscanf(line, "_________________ Logical CPU #%" SCNi16 " _________________", &logical_cpu) >= 1)) {
 				debugf(2, "Parsing raw dump for logical CPU %i\n", logical_cpu);
 				is_header = false;
 				cpuid_grow_raw_data_array(raw_array, logical_cpu + 1);
 				raw_ptr = &raw_array->raw[logical_cpu];
 				raw_array->with_affinity = true;
 			}
-			else if ((sscanf(line, "basic_cpuid[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_CPUID_LEVEL)) {
+			else if ((sscanf(line, "basic_cpuid[%d]=%" SCNx32 "%" SCNx32 "%" SCNx32 "%" SCNx32, &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_CPUID_LEVEL)) {
 				RAW_ASSIGN_LINE_X86(raw_ptr->basic_cpuid[i]);
 			}
-			else if ((sscanf(line, "ext_cpuid[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_EXT_CPUID_LEVEL)) {
+			else if ((sscanf(line, "ext_cpuid[%d]=%" SCNx32 "%" SCNx32 "%" SCNx32 "%" SCNx32, &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_EXT_CPUID_LEVEL)) {
 				RAW_ASSIGN_LINE_X86(raw_ptr->ext_cpuid[i]);
 			}
-			else if ((sscanf(line, "intel_fn4[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN4_LEVEL)) {
+			else if ((sscanf(line, "intel_fn4[%d]=%" SCNx32 "%" SCNx32 "%" SCNx32 "%" SCNx32, &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN4_LEVEL)) {
 				RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn4[i]);
 			}
-			else if ((sscanf(line, "intel_fn11[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN11_LEVEL)) {
+			else if ((sscanf(line, "intel_fn11[%d]=%" SCNx32 "%" SCNx32 "%" SCNx32 "%" SCNx32, &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN11_LEVEL)) {
 				RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn11[i]);
 			}
-			else if ((sscanf(line, "intel_fn12h[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN12H_LEVEL)) {
+			else if ((sscanf(line, "intel_fn12h[%d]=%" SCNx32 "%" SCNx32 "%" SCNx32 "%" SCNx32, &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN12H_LEVEL)) {
 				RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn12h[i]);
 			}
-			else if ((sscanf(line, "intel_fn14h[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN14H_LEVEL)) {
+			else if ((sscanf(line, "intel_fn14h[%d]=%" SCNx32 "%" SCNx32 "%" SCNx32 "%" SCNx32, &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_INTELFN14H_LEVEL)) {
 				RAW_ASSIGN_LINE_X86(raw_ptr->intel_fn14h[i]);
 			}
-			else if ((sscanf(line, "amd_fn8000001dh[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_AMDFN8000001DH_LEVEL)) {
+			else if ((sscanf(line, "amd_fn8000001dh[%d]=%" SCNx32 "%" SCNx32 "%" SCNx32 "%" SCNx32, &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_AMDFN8000001DH_LEVEL)) {
 				RAW_ASSIGN_LINE_X86(raw_ptr->amd_fn8000001dh[i]);
 			}
-			else if ((sscanf(line, "amd_fn80000026h[%d]=%x %x %x %x", &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_AMDFN80000026H_LEVEL)) {
+			else if ((sscanf(line, "amd_fn80000026h[%d]=%" SCNx32 "%" SCNx32 "%" SCNx32 "%" SCNx32, &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_AMDFN80000026H_LEVEL)) {
 				RAW_ASSIGN_LINE_X86(raw_ptr->amd_fn80000026h[i]);
 			}
-			else if ((sscanf(line, "arm_midr=%lx", &arm_reg) >= 1)) {
+			else if ((sscanf(line, "arm_midr=%" SCNx64, &arm_reg) >= 1)) {
 				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_midr);
 			}
-			else if ((sscanf(line, "arm_mpidr=%lx", &arm_reg) >= 1)) {
+			else if ((sscanf(line, "arm_mpidr=%" SCNx64, &arm_reg) >= 1)) {
 				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_mpidr);
 			}
-			else if ((sscanf(line, "arm_revidr=%lx", &arm_reg) >= 1)) {
+			else if ((sscanf(line, "arm_revidr=%" SCNx64, &arm_reg) >= 1)) {
 				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_revidr);
 			}
-			else if ((sscanf(line, "arm_id_aa64dfr%d=%lx", &i, &arm_reg) >= 2)) {
+			else if ((sscanf(line, "arm_id_aa64dfr%d=%" SCNx64, &i, &arm_reg) >= 2)) {
 				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64dfr[i]);
 			}
-			else if ((sscanf(line, "arm_id_aa64isar%d=%lx", &i, &arm_reg) >= 2)) {
+			else if ((sscanf(line, "arm_id_aa64isar%d=%" SCNx64, &i, &arm_reg) >= 2)) {
 				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64isar[i]);
 			}
-			else if ((sscanf(line, "arm_id_aa64mmfr%d=%lx", &i, &arm_reg) >= 2)) {
+			else if ((sscanf(line, "arm_id_aa64mmfr%d=%" SCNx64, &i, &arm_reg) >= 2)) {
 				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64mmfr[i]);
 			}
-			else if ((sscanf(line, "arm_id_aa64pfr%d=%lx", &i, &arm_reg) >= 2)) {
+			else if ((sscanf(line, "arm_id_aa64pfr%d=%" SCNx64, &i, &arm_reg) >= 2)) {
 				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64pfr[i]);
 			}
-			else if ((sscanf(line, "arm_id_aa64smfr%d=%lx", &i, &arm_reg) >= 2)) {
+			else if ((sscanf(line, "arm_id_aa64smfr%d=%" SCNx64, &i, &arm_reg) >= 2)) {
 				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64smfr[i]);
 			}
-			else if ((sscanf(line, "arm_id_aa64zfr%d=%lx", &i, &arm_reg) >= 2)) {
+			else if ((sscanf(line, "arm_id_aa64zfr%d=%" SCNx64, &i, &arm_reg) >= 2)) {
 				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64zfr[i]);
 			}
 			else if (line[0] != '\0') {
@@ -817,9 +818,9 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 			}
 		}
 		else if (is_aida64_dump) {
-			if (use_raw_array && ((sscanf(line, "------[ Logical CPU #%hi ]------", &logical_cpu) >= 1) ||
-			                      (sscanf(line, "------[ CPUID Registers / Logical CPU #%hi ]------", &logical_cpu) >= 1) ||
-			                      (sscanf(line, "CPU#%hi AffMask: 0x%*x", &logical_cpu) >= 1))) {
+			if (use_raw_array && ((sscanf(line, "------[ Logical CPU #%" SCNi16 " ]------", &logical_cpu) >= 1) ||
+			                      (sscanf(line, "------[ CPUID Registers / Logical CPU #%" SCNi16 " ]------", &logical_cpu) >= 1) ||
+			                      (sscanf(line, "CPU#%" SCNi16 " AffMask: 0x%*x", &logical_cpu) >= 1))) {
 				debugf(2, "Parsing AIDA64 raw dump for logical CPU %i\n", logical_cpu);
 				cpuid_grow_raw_data_array(raw_array, logical_cpu + 1);
 				raw_ptr = &raw_array->raw[logical_cpu];
@@ -827,7 +828,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 				continue;
 			}
 			subleaf = 0;
-			assigned = sscanf(line, "CPUID %x: %x-%x-%x-%x [SL %02i]", &addr, &eax, &ebx, &ecx, &edx, &subleaf);
+			assigned = sscanf(line, "CPUID %" SCNx32 ": %" SCNx32 "-%" SCNx32 "-%" SCNx32 "-%" SCNx32 " [SL %02i]", &addr, &eax, &ebx, &ecx, &edx, &subleaf);
 			debugf(3, "raw line %d: %i items assigned for string '%s'\n", cur_line, assigned, line);
 			if ((assigned >= 5) && (subleaf == 0)) {
 				if (addr < MAX_CPUID_LEVEL) {
