@@ -58,6 +58,8 @@ libcpuid_warn_fn_t _warn_fun = default_warn;
 #endif
 void warnf(const char* format, ...)
 {
+	if (getenv("LIBCPUID_NO_WARN"))
+		return;
 	char buff[1024];
 	va_list va;
 	if (!_warn_fun) return;

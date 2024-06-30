@@ -5,6 +5,7 @@ import os, sys, re, random
 
 
 ### Constants:
+os.environ["LIBCPUID_NO_WARN"] = "1"
 delimiter = "-" * 80
 fields_x86 = [ "architecture", "feature-level", "purpose", "family", "model", "stepping",
 	   "extfamily", "extmodel", "cores", "logical",
