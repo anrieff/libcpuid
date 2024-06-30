@@ -1,24 +1,59 @@
-libcpuid
-========
+# libcpuid
 
-libcpuid provides CPU identification for the x86 (and x86_64).
+libcpuid provides CPU identification. Supported CPU architectures are:
+- x86:
+  - 32-bit CPUs (IA-32, also known as i386, i486, i586 and i686)
+  - 64-bit CPUs (x86_64, also known as x64, x86_64, AMD64, and Intel 64)
+- ARM:
+  - 64-bit CPUs (ARM64, also known as AArch64)
+
 For details about the programming API, you might want to
 take a look at the project's website on sourceforge
 (http://libcpuid.sourceforge.net/). There you'd find a short
 [tutorial](http://libcpuid.sf.net/documentation.html), as well
 as the full [API reference](http://libcpuid.sf.net/doxy).
 
-Configuring after checkout
---------------------------
+## Getting started
 
-Under Linux, where you download the sources, there's no
+You have two ways to get libcpuid:
+- build it from sources
+- download a pre-compiled binary
+
+### Sources
+
+#### Prerequisites
+
+Using libcpuid requires no dependencies on any of the supported OSes.
+Building it requires build tool commands to be available,
+which is a matter of installing a few common packages
+with related names (e.g. automake, autoconf, libtool, cmake).
+It also requires a POSIX-compatible shell. On NetBSD, you may need
+to install one (credits to @brucelilly):
+
+1. Install a POSIX-compatible shell such as ksh93
+```shell
+pkg_add ast-ksh || pkgin in ast-ksh
+```
+2. Export `CONFIG_SHELL` with correct path if required:
+```shell
+export CONFIG_SHELL=/usr/pkg/bin/ksh93
+```
+
+#### Configuring after checkout
+
+Two build systems are supported, use the one you prefer.
+
+##### By using autotools
+
+Under POSIX systems, where you download the sources, there's no
 configure script to run. This is because it isn't a good practice to keep
 such scripts in a source control system. To create it, you need to run the
 following commands once, after you checkout the libcpuid sources
-from github:
-
-        1. run "libtoolize"
-        2. run "autoreconf --install"
+from GitHub:
+```shell
+libtoolize
+autoreconf --install
+```
 
 You need to have `autoconf`, `automake` and `libtool` installed.
 
@@ -28,67 +63,16 @@ the library.
 `make dist` will create a tarball (with "configure" inside) with the
 sources.
 
-Prerequisites
--------------
+##### By using CMake
 
-Using libcpuid requires no dependencies on any of the supported OSes.
-Building it requires the aforementioned libtool and autotools commands
-to be available, which is a matter of installing a few common packages
-with related names (e.g. automake, autoconf, libtool).
-It also requires a POSIX-compatible shell. On NetBSD, you may need
-to install one (credits to @brucelilly):
-
-1. Install a POSIX-compatible shell such as ksh93
-   (pkg_add ast-ksh || pkgin in ast-ksh)
-2. export CONFIG_SHELL=/usr/pkg/bin/ksh93 (substitute the
-   correct path if required)
-3. Follow the regular Linux instructions
-
-Testing
--------
-
-After any change to the detection routines or match tables, it's always
-a good idea to run `make test`. If some test fails, and you're confident
-that the test is wrong and needs fixing, run `make fix-tests`.
-
-You can also add a new test (which is basically a file containing
-the raw CPUID data and the expected decoded items) by using
-`tests/create_test.py`. The workflow there is as follows:
-
-1. Run "cpuid_tool" with no arguments. It will tell you that it
-   has written a pair of files, raw.txt and report.txt. Ensure
-   that report.txt contains meaningful data.
-2. Run "tests/create_test.py raw.txt report.txt > «my-cpu».test"
-3. Use a proper descriptive name for the test (look into tests/amd
-   and tests/intel to get an idea) and copy your test file to an
-   appropriate place within the tests directory hierarchy.
-
-AIDA64 CPUID dumps (mostly found on [InstLatx64](http://instlatx64.atw.hu/)) are also supported.
-To create a new test based on a AIDA64 CPUID dump, you can do:
-```sh
-cpuid_tool --load=aida64_raw.txt --outfile=report.txt --report
-./tests/create_test.py aida64_raw.txt report.txt > tests/xxx/yyy/my-cpu.test
+Basic example to build and install libcpuid by using CMake:
+```shell
+cmake -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake --build build
+cmake --install build # may need administrative privileges, install under /usr/local by default
 ```
 
-For non-developers, who still want to contribute tests for the project,
-use [this page](http://libcpuid.sourceforge.net/bugreport.php) to report
-misdetections or new CPUs that libcpuid doesn't handle well yet.
-
-Users
------
-
-So far, I'm aware of the following projects which utilize libcpuid (listed alphabetically):
-
-* CPU-X (https://github.com/TheTumultuousUnicornOfDarkness/CPU-X)
-* fre:ac (https://www.freac.org/)
-* I-Nex (https://github.com/i-nex/I-Nex)
-* Multiprecision Computing Toolbox for MATLAB (https://www.advanpix.com/)
-* ucbench (http://anrieff.net/ucbench)
-
-We'd love to hear from you if you are also using libcpuid and want your project listed above.
-
-Downloads
----------
+### Downloads
 
 You can find latest versioned archives [here](https://github.com/anrieff/libcpuid/releases/latest), with binaries for macOS and Windows.
 
@@ -111,3 +95,19 @@ Below, the full lists of repositories:
 #### Build tool
 
 * Vcpkg: `vcpkg install cpuid`
+
+## Contributing
+
+Refer to the [dedicated page](CONTRIBUTING.md).
+
+## Users
+
+So far, I'm aware of the following projects which utilize libcpuid (listed alphabetically):
+
+* CPU-X (https://github.com/TheTumultuousUnicornOfDarkness/CPU-X)
+* fre:ac (https://www.freac.org/)
+* I-Nex (https://github.com/i-nex/I-Nex)
+* Multiprecision Computing Toolbox for MATLAB (https://www.advanpix.com/)
+* ucbench (http://anrieff.net/ucbench)
+
+We'd love to hear from you if you are also using libcpuid and want your project listed above.
