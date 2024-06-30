@@ -3,8 +3,8 @@
 libcpuid provides CPU identification. Supported CPU architectures are:
 - x86:
   - 32-bit CPUs (IA-32, also known as i386, i486, i586 and i686)
-  - 64-bit CPUs (x86_64, also known as x64, x86_64, AMD64, and Intel 64)
-- ARM:
+  - 64-bit CPUs (x86_64, also known as x64, AMD64, and Intel 64)
+- ARM (since v0.7.0):
   - 64-bit CPUs (ARM64, also known as AArch64)
 
 For details about the programming API, you might want to
