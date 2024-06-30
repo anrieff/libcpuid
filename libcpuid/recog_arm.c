@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <inttypes.h>
 #include "libcpuid.h"
 #include "libcpuid_util.h"
 #include "libcpuid_internal.h"
@@ -414,7 +415,7 @@ static void set_feature_status(struct cpu_id_t* data, struct arm_arch_extension_
 	}
 }
 
-static void match_arm_features(const struct arm_feature_map_t* matchtable, const char* reg_name, const int reg_number, uint32_t reg_value, struct cpu_id_t* data, struct arm_arch_extension_t* ext_status)
+static void match_arm_features(const struct arm_feature_map_t* matchtable, const char* reg_name, const int reg_number, uint64_t reg_value, struct cpu_id_t* data, struct arm_arch_extension_t* ext_status)
 {
 	int i;
 	bool feature_is_present;
@@ -422,7 +423,7 @@ static void match_arm_features(const struct arm_feature_map_t* matchtable, const
 	for (i = 0; matchtable[i].feature != -1; i++) {
 		feature_is_present = (EXTRACTS_BITS(reg_value, matchtable[i].highbit, matchtable[i].lowbit) == matchtable[i].value);
 		if (feature_is_present)
-			debugf(3, "Register %8s%i (0x%016X): match value %u for bits [%2u:%2u], ", reg_name, reg_number, reg_value, matchtable[i].value, matchtable[i].highbit, matchtable[i].lowbit);
+			debugf(3, "Register %8s%i (0x%016" PRIX64 "): match value %u for bits [%2u:%2u], ", reg_name, reg_number, reg_value, matchtable[i].value, matchtable[i].highbit, matchtable[i].lowbit);
 		set_feature_status(data, ext_status, feature_is_present, matchtable[i].feature, matchtable[i].ver_optional, matchtable[i].ver_mandatory);
 	}
 }
