@@ -86,14 +86,15 @@
  * LibCPUID provides CPU identification and access to the CPUID and RDTSC
  * instructions on the x86.
  * <p>
- * To execute CPUID, use \ref cpu_exec_cpuid <br>
- * To execute RDTSC, use \ref cpu_rdtsc <br>
+ * To execute CPUID, use \ref cpu_exec_cpuid. <br>
+ * To execute RDTSC, use \ref cpu_rdtsc. <br>
  * To fetch the CPUID info needed for CPU identification, use
- *   \ref cpuid_get_raw_data <br>
- * To make sense of that data (decode, extract features), use \ref cpu_identify <br>
+ *   \ref cpuid_get_raw_data or \ref cpuid_get_all_raw_data. <br>
+ * To make sense of that data (decode, extract features), use
+ *    \ref cpu_identify or \ref cpu_identify_all. <br>
  * To detect the CPU speed, use either \ref cpu_clock, \ref cpu_clock_by_os,
  * \ref cpu_tsc_mark + \ref cpu_tsc_unmark + \ref cpu_clock_by_mark,
- * \ref cpu_clock_measure or \ref cpu_clock_by_ic.
+ * \ref cpu_clock_measure, \ref cpu_clock_by_ic or \ref cpu_clock_by_tsc.
  * Read carefully for pros/cons of each method. <br>
  *
  * To read MSRs, use \ref cpu_msr_driver_open to get a handle, and then
