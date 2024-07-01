@@ -3,7 +3,7 @@ The main module, providing a class that holds CPU information.
 """
 
 from typing import Optional
-from libcpuid import enums, cpusgx
+from libcpuid import enums
 from libcpuid._utils import c_string_to_str, optional_int
 from libcpuid._libcpuid_cffi import (  # pylint: disable=no-name-in-module, import-error
     lib,
@@ -54,31 +54,6 @@ class CPUID:  # pylint: disable=too-many-public-methods
     def flags(self) -> list[enums.CPUFeature]:
         """List of CPU features"""
         return [flag for flag in enums.CPUFeature if self._raw.flags[flag]]
-
-    @property
-    def family(self) -> int:
-        """The CPU family number."""
-        return self._raw.family
-
-    @property
-    def model(self) -> int:
-        """The CPU model number."""
-        return self._raw.model
-
-    @property
-    def stepping(self) -> int:
-        """The CPU stepping."""
-        return self._raw.stepping
-
-    @property
-    def ext_family(self) -> int:
-        """The CPU display family number."""
-        return self._raw.ext_family
-
-    @property
-    def ext_model(self) -> int:
-        """The CPU display model number."""
-        return self._raw.ext_model
 
     @property
     def num_cores(self) -> int:
@@ -201,19 +176,9 @@ class CPUID:  # pylint: disable=too-many-public-methods
         return c_string_to_str(self._raw.cpu_codename)
 
     @property
-    def sse_size(self) -> Optional[int]:
-        """SSE execution unit size (64 or 128), :const:`None` if not available."""
-        return optional_int(self._raw.sse_size)
-
-    @property
     def detection_hints(self) -> list[enums.CPUHint]:
         """List of CPU detection hints."""
         return [hint for hint in enums.CPUHint if self._raw.detection_hints[hint]]
-
-    @property
-    def sgx(self) -> Optional[cpusgx.CPUSGX]:
-        """SGX-related features if present."""
-        return cpusgx.CPUSGX(self._raw.sgx) if self._raw.sgx.present == 1 else None
 
     @property
     def affinity_mask(self) -> list[bool]:

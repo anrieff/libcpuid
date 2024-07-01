@@ -5,7 +5,7 @@ Module dealing with SGX-related CPU information.
 from libcpuid import enums
 
 
-class CPUSGX:
+class SGX:
     """
     Holds the SGX-related information of a CPU.
 

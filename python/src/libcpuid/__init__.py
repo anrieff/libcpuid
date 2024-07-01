@@ -7,7 +7,7 @@ from libcpuid._libcpuid_cffi import (  # pylint: disable=no-name-in-module, impo
     ffi,
     lib,
 )
-from libcpuid import cpuid, enums
+from libcpuid import cpuid, enums, x86, arm
 from libcpuid._utils import c_string_to_str
 
 
@@ -40,7 +40,12 @@ def cpu_identify() -> cpuid.CPUID:
     """Identifies the CPU and returns a :class:`cpuid.CPUID` instance."""
     raw_cpu_id = ffi.new("struct cpu_id_t *")
     _check_error(lib.cpu_identify(ffi.NULL, raw_cpu_id))
-    return cpuid.CPUID(raw_cpu_id)
+    cpu_info = cpuid.CPUID(raw_cpu_id)
+    if cpu_info.architecture == enums.CPUArchitecture.X86:
+        return x86.X86ID(raw_cpu_id)
+    if cpu_info.architecture == enums.CPUArchitecture.ARM:
+        return arm.ARMID(raw_cpu_id)
+    return cpu_info
 
 
 def get_cpu_list(vendor: enums.CPUVendor) -> list[str]:
