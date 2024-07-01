@@ -75,6 +75,7 @@ def fmt_error(err):
 def fixFile(filename, input_lines, output_lines):
 	f = open(filename, "wt")
 	f.writelines([s + "\n" for s in input_lines])
+	f.write(delimiter + "\n")
 	f.writelines([s + "\n" for s in output_lines])
 	f.close()
 
