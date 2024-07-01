@@ -1287,6 +1287,9 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 	cpu_exec_mrs(SYS_ID_AA64PFR2_EL1, data->arm_id_aa64pfr[2]);
 	cpu_exec_mrs(SYS_ID_AA64SMFR0_EL1, data->arm_id_aa64smfr[0]);
 	cpu_exec_mrs(SYS_ID_AA64ZFR0_EL1, data->arm_id_aa64zfr[0]);
+#else
+# warning This CPU architecture is not supported by libcpuid
+	UNUSED(data);
 #endif
 	return cpuid_set_error(ERR_OK);
 }
