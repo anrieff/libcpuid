@@ -31,10 +31,10 @@ to the libcpuid C library.
    try:
       # run the main CPU identification function
       # and print information about the CPU
-      id = cpu_identify()
-      print(id.vendor.name)
-      print(id.architecture.name)
-      print(CPUFeature.FPU in id.flags)
+      cpu_info = cpu_identify()
+      print(cpu_info.vendor.name)
+      print(cpu_info.architecture.name)
+      print(CPUFeature.FPU in cpu_info.flags)
       # print the list of all Intel CPU code names
       print(get_cpu_list(CPUVendor.INTEL))
    except LibCPUIDError as err:
