@@ -9,9 +9,9 @@ libcpuid provides CPU identification. Supported CPU architectures are:
 
 For details about the programming API, you might want to
 take a look at the project's website on sourceforge
-(http://libcpuid.sourceforge.net/). There you'd find a short
-[tutorial](http://libcpuid.sf.net/documentation.html), as well
-as the full [API reference](http://libcpuid.sf.net/doxy).
+(https://libcpuid.sourceforge.net). There you'd find a short
+[tutorial](https://libcpuid.sourceforge.net/documentation.html), as well
+as the full [API reference](https://anrieff.github.io/libcpuid).
 
 ## Getting started
 
