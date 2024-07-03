@@ -624,54 +624,54 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 		switch (architecture) {
 			case ARCHITECTURE_X86:
 				for (i = 0; i < MAX_CPUID_LEVEL; i++)
-					fprintf(f, "basic_cpuid[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
+					fprintf(f, "basic_cpuid[%d]=%08" PRIx32 " %08" PRIx32 " %08" PRIx32 " %08" PRIx32 "\n", i,
 						raw_ptr->basic_cpuid[i][EAX], raw_ptr->basic_cpuid[i][EBX],
 						raw_ptr->basic_cpuid[i][ECX], raw_ptr->basic_cpuid[i][EDX]);
 				for (i = 0; i < MAX_EXT_CPUID_LEVEL; i++)
-					fprintf(f, "ext_cpuid[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
+					fprintf(f, "ext_cpuid[%d]=%08" PRIx32 " %08" PRIx32 " %08" PRIx32 " %08" PRIx32 "\n", i,
 						raw_ptr->ext_cpuid[i][EAX], raw_ptr->ext_cpuid[i][EBX],
 						raw_ptr->ext_cpuid[i][ECX], raw_ptr->ext_cpuid[i][EDX]);
 				for (i = 0; i < MAX_INTELFN4_LEVEL; i++)
-					fprintf(f, "intel_fn4[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
+					fprintf(f, "intel_fn4[%d]=%08" PRIx32 " %08" PRIx32 " %08" PRIx32 " %08" PRIx32 "\n", i,
 						raw_ptr->intel_fn4[i][EAX], raw_ptr->intel_fn4[i][EBX],
 						raw_ptr->intel_fn4[i][ECX], raw_ptr->intel_fn4[i][EDX]);
 				for (i = 0; i < MAX_INTELFN11_LEVEL; i++)
-					fprintf(f, "intel_fn11[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
+					fprintf(f, "intel_fn11[%d]=%08" PRIx32 " %08" PRIx32 " %08" PRIx32 " %08" PRIx32 "\n", i,
 						raw_ptr->intel_fn11[i][EAX], raw_ptr->intel_fn11[i][EBX],
 						raw_ptr->intel_fn11[i][ECX], raw_ptr->intel_fn11[i][EDX]);
 				for (i = 0; i < MAX_INTELFN12H_LEVEL; i++)
-					fprintf(f, "intel_fn12h[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
+					fprintf(f, "intel_fn12h[%d]=%08" PRIx32 " %08" PRIx32 " %08" PRIx32 " %08" PRIx32 "\n", i,
 						raw_ptr->intel_fn12h[i][EAX], raw_ptr->intel_fn12h[i][EBX],
 						raw_ptr->intel_fn12h[i][ECX], raw_ptr->intel_fn12h[i][EDX]);
 				for (i = 0; i < MAX_INTELFN14H_LEVEL; i++)
-					fprintf(f, "intel_fn14h[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
+					fprintf(f, "intel_fn14h[%d]=%08" PRIx32 " %08" PRIx32 " %08" PRIx32 " %08" PRIx32 "\n", i,
 						raw_ptr->intel_fn14h[i][EAX], raw_ptr->intel_fn14h[i][EBX],
 						raw_ptr->intel_fn14h[i][ECX], raw_ptr->intel_fn14h[i][EDX]);
 				for (i = 0; i < MAX_AMDFN8000001DH_LEVEL; i++)
-					fprintf(f, "amd_fn8000001dh[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
+					fprintf(f, "amd_fn8000001dh[%d]=%08" PRIx32 " %08" PRIx32 " %08" PRIx32 " %08" PRIx32 "\n", i,
 						raw_ptr->amd_fn8000001dh[i][EAX], raw_ptr->amd_fn8000001dh[i][EBX],
 						raw_ptr->amd_fn8000001dh[i][ECX], raw_ptr->amd_fn8000001dh[i][EDX]);
 				for (i = 0; i < MAX_AMDFN80000026H_LEVEL; i++)
-					fprintf(f, "amd_fn80000026h[%d]=%" PRIx32 " %" PRIx32 " %" PRIx32 " %" PRIx32 "\n", i,
+					fprintf(f, "amd_fn80000026h[%d]=%08" PRIx32 " %08" PRIx32 " %08" PRIx32 " %08" PRIx32 "\n", i,
 						raw_ptr->amd_fn80000026h[i][EAX], raw_ptr->amd_fn80000026h[i][EBX],
 						raw_ptr->amd_fn80000026h[i][ECX], raw_ptr->amd_fn80000026h[i][EDX]);
 				break;
 			case ARCHITECTURE_ARM:
-				fprintf(f, "arm_midr=%" PRIx64 "\n", raw_ptr->arm_midr);
-				fprintf(f, "arm_mpidr=%" PRIx64 "\n", raw_ptr->arm_mpidr);
-				fprintf(f, "arm_revidr=%" PRIx64 "\n", raw_ptr->arm_revidr);
+				fprintf(f, "arm_midr=%016" PRIx64 "\n", raw_ptr->arm_midr);
+				fprintf(f, "arm_mpidr=%016" PRIx64 "\n", raw_ptr->arm_mpidr);
+				fprintf(f, "arm_revidr=%016" PRIx64 "\n", raw_ptr->arm_revidr);
 				for (i = 0; i < MAX_ARM_ID_AA64DFR_REGS; i++)
-					fprintf(f, "arm_id_aa64dfr%d=%" PRIx64 "\n", i, raw_ptr->arm_id_aa64dfr[i]);
+					fprintf(f, "arm_id_aa64dfr%d=%016" PRIx64 "\n", i, raw_ptr->arm_id_aa64dfr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64ISAR_REGS; i++)
-					fprintf(f, "arm_id_aa64isar%d=%" PRIx64 "\n", i, raw_ptr->arm_id_aa64isar[i]);
+					fprintf(f, "arm_id_aa64isar%d=%016" PRIx64 "\n", i, raw_ptr->arm_id_aa64isar[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64MMFR_REGS; i++)
-					fprintf(f, "arm_id_aa64mmfr%d=%" PRIx64 "\n", i, raw_ptr->arm_id_aa64mmfr[i]);
+					fprintf(f, "arm_id_aa64mmfr%d=%016" PRIx64 "\n", i, raw_ptr->arm_id_aa64mmfr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64PFR_REGS; i++)
-					fprintf(f, "arm_id_aa64pfr%d=%" PRIx64 "\n", i, raw_ptr->arm_id_aa64pfr[i]);
+					fprintf(f, "arm_id_aa64pfr%d=%016" PRIx64 "\n", i, raw_ptr->arm_id_aa64pfr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64SMFR_REGS; i++)
-					fprintf(f, "arm_id_aa64smfr%d=%" PRIx64 "\n", i, raw_ptr->arm_id_aa64smfr[i]);
+					fprintf(f, "arm_id_aa64smfr%d=%016" PRIx64 "\n", i, raw_ptr->arm_id_aa64smfr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64ZFR_REGS; i++)
-					fprintf(f, "arm_id_aa64zfr%d=%" PRIx64 "\n", i, raw_ptr->arm_id_aa64zfr[i]);
+					fprintf(f, "arm_id_aa64zfr%d=%016" PRIx64 "\n", i, raw_ptr->arm_id_aa64zfr[i]);
 				break;
 			default:
 				break;
