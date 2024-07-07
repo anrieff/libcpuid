@@ -108,8 +108,8 @@ firstError = True
 
 files_code = {}
 
-rexp1 = re.compile(r'.*flags\[(CPU_FEATURE_[^\]]+)\]\s*=\s*1.*') # e.g. "data->flags[CPU_FEATURE_MPAM] = 1;"
-rexp2 = re.compile(r'.*(CPU_FEATURE_[^ ,]+)\s*,\s*FEATURE_LEVEL_ARM_.*') # e.g. "{ 35, 32, 0b0101, CPU_FEATURE_SPEV1P4,    FEATURE_LEVEL_ARM_V8_8_A, -1 },"
+rexp1 = re.compile(r'.*\[(CPU_FEATURE_[^ \]]+)\]\s*=\s*{.*') # e.g. "[CPU_FEATURE_SWAP] = {"
+rexp2 = re.compile(r'.*(CPU_FEATURE_[^ ,]+),\s*FEATURE_LEVEL_ARM_.*') # e.g. "set_feature_status(data, ext_status, (mte_frac == 0b0000), CPU_FEATURE_MTE_ASYNC,           FEATURE_LEVEL_ARM_V8_5_A, -1);"
 rexp3 = re.compile(r'.*(CPU_FEATURE_[^ }]+).*') # e.g. "{ 28, CPU_FEATURE_HT },"
 
 for fn in glob.glob("%s/*.c" % sys.argv[1]):

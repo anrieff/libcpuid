@@ -660,6 +660,18 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 				fprintf(f, "arm_midr=%016" PRIx64 "\n", raw_ptr->arm_midr);
 				fprintf(f, "arm_mpidr=%016" PRIx64 "\n", raw_ptr->arm_mpidr);
 				fprintf(f, "arm_revidr=%016" PRIx64 "\n", raw_ptr->arm_revidr);
+				for (i = 0; i < MAX_ARM_ID_AFR_REGS; i++)
+					fprintf(f, "arm_id_afr%d=%08" PRIx32 "\n", i, raw_ptr->arm_id_afr[i]);
+				for (i = 0; i < MAX_ARM_ID_DFR_REGS; i++)
+					fprintf(f, "arm_id_dfr%d=%08" PRIx32 "\n", i, raw_ptr->arm_id_dfr[i]);
+				for (i = 0; i < MAX_ARM_ID_ISAR_REGS; i++)
+					fprintf(f, "arm_id_isar%d=%08" PRIx32 "\n", i, raw_ptr->arm_id_isar[i]);
+				for (i = 0; i < MAX_ARM_ID_MMFR_REGS; i++)
+					fprintf(f, "arm_id_mmfr%d=%08" PRIx32 "\n", i, raw_ptr->arm_id_mmfr[i]);
+				for (i = 0; i < MAX_ARM_ID_PFR_REGS; i++)
+					fprintf(f, "arm_id_pfr%d=%08" PRIx32 "\n", i, raw_ptr->arm_id_pfr[i]);
+				for (i = 0; i < MAX_ARM_ID_AA64AFR_REGS; i++)
+					fprintf(f, "arm_id_aa64afr%d=%016" PRIx64 "\n", i, raw_ptr->arm_id_aa64afr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64DFR_REGS; i++)
 					fprintf(f, "arm_id_aa64dfr%d=%016" PRIx64 "\n", i, raw_ptr->arm_id_aa64dfr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64ISAR_REGS; i++)
@@ -688,7 +700,8 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 }
 
 #define RAW_ASSIGN_LINE_X86(__line) __line[EAX] = eax ; __line[EBX] = ebx ; __line[ECX] = ecx ; __line[EDX] = edx
-#define RAW_ASSIGN_LINE_ARM(__line) __line = arm_reg
+#define RAW_ASSIGN_LINE_AARCH32(__line) __line = aarch32_reg
+#define RAW_ASSIGN_LINE_AARCH64(__line) __line = aarch64_reg
 static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw, struct cpu_raw_data_array_t* raw_array, const char* filename)
 {
 	int i;
@@ -700,8 +713,8 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 	bool is_aida64_dump = false;
 	const bool use_raw_array = (raw_array != NULL);
 	logical_cpu_t logical_cpu = 0;
-	uint32_t addr, eax, ebx, ecx, edx;
-	uint64_t arm_reg;
+	uint32_t addr, eax, ebx, ecx, edx, aarch32_reg;
+	uint64_t aarch64_reg;
 	char version[8] = "";
 	char line[100];
 	struct cpu_raw_data_t* raw_ptr = single_raw;
@@ -786,32 +799,50 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 			else if ((sscanf(line, "amd_fn80000026h[%d]=%" SCNx32 "%" SCNx32 "%" SCNx32 "%" SCNx32, &i, &eax, &ebx, &ecx, &edx) >= 5) && (i >= 0) && (i < MAX_AMDFN80000026H_LEVEL)) {
 				RAW_ASSIGN_LINE_X86(raw_ptr->amd_fn80000026h[i]);
 			}
-			else if ((sscanf(line, "arm_midr=%" SCNx64, &arm_reg) >= 1)) {
-				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_midr);
+			else if ((sscanf(line, "arm_midr=%" SCNx64, &aarch64_reg) >= 1)) {
+				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_midr);
 			}
-			else if ((sscanf(line, "arm_mpidr=%" SCNx64, &arm_reg) >= 1)) {
-				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_mpidr);
+			else if ((sscanf(line, "arm_mpidr=%" SCNx64, &aarch64_reg) >= 1)) {
+				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_mpidr);
 			}
-			else if ((sscanf(line, "arm_revidr=%" SCNx64, &arm_reg) >= 1)) {
-				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_revidr);
+			else if ((sscanf(line, "arm_revidr=%" SCNx64, &aarch64_reg) >= 1)) {
+				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_revidr);
 			}
-			else if ((sscanf(line, "arm_id_aa64dfr%d=%" SCNx64, &i, &arm_reg) >= 2)) {
-				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64dfr[i]);
+			else if ((sscanf(line, "arm_id_afr%d=%" SCNx32, &i, &aarch32_reg) >= 2)) {
+				RAW_ASSIGN_LINE_AARCH32(raw_ptr->arm_id_afr[i]);
 			}
-			else if ((sscanf(line, "arm_id_aa64isar%d=%" SCNx64, &i, &arm_reg) >= 2)) {
-				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64isar[i]);
+			else if ((sscanf(line, "arm_id_dfr%d=%" SCNx32, &i, &aarch32_reg) >= 2)) {
+				RAW_ASSIGN_LINE_AARCH32(raw_ptr->arm_id_dfr[i]);
 			}
-			else if ((sscanf(line, "arm_id_aa64mmfr%d=%" SCNx64, &i, &arm_reg) >= 2)) {
-				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64mmfr[i]);
+			else if ((sscanf(line, "arm_id_isar%d=%" SCNx32, &i, &aarch32_reg) >= 2)) {
+				RAW_ASSIGN_LINE_AARCH32(raw_ptr->arm_id_isar[i]);
 			}
-			else if ((sscanf(line, "arm_id_aa64pfr%d=%" SCNx64, &i, &arm_reg) >= 2)) {
-				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64pfr[i]);
+			else if ((sscanf(line, "arm_id_mmfr%d=%" SCNx32, &i, &aarch32_reg) >= 2)) {
+				RAW_ASSIGN_LINE_AARCH32(raw_ptr->arm_id_mmfr[i]);
 			}
-			else if ((sscanf(line, "arm_id_aa64smfr%d=%" SCNx64, &i, &arm_reg) >= 2)) {
-				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64smfr[i]);
+			else if ((sscanf(line, "arm_id_pfr%d=%" SCNx32, &i, &aarch32_reg) >= 2)) {
+				RAW_ASSIGN_LINE_AARCH32(raw_ptr->arm_id_pfr[i]);
 			}
-			else if ((sscanf(line, "arm_id_aa64zfr%d=%" SCNx64, &i, &arm_reg) >= 2)) {
-				RAW_ASSIGN_LINE_ARM(raw_ptr->arm_id_aa64zfr[i]);
+			else if ((sscanf(line, "arm_id_aa64afr%d=%" SCNx64, &i, &aarch64_reg) >= 2)) {
+				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_id_aa64afr[i]);
+			}
+			else if ((sscanf(line, "arm_id_aa64dfr%d=%" SCNx64, &i, &aarch64_reg) >= 2)) {
+				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_id_aa64dfr[i]);
+			}
+			else if ((sscanf(line, "arm_id_aa64isar%d=%" SCNx64, &i, &aarch64_reg) >= 2)) {
+				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_id_aa64isar[i]);
+			}
+			else if ((sscanf(line, "arm_id_aa64mmfr%d=%" SCNx64, &i, &aarch64_reg) >= 2)) {
+				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_id_aa64mmfr[i]);
+			}
+			else if ((sscanf(line, "arm_id_aa64pfr%d=%" SCNx64, &i, &aarch64_reg) >= 2)) {
+				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_id_aa64pfr[i]);
+			}
+			else if ((sscanf(line, "arm_id_aa64smfr%d=%" SCNx64, &i, &aarch64_reg) >= 2)) {
+				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_id_aa64smfr[i]);
+			}
+			else if ((sscanf(line, "arm_id_aa64zfr%d=%" SCNx64, &i, &aarch64_reg) >= 2)) {
+				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_id_aa64zfr[i]);
 			}
 			else if (line[0] != '\0') {
 				warnf("Warning: file '%s', line %d: '%s' not understood!\n", filename, cur_line, line);
@@ -1876,6 +1907,21 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_AVX512VBMI, "avx512vbmi" },
 		{ CPU_FEATURE_AVX512VBMI2, "avx512vbmi2" },
 		{ CPU_FEATURE_HYPERVISOR, "hypervisor" },
+		{ CPU_FEATURE_SWAP, "swap" },
+		{ CPU_FEATURE_THUMB, "thumb" },
+		{ CPU_FEATURE_ADVMULTU, "advmultu" },
+		{ CPU_FEATURE_ADVMULTS, "advmults" },
+		{ CPU_FEATURE_JAZELLE, "jazelle" },
+		{ CPU_FEATURE_DEBUGV6, "debugv6" },
+		{ CPU_FEATURE_DEBUGV6P1, "debugv6p1" },
+		{ CPU_FEATURE_THUMB2, "thumb2" },
+		{ CPU_FEATURE_DEBUGV7, "debugv7" },
+		{ CPU_FEATURE_DEBUGV7P1, "debugv7p1" },
+		{ CPU_FEATURE_THUMBEE, "thumbee" },
+		{ CPU_FEATURE_DIVIDE, "divide" },
+		{ CPU_FEATURE_LPAE, "lpae" },
+		{ CPU_FEATURE_PMUV1, "pmuv1" },
+		{ CPU_FEATURE_PMUV2, "pmuv2" },
 		{ CPU_FEATURE_ASID16, "asid16" },
 		{ CPU_FEATURE_ADVSIMD, "advsimd" },
 		{ CPU_FEATURE_CRC32, "crc32" },
@@ -1892,6 +1938,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_PMUV3, "pmuv3" },
 		{ CPU_FEATURE_SHA1, "sha1" },
 		{ CPU_FEATURE_SHA256, "sha256" },
+		{ CPU_FEATURE_NTLBPA, "ntlbpa" },
 		{ CPU_FEATURE_HAFDBS, "hafdbs" },
 		{ CPU_FEATURE_HPDS, "hpds" },
 		{ CPU_FEATURE_LOR, "lor" },
@@ -1901,8 +1948,8 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_RDM, "rdm" },
 		{ CPU_FEATURE_VHE, "vhe" },
 		{ CPU_FEATURE_VMID16, "vmid16" },
-		//{ CPU_FEATURE_AA32HPD, "aa32hpd" },
-		//{ CPU_FEATURE_AA32I8MM, "aa32i8mm" },
+		{ CPU_FEATURE_AA32HPD, "aa32hpd" },
+		{ CPU_FEATURE_AA32I8MM, "aa32i8mm" },
 		{ CPU_FEATURE_DPB, "dpb" },
 		{ CPU_FEATURE_DEBUGV8P2, "debugv8p2" },
 		{ CPU_FEATURE_F32MM, "f32mm" },
@@ -1977,11 +2024,13 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SPECRES, "specres" },
 		{ CPU_FEATURE_SSBS, "ssbs" },
 		{ CPU_FEATURE_SSBS2, "ssbs2" },
+		{ CPU_FEATURE_AA32BF16, "aa32bf16" },
 		{ CPU_FEATURE_AMUV1P1, "amuv1p1" },
 		{ CPU_FEATURE_BF16, "bf16" },
 		{ CPU_FEATURE_DGH, "dgh" },
 		{ CPU_FEATURE_ECV, "ecv" },
 		{ CPU_FEATURE_FGT, "fgt" },
+		{ CPU_FEATURE_HPMN0, "hpmn0" },
 		{ CPU_FEATURE_MPAMV0P1, "mpamv0p1" },
 		{ CPU_FEATURE_MPAMV1P1, "mpamv1p1" },
 		{ CPU_FEATURE_MTPMU, "mtpmu" },
