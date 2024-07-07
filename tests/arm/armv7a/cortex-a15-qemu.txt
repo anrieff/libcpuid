@@ -40,7 +40,7 @@ arm_id_aa64smfr0=0000000000000000
 arm_id_aa64zfr0=0000000000000000
 _________________ Logical CPU #1 _________________
 arm_midr=00000000414fc0f0
-arm_mpidr=0000000180000000
+arm_mpidr=0000000180000001
 arm_revidr=00000002414fc0f0
 arm_id_afr0=00000000
 arm_id_dfr0=02000505
@@ -80,7 +80,7 @@ arm_id_aa64smfr0=0000000000000000
 arm_id_aa64zfr0=0000000000000000
 _________________ Logical CPU #2 _________________
 arm_midr=00000000414fc0f0
-arm_mpidr=0000000180000000
+arm_mpidr=0000000180000002
 arm_revidr=00000002414fc0f0
 arm_id_afr0=00000000
 arm_id_dfr0=02000505
@@ -120,7 +120,7 @@ arm_id_aa64smfr0=0000000000000000
 arm_id_aa64zfr0=0000000000000000
 _________________ Logical CPU #3 _________________
 arm_midr=00000000414fc0f0
-arm_mpidr=0000000180000000
+arm_mpidr=0000000180000003
 arm_revidr=00000002414fc0f0
 arm_id_afr0=00000000
 arm_id_dfr0=02000505
@@ -165,7 +165,7 @@ general
 4
 3087
 0
-1
+4
 4
 Eagle
 advmultu advmults jazelle thumb2 debugv7p1 thumbee divide lpae

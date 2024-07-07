@@ -1261,6 +1261,18 @@ void cpu_exec_cpuid_ext(uint32_t* regs);
 int cpuid_get_raw_data(struct cpu_raw_data_t* data);
 
 /**
+ * @brief Obtains the raw CPUID data from the specified CPU
+ * @param data - a pointer to cpu_raw_data_t structure
+ * @param logical_cpu specify the core number.
+ *          The first core number is 0.
+ *          The last core number is \ref cpuid_get_total_cpus - 1.
+ * @returns zero if successful, and some negative number on error.
+ *          The error message can be obtained by calling \ref cpuid_error.
+ *          @see cpu_error_t
+ */
+int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_cpu);
+
+/**
  * @brief Obtains the raw CPUID data from all CPUs
  * @param data - a pointer to cpu_raw_data_array_t structure
  * @note As the memory is dynamically allocated, be sure to call

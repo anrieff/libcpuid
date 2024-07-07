@@ -1170,18 +1170,44 @@ static bool cpu_ident_id_arm(struct cpu_raw_data_t* raw, struct internal_topolog
 {
 	/* Documentation: Multiprocessor Affinity Register
 	   https://developer.arm.com/documentation/ddi0601/2020-12/AArch64-Registers/MPIDR-EL1--Multiprocessor-Affinity-Register
+
+	   This function is inspired by the store_cpu_topology() function from Linux:
+	   https://github.com/torvalds/linux/blob/c6653f49e4fd3b0d52c12a1fc814d6c5b234ea15/arch/arm/kernel/topology.c#L185-L233
 	*/
-	const bool aff0_is_threads = EXTRACTS_BIT(raw->arm_mpidr, 24);
-	if (aff0_is_threads) {
-		/* Aff0: the level identifies individual threads within a multithreaded core
-		   On single-threaded CPUs this field has the value 0x00 */
-		topology->smt_id     = EXTRACTS_BITS(raw->arm_mpidr,  7,  0); // Aff0
-		topology->core_id    = EXTRACTS_BITS(raw->arm_mpidr, 15,  8); // Aff1
-		topology->package_id = EXTRACTS_BITS(raw->arm_mpidr, 23, 16); // Aff2
+	if (!raw->arm_mpidr)
+		return false;
+
+	const bool is_uniprocessor = (EXTRACTS_BIT(raw->arm_mpidr, 30) == 0b1);
+	const bool is_mt           = (EXTRACTS_BIT(raw->arm_mpidr, 24) == 0b1);
+
+	/* create cpu topology mapping */
+	if (!is_uniprocessor) {
+		/*
+		 * This is a multiprocessor system
+		 * multiprocessor format & multiprocessor mode field are set
+		 */
+		if (is_mt) {
+			/* core performance interdependency */
+			topology->smt_id     = EXTRACTS_BITS(raw->arm_mpidr,  7,  0); // Aff0
+			topology->core_id    = EXTRACTS_BITS(raw->arm_mpidr, 15,  8); // Aff1
+			topology->package_id = EXTRACTS_BITS(raw->arm_mpidr, 23, 16); // Aff2
+		}
+		else {
+			/* largely independent cores */
+			topology->smt_id     = -1;
+			topology->core_id    = EXTRACTS_BITS(raw->arm_mpidr,  7,  0); // Aff0
+			topology->package_id = EXTRACTS_BITS(raw->arm_mpidr, 15,  8); // Aff1
+		}
 	}
 	else {
-		topology->core_id    = EXTRACTS_BITS(raw->arm_mpidr,  7,  0); // Aff0
-		topology->package_id = EXTRACTS_BITS(raw->arm_mpidr, 15,  8); // Aff1
+		/*
+		 * This is an uniprocessor system
+		 * we are in multiprocessor format but uniprocessor system
+		 * or in the old uniprocessor format
+		 */
+		topology->smt_id     = -1;
+		topology->core_id    = 0;
+		topology->package_id = -1;
 	}
 
 	/* Always implemented since ARMv7
@@ -1247,8 +1273,23 @@ void cpu_exec_cpuid_ext(uint32_t* regs)
 
 int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 {
+	return(cpuid_get_raw_data_core(data, -1));
+}
+
+int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_cpu)
+{
+	bool affinity_saved = false;
+
 	if (!cpuid_present())
 		return cpuid_set_error(ERR_NO_CPUID);
+
+	if (logical_cpu != (logical_cpu_t) -1) {
+		debugf(2, "Getting raw dump for logical CPU %u\n", logical_cpu);
+		if (!set_cpu_affinity(logical_cpu))
+			return ERR_INVCNB;
+		affinity_saved = save_cpu_affinity();
+	}
+
 #if defined(PLATFORM_X86) || defined(PLATFORM_X64)
 	unsigned i;
 	for (i = 0; i < 32; i++)
@@ -1322,6 +1363,10 @@ int cpuid_get_raw_data(struct cpu_raw_data_t* data)
 # warning This CPU architecture is not supported by libcpuid
 	UNUSED(data);
 #endif
+
+	if (affinity_saved)
+		restore_cpu_affinity();
+
 	return cpuid_set_error(ERR_OK);
 }
 
@@ -1330,26 +1375,23 @@ int cpuid_get_all_raw_data(struct cpu_raw_data_array_t* data)
 	int cur_error = cpuid_set_error(ERR_OK);
 	int ret_error = cpuid_set_error(ERR_OK);
 	logical_cpu_t logical_cpu = 0;
-	struct cpu_raw_data_t* raw_ptr = NULL;
+	struct cpu_raw_data_t raw_tmp;
 
 	if (data == NULL)
 		return cpuid_set_error(ERR_HANDLE);
 
-	bool affinity_saved = save_cpu_affinity();
-
 	cpu_raw_data_array_t_constructor(data, true);
-	while (set_cpu_affinity(logical_cpu) || logical_cpu == 0) {
-		debugf(2, "Getting raw dump for logical CPU %i\n", logical_cpu);
+	do {
+		memset(&raw_tmp, 0, sizeof(struct cpu_raw_data_t));
+		cur_error = cpuid_get_raw_data_core(&raw_tmp, logical_cpu);
+		if (cur_error == ERR_INVCNB)
+			break;
 		cpuid_grow_raw_data_array(data, logical_cpu + 1);
-		raw_ptr = &data->raw[logical_cpu];
-		cur_error = cpuid_get_raw_data(raw_ptr);
+		memcpy(&data->raw[logical_cpu], &raw_tmp, sizeof(struct cpu_raw_data_t));
 		if (ret_error == ERR_OK)
 			ret_error = cur_error;
 		logical_cpu++;
-	}
-
-	if (affinity_saved)
-		restore_cpu_affinity();
+	} while (cur_error == ERR_OK);
 
 	return ret_error;
 }
