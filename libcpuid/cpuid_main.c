@@ -31,6 +31,10 @@
 #include "recog_intel.h"
 #include "asm-bits.h"
 #include "libcpuid_util.h"
+#if defined(PLATFORM_ARM) || defined(PLATFORM_AARCH64)
+# include "libcpuid_arm_driver.h"
+# include "rdcpuid.h"
+#endif /* ARM */
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
@@ -1280,9 +1284,6 @@ int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_c
 {
 	bool affinity_saved = false;
 
-	if (!cpuid_present())
-		return cpuid_set_error(ERR_NO_CPUID);
-
 	if (logical_cpu != (logical_cpu_t) -1) {
 		debugf(2, "Getting raw dump for logical CPU %u\n", logical_cpu);
 		if (!set_cpu_affinity(logical_cpu))
@@ -1292,6 +1293,10 @@ int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_c
 
 #if defined(PLATFORM_X86) || defined(PLATFORM_X64)
 	unsigned i;
+
+	if (!cpuid_present())
+		return cpuid_set_error(ERR_NO_CPUID);
+
 	for (i = 0; i < 32; i++)
 		cpu_exec_cpuid(i, data->basic_cpuid[i]);
 	for (i = 0; i < 32; i++)
@@ -1332,33 +1337,54 @@ int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_c
 		data->amd_fn80000026h[i][ECX] = i;
 		cpu_exec_cpuid_ext(data->amd_fn80000026h[i]);
 	}
-#elif defined(PLATFORM_ARM)
-	/* We cannot support ARM CPUs running in 32-bit mode, because the Main ID Register is accessible only in privileged modes
-	   Some related links:
-	   - https://github.com/anrieff/libcpuid/issues/96
-	   - https://developer.arm.com/documentation/ddi0406/b/System-Level-Architecture/Protected-Memory-System-Architecture--PMSA-/CP15-registers-for-a-PMSA-implementation/c0--Main-ID-Register--MIDR-
-	*/
-# warning The 32-bit ARM platform is not supported (Main ID Register is accessible only in privileged modes)
-	UNUSED(data);
-#elif defined(PLATFORM_AARCH64)
-	cpu_exec_mrs("MIDR_EL1", data->arm_midr);
-	cpu_exec_mrs("MPIDR_EL1", data->arm_mpidr);
-	cpu_exec_mrs("REVIDR_EL1", data->arm_revidr);
-	cpu_exec_mrs(SYS_ID_AA64DFR0_EL1, data->arm_id_aa64dfr[0]);
-	cpu_exec_mrs(SYS_ID_AA64DFR1_EL1, data->arm_id_aa64dfr[1]);
-	cpu_exec_mrs(SYS_ID_AA64ISAR0_EL1, data->arm_id_aa64isar[0]);
-	cpu_exec_mrs(SYS_ID_AA64ISAR1_EL1, data->arm_id_aa64isar[1]);
-	cpu_exec_mrs(SYS_ID_AA64ISAR2_EL1, data->arm_id_aa64isar[2]);
-	cpu_exec_mrs(SYS_ID_AA64MMFR0_EL1, data->arm_id_aa64mmfr[0]);
-	cpu_exec_mrs(SYS_ID_AA64MMFR1_EL1, data->arm_id_aa64mmfr[1]);
-	cpu_exec_mrs(SYS_ID_AA64MMFR2_EL1, data->arm_id_aa64mmfr[2]);
-	cpu_exec_mrs(SYS_ID_AA64MMFR3_EL1, data->arm_id_aa64mmfr[3]);
-	cpu_exec_mrs(SYS_ID_AA64MMFR4_EL1, data->arm_id_aa64mmfr[4]);
-	cpu_exec_mrs(SYS_ID_AA64PFR0_EL1, data->arm_id_aa64pfr[0]);
-	cpu_exec_mrs(SYS_ID_AA64PFR1_EL1, data->arm_id_aa64pfr[1]);
-	cpu_exec_mrs(SYS_ID_AA64PFR2_EL1, data->arm_id_aa64pfr[2]);
-	cpu_exec_mrs(SYS_ID_AA64SMFR0_EL1, data->arm_id_aa64smfr[0]);
-	cpu_exec_mrs(SYS_ID_AA64ZFR0_EL1, data->arm_id_aa64zfr[0]);
+#elif defined(PLATFORM_ARM) || defined(PLATFORM_AARCH64)
+	unsigned i;
+	struct cpuid_driver_t *handle;
+
+	if ((handle = cpu_cpuid_driver_open_core(logical_cpu)) != NULL) {
+		debugf(2, "Using kernel driver to read register on logical CPU %u\n", logical_cpu);
+		cpu_read_arm_register_64b(handle, REQ_MIDR, &data->arm_midr);
+		cpu_read_arm_register_64b(handle, REQ_MPIDR, &data->arm_mpidr);
+		cpu_read_arm_register_64b(handle, REQ_REVIDR, &data->arm_revidr);
+		for (i = 0; i < MAX_ARM_ID_AFR_REGS; i++)
+			cpu_read_arm_register_32b(handle, REQ_ID_AFR0 + i, &data->arm_id_afr[i]);
+		for (i = 0; i < MAX_ARM_ID_DFR_REGS; i++)
+			cpu_read_arm_register_32b(handle, REQ_ID_DFR0 + i, &data->arm_id_dfr[i]);
+		for (i = 0; i < MAX_ARM_ID_ISAR_REGS; i++)
+			cpu_read_arm_register_32b(handle, REQ_ID_ISAR0 + i, &data->arm_id_isar[i]);
+		for (i = 0; i < MAX_ARM_ID_MMFR_REGS; i++)
+			cpu_read_arm_register_32b(handle, REQ_ID_MMFR0 + i, &data->arm_id_mmfr[i]);
+		for (i = 0; i < MAX_ARM_ID_PFR_REGS; i++)
+			cpu_read_arm_register_32b(handle, REQ_ID_PFR0 + i, &data->arm_id_pfr[i]);
+		cpu_cpuid_driver_close(handle);
+	}
+# if defined(PLATFORM_AARCH64)
+	else {
+		if (!cpuid_present())
+			return cpuid_set_error(ERR_NO_CPUID);
+		debugf(2, "Using MRS instruction to read register on logical CPU %u\n", logical_cpu);
+		cpu_exec_mrs(AARCH64_REG_MIDR_EL1, data->arm_midr);
+		cpu_exec_mrs(AARCH64_REG_MPIDR_EL1, data->arm_mpidr);
+		cpu_exec_mrs(AARCH64_REG_REVIDR_EL1, data->arm_revidr);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64AFR0_EL1, data->arm_id_aa64afr[0]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64AFR1_EL1, data->arm_id_aa64afr[1]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64DFR0_EL1, data->arm_id_aa64dfr[0]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64DFR1_EL1, data->arm_id_aa64dfr[1]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64ISAR0_EL1, data->arm_id_aa64isar[0]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64ISAR1_EL1, data->arm_id_aa64isar[1]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64ISAR2_EL1, data->arm_id_aa64isar[2]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64MMFR0_EL1, data->arm_id_aa64mmfr[0]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64MMFR1_EL1, data->arm_id_aa64mmfr[1]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64MMFR2_EL1, data->arm_id_aa64mmfr[2]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64MMFR3_EL1, data->arm_id_aa64mmfr[3]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64MMFR4_EL1, data->arm_id_aa64mmfr[4]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64PFR0_EL1, data->arm_id_aa64pfr[0]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64PFR1_EL1, data->arm_id_aa64pfr[1]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64PFR2_EL1, data->arm_id_aa64pfr[2]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64SMFR0_EL1, data->arm_id_aa64smfr[0]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64ZFR0_EL1, data->arm_id_aa64zfr[0]);
+	}
+# endif /* PLATFORM_AARCH64 */
 #else
 # warning This CPU architecture is not supported by libcpuid
 	UNUSED(data);
@@ -2204,6 +2230,7 @@ const char* cpuid_error(void)
 		{ ERR_HANDLE_R , "Error on handle read"},
 		{ ERR_INVRANGE , "Invalid given range"},
 		{ ERR_NOT_FOUND, "Requested type not found"},
+		{ ERR_IOCTL,     "Error on ioctl"},
 	};
 	unsigned i;
 	for (i = 0; i < COUNT_OF(matchtable); i++)

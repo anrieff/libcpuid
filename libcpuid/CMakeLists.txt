@@ -7,7 +7,8 @@ set(cpuid_sources
     rdtsc.c
     libcpuid_util.c
     rdmsr.c
-    asm-bits.c)
+    asm-bits.c
+    rdcpuid.c)
 
 if(WIN32)
   list(APPEND cpuid_sources msrdriver.c)
