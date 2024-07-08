@@ -94,6 +94,8 @@
 #  else
 #    error "Unsupported compiler"
 #  endif /* COMPILER */
+# else
+#    define cpu_exec_mrs(reg_name, reg_value) /* no-op */
 #endif /* INLINE_ASM_SUPPORTED */
 
 int cpuid_exists_by_eflags(void);
