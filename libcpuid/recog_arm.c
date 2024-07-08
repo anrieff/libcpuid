@@ -404,10 +404,11 @@ static inline bool is_aarch32_mode(struct cpu_raw_data_t* raw)
 	return (raw->arm_id_afr[0] != 0) || (raw->arm_id_dfr[0] != 0) || (raw->arm_id_isar[0] != 0) || (raw->arm_id_mmfr[0] != 0) || (raw->arm_id_pfr[0] != 0);
 }
 
+/* Unused
 static inline bool is_aarch64_mode(struct cpu_raw_data_t* raw)
 {
 	return (raw->arm_id_aa64afr[0] != 0) || (raw->arm_id_aa64dfr[0] != 0) || (raw->arm_id_aa64isar[0] != 0) || (raw->arm_id_aa64mmfr[0] != 0) || (raw->arm_id_aa64pfr[0] != 0);
-}
+} */
 
 static bool decode_arm_architecture_version_by_midr(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
