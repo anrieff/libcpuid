@@ -7,18 +7,15 @@
 #include <string>
 using namespace std;
 
-const char* drivers_root = "..\\contrib\\MSR Driver\\";
-const char* sourcefile = "msrdriver.c";
-
 char* images[2];
 int sizes[2];
 const char* filenames[] = { "TmpRdr.sys", "TmpRdr64.sys" };
 vector<string> source;
 
-bool read_image(const char* filename, char*& image, int& isize)
+bool read_image(const char* drivers_root, const char* filename, char*& image, int& isize)
 {
 	char fn[512];
-	sprintf(fn, "%s%s", drivers_root, filename);
+	sprintf(fn, "%s\\%s", drivers_root, filename);
 	FILE* f = fopen(fn, "rb");
 	if (!f) return false;
 	fseek(f, 0, SEEK_END);
@@ -57,10 +54,17 @@ void print_image(FILE* f, const char* arch, const char* image, int size)
 	fprintf(f, "\n};\n");
 }
 
-int main(void)
+int main(int argc, char** argv)
 {
+	if (argc < 3) {
+		printf("%s DRIVER_ROOT_FOLDER SOURCE_FILE\n", argv[0]);
+		return 1;
+	}
+	const char* drivers_root = argv[1];
+	const char* sourcefile = argv[2];
+
 	for (int i = 0; i < 2; i++)
-		if (!read_image(filenames[i], images[i], sizes[i])) {
+		if (!read_image(drivers_root, filenames[i], images[i], sizes[i])) {
 			printf("Cannot read image `%s' from `%s'!\n", filenames[i], drivers_root);
 			return -1;
 		}

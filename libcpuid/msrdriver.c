@@ -30,7 +30,7 @@
  * @Date    2009-09-29
  *
  * The driver is courtesy of Nick 'Bombera' Gabareff, and its source is actually
- * available, see the contrib/ dir.
+ * available, see the drivers/x86/windows/msr/ dir.
  *
  * However, for simplicity, here we just include the images of the compiled .SYS
  * files.
