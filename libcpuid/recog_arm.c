@@ -399,16 +399,10 @@ static const struct arm_id_part* get_cpu_implementer_parts(const struct arm_hw_i
 	return &hw_impl->parts[i];
 }
 
-static inline bool is_aarch32_mode(struct cpu_raw_data_t* raw)
-{
-	return (raw->arm_id_afr[0] != 0) || (raw->arm_id_dfr[0] != 0) || (raw->arm_id_isar[0] != 0) || (raw->arm_id_mmfr[0] != 0) || (raw->arm_id_pfr[0] != 0);
-}
-
-/* Unused
 static inline bool is_aarch64_mode(struct cpu_raw_data_t* raw)
 {
 	return (raw->arm_id_aa64afr[0] != 0) || (raw->arm_id_aa64dfr[0] != 0) || (raw->arm_id_aa64isar[0] != 0) || (raw->arm_id_aa64mmfr[0] != 0) || (raw->arm_id_aa64pfr[0] != 0);
-} */
+}
 
 static bool decode_arm_architecture_version_by_midr(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
@@ -594,7 +588,7 @@ static void set_feature_status(struct cpu_id_t* data, struct arm_arch_extension_
 	}
 }
 
-static void match_arm_features(bool is_aarch32, cpu_feature_t feature, const struct arm_feature_map_t* feature_map, struct cpu_id_t* data, struct arm_arch_extension_t* ext_status)
+static void match_arm_features(bool is_aarch64, cpu_feature_t feature, const struct arm_feature_map_t* feature_map, struct cpu_id_t* data, struct arm_arch_extension_t* ext_status)
 {
 	bool field_is_present, feature_is_present = false;
 	unsigned i;
@@ -604,9 +598,9 @@ static void match_arm_features(bool is_aarch32, cpu_feature_t feature, const str
 	for (i = 0; i < MAX_IDENTIFY_FIELDS; i++) {
 		field = &feature_map->fields[i];
 
-		if (is_aarch32 && field->aarch32_reg != NULL)
+		if (!is_aarch64 && field->aarch32_reg != NULL)
 			reg_value = *field->aarch32_reg;
-		else if (!is_aarch32 && field->aarch64_reg != NULL)
+		else if (is_aarch64 && field->aarch64_reg != NULL)
 			reg_value = *field->aarch64_reg;
 		else
 			break; // quit on sentinel values
@@ -681,7 +675,7 @@ static void load_arm_feature_mte4(struct cpu_raw_data_t* raw, struct cpu_id_t* d
 static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct arm_arch_extension_t* ext_status)
 {
 	cpu_feature_t feature;
-	const bool is_aarch32 = is_aarch32_mode(raw);
+	const bool is_aarch64 = is_aarch64_mode(raw);
 
 	/* Thumb */
 	set_feature_status(data, ext_status,
@@ -2524,7 +2518,7 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data,
 
 	for (feature = 0; feature < NUM_CPU_FEATURES; feature++)
 		if (features_map[feature].ver_optional)
-			match_arm_features(is_aarch32, feature, &features_map[feature], data, ext_status);
+			match_arm_features(is_aarch64, feature, &features_map[feature], data, ext_status);
 
 	/* Some fields do not follow the standard ID scheme */
 	load_arm_feature_pauth(data, ext_status);

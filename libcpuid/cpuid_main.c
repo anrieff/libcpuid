@@ -1356,6 +1356,22 @@ int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_c
 			cpu_read_arm_register_32b(handle, REQ_ID_MMFR0 + i, &data->arm_id_mmfr[i]);
 		for (i = 0; i < MAX_ARM_ID_PFR_REGS; i++)
 			cpu_read_arm_register_32b(handle, REQ_ID_PFR0 + i, &data->arm_id_pfr[i]);
+# if defined(PLATFORM_AARCH64)
+		for (i = 0; i < MAX_ARM_ID_AA64AFR_REGS; i++)
+			cpu_read_arm_register_64b(handle, REQ_ID_AA64AFR0 + i, &data->arm_id_aa64afr[i]);
+		for (i = 0; i < MAX_ARM_ID_AA64DFR_REGS; i++)
+			cpu_read_arm_register_64b(handle, REQ_ID_AA64DFR0 + i, &data->arm_id_aa64dfr[i]);
+		for (i = 0; i < MAX_ARM_ID_AA64ISAR_REGS; i++)
+			cpu_read_arm_register_64b(handle, REQ_ID_AA64ISAR0 + i, &data->arm_id_aa64isar[i]);
+		for (i = 0; i < MAX_ARM_ID_AA64MMFR_REGS; i++)
+			cpu_read_arm_register_64b(handle, REQ_ID_AA64MMFR0 + i, &data->arm_id_aa64mmfr[i]);
+		for (i = 0; i < MAX_ARM_ID_AA64PFR_REGS; i++)
+			cpu_read_arm_register_64b(handle, REQ_ID_AA64PFR0 + i, &data->arm_id_aa64pfr[i]);
+		for (i = 0; i < MAX_ARM_ID_AA64SMFR_REGS; i++)
+			cpu_read_arm_register_64b(handle, REQ_ID_AA64SMFR0 + i, &data->arm_id_aa64smfr[i]);
+		for (i = 0; i < MAX_ARM_ID_AA64ZFR_REGS; i++)
+			cpu_read_arm_register_64b(handle, REQ_ID_AA64ZFR0 + i, &data->arm_id_aa64zfr[i]);
+# endif /* PLATFORM_AARCH64 */
 		cpu_cpuid_driver_close(handle);
 	}
 # if defined(PLATFORM_AARCH64)
