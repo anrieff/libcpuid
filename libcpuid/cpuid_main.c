@@ -2247,6 +2247,7 @@ const char* cpuid_error(void)
 		{ ERR_INVRANGE , "Invalid given range"},
 		{ ERR_NOT_FOUND, "Requested type not found"},
 		{ ERR_IOCTL,     "Error on ioctl"},
+		{ ERR_REQUEST,   "Invalid request"},
 	};
 	unsigned i;
 	for (i = 0; i < COUNT_OF(matchtable); i++)

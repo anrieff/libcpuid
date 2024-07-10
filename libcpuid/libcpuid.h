@@ -1203,6 +1203,7 @@ typedef enum {
 	ERR_INVRANGE = -16,	/*!< Invalid given range */
 	ERR_NOT_FOUND= -17,	/*!< Requested type not found */
 	ERR_IOCTL    = -18,	/*!< Error on ioctl */
+	ERR_REQUEST  = -19,	/*!< Invalid request */
 } cpu_error_t;
 
 /**

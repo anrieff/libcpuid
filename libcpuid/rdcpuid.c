@@ -110,8 +110,11 @@ int cpu_read_arm_register_32b(struct cpuid_driver_t* driver, reg_request_t reque
 	if (!driver || driver->fd < 0)
 		return cpuid_set_error(ERR_HANDLE);
 
-	if(ioctl(driver->fd, ARM_IOC_READ_REG, &read_reg))
+	if (ioctl(driver->fd, ARM_IOC_READ_REG, &read_reg))
 		return cpuid_set_error(ERR_IOCTL);
+
+	if (read_reg.request == REQ_INVALID)
+		return cpuid_set_error(ERR_REQUEST);
 
 	*result = read_reg.value_32b;
 	return 0;
@@ -125,8 +128,11 @@ int cpu_read_arm_register_64b(struct cpuid_driver_t* driver, reg_request_t reque
 	if (!driver || driver->fd < 0)
 		return cpuid_set_error(ERR_HANDLE);
 
-	if(ioctl(driver->fd, ARM_IOC_READ_REG, &read_reg))
+	if (ioctl(driver->fd, ARM_IOC_READ_REG, &read_reg))
 		return cpuid_set_error(ERR_IOCTL);
+
+	if (read_reg.request == REQ_INVALID)
+		return cpuid_set_error(ERR_REQUEST);
 
 	*result = read_reg.value_64b;
 	return 0;

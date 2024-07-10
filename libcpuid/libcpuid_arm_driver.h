@@ -120,7 +120,6 @@ struct read_reg_t {
 		uint32_t value_32b;
 		uint64_t value_64b;
 	};
-	int err;
 };
 typedef struct read_reg_t read_reg_t;
 
