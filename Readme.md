@@ -65,9 +65,17 @@ sources.
 
 ##### By using CMake
 
+CMake options for libcpuid (use `cmake -LH` to list all options):
+- `LIBCPUID_ENABLE_DOCS`: enable building documentation by using Doxyen (**ON** by default)
+- `LIBCPUID_ENABLE_TESTS`: enable tests targets, like `test-fast`, `test-old` and `fix-tests` (**OFF** by default)
+- `LIBCPUID_BUILD_DEPRECATED`: build support of deprecated attributes (**ON** by default to guarantee backward compatibility)
+- `LIBCPUID_BUILD_DRIVERS`: enable building kernel drivers (**ON** by default)
+- `LIBCPUID_DRIVER_DEBUG`: enable debug mode flr kernel drivers (**OFF** by default)
+- `LIBCPUID_DRIVER_ARM_LINUX_DKMS`: use DKMS for CPUID Linux kernel module for ARM (**ON** by default), switch off to build the kernel module in the `build` directory
+
 Basic example to build and install libcpuid by using CMake:
 ```shell
-cmake -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLIBCPUID_ENABLE_TESTS=ON
 cmake --build build
 cmake --install build # may need administrative privileges, install under /usr/local by default
 ```

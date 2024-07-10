@@ -1,5 +1,7 @@
-set(DRIVER_NAME "cpuid")
+# Options
 option(LIBCPUID_DRIVER_ARM_LINUX_DKMS "Use DKMS for CPUID kernel module for ARM" ON)
+
+set(DRIVER_NAME "cpuid")
 
 if(LIBCPUID_DRIVER_ARM_LINUX_DKMS)
   message(STATUS "Deploying DKMS configuration for CPUID kernel module...")

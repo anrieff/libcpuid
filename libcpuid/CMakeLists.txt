@@ -1,3 +1,7 @@
+# Options
+option(LIBCPUID_BUILD_DEPRECATED "Build support of deprecated attributes" ON)
+option(LIBCPUID_ENABLE_DOCS "Enable building documentation" ON)
+
 set(cpuid_sources
     cpuid_main.c
     recog_amd.c
@@ -21,11 +25,10 @@ if("${MSVC_CXX_ARCHITECTURE_ID}" MATCHES "x64")
   list(APPEND cpuid_sources masm-x64.asm)
 endif()
 
-option(SUPPORT_DEPRECATED "Build support of deprecated attributes" ON)
-if(NOT SUPPORT_DEPRECATED)
+if(NOT LIBCPUID_BUILD_DEPRECATED)
   message(AUTHOR_WARNING "Deprecated attributes will not be available, the library will be not backward compatible")
   add_compile_definitions(LIBCPUID_DISABLE_DEPRECATED)
-endif(NOT SUPPORT_DEPRECATED)
+endif(NOT LIBCPUID_BUILD_DEPRECATED)
 
 add_library(cpuid ${cpuid_sources})
 set_property(TARGET cpuid PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -38,33 +41,34 @@ set_target_properties(cpuid PROPERTIES SOVERSION "${LIBCPUID_CURRENT}")
 set_target_properties(cpuid PROPERTIES PUBLIC_HEADER "libcpuid.h;libcpuid_types.h;libcpuid_constants.h")
 
 # Documentation
-find_package(Doxygen)
-option(ENABLE_DOCS "Enable building documentation." ON)
-if(DOXYGEN_FOUND AND ENABLE_DOCS)
-  set(top_srcdir ${PROJECT_SOURCE_DIR})
-  configure_file(Doxyfile.in Doxyfile ESCAPE_QUOTES)
-  add_custom_target(
-    docs ALL
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/
-    COMMENT "Generating API documentation with Doxygen"
-    VERBATIM)
-  if(UNIX)
-    install(
-      DIRECTORY "${CMAKE_SOURCE_DIR}/docs/man/"
-      DESTINATION "${CMAKE_INSTALL_MANDIR}"
-      FILES_MATCHING
-      PATTERN "cpu_*_t.3"
-      PATTERN "libcpuid.3"
-      PATTERN "cpuid_tool.3")
-  endif(UNIX)
-else()
-  add_custom_target(
-    docs
-    echo
-    "Doxygen was not installed when CMake was run or ENABLE_DOCS was OFF. Check that Doxygen is installed and rerun `cmake .`"
-    VERBATIM)
-endif()
+if(LIBCPUID_ENABLE_DOCS)
+  find_package(Doxygen)
+  if(DOXYGEN_FOUND)
+    set(top_srcdir ${PROJECT_SOURCE_DIR})
+    configure_file(Doxyfile.in Doxyfile ESCAPE_QUOTES)
+    add_custom_target(
+      docs ALL
+      ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/
+      COMMENT "Generating API documentation with Doxygen"
+      VERBATIM)
+    if(UNIX)
+      install(
+        DIRECTORY "${CMAKE_SOURCE_DIR}/docs/man/"
+        DESTINATION "${CMAKE_INSTALL_MANDIR}"
+        FILES_MATCHING
+        PATTERN "cpu_*_t.3"
+        PATTERN "libcpuid.3"
+        PATTERN "cpuid_tool.3")
+    endif(UNIX)
+  else(DOXYGEN_FOUND)
+    add_custom_target(
+      docs
+      echo
+      "Doxygen was not installed when CMake was run. Check that Doxygen is installed and rerun `cmake .`"
+      VERBATIM)
+  endif(DOXYGEN_FOUND)
+endif(LIBCPUID_ENABLE_DOCS)
 
 # Configuration
 set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
