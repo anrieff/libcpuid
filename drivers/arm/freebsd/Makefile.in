@@ -1,0 +1,9 @@
+KMOD=@DRIVER_NAME@
+
+SRCS= \
+	@DRIVER_SOURCE@
+
+CFLAGS+= \
+	-I@CMAKE_SOURCE_DIR@/libcpuid
+
+.include <bsd.kmod.mk>
