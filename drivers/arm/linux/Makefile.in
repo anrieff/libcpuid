@@ -1,0 +1,9 @@
+obj-m += @DRIVER_NAME@.o
+
+all: modules
+
+modules:
+	@$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+
+clean:
+	@$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean

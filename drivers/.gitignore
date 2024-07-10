@@ -1,0 +1,8 @@
+!*/*/Makefile.in
+*.cmd
+*.o.d
+*.ko
+*.mod
+*.mod.c
+Module.symvers
+modules.order
