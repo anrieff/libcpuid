@@ -42,3 +42,5 @@ cpuid_tool/x64
 build
 docs
 .vscode
+raw.txt
+report.txt
