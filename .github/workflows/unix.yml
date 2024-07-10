@@ -25,7 +25,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Generate build system
-      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="" -DLIBCPUID_TESTS:BOOL=ON
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="" -DLIBCPUID_ENABLE_TESTS=ON
 
     - name: Build
       run: cmake --build build

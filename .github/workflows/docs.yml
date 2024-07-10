@@ -41,7 +41,7 @@ jobs:
           sudo apt-get install -y -qq cmake doxygen
 
       - name: Generate build system
-        run: cmake -S . -B build -DENABLE_DOCS:BOOL=ON
+        run: cmake -S . -B build -DLIBCPUID_ENABLE_DOCS=ON
 
       - name: Run Doxygen
         run: make -C build docs
