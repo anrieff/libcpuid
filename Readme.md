@@ -1,17 +1,40 @@
 # libcpuid
 
-libcpuid provides CPU identification. Supported CPU architectures are:
+libcpuid provides CPU identification. Project website is on SourceForge (https://libcpuid.sourceforge.net).
+
+## Support
+
+### CPU architectures
+
 - x86:
   - 32-bit CPUs (IA-32, also known as i386, i486, i586 and i686)
   - 64-bit CPUs (x86_64, also known as x64, AMD64, and Intel 64)
 - ARM (since v0.7.0):
+  - 32-bit CPUs (ARM32, also known as AArch32)
   - 64-bit CPUs (ARM64, also known as AArch64)
 
-For details about the programming API, you might want to
-take a look at the project's website on sourceforge
-(https://libcpuid.sourceforge.net). There you'd find a short
-[tutorial](https://libcpuid.sourceforge.net/documentation.html), as well
-as the full [API reference](https://anrieff.github.io/libcpuid).
+### Operating systems
+
+libcpuid support varies depending on the features:
+- build: code build, generate libraries and binaries
+- x86 MSR : access to x86 model-specific registers
+- ARM CPUID : access to ARM registers
+
+|Name|Build|x86 MSR|ARM CPUID|
+|----|----|-------|---------|
+|DragonFly BSD|:grey_question: |:grey_question: ([`cpuctl` kernel module](https://man.freebsd.org/cgi/man.cgi?query=cpuctl))|:x:|
+|FreeBSD|:heavy_check_mark: |:heavy_check_mark: ([`cpuctl` kernel module](https://man.freebsd.org/cgi/man.cgi?query=cpuctl))|:heavy_check_mark:¹ ([`cpuid` out-of-tree kernel module](https://github.com/anrieff/libcpuid/tree/master/drivers/arm/freebsd))|
+|Linux|:heavy_check_mark: ![UNIX workflow status](https://github.com/anrieff/libcpuid/actions/workflows/unix.yml/badge.svg)|:heavy_check_mark: ([`msr` kernel module](https://man7.org/linux/man-pages/man4/msr.4.html))|:heavy_check_mark:¹ ([`cpuid` out-of-tree kernel module](https://github.com/anrieff/libcpuid/tree/master/drivers/arm/linux))|
+|macOS|:heavy_check_mark: ![UNIX workflow status](https://github.com/anrieff/libcpuid/actions/workflows/unix.yml/badge.svg)|:x:|:x:|
+|NetBSD|:grey_question:|:x:|:x:|
+|OpenBSD|:grey_question:|:x:|:x:|
+|Windows|:heavy_check_mark: ![Windows workflow status](https://github.com/anrieff/libcpuid/actions/workflows/windows.yml/badge.svg)|:heavy_check_mark: ([`msr` driver](https://github.com/anrieff/libcpuid/tree/master/drivers/x86/windows/msr))|:x:|
+
+Legend:
+- :heavy_check_mark: Supported
+- :grey_question: Likely supported, not heavily tested
+- :x: Not supported
+- **¹** On AArch32 state, the kernel module is required. On AArch64 state, the kernel module is optional, because the kernel can trap the [`MRS` instruction](https://developer.arm.com/documentation/dui0473/m/arm-and-thumb-instructions/mrs--system-coprocessor-register-to-arm-register-)
 
 ## Getting started
 
@@ -103,6 +126,50 @@ Below, the full lists of repositories:
 #### Build tool
 
 * Vcpkg: `vcpkg install cpuid`
+
+## Usage
+
+### As a software developer
+
+For details about the programming API, you might want to take a look at the short [tutorial](https://libcpuid.sourceforge.net/documentation.html), as well as the full [API reference](https://anrieff.github.io/libcpuid).
+
+### As an end-user
+
+You can use the `cpuid_tool` command. Pass the `--help` argument to display usage:
+```
+Usage: cpuid_tool [options]
+
+Options:
+  -h, --help       - Show this help
+  --load=<file>    - Load raw CPUID data from file
+  --save=<file>    - Acquire raw CPUID data and write it to file
+  --report, --all  - Report all decoded CPU info (w/o clock)
+  --clock          - in conjunction to --report: print CPU clock as well
+  --clock-rdtsc    - same as --clock, but use RDTSC for clock detection
+  --cpulist        - list all known CPUs
+  --sgx            - list SGX leaf data, if SGX is supported.
+  --hypervisor     - print hypervisor vendor if detected.
+  --quiet          - disable warnings
+  --outfile=<file> - redirect all output to this file, instead of stdout
+  --verbose, -v    - be extra verbose (more keys increase verbosiness level)
+  --version        - print library version
+
+Query switches (generate 1 line of output per switch; in order of appearance):
+  --cpuid, --architecture, --feature-level, --purpose, --vendorstr, 
+  --vendorid, --brandstr, --family, --model, --stepping, --extfamily, 
+  --extmodel, --implementer, --variant, --part-num, --revision, --cores, 
+  --logical, --total-cpus, --affi-mask, --l1d-cache, --l1i-cache, --cache, 
+  --l2-cache, --l3-cache, --l4-cache, --l1d-assoc, --l1i-assoc, --l2-assoc, 
+  --l3-assoc, --l4-assoc, --l1d-cacheline, --l1i-cacheline, --l2-cacheline, 
+  --l3-cacheline, --l4-cacheline, --l1d-instances, --l1i-instances, 
+  --l2-instances, --l3-instances, --l4-instances, --codename, --flags, 
+  --clock, --clock-os, --clock-rdtsc, --clock-ic, --rdmsr, --rdmsr-raw, 
+  --sse-size
+
+If `-' is used for <file>, then stdin/stdout will be used instead of files.
+When no options are present, the program behaves as if it was invoked with
+  cpuid_tool "--save=raw.txt --outfile=report.txt --report --verbose"
+```
 
 ## Contributing
 
