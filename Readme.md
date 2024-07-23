@@ -171,6 +171,13 @@ When no options are present, the program behaves as if it was invoked with
   cpuid_tool "--save=raw.txt --outfile=report.txt --report --verbose"
 ```
 
+### Python bindings
+
+The libcpuid library features Python bindings, which can be installed as a library
+using `python -m pip install libcpuid`. Visit the
+[documentation at Read the Docs](https://libcpuid.readthedocs.io/en/latest/index.html#)
+to see how the library is used.
+
 ## Contributing
 
 Refer to the [dedicated page](CONTRIBUTING.md).

@@ -1,0 +1,29 @@
+# Read the Docs configuration file
+
+version: 2
+
+build:
+  os: ubuntu-22.04
+  tools:
+    python: latest
+  apt_packages:
+    - autoconf
+    - libtool
+    - automake
+  jobs:
+    pre_install:
+      - libtoolize
+      - autoreconf --install
+      - mkdir ./install
+      - ./configure --prefix=`pwd`/install
+      - make
+      - make install
+      - pip install cffi
+      - python ./python/ffi_build_rtd.py ./libcpuid/libcpuid.h ./install
+
+sphinx:
+  configuration: python/docs/conf.py
+
+python:
+  install:
+    - requirements: python/docs/requirements.txt

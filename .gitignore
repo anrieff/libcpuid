@@ -40,11 +40,14 @@ cpuid_tool/x32
 cpuid_tool/x64
 *.vcxproj.user
 build
-docs
+/docs
 .vscode
 raw.txt
 report.txt
 *__pycache__
+python/docs/_build
+python/docs/doctrees
+python/docs/html
 python/dist
 python/src/libcpuid/_libcpuid_cffi.*
 python/src/libcpuid/libcpuid.h
