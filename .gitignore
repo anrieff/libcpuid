@@ -44,3 +44,8 @@ docs
 .vscode
 raw.txt
 report.txt
+*__pycache__
+python/dist
+python/src/libcpuid/_libcpuid_cffi.*
+python/src/libcpuid/libcpuid.h
+*.egg-info
