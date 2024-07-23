@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools", "cffi"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "libcpuid"
+version = "0.1.0"
+readme = "README.md"
+dependencies = ["cffi"]
+license = {text = "BSD-3-Clause"}
+authors = [{name = "Pavol Žáčik", email = "zacikpa@gmail.com"}]
+description = "Python bindings for the libcpuid C library"
