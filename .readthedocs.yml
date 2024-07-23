@@ -19,7 +19,7 @@ build:
       - make
       - make install
       - pip install cffi
-      - python ./python/ffi_build_rtd.py ./libcpuid/libcpuid.h ./install
+      - python ./python/src/libcpuid/_ffi_build_rtd.py ./libcpuid/libcpuid.h ./install
 
 sphinx:
   configuration: python/docs/conf.py
