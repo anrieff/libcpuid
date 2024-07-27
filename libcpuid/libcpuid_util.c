@@ -28,11 +28,11 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <ctype.h>
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 #include "libcpuid.h"
+#include "libcpuid_ctype.h"
 #include "libcpuid_util.h"
 #include "libcpuid_internal.h"
 

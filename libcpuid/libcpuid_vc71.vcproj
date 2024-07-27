@@ -203,6 +203,9 @@
 				RelativePath=".\libcpuid_constants.h">
 			</File>
 			<File
+				RelativePath=".\libcpuid_ctype.h">
+			</File>
+			<File
 				RelativePath=".\libcpuid_internal.h">
 			</File>
 			<File

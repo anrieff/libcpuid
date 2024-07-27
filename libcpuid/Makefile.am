@@ -35,6 +35,7 @@ noinst_HEADERS = 		\
 	asm-bits.h		\
 	centaur_code_t.h	\
 	intel_code_t.h		\
+	libcpuid_ctype.h	\
 	libcpuid_internal.h	\
 	libcpuid_util.h		\
 	recog_amd.h		\
