@@ -1320,9 +1320,12 @@ int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_c
 
 	if (logical_cpu != (logical_cpu_t) -1) {
 		debugf(2, "Getting raw dump for logical CPU %u\n", logical_cpu);
-		if (!set_cpu_affinity(logical_cpu))
-			return cpuid_set_error(ERR_INVCNB);
-		affinity_saved = save_cpu_affinity();
+		if (set_cpu_affinity(logical_cpu))
+			affinity_saved = save_cpu_affinity();
+		else
+			/* Never return ERR_INVCNB for logical CPU 0 (in case set_cpu_affinity() is not supported) */
+			if (logical_cpu > 0)
+				return cpuid_set_error(ERR_INVCNB);
 	}
 
 #if defined(PLATFORM_X86) || defined(PLATFORM_X64)
