@@ -526,6 +526,8 @@ static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 #endif /* defined __DragonFly__ */
 
 #if defined __NetBSD__
+#include <unistd.h>
+#include <sys/sysctl.h>
 #include <pthread.h>
 #include <sched.h>
 
@@ -553,9 +555,36 @@ static bool restore_cpu_affinity(void)
 
 static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
-	cpuset_t *cpuset;
-	cpuset = cpuset_create();
-	cpuset_set((cpuid_t) logical_cpu, cpuset);
+	int result = -1;
+	size_t size = sizeof(result);
+
+	/* Note: pthread_setaffinity_np() always returns 0 even if the target logical CPU does not exist */
+	if (logical_cpu >= get_total_cpus())
+		return false;
+
+	/* Check if user is allowed to control CPU sets: https://man.netbsd.org/secmodel_extensions.9 */
+	if (getuid() != 0) {
+		if (sysctlbyname("security.models.extensions.user_set_cpu_affinity", &result, &size, NULL, 0)) {
+			warnf("failed to get sysctl value for security.models.extensions.user_set_cpu_affinity\n");
+			return false;
+		}
+		else if (result == 0) {
+			warnf("user is not allowed to control the CPU affinity: you may enable \"Non-superuser control of CPU sets\" by setting sysctl security.models.extensions.user_set_cpu_affinity=1\n");
+			return false;
+		}
+	}
+
+	cpuset_t *cpuset = cpuset_create();
+	if (cpuset == NULL) {
+		warnf("failed to create CPU set for logical CPU %u\n", logical_cpu);
+		return false;
+	}
+
+	if (cpuset_set((cpuid_t) logical_cpu, cpuset) < 0) {
+		warnf("failed to set CPU set for logical CPU %u\n", logical_cpu);
+		return false;
+	}
+
 	int ret = pthread_setaffinity_np(pthread_self(), cpuset_size(cpuset), cpuset);
 	cpuset_destroy(cpuset);
 	return ret == 0;
