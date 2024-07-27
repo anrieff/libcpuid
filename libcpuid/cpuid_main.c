@@ -62,178 +62,6 @@
 
 INTERNAL_SCOPE int _libcpuid_errno = ERR_OK;
 
-int cpuid_set_error(cpu_error_t err)
-{
-	_libcpuid_errno = (int) err;
-	return (int) err;
-}
-
-int cpuid_get_error(void)
-{
-	return _libcpuid_errno;
-}
-
-static void raw_data_t_constructor(struct cpu_raw_data_t* raw)
-{
-	memset(raw, 0, sizeof(struct cpu_raw_data_t));
-}
-
-static void cpu_id_t_constructor(struct cpu_id_t* id)
-{
-	memset(id, 0, sizeof(struct cpu_id_t));
-	id->architecture = ARCHITECTURE_UNKNOWN;
-	id->feature_level = FEATURE_LEVEL_UNKNOWN;
-	id->vendor = VENDOR_UNKNOWN;
-	id->l1_data_cache = id->l1_instruction_cache = id->l2_cache = id->l3_cache = id->l4_cache = -1;
-	id->l1_data_assoc = id->l1_instruction_assoc = id->l2_assoc = id->l3_assoc = id->l4_assoc = -1;
-	id->l1_data_cacheline = id->l1_instruction_cacheline = id->l2_cacheline = id->l3_cacheline = id->l4_cacheline = -1;
-	id->l1_data_instances = id->l1_instruction_instances = id->l2_instances = id->l3_instances = id->l4_instances = -1;
-	id->x86.sse_size = -1;
-	init_affinity_mask(&id->affinity_mask);
-	id->purpose = PURPOSE_GENERAL;
-}
-
-static void cpu_raw_data_array_t_constructor(struct cpu_raw_data_array_t* raw_array, bool with_affinity)
-{
-	raw_array->with_affinity = with_affinity;
-	raw_array->num_raw = 0;
-	raw_array->raw = NULL;
-}
-
-static void system_id_t_constructor(struct system_id_t* system)
-{
-	system->num_cpu_types                  = 0;
-	system->cpu_types                      = NULL;
-	system->l1_data_total_instances        = -1;
-	system->l1_instruction_total_instances = -1;
-	system->l2_total_instances             = -1;
-	system->l3_total_instances             = -1;
-	system->l4_total_instances             = -1;
-}
-
-static void topology_t_constructor(struct internal_topology_t* topology, logical_cpu_t logical_cpu)
-{
-	memset(topology, 0, sizeof(struct internal_topology_t));
-	topology->apic_id     = -1;
-	topology->package_id  = -1;
-	topology->core_id     = -1;
-	topology->smt_id      = -1;
-	topology->logical_cpu = logical_cpu;
-}
-
-static void core_instances_t_constructor(struct internal_core_instances_t* data)
-{
-	data->instances = 0;
-	memset(data->htable, 0, sizeof(data->htable));
-}
-
-static void cache_instances_t_constructor(struct internal_cache_instances_t* data)
-{
-	memset(data->instances, 0, sizeof(data->instances));
-	memset(data->htable,    0, sizeof(data->htable));
-}
-
-static void type_info_array_t_constructor(struct internal_type_info_array_t* data)
-{
-	data->num  = 0;
-	data->data = NULL;
-}
-
-static int16_t cpuid_find_index_system_id(struct system_id_t* system, cpu_purpose_t purpose,
-                                          struct internal_type_info_array_t* type_info, int32_t package_id, bool is_topology_supported)
-{
-	int16_t i = 0;
-
-	if (is_topology_supported) {
-		for (i = 0; i < system->num_cpu_types; i++)
-			if ((system->cpu_types[i].purpose == purpose) && (type_info->data[i].package_id == package_id))
-				return i;
-	}
-	else {
-		for (i = 0; i < system->num_cpu_types; i++)
-			if (system->cpu_types[i].purpose == purpose)
-				return i;
-	}
-
-	return -1;
-}
-
-static void cpuid_grow_raw_data_array(struct cpu_raw_data_array_t* raw_array, logical_cpu_t n)
-{
-	logical_cpu_t i;
-	struct cpu_raw_data_t *tmp = NULL;
-
-	if ((n <= 0) || (n < raw_array->num_raw)) return;
-	debugf(3, "Growing cpu_raw_data_array_t from %u to %u items\n", raw_array->num_raw, n);
-	tmp = realloc(raw_array->raw, sizeof(struct cpu_raw_data_t) * n);
-	if (tmp == NULL) { /* Memory allocation failure */
-		cpuid_set_error(ERR_NO_MEM);
-		return;
-	}
-
-	for (i = raw_array->num_raw; i < n; i++)
-		raw_data_t_constructor(&tmp[i]);
-	raw_array->num_raw = n;
-	raw_array->raw     = tmp;
-}
-
-static void cpuid_grow_system_id(struct system_id_t* system, uint8_t n)
-{
-	uint8_t i;
-	struct cpu_id_t *tmp = NULL;
-
-	if ((n <= 0) || (n < system->num_cpu_types)) return;
-	debugf(3, "Growing system_id_t from %u to %u items\n", system->num_cpu_types, n);
-	tmp = realloc(system->cpu_types, sizeof(struct cpu_id_t) * n);
-	if (tmp == NULL) { /* Memory allocation failure */
-		cpuid_set_error(ERR_NO_MEM);
-		return;
-	}
-
-	for (i = system->num_cpu_types; i < n; i++)
-		cpu_id_t_constructor(&tmp[i]);
-	system->num_cpu_types = n;
-	system->cpu_types     = tmp;
-}
-
-static void cpuid_grow_type_info(struct internal_type_info_array_t* type_info, uint8_t n)
-{
-	uint8_t i;
-	struct internal_type_info_t *tmp = NULL;
-
-	if ((n <= 0) || (n < type_info->num)) return;
-	debugf(3, "Growing internal_type_info_t from %u to %u items\n", type_info->num, n);
-	tmp = realloc(type_info->data, sizeof(struct internal_type_info_t) * n);
-	if (tmp == NULL) { /* Memory allocation failure */
-		cpuid_set_error(ERR_NO_MEM);
-		return;
-	}
-
-	for (i = type_info->num; i < n; i++) {
-		core_instances_t_constructor(&tmp[i].core_instances);
-		cache_instances_t_constructor(&tmp[i].cache_instances);
-	}
-	type_info->num  = n;
-	type_info->data = tmp;
-}
-
-static void cpuid_free_type_info(struct internal_type_info_array_t* type_info)
-{
-	if (type_info->num <= 0) return;
-	free(type_info->data);
-	type_info->num = 0;
-}
-
-static cpu_architecture_t cpuid_architecture_identify(struct cpu_raw_data_t* raw)
-{
-	if (raw->basic_cpuid[0][EAX] != 0x0 || raw->basic_cpuid[0][EBX] != 0x0 || raw->basic_cpuid[0][ECX] != 0x0 || raw->basic_cpuid[0][EDX] != 0x0)
-		return ARCHITECTURE_X86;
-	else if (raw->arm_midr != 0x0)
-		return ARCHITECTURE_ARM;
-
-	return ARCHITECTURE_UNKNOWN;
-}
-
 /* get_total_cpus() system specific code: uses OS routines to determine total number of CPUs */
 #ifdef __APPLE__
 #include <unistd.h>
@@ -629,6 +457,183 @@ static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 	return false;
 }
 #endif /* SET_CPU_AFFINITY */
+
+int cpuid_set_error(cpu_error_t err)
+{
+	_libcpuid_errno = (int) err;
+	return (int) err;
+}
+
+int cpuid_get_error(void)
+{
+	return _libcpuid_errno;
+}
+
+static void raw_data_t_constructor(struct cpu_raw_data_t* raw)
+{
+	memset(raw, 0, sizeof(struct cpu_raw_data_t));
+}
+
+static void cpu_id_t_constructor(struct cpu_id_t* id)
+{
+	memset(id, 0, sizeof(struct cpu_id_t));
+	id->architecture = ARCHITECTURE_UNKNOWN;
+	id->feature_level = FEATURE_LEVEL_UNKNOWN;
+	id->vendor = VENDOR_UNKNOWN;
+	id->l1_data_cache = id->l1_instruction_cache = id->l2_cache = id->l3_cache = id->l4_cache = -1;
+	id->l1_data_assoc = id->l1_instruction_assoc = id->l2_assoc = id->l3_assoc = id->l4_assoc = -1;
+	id->l1_data_cacheline = id->l1_instruction_cacheline = id->l2_cacheline = id->l3_cacheline = id->l4_cacheline = -1;
+	id->l1_data_instances = id->l1_instruction_instances = id->l2_instances = id->l3_instances = id->l4_instances = -1;
+	id->x86.sse_size = -1;
+	init_affinity_mask(&id->affinity_mask);
+	id->purpose = PURPOSE_GENERAL;
+}
+
+static void cpu_raw_data_array_t_constructor(struct cpu_raw_data_array_t* raw_array, bool with_affinity)
+{
+#ifdef SET_CPU_AFFINITY
+	raw_array->with_affinity = with_affinity;
+#else
+	UNUSED(with_affinity);
+	raw_array->with_affinity = false;
+#endif
+	raw_array->num_raw = 0;
+	raw_array->raw = NULL;
+}
+
+static void system_id_t_constructor(struct system_id_t* system)
+{
+	system->num_cpu_types                  = 0;
+	system->cpu_types                      = NULL;
+	system->l1_data_total_instances        = -1;
+	system->l1_instruction_total_instances = -1;
+	system->l2_total_instances             = -1;
+	system->l3_total_instances             = -1;
+	system->l4_total_instances             = -1;
+}
+
+static void topology_t_constructor(struct internal_topology_t* topology, logical_cpu_t logical_cpu)
+{
+	memset(topology, 0, sizeof(struct internal_topology_t));
+	topology->apic_id     = -1;
+	topology->package_id  = -1;
+	topology->core_id     = -1;
+	topology->smt_id      = -1;
+	topology->logical_cpu = logical_cpu;
+}
+
+static void core_instances_t_constructor(struct internal_core_instances_t* data)
+{
+	data->instances = 0;
+	memset(data->htable, 0, sizeof(data->htable));
+}
+
+static void cache_instances_t_constructor(struct internal_cache_instances_t* data)
+{
+	memset(data->instances, 0, sizeof(data->instances));
+	memset(data->htable,    0, sizeof(data->htable));
+}
+
+static void type_info_array_t_constructor(struct internal_type_info_array_t* data)
+{
+	data->num  = 0;
+	data->data = NULL;
+}
+
+static int16_t cpuid_find_index_system_id(struct system_id_t* system, cpu_purpose_t purpose,
+                                          struct internal_type_info_array_t* type_info, int32_t package_id, bool is_topology_supported)
+{
+	int16_t i = 0;
+
+	if (is_topology_supported) {
+		for (i = 0; i < system->num_cpu_types; i++)
+			if ((system->cpu_types[i].purpose == purpose) && (type_info->data[i].package_id == package_id))
+				return i;
+	}
+	else {
+		for (i = 0; i < system->num_cpu_types; i++)
+			if (system->cpu_types[i].purpose == purpose)
+				return i;
+	}
+
+	return -1;
+}
+
+static void cpuid_grow_raw_data_array(struct cpu_raw_data_array_t* raw_array, logical_cpu_t n)
+{
+	logical_cpu_t i;
+	struct cpu_raw_data_t *tmp = NULL;
+
+	if ((n <= 0) || (n < raw_array->num_raw)) return;
+	debugf(3, "Growing cpu_raw_data_array_t from %u to %u items\n", raw_array->num_raw, n);
+	tmp = realloc(raw_array->raw, sizeof(struct cpu_raw_data_t) * n);
+	if (tmp == NULL) { /* Memory allocation failure */
+		cpuid_set_error(ERR_NO_MEM);
+		return;
+	}
+
+	for (i = raw_array->num_raw; i < n; i++)
+		raw_data_t_constructor(&tmp[i]);
+	raw_array->num_raw = n;
+	raw_array->raw     = tmp;
+}
+
+static void cpuid_grow_system_id(struct system_id_t* system, uint8_t n)
+{
+	uint8_t i;
+	struct cpu_id_t *tmp = NULL;
+
+	if ((n <= 0) || (n < system->num_cpu_types)) return;
+	debugf(3, "Growing system_id_t from %u to %u items\n", system->num_cpu_types, n);
+	tmp = realloc(system->cpu_types, sizeof(struct cpu_id_t) * n);
+	if (tmp == NULL) { /* Memory allocation failure */
+		cpuid_set_error(ERR_NO_MEM);
+		return;
+	}
+
+	for (i = system->num_cpu_types; i < n; i++)
+		cpu_id_t_constructor(&tmp[i]);
+	system->num_cpu_types = n;
+	system->cpu_types     = tmp;
+}
+
+static void cpuid_grow_type_info(struct internal_type_info_array_t* type_info, uint8_t n)
+{
+	uint8_t i;
+	struct internal_type_info_t *tmp = NULL;
+
+	if ((n <= 0) || (n < type_info->num)) return;
+	debugf(3, "Growing internal_type_info_t from %u to %u items\n", type_info->num, n);
+	tmp = realloc(type_info->data, sizeof(struct internal_type_info_t) * n);
+	if (tmp == NULL) { /* Memory allocation failure */
+		cpuid_set_error(ERR_NO_MEM);
+		return;
+	}
+
+	for (i = type_info->num; i < n; i++) {
+		core_instances_t_constructor(&tmp[i].core_instances);
+		cache_instances_t_constructor(&tmp[i].cache_instances);
+	}
+	type_info->num  = n;
+	type_info->data = tmp;
+}
+
+static void cpuid_free_type_info(struct internal_type_info_array_t* type_info)
+{
+	if (type_info->num <= 0) return;
+	free(type_info->data);
+	type_info->num = 0;
+}
+
+static cpu_architecture_t cpuid_architecture_identify(struct cpu_raw_data_t* raw)
+{
+	if (raw->basic_cpuid[0][EAX] != 0x0 || raw->basic_cpuid[0][EBX] != 0x0 || raw->basic_cpuid[0][ECX] != 0x0 || raw->basic_cpuid[0][EDX] != 0x0)
+		return ARCHITECTURE_X86;
+	else if (raw->arm_midr != 0x0)
+		return ARCHITECTURE_ARM;
+
+	return ARCHITECTURE_UNKNOWN;
+}
 
 static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, struct cpu_raw_data_array_t* raw_array, const char* filename)
 {
