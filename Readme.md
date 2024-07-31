@@ -27,7 +27,7 @@ libcpuid support varies depending on the features:
 |Linux|:heavy_check_mark: ![Linux workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_linux.yml/badge.svg)|:heavy_check_mark: ([`msr` kernel module](https://man7.org/linux/man-pages/man4/msr.4.html))|:heavy_check_mark:¹ ([`cpuid` out-of-tree kernel module](https://github.com/anrieff/libcpuid/tree/master/drivers/arm/linux))|
 |macOS|:heavy_check_mark: ![macOS workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_macos.yml/badge.svg)|:x:|:x:|
 |NetBSD|:grey_question:|:x:|:x:|
-|OpenBSD|:grey_question:|:x:|:x:|
+|OpenBSD|:heavy_check_mark: ![OpenBSD BSD workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_openbsd.yml/badge.svg)|:x:|:x:|
 |Windows|:heavy_check_mark: ![Windows workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_windows.yml/badge.svg)|:heavy_check_mark: ([`msr` driver](https://github.com/anrieff/libcpuid/tree/master/drivers/x86/windows/msr))|:x:|
 
 Legend:
