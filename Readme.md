@@ -23,7 +23,7 @@ libcpuid support varies depending on the features:
 |Name|Build|x86 MSR|ARM CPUID|
 |----|----|-------|---------|
 |DragonFly BSD|:heavy_check_mark: |:grey_question: ([`cpuctl` kernel module](https://man.freebsd.org/cgi/man.cgi?query=cpuctl))|:x:|
-|FreeBSD|:heavy_check_mark: |:heavy_check_mark: ([`cpuctl` kernel module](https://man.freebsd.org/cgi/man.cgi?query=cpuctl))|:heavy_check_mark:¹ ([`cpuid` out-of-tree kernel module](https://github.com/anrieff/libcpuid/tree/master/drivers/arm/freebsd))|
+|FreeBSD|:heavy_check_mark: ![FreeBSD workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_freebsd.yml/badge.svg)|:heavy_check_mark: ([`cpuctl` kernel module](https://man.freebsd.org/cgi/man.cgi?query=cpuctl))|:heavy_check_mark:¹ ([`cpuid` out-of-tree kernel module](https://github.com/anrieff/libcpuid/tree/master/drivers/arm/freebsd))|
 |Linux|:heavy_check_mark: ![UNIX workflow status](https://github.com/anrieff/libcpuid/actions/workflows/unix.yml/badge.svg)|:heavy_check_mark: ([`msr` kernel module](https://man7.org/linux/man-pages/man4/msr.4.html))|:heavy_check_mark:¹ ([`cpuid` out-of-tree kernel module](https://github.com/anrieff/libcpuid/tree/master/drivers/arm/linux))|
 |macOS|:heavy_check_mark: ![UNIX workflow status](https://github.com/anrieff/libcpuid/actions/workflows/unix.yml/badge.svg)|:x:|:x:|
 |NetBSD|:grey_question:|:x:|:x:|

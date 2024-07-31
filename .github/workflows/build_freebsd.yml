@@ -1,0 +1,49 @@
+name: Build (FreeBSD)
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build_freebsd:
+    name: Build on ${{ matrix.box }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        box:
+          - generic/freebsd13
+          - generic/freebsd14
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Provision VM
+      uses: hummeltech/freebsd-vagrant-action@v1.4
+      with:
+        box: ${{ matrix.box }}
+        save_box_to_cache: true
+
+    - name: Install packages
+      run: sudo pkg install --yes cmake python3
+
+    - name: Generate build system
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="" -DLIBCPUID_ENABLE_TESTS=ON
+
+    - name: Build
+      run: cmake --build build
+
+    - name: Run cpuid_tool
+      run: |
+        echo "RAW dump"
+        ./build/cpuid_tool/cpuid_tool --save=-
+        echo "Report"
+        ./build/cpuid_tool/cpuid_tool --all
+
+    - name: Run tests
+      run: |
+        make -C build consistency
+        make -C build test-old
