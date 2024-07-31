@@ -10,7 +10,7 @@ on:
 
 jobs:
   build_win:
-    name: Build
+    name: Build on Windows ${{ matrix.platform.bitness }} as ${{ matrix.config }}
     runs-on: windows-latest
     strategy:
       matrix:
