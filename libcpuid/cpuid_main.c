@@ -806,7 +806,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 		}
 
 		if (is_libcpuid_dump) {
-			if (use_raw_array && (sscanf(line, "_________________ Logical CPU #%" SCNi16 " _________________", &logical_cpu) >= 1)) {
+			if (use_raw_array && (sscanf(line, "_________________ Logical CPU #%" SCNu16 " _________________", &logical_cpu) >= 1)) {
 				debugf(2, "Parsing raw dump for logical CPU %i\n", logical_cpu);
 				is_header = false;
 				cpuid_grow_raw_data_array(raw_array, logical_cpu + 1);
@@ -887,9 +887,9 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 			}
 		}
 		else if (is_aida64_dump) {
-			if (use_raw_array && ((sscanf(line, "------[ Logical CPU #%" SCNi16 " ]------", &logical_cpu) >= 1) ||
-			                      (sscanf(line, "------[ CPUID Registers / Logical CPU #%" SCNi16 " ]------", &logical_cpu) >= 1) ||
-			                      (sscanf(line, "CPU#%" SCNi16 " AffMask: 0x%*x", &logical_cpu) >= 1))) {
+			if (use_raw_array && ((sscanf(line, "------[ Logical CPU #%" SCNu16 " ]------", &logical_cpu) >= 1) ||
+			                      (sscanf(line, "------[ CPUID Registers / Logical CPU #%" SCNu16 " ]------", &logical_cpu) >= 1) ||
+			                      (sscanf(line, "CPU#%" SCNu16 " AffMask: 0x%*x", &logical_cpu) >= 1))) {
 				debugf(2, "Parsing AIDA64 raw dump for logical CPU %i\n", logical_cpu);
 				cpuid_grow_raw_data_array(raw_array, logical_cpu + 1);
 				raw_ptr = &raw_array->raw[logical_cpu];
