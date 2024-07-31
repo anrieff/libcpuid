@@ -374,6 +374,13 @@ static void print_info(output_data_switch query, struct cpu_id_t* data)
 {
 	int i, value;
 	struct msr_driver_t* handle;
+
+	/* Check if function is properly called */
+	if ((data == NULL) && check_need_raw_data()) {
+		fprintf(stderr, "print_info: raw data is required but not provided.\n");
+		return;
+	}
+
 	switch (query) {
 		case NEED_CPUID_PRESENT:
 			fprintf(fout, "%d\n", cpuid_present());
@@ -859,21 +866,26 @@ int main(int argc, char** argv)
 		}
 	/* OK, process all queries. */
 	if (((!need_report || !only_clock_queries) && num_requests > 0) || need_identify) {
-		/* Identify the CPU. Make it do cpuid_get_all_raw_data() itself */
-		if (check_need_raw_data() && cpu_identify_all(&raw_array, &data) < 0) {
-			if (!need_quiet)
-				fprintf(stderr,
-				        "Error identifying the CPU: %s\n",
-				        cpuid_error());
-			return -1;
-		}
+		if (check_need_raw_data()) {
+			/* Identify the CPU. Make it do cpuid_get_all_raw_data() itself */
+			if (cpu_identify_all(&raw_array, &data) < 0) {
+				if (!need_quiet)
+					fprintf(stderr,
+							"Error identifying the CPU: %s\n",
+							cpuid_error());
+				return -1;
+			}
 
-		for (cpu_type_index = 0; cpu_type_index < data.num_cpu_types; cpu_type_index++) {
-			if (raw_array.with_affinity && (cpu_type_index > 0))
-				fprintf(fout, "--------------------------------------------------------------------------------\n");
-			for (i = 0; i < num_requests; i++)
-				print_info(requests[i], &data.cpu_types[cpu_type_index]);
+			for (cpu_type_index = 0; cpu_type_index < data.num_cpu_types; cpu_type_index++) {
+				if (raw_array.with_affinity && (cpu_type_index > 0))
+					fprintf(fout, "--------------------------------------------------------------------------------\n");
+				for (i = 0; i < num_requests; i++)
+					print_info(requests[i], &data.cpu_types[cpu_type_index]);
+			}
 		}
+		else
+			for (i = 0; i < num_requests; i++)
+				print_info(requests[i], NULL);
 	}
 	if (need_cpulist) {
 		print_cpulist();
