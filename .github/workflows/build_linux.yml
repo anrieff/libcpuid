@@ -30,10 +30,8 @@ jobs:
 
     - name: Run cpuid_tool
       run: |
-        echo "RAW dump"
-        ./build/cpuid_tool/cpuid_tool --save=-
-        echo "Report"
-        ./build/cpuid_tool/cpuid_tool --all
+        ./build/cpuid_tool/cpuid_tool --save=- --all
+        sudo ./build/cpuid_tool/cpuid_tool --rdmsr-raw --rdmsr
 
     - name: Run tests
       run: |
@@ -41,7 +39,6 @@ jobs:
         make -C build test-old
 
     - name: Install
-      run: |
-        cmake --install build
+      run: cmake --install build
       env:
         DESTDIR: ${{ github.workspace }}/installdir
