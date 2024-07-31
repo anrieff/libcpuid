@@ -27,7 +27,7 @@ jobs:
       uses: dawidd6/action-download-artifact@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: unix.yml
+        workflow: build_macos.yml
         commit: ${{ github.sha }}
         name: macos-x86_64
         path: macos-x86_64
@@ -36,7 +36,7 @@ jobs:
       uses: dawidd6/action-download-artifact@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: unix.yml
+        workflow: build_macos.yml
         commit: ${{ github.sha }}
         name: macos-aarch64
         path: macos-aarch64
@@ -45,7 +45,7 @@ jobs:
       uses: dawidd6/action-download-artifact@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: windows.yml
+        workflow: build_windows.yml
         commit: ${{ github.sha }}
         name: windows-ix86
         path: windows-ix86
@@ -54,7 +54,7 @@ jobs:
       uses: dawidd6/action-download-artifact@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: windows.yml
+        workflow: build_windows.yml
         commit: ${{ github.sha }}
         name: window-x86_64
         path: window-x86_64
