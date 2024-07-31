@@ -1,0 +1,51 @@
+name: Build (DragonFly BSD)
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build_dragonflybsd:
+    name: Build on ${{ matrix.box }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        box:
+          - generic/dragonflybsd6
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Provision VM
+      uses: hummeltech/freebsd-vagrant-action@v1.4
+      with:
+        box: ${{ matrix.box }}
+        save_box_to_cache: true
+
+    - name: Install packages
+      run: sudo pkg install --yes cmake python3
+
+    - name: Generate build system
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="" -DLIBCPUID_ENABLE_TESTS=ON
+
+    - name: Build
+      run: cmake --build build
+
+    - name: Run cpuid_tool
+      run: |
+        ./build/cpuid_tool/cpuid_tool --save=- --all
+        sudo ./build/cpuid_tool/cpuid_tool --rdmsr-raw --rdmsr
+
+    - name: Run tests
+      run: |
+        make -C build consistency
+        make -C build test-old
+
+    - name: Install
+      run: cmake --install build
+      env:
+        DESTDIR: ${{ github.workspace }}/installdir
