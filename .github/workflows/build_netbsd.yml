@@ -1,0 +1,57 @@
+name: Build (NetBSD)
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build_netbsd:
+    name: Build on ${{ matrix.box }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        box:
+          - generic/netbsd9
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Provision VM
+      uses: hummeltech/netbsd-vagrant-action@v2
+      with:
+        box: ${{ matrix.box }}
+        save_box_to_cache: true
+
+    - name: Install packages
+      run: sudo pkgin -y install clang cmake python311
+      shell: /usr/local/bin/bash --noprofile --norc -euo pipefail {0}
+
+    - name: Generate build system
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="" -DLIBCPUID_ENABLE_TESTS=ON
+      shell: /usr/local/bin/bash --noprofile --norc -euo pipefail {0}
+
+    - name: Build
+      run: cmake --build build
+      shell: /usr/local/bin/bash --noprofile --norc -euo pipefail {0}
+
+    - name: Run cpuid_tool
+      run: |
+        sudo /sbin/sysctl -w security.models.extensions.user_set_cpu_affinity=1
+        ./build/cpuid_tool/cpuid_tool --save=- --all
+      shell: /usr/local/bin/bash --noprofile --norc -euo pipefail {0}
+
+    - name: Run tests
+      run: |
+        make -C build consistency
+        make -C build test-old
+      shell: /usr/local/bin/bash --noprofile --norc -euo pipefail {0}
+
+    - name: Install
+      run: cmake --install build
+      env:
+        DESTDIR: ${{ github.workspace }}/installdir
+      shell: /usr/local/bin/bash --noprofile --norc -euo pipefail {0}
