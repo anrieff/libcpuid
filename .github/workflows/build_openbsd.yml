@@ -21,18 +21,10 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Provision VM
-      uses: hummeltech/freebsd-vagrant-action@v1.4
+      uses: hummeltech/openbsd-vagrant-action@v2
       with:
         box: ${{ matrix.box }}
         save_box_to_cache: true
-        provision-commands: >-
-          pkg_add -I install bash rsync-3.2.7p1;
-          echo 'AcceptEnv *' >> /etc/ssh/sshd_config;
-          rcctl restart sshd;
-          mkdir -p ${{ github.workspace }};
-          chown vagrant:vagrant ${{ github.workspace }};
-          mkdir -p ${{ runner.temp }};
-          chown vagrant:vagrant ${{ runner.temp }};
 
     - name: Install packages
       run: sudo pkg_add -I cmake python3
