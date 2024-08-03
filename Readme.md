@@ -22,13 +22,13 @@ libcpuid support varies depending on the features:
 
 |Name|Build|x86 MSR|ARM CPUID|
 |----|----|-------|---------|
-|DragonFly BSD|:heavy_check_mark: ![DragonFly BSD workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_dragonflybsd.yml/badge.svg)|:grey_question: ([`cpuctl` kernel module](https://man.freebsd.org/cgi/man.cgi?query=cpuctl))|:x:|
-|FreeBSD|:heavy_check_mark: ![FreeBSD workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_freebsd.yml/badge.svg)|:heavy_check_mark: ([`cpuctl` kernel module](https://man.freebsd.org/cgi/man.cgi?query=cpuctl))|:heavy_check_mark:¹ ([`cpuid` out-of-tree kernel module](https://github.com/anrieff/libcpuid/tree/master/drivers/arm/freebsd))|
-|Linux|:heavy_check_mark: ![Linux workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_linux.yml/badge.svg)|:heavy_check_mark: ([`msr` kernel module](https://man7.org/linux/man-pages/man4/msr.4.html))|:heavy_check_mark:¹ ([`cpuid` out-of-tree kernel module](https://github.com/anrieff/libcpuid/tree/master/drivers/arm/linux))|
-|macOS|:heavy_check_mark: ![macOS workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_macos.yml/badge.svg)|:x:|:x:|
-|NetBSD|:heavy_check_mark: ![NetBSD BSD workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_netbsd.yml/badge.svg)|:x:|:x:|
-|OpenBSD|:heavy_check_mark: ![OpenBSD BSD workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_openbsd.yml/badge.svg)|:x:|:x:|
-|Windows|:heavy_check_mark: ![Windows workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_windows.yml/badge.svg)|:heavy_check_mark: ([`msr` driver](https://github.com/anrieff/libcpuid/tree/master/drivers/x86/windows/msr))|:x:|
+|DragonFly BSD|![DragonFly BSD workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_dragonflybsd.yml/badge.svg)|:grey_question: ([`cpuctl` kernel module](https://man.freebsd.org/cgi/man.cgi?query=cpuctl))|:x:|
+|FreeBSD|![FreeBSD workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_freebsd.yml/badge.svg)|:heavy_check_mark: ([`cpuctl` kernel module](https://man.freebsd.org/cgi/man.cgi?query=cpuctl))|:heavy_check_mark:¹ ([`cpuid` out-of-tree kernel module](https://github.com/anrieff/libcpuid/tree/master/drivers/arm/freebsd))|
+|Linux|![Linux workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_linux.yml/badge.svg)|:heavy_check_mark: ([`msr` kernel module](https://man7.org/linux/man-pages/man4/msr.4.html))|:heavy_check_mark:¹ ([`cpuid` out-of-tree kernel module](https://github.com/anrieff/libcpuid/tree/master/drivers/arm/linux))|
+|macOS|![macOS workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_macos.yml/badge.svg)|:x:|:x:|
+|NetBSD|![NetBSD BSD workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_netbsd.yml/badge.svg)|:x:|:x:|
+|OpenBSD|![OpenBSD BSD workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_openbsd.yml/badge.svg)|:x:|:x:|
+|Windows|![Windows workflow status](https://github.com/anrieff/libcpuid/actions/workflows/build_windows.yml/badge.svg)|:heavy_check_mark: ([`msr` driver](https://github.com/anrieff/libcpuid/tree/master/drivers/x86/windows/msr))|:x:|
 
 Legend:
 - :heavy_check_mark: Supported
