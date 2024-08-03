@@ -28,22 +28,28 @@ jobs:
 
     - name: Install packages
       run: sudo pkg_add -I cmake python3
+      shell: /usr/local/bin/bash --noprofile --norc -euo pipefail {0}
 
     - name: Generate build system
       run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="" -DLIBCPUID_ENABLE_TESTS=ON
+      shell: /usr/local/bin/bash --noprofile --norc -euo pipefail {0}
 
     - name: Build
       run: cmake --build build
+      shell: /usr/local/bin/bash --noprofile --norc -euo pipefail {0}
 
     - name: Run cpuid_tool
       run: ./build/cpuid_tool/cpuid_tool --save=- --all
+      shell: /usr/local/bin/bash --noprofile --norc -euo pipefail {0}
 
     - name: Run tests
       run: |
         make -C build consistency
         make -C build test-old
+      shell: /usr/local/bin/bash --noprofile --norc -euo pipefail {0}
 
     - name: Install
       run: cmake --install build
       env:
         DESTDIR: ${{ github.workspace }}/installdir
+      shell: /usr/local/bin/bash --noprofile --norc -euo pipefail {0}
