@@ -449,6 +449,7 @@ static bool restore_cpu_affinity(void)
 #ifndef SET_CPU_AFFINITY
 static bool set_cpu_affinity(logical_cpu_t logical_cpu)
 {
+	UNUSED(logical_cpu);
 	static int warning_printed = 0;
 	if (!warning_printed) {
 		warning_printed = 1;
