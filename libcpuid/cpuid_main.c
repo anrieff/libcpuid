@@ -1762,14 +1762,14 @@ int cpu_identify_all(struct cpu_raw_data_array_t* raw_array, struct system_id_t*
 
 int cpu_request_core_type(cpu_purpose_t purpose, struct cpu_raw_data_array_t* raw_array, struct cpu_id_t* data)
 {
-	int error;
+	int r;
 	logical_cpu_t logical_cpu = 0;
 	struct cpu_raw_data_array_t my_raw_array;
 	struct internal_id_info_t throwaway;
 
 	if (!raw_array) {
-		if ((error = cpuid_get_all_raw_data(&my_raw_array)) < 0)
-			return cpuid_set_error(error);
+		if ((r = cpuid_get_all_raw_data(&my_raw_array)) < 0)
+			return r;
 		raw_array = &my_raw_array;
 	}
 
