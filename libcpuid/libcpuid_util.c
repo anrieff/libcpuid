@@ -73,7 +73,7 @@ void debugf(int verboselevel, const char* format, ...)
 {
 	char buff[1024];
 	va_list va;
-	if (verboselevel > _current_verboselevel) return;
+	if (!_warn_fun || (verboselevel > _current_verboselevel)) return;
 	va_start(va, format);
 	vsnprintf(buff, sizeof(buff), format, va);
 	va_end(va);
