@@ -96,9 +96,11 @@ def do_test(inp, expected_out, binary, test_file_name, num_cpu_type):
 	os.system(cmd)
 	os.unlink(fninp)
 	real_out = []
+	real_out_delim = [] # when fixing the file, delimiters are required
 	try:
 		f = open(fnoutp, "rt")
 		for s in f.readlines():
+			real_out_delim.append(s.strip())
 			if delimiter not in s:
 				real_out.append(s.strip())
 		f.close()
@@ -107,7 +109,7 @@ def do_test(inp, expected_out, binary, test_file_name, num_cpu_type):
 		return "Exception"
 	if len(real_out) != len(expected_out) or len(real_out) != len(fields) * num_cpu_type:
 		if fix:
-			fixFile(test_file_name, inp, real_out)
+			fixFile(test_file_name, inp, real_out_delim)
 			return "Number of records, fixed."
 		else:
 			return "Unexpected number of records returned\n - expected length %d\n - real length %d\n - %d fields" % (len(expected_out), len(real_out), len(fields) * num_cpu_type)
@@ -119,7 +121,7 @@ def do_test(inp, expected_out, binary, test_file_name, num_cpu_type):
 		return "OK"
 	else:
 		if fix:
-			fixFile(test_file_name, inp, real_out)
+			fixFile(test_file_name, inp, real_out_delim)
 			return "Mismatch, fixed."
 		else:
 			return "Mismatch in fields:\n%s" % "\n".join([fmt_error(err) for err in err_fields])
