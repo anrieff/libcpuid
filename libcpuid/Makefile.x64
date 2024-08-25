@@ -6,7 +6,7 @@ ASM = ml64 /nologo
 CC = cl.exe /nologo /TC
 OPTFLAGS = /MT
 DEFINES = /D "VERSION=\"0.6.5\""
-OBJECTS = masm-x64.obj asm-bits.obj cpuid_main.obj libcpuid_util.obj recog_amd.obj recog_arm.obj recog_centaur.obj recog_intel.obj rdtsc.obj
+OBJECTS = masm-x64.obj asm-bits.obj cpuid_main.obj libcpuid_util.obj recog_amd.obj recog_arm.obj recog_centaur.obj recog_intel.obj rdcpuid.obj rdtsc.obj
 
 libcpuid.lib: $(OBJECTS)
 	lib /nologo /MACHINE:AMD64 /out:libcpuid.lib $(OBJECTS) bufferoverflowU.lib
@@ -34,6 +34,9 @@ recog_centaur.obj: recog_centaur.c
 
 recog_intel.obj: recog_intel.c
 	$(CC) $(OPTFLAGS) $(DEFINES) /c recog_intel.c
+
+rdcpuid.obj: rdcpuid.c
+	$(CC) $(OPTFLAGS) $(DEFINES) /c rdcpuid.c
 
 rdtsc.obj: rdtsc.c
 	$(CC) $(OPTFLAGS) $(DEFINES) /c rdtsc.c

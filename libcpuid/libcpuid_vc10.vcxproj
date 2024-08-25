@@ -187,6 +187,7 @@
     <ClCompile Include="cpuid_main.c" />
     <ClCompile Include="libcpuid_util.c" />
     <ClCompile Include="msrdriver.c" />
+    <ClCompile Include="rdcpuid.c" />
     <ClCompile Include="rdmsr.c" />
     <ClCompile Include="rdtsc.c" />
     <ClCompile Include="recog_amd.c" />
@@ -197,13 +198,17 @@
   <ItemGroup>
     <ClInclude Include="asm-bits.h" />
     <ClInclude Include="libcpuid.h" />
+    <ClInclude Include="libcpuid_arm_driver.h" />
     <ClInclude Include="libcpuid_constants.h" />
+    <ClInclude Include="libcpuid_ctype.h" />
+    <ClInclude Include="libcpuid_internal.h" />
     <ClInclude Include="libcpuid_types.h" />
     <ClInclude Include="libcpuid_util.h" />
     <ClInclude Include="recog_amd.h" />
     <ClInclude Include="recog_arm.h" />
     <ClInclude Include="recog_centaur.h" />
     <ClInclude Include="recog_intel.h" />
+    <ClInclude Include="rdcpuid.h" />
     <ClInclude Include="rdtsc.h" />
   </ItemGroup>
   <ItemGroup>

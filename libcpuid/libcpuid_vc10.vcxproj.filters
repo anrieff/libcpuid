@@ -42,6 +42,9 @@
     <ClCompile Include="msrdriver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="rdcpuid.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="rdmsr.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -53,7 +56,16 @@
     <ClInclude Include="libcpuid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="libcpuid_arm_driver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="libcpuid_constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libcpuid_ctype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libcpuid_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="libcpuid_types.h">
@@ -72,6 +84,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="recog_intel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rdcpuid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="rdtsc.h">

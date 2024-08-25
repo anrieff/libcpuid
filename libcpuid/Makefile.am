@@ -15,6 +15,7 @@ libcpuid_la_SOURCES =		\
 	rdtsc.c			\
 	asm-bits.c		\
 	libcpuid_util.c		\
+	rdcpuid.c			\
 	rdmsr.c
 
 if WINDOWS
@@ -35,6 +36,7 @@ noinst_HEADERS = 		\
 	asm-bits.h		\
 	centaur_code_t.h	\
 	intel_code_t.h		\
+	libcpuid_arm_driver.h	\
 	libcpuid_ctype.h	\
 	libcpuid_internal.h	\
 	libcpuid_util.h		\
@@ -42,6 +44,7 @@ noinst_HEADERS = 		\
 	recog_arm.h		\
 	recog_centaur.h		\
 	recog_intel.h		\
+	rdcpuid.h			\
 	rdtsc.h
 
 EXTRA_DIST += libcpuid.sym libcpuid_vc71.vcproj libcpuid_vc10.vcxproj libcpuid_vc10.vcxproj.filters

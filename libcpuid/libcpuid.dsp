@@ -101,6 +101,10 @@ SOURCE=.\msrdriver.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\rdcpuid.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\rdmsr.c
 # End Source File
 # Begin Source File
@@ -137,7 +141,19 @@ SOURCE=.\libcpuid.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\libcpuid_arm_driver.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\libcpuid_constants.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libcpuid_ctype.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\libcpuid_internal.h
 # End Source File
 # Begin Source File
 
@@ -146,6 +162,10 @@ SOURCE=.\libcpuid_types.h
 # Begin Source File
 
 SOURCE=.\libcpuid_util.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\rdcpuid.h
 # End Source File
 # Begin Source File
 
