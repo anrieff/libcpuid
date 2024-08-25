@@ -1296,6 +1296,7 @@ CPUID 80000028: 00000000-00000000-00000000-00000000
 CPUID 8FFFFFFF: 00000000-00000000-00000000-00000000
 --------------------------------------------------------------------------------
 x86
+x86-64-v4
 general
 15
 4
@@ -1326,4 +1327,4 @@ general
 0
 64 (authoritative)
 Ryzen 7 (Granite Ridge)
-fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni pclmul monitor ssse3 cx16 sse4_1 sse4_2 syscall movbe popcnt aes xsave osxsave avx mmxext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch osvw ibs skinit wdt ts ttp tm_amd hwpstate constant_tsc fma3 f16c rdrand cpb aperfmperf avx2 bmi1 bmi2 sha_ni rdseed adx
+fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni pclmul monitor ssse3 cx16 sse4_1 sse4_2 syscall movbe popcnt aes xsave osxsave avx mmxext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch osvw ibs skinit wdt ts ttp tm_amd hwpstate constant_tsc fma3 f16c rdrand cpb aperfmperf avx2 bmi1 bmi2 avx512f avx512dq avx512cd sha_ni avx512bw avx512vl rdseed adx avx512vnni avx512vbmi avx512vbmi2

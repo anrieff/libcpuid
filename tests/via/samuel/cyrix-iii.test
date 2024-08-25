@@ -40,4 +40,4 @@ general
 -1
 -1 (non-authoritative)
 VIA Cyrix III (Samuel)
-fpu de tsc msr mce cx8 mtrr pge mmx monitor ssse3 sse4_2 movbe fma3 rdrand hypervisor
+fpu de tsc msr mce cx8 mtrr pge mmx monitor ssse3 sse4_2 movbe fma3 rdrand x2apic hypervisor

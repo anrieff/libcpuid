@@ -58,6 +58,8 @@ def readResultFile():
 			repdata.append(delimiter)
 		if field == "arch":
 			value = s[s.find(":") + 2:]
+		if field == "feat_level":
+			value = s[s.find(":") + 2:]
 			repdata.append(value)
 		if field == "purpose":
 			value = s[s.find(":") + 2:]
