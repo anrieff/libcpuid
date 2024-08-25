@@ -383,6 +383,11 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 25,  117,  -1,    -1,    -1, NC, RYZEN_|_5|_U        ,     0, "Ryzen 5 (Hawk Point)"          },
 	{ 15, -1, -1, 25,  117,  -1,    -1,    -1, NC, RYZEN_|_3|_U        ,     0, "Ryzen 3 (Hawk Point)"          },
 	/* Zen 5 (2024) => https://en.wikichip.org/wiki/amd/microarchitectures/zen_5 */
+	/*  => Granite Ridge (9000 series, Zen 5 based) */
+	{ 15, -1, -1, 26,   68,  -1,    -1,    -1, NC, RYZEN_|_9           ,     0, "Ryzen 9 (Granite Ridge)"       },
+	{ 15, -1, -1, 26,   68,  -1,    -1,    -1, NC, RYZEN_|_7           ,     0, "Ryzen 7 (Granite Ridge)"       },
+	{ 15, -1, -1, 26,   68,  -1,    -1,    -1, NC, RYZEN_|_5           ,     0, "Ryzen 5 (Granite Ridge)"       },
+	{ 15, -1, -1, 26,   68,  -1,    -1,    -1, NC, RYZEN_|_3           ,     0, "Ryzen 3 (Granite Ridge)"       },
 	/*  => Strix Point (Zen 5/RDNA3.5/XDNA2 based) */
 	{ 15, -1, -1, 26,   36,  -1,    -1,    -1, NC, RYZEN_|_AI_|_9      ,     0, "Ryzen AI 9 (Strix Point)"      },
 	{ 15, -1, -1, 26,   36,  -1,    -1,    -1, NC, RYZEN_|_AI_|_7      ,     0, "Ryzen AI 7 (Strix Point)"      },
