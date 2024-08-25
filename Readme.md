@@ -131,7 +131,16 @@ Below, the full lists of repositories:
 
 ### As a software developer
 
+#### Native C library
+
 For details about the programming API, you might want to take a look at the short [tutorial](https://libcpuid.sourceforge.net/documentation.html), as well as the full [API reference](https://anrieff.github.io/libcpuid).
+
+#### Python bindings
+
+The libcpuid library features Python bindings, which can be installed as a library
+using `python -m pip install libcpuid`. Visit the
+[documentation at Read the Docs](https://libcpuid.readthedocs.io/en/latest/index.html#)
+to see how the library is used.
 
 ### As an end-user
 
@@ -170,13 +179,6 @@ If `-' is used for <file>, then stdin/stdout will be used instead of files.
 When no options are present, the program behaves as if it was invoked with
   cpuid_tool "--save=raw.txt --outfile=report.txt --report --verbose"
 ```
-
-### Python bindings
-
-The libcpuid library features Python bindings, which can be installed as a library
-using `python -m pip install libcpuid`. Visit the
-[documentation at Read the Docs](https://libcpuid.readthedocs.io/en/latest/index.html#)
-to see how the library is used.
 
 ## Contributing
 
