@@ -190,3 +190,30 @@ Version 0.6.5 (2024-04-28):
 	* Support for Intel Meteor Lake, including detection of LP E-Cores
 	* Support for Intel Emerald Rapids-SP
 	* Support for more AMD Van Gogh
+
+Version 0.7.0 (2024-08-26):
+	* Fix handle leaks in rdmsr.c (#199)
+	* Fix cpuid_get_hypervisor when NULL data is provided (#199)
+	* Prevent intel_fn11 array overruns (#199)
+	* Support for AMD Hawk Point
+	* Support for more AMD Phoenix (8000 series)
+	* Add cpu_clock_by_tsc() function to the library (#124)
+	* Check x86 CPUs MSR support (#185)
+	* Add support for ARM CPUs (AArch32 + AArch64) (#200)
+	* Add cpu_feature_level_t enumerated values for x86 CPUs (#177)
+	* Support up to 4 subleaf entries for CPUID leaf 0x80000026 (#189)
+	* Support for Extended CPU topology subleaf in cpuid_identify_purpose_amd() (#189)
+	* Support CPU purpose for AMD x86 CPUs (#189)
+	* Add cpuid Linux and FreeBSD kernel modules for ARM CPUs
+	* Improve errors handling in cpuid_get_all_raw_data() and cpuid_get_raw_data_core() (#202)
+	* Support get_total_cpus() on DragonFly BSD
+	* Improve set_cpu_affinity() on NetBSD
+	* Fix build on OpenBSD
+	* Improve behavior when CPU affinity cannot be set
+	* Fix a regression in cpuid_tool about arguments doing nothing (like --rdmsr or --cpuid)
+	* Fix a segmentation fault when using --quiet in cpuid_tool
+	* Improve error handling in cpu_identify_all()
+	* Add Python bindings (#197)
+	* Support for AMD Granite Ridge
+	* Support for AMD Strix Point
+	* Detect x2APIC and AVX512 features for AMD x86 CPUs

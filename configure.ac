@@ -1,4 +1,4 @@
-AC_INIT([libcpuid CPU Identification library], [0.6.5], [libcpuid-devel@lists.sourceforge.net], [libcpuid])
+AC_INIT([libcpuid CPU Identification library], [0.7.0], [libcpuid-devel@lists.sourceforge.net], [libcpuid])
 AC_CONFIG_SRCDIR([libcpuid/libcpuid.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -31,9 +31,10 @@ dnl 16:0:2   Version 0.6.2: DB updates, fix for single-core CPUs
 dnl 16:0:3   Version 0.6.3: DB updates, fixes, restore CPU affinity, rename {set,get}_error() to cpuid_{set,get}_error()
 dnl 16:0:4   Version 0.6.4: DB updates, fixes, support for Centaur CPUs (VIA and Zhaoxin)
 dnl 16:0:5   Version 0.6.5: DB updates, various improvements, detection of LP E-Cores for Intel CPUs
-LIBCPUID_CURRENT=16
+dnl 17:0:0   Version 0.7.0: DB updates, fixes, various improvements, add cpu_clock_by_tsc() function, add support for ARM CPUs, add cpu_feature_level_t enumerated values, add more fields in cpu_raw_data_t (amd_fn80000026h, arm_*)
+LIBCPUID_CURRENT=17
 LIBCPUID_AGE=0
-LIBCPUID_REVISION=5
+LIBCPUID_REVISION=0
 AC_SUBST([LIBCPUID_AGE])
 AC_SUBST([LIBCPUID_REVISION])
 AC_SUBST([LIBCPUID_CURRENT])
