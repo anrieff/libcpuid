@@ -192,6 +192,7 @@ So far, I'm aware of the following projects which utilize libcpuid (listed alpha
 * fre:ac (https://www.freac.org/)
 * I-Nex (https://github.com/i-nex/I-Nex)
 * Multiprecision Computing Toolbox for MATLAB (https://www.advanpix.com/)
+* Nix (https://nixos.org/nix)
 * ucbench (http://anrieff.net/ucbench)
 
 We'd love to hear from you if you are also using libcpuid and want your project listed above.
