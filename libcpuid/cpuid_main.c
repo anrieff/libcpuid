@@ -1391,6 +1391,7 @@ int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_c
 	unsigned i;
 	struct cpuid_driver_t *handle;
 
+	/* Try to use cpuid kernel driver on AArch32/AArch64 states */
 	if ((handle = cpu_cpuid_driver_open_core(logical_cpu)) != NULL) {
 		debugf(2, "Using kernel driver to read register on logical CPU %u\n", logical_cpu);
 		cpu_read_arm_register_64b(handle, REQ_MIDR, &data->arm_midr);
@@ -1424,8 +1425,9 @@ int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_c
 # endif /* PLATFORM_AARCH64 */
 		cpu_cpuid_driver_close(handle);
 	}
-# if defined(PLATFORM_AARCH64)
 	else {
+# if defined(PLATFORM_AARCH64)
+		/* Fallback to MRS instruction on AArch64 state */
 		if (!cpuid_present())
 			return cpuid_set_error(ERR_NO_CPUID);
 		debugf(2, "Using MRS instruction to read register on logical CPU %u\n", logical_cpu);
@@ -1449,8 +1451,11 @@ int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_c
 		cpu_exec_mrs(AARCH64_REG_ID_AA64PFR2_EL1, data->arm_id_aa64pfr[2]);
 		cpu_exec_mrs(AARCH64_REG_ID_AA64SMFR0_EL1, data->arm_id_aa64smfr[0]);
 		cpu_exec_mrs(AARCH64_REG_ID_AA64ZFR0_EL1, data->arm_id_aa64zfr[0]);
-	}
+# else
+	/* Return ERR_NO_CPUID on AArch32 state */
+		return cpuid_set_error(ERR_NO_CPUID);
 # endif /* PLATFORM_AARCH64 */
+	}
 #else
 # warning This CPU architecture is not supported by libcpuid
 	UNUSED(data);
