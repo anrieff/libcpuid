@@ -1296,13 +1296,15 @@ int cpuid_present(void)
 #if defined(PLATFORM_X86) || defined(PLATFORM_X64)
 	return cpuid_exists_by_eflags();
 #elif defined(PLATFORM_AARCH64)
-# if defined(HAVE_GETAUXVAL) /* Linux */
+# if defined(HAVE_GETAUXVAL) && defined(HWCAP_CPUID) /* Linux */
 	return (getauxval(AT_HWCAP) & HWCAP_CPUID);
-# elif defined(HAVE_ELF_AUX_INFO) /* FreeBSD */
+# elif defined(HAVE_ELF_AUX_INFO) && defined(HWCAP_CPUID) /* FreeBSD */
 	unsigned long hwcap = 0;
 	if (elf_aux_info(AT_HWCAP, &hwcap, sizeof(hwcap)) == 0)
 		return ((hwcap & HWCAP_CPUID) != 0);
-# endif /* HAVE_GETAUXVAL */
+# elif !defined(HWCAP_CPUID)
+#  warning HWCAP_CPUID is not defined on this AArch64 system, cpuid_present() will always return 0
+# endif /* HWCAP_CPUID */
 	/* On AArch64, return 0 by default */
 	return 0;
 #else
