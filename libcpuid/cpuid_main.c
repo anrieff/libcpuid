@@ -1459,8 +1459,12 @@ int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_c
 # endif /* PLATFORM_AARCH64 */
 	}
 #else
-# warning This CPU architecture is not supported by libcpuid
-	UNUSED(data);
+    #if defined(_MSC_VER)
+        #pragma message("Warning: This CPU architecture is not supported by libcpuid")
+    #else
+        #warning This CPU architecture is not supported by libcpuid
+    #endif
+    UNUSED(data);
 #endif
 
 	if (affinity_saved)
