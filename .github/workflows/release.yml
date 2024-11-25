@@ -24,7 +24,7 @@ jobs:
         make dist
 
     - name: Download macOS x86_64 artifacts
-      uses: dawidd6/action-download-artifact@v3
+      uses: dawidd6/action-download-artifact@v6
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         workflow: build_macos.yml
@@ -33,7 +33,7 @@ jobs:
         path: macos-x86_64
 
     - name: Download macOS AArch64 artifacts
-      uses: dawidd6/action-download-artifact@v3
+      uses: dawidd6/action-download-artifact@v6
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         workflow: build_macos.yml
@@ -42,7 +42,7 @@ jobs:
         path: macos-aarch64
 
     - name: Download Windows ix86 artifacts
-      uses: dawidd6/action-download-artifact@v3
+      uses: dawidd6/action-download-artifact@v6
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         workflow: build_windows.yml
@@ -51,7 +51,7 @@ jobs:
         path: windows-ix86
 
     - name: Download Windows x86_64 artifacts
-      uses: dawidd6/action-download-artifact@v3
+      uses: dawidd6/action-download-artifact@v6
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         workflow: build_windows.yml
