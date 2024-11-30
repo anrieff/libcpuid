@@ -62,6 +62,7 @@ jobs:
 
     - name: Compress artifacts
       run: |
+        ls -l
         for dir in macos-* windows-*; do
           zip -r "libcpuid-$VERSION-$dir.zip" "$dir"
         done
