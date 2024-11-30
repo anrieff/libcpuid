@@ -217,3 +217,13 @@ Version 0.7.0 (2024-08-26):
 	* Support for AMD Granite Ridge
 	* Support for AMD Strix Point
 	* Detect x2APIC and AVX512 features for AMD x86 CPUs
+
+Version 0.7.1 (2024-11-30):
+	* Fix cpuid kernel module build on ARM
+	* Return ERR_NO_CPUID when cpuid kernel module cannot be used on AArch32 state
+	* Refactor the build of the bindings (#203)
+	* Fix build error on AArch64 when HWCAP_CPUID is not defined (#205)
+	* Fix build on Windows ARM with MSVC (206)
+	* Fix detection of Intel Meteor Lake
+	* Support for Intel Arrow Lake
+	* Support for AMD Turin
