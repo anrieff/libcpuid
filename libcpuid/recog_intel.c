@@ -73,6 +73,7 @@ enum _intel_model_t {
 	_x4xx,  /* Xeon Bronze/Silver/Gold/Platinum/Max x4xx */
 	_x5xx,  /* Xeon Bronze/Silver/Gold/Platinum x5xx */
 	_1xx,   /* Core Ultra [3579] 1xx */
+	_2xx,   /* Core Ultra [3579] 2xx */
 };
 typedef enum _intel_model_t intel_model_t;
 
@@ -551,6 +552,12 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 170, -1,    -1,    -1, NC, CORE_|_ULTRA_|_5|_H, _1xx, "Meteor Lake-H (Core Ultra 5)" },
 	{  6, 10, -1, -1, 170, -1,    -1,    -1, NC, CORE_|_ULTRA_|_7|_U, _1xx, "Meteor Lake-U (Core Ultra 7)" },
 	{  6, 10, -1, -1, 170, -1,    -1,    -1, NC, CORE_|_ULTRA_|_5|_U, _1xx, "Meteor Lake-U (Core Ultra 5)" },
+
+	/* Arrow Lake CPUs (2024, Core Ultra Series 2 processors, TSMC N3B) => https://en.wikichip.org/wiki/intel/microarchitectures/arrow_lake */
+	{  6,  6, -1, -1, 198, -1,    -1,    -1, NC, CORE_|_ULTRA_|_9|_S, _2xx, "Arrow Lake-S (Core Ultra 9)" },
+	{  6,  6, -1, -1, 198, -1,    -1,    -1, NC, CORE_|_ULTRA_|_7|_S, _2xx, "Arrow Lake-S (Core Ultra 7)" },
+	{  6,  6, -1, -1, 198, -1,    -1,    -1, NC, CORE_|_ULTRA_|_5|_S, _2xx, "Arrow Lake-S (Core Ultra 5)" },
+	{  6,  6, -1, -1, 198, -1,    -1,    -1, NC, CORE_|_ULTRA_|_3|_S, _2xx, "Arrow Lake-S (Core Ultra 3)" },
 	/* F   M   S  EF   EM #cores L2$    L3$  BC       ModelBits ModelCode                                  Name */
 
 
@@ -947,6 +954,7 @@ static intel_model_t get_model_code(struct cpu_id_t* data)
 		i += 16;
 		if (i + 3 >= l) return UNKNOWN;
 		if (bs[i] == '1') return _1xx;
+		if (bs[i] == '2') return _2xx;
 		return UNKNOWN;
 	}
 	else if ((i = match_pattern(bs, "Xeon(R) [WBSGP]")) != 0) {
