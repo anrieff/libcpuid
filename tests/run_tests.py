@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 
-import os, sys, re, random
+import os, sys, re, random, lzma
+from pathlib import Path
 
 
 ### Constants:
@@ -47,7 +48,7 @@ for arg in args[2:]:
 	if os.path.isdir(arg):
 		# gather all *.test files from subdirs amd and intel:
 		for dirpath, dirnames, filenames in os.walk(arg):
-			filelist += [os.path.join(dirpath, fn) for fn in filenames if fn[-5:] == ".test"]
+			filelist += [os.path.join(dirpath, fn) for fn in filenames if Path(fn).suffixes[0] == ".test"]
 	else:
 		filelist.append(arg)
 
@@ -128,28 +129,40 @@ def do_test(inp, expected_out, binary, test_file_name, num_cpu_type):
 
 errors = False
 print("Testing...")
-for test_file_name in filelist:
+for test_file_name_raw in filelist:
+	test_file_name = Path(test_file_name_raw)
 	num_cpu_type = 0
 	current_input = []
 	current_output = []
 	build_output = False
-	with open(test_file_name, "rt") as f:
-		for line in f.readlines():
-			line = line.strip()
-			if line == delimiter:
-				build_output = True
-				num_cpu_type += 1
+	if len(test_file_name.suffixes) >= 2:
+		# Compressed file
+		if test_file_name.suffixes[1] == ".xz":
+			f = lzma.open(test_file_name, "rt")
+		else:
+			print("Test [%s]: skipped because %s is not supported" % (test_file_name.name, "".join(test_file_name.suffixes[1:])))
+			continue
+	else:
+		# Plain text file
+		f = open(test_file_name, "rt")
+	# Read file line by line
+	for line in f.readlines():
+		line = line.strip()
+		if line == delimiter:
+			build_output = True
+			num_cpu_type += 1
+		else:
+			if build_output:
+				current_output.append(line)
 			else:
-				if build_output:
-					current_output.append(line)
-				else:
-					current_input.append(line)
-		#codename = current_output[len(current_output) - 2]
-		result = do_test(current_input, current_output, cpuid_tool, test_file_name, num_cpu_type)
-		print("Test [%s]: %s" % (test_file_name[:-5], result))
-		if result != "OK":
-			errors = True
-		build_output = False
+				current_input.append(line)
+	f.close()
+	#codename = current_output[len(current_output) - 2]
+	result = do_test(current_input, current_output, cpuid_tool, test_file_name, num_cpu_type)
+	print("Test [%s]: %s" % (test_file_name.name, result))
+	if result != "OK":
+		errors = True
+	build_output = False
 
 if errors:
 	if show_test_fast_warning:
