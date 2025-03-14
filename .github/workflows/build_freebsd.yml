@@ -15,7 +15,7 @@ concurrency:
 jobs:
   build_freebsd:
     name: Build on ${{ matrix.box }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         box:
