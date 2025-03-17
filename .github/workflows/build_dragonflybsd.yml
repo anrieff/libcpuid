@@ -15,7 +15,7 @@ concurrency:
 jobs:
   build_dragonflybsd:
     name: Build on ${{ matrix.box }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         box:
