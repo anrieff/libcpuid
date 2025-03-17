@@ -25,7 +25,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Provision VM
-      uses: hummeltech/freebsd-vagrant-action@v2 # Note: DragonFly BSD was forked from FreeBSD 4.8, and the provision_commands for freebsd-vagrant-action should run fine on DragonFly BSD
+      uses: hummeltech/freebsd-vagrant-action@v4 # Note: DragonFly BSD was forked from FreeBSD 4.8, and the provision_commands for freebsd-vagrant-action should run fine on DragonFly BSD
       with:
         box: ${{ matrix.box }}
         save_box_to_cache: true
