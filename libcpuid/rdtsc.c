@@ -109,8 +109,7 @@ int cpu_clock_by_os(void)
 
 	return (int)result;
 }
-#else
-#ifdef __APPLE__
+#elif defined(__APPLE__)
 #include <sys/types.h>
 #include <sys/sysctl.h>
 /* Assuming Mac OS X with hw.cpufrequency sysctl */
@@ -121,6 +120,19 @@ int cpu_clock_by_os(void)
 	if (sysctlbyname("hw.cpufrequency", &result, &size, NULL, 0))
 		return -1;
 	return (int) (result / (long long) 1000000);
+}
+#elif defined(__OpenBSD__)
+/* Assuming OpenBSD with hw.cpuspeed sysctl */
+#include <sys/types.h>
+#include <sys/sysctl.h>
+int cpu_clock_by_os(void)
+{
+	int result = -1;
+	size_t size = sizeof(result);
+	int mib[2] = { CTL_HW, HW_CPUSPEED };
+	if (sysctl(mib, 2, &result, &size, NULL, 0))
+		return -1;
+	return result;
 }
 #else
 /* Assuming Linux with /proc/cpuinfo */
@@ -145,7 +157,6 @@ int cpu_clock_by_os(void)
 	fclose(f);
 	return -1;
 }
-#endif /* __APPLE__ */
 #endif /* _WIN32 */
 
 /* Emulate doing useful CPU intensive work */
