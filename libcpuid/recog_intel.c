@@ -545,6 +545,9 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_7|_U       ,   _1xx, "Raptor Lake-U (Core 7)"  }, /* Core 7 150U */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_5|_U       ,   _1xx, "Raptor Lake-U (Core 5)"  }, /* Core 5 120U */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_3|_U       ,   _1xx, "Raptor Lake-U (Core 3)"  }, /* Core 3 100U */
+	/* Raptor Lake Re-refresh CPUs (2025, Core Series 2 processors Intel 7) => https://en.wikipedia.org/wiki/Raptor_Lake#List_of_Core_Series_2_processors */
+	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_7|_U       ,   _2xx, "Raptor Lake-U (Core 7)"  }, /* Core 7 250U */
+	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_5|_U       ,   _2xx, "Raptor Lake-U (Core 5)"  }, /* Core 5 220U */
 
 	/* Sapphire Rapids CPUs (2023, 4th Xeon Scalable gen, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/sapphire_rapids */
 	{  6, 15, -1, -1, 143, -1,    -1,    -1, NC, XEON_|_W_|_9     , _x4xx, "Sapphire Rapids-WS (Xeon w9)"       },
