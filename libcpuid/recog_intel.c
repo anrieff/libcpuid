@@ -537,6 +537,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_I_|_7      , _14xxx, "Raptor Lake-S (Core i7)"  },
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_I_|_5      , _14xxx, "Raptor Lake-S (Core i5)"  },
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_I_|_3      , _14xxx, "Raptor Lake-S (Core i3)"  },
+	{  6,  7, -1, -1, 183,  2,    -1,    -1, NC, 0                 ,      0, "Raptor Lake-S (Intel Processor )"}, /* Intel Processor 300 + Intel Processor 300T */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_I_|_9|_H|_X, _14xxx, "Raptor Lake-HX (Core i9)" },
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_I_|_7|_H|_X, _14xxx, "Raptor Lake-HX (Core i7)" },
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, NC, CORE_|_I_|_5|_H|_X, _14xxx, "Raptor Lake-HX (Core i5)" },
