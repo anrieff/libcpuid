@@ -166,6 +166,7 @@ enum _intel_bits_t {
 	_V                      = LBIT( (LAST_COMMON_BIT + 20) ), // Lunar Lake
 	_L                      = LBIT( (LAST_COMMON_BIT + 21) ), // LGA package (UL = Power efficient, in LGA package / HL = Highest performance, in LGA package)
 	_T                      = LBIT( (LAST_COMMON_BIT + 22) ), // Power-optimized lifestyle
+	_U_                     = LBIT( (LAST_COMMON_BIT + 23) ),
 };
 typedef enum _intel_bits_t intel_bits_t;
 

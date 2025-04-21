@@ -505,13 +505,13 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_7|_H|_L, _12xxx, "Alder Lake-PS (Core i7)"        },
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_5|_H|_L, _12xxx, "Alder Lake-PS (Core i5)"        },
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_3|_H|_L, _12xxx, "Alder Lake-PS (Core i3)"        },
-	{  6, 14, -1, -1, 190, -1,    -1,    -1, NC, CORE_|_I_|_3|_N  ,       0, "Alder Lake-N (Core i3)"         },
+	{  6, 14, -1, -1, 190, -1,    -1,    -1, NC, CORE_|_I_|_3|_N_ ,       0, "Alder Lake-N (Core i3)"         }, /* Core i3 N300 + Core i3 N305 */
 	{  6, 14, -1, -1, 190,  4,    -1,    -1, NC, _N_              ,       0, "Alder Lake-N (Intel Processor)" },
-	{  6, 14, -1, -1, 190,  2,    -1,    -1, NC, _N_              ,       0, "Alder Lake-N (Intel Processor)" },
+	{  6, 14, -1, -1, 190,  2,    -1,    -1, NC, _N_              ,       0, "Alder Lake-N (Intel Processor)" }, /* Intel Processor N50 */
 	{  6, 14, -1, -1, 190, -1,    -1,    -1, NC, ATOM_            ,       0, "Alder Lake-N (Atom)"            },
 	/* Twin Lake CPUs (2025, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/twin_lake */
-	{  6, 14, -1, -1, 190,  8,    -1,    -1, NC, CORE_|_3|_N_     ,    _x5x, "Twin Lake-N (Core 3)"          },
-	{  6, 14, -1, -1, 190,  4,    -1,    -1, NC, _N               ,    _x5x, "Twin Lake-N (Intel Processor)" },
+	{  6, 14, -1, -1, 190,  8,    -1,    -1, NC, CORE_|_3|_N_     ,    _x5x, "Twin Lake-N (Core 3)"          }, /* Core 3 N350 + Core 3 N355 */
+	{  6, 14, -1, -1, 190,  4,    -1,    -1, NC, _N_              ,    _x5x, "Twin Lake-N (Intel Processor)" }, /* Intel Processor N150 + Intel Processor N150 */
 
 	/* Raptor Lake CPUs (2022, 13th Core i gen, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/raptor_lake */
 	{  6, 15, -1, -1, 191, -1,    -1,    -1, NC, CORE_|_I_|_5      , _13xxx, "Raptor Lake-S (Core i5)"  }, // "Golden Cove" cores
@@ -528,6 +528,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_7|_U   ,      0, "Raptor Lake-U (Core i7)"  },
 	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_5|_U   ,      0, "Raptor Lake-U (Core i5)"  },
 	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_3|_U   ,      0, "Raptor Lake-U (Core i3)"  },
+	{  6, 10,  3, -1, 186, -1,    -1,    -1, NC, _U_               ,      0, "Raptor Lake-U (Intel Processor)" }, /* Intel Processor U300 */
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_9|_H   , _13xxx, "Raptor Lake-H (Core i9)"  },
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_7|_H   , _13xxx, "Raptor Lake-H (Core i7)"  },
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, NC, CORE_|_I_|_5|_H   , _13xxx, "Raptor Lake-H (Core i5)"  },
@@ -887,6 +888,13 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 		switch (bs[i + 8]) {
 			case 'D': bits |= _D_; break;
 			case 'W': bits |= _W_; break;
+		}
+	}
+	else if ((i = match_pattern(bs, "[NU]##")) != 0) {
+		i--;
+		switch (bs[i]) {
+			case 'N': bits |= _N_; break;
+			case 'U': bits |= _U_; break;
 		}
 	}
 
