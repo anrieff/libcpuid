@@ -161,6 +161,7 @@ enum _intel_bits_t {
 	_J_                     = LBIT( 26 ),
 	_N_                     = LBIT( 27 ),
 	_ULTRA_                 = LBIT( 28 ),
+	_V                      = LBIT( 29 ), // Lunar Lake
 };
 typedef enum _intel_bits_t intel_bits_t;
 

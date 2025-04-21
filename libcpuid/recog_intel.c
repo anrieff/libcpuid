@@ -558,6 +558,10 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  6, -1, -1, 198, -1,    -1,    -1, NC, CORE_|_ULTRA_|_7|_S, _2xx, "Arrow Lake-S (Core Ultra 7)" },
 	{  6,  6, -1, -1, 198, -1,    -1,    -1, NC, CORE_|_ULTRA_|_5|_S, _2xx, "Arrow Lake-S (Core Ultra 5)" },
 	{  6,  6, -1, -1, 198, -1,    -1,    -1, NC, CORE_|_ULTRA_|_3|_S, _2xx, "Arrow Lake-S (Core Ultra 3)" },
+	/* Lunar Lake CPUs (2024, Core Ultra Series 2 processors, TSMC N3B) => https://en.wikichip.org/wiki/intel/microarchitectures/lunar_lake */
+	{  6, 13, -1, -1, 189, -1,    -1,    -1, NC, CORE_|_ULTRA_|_9|_V, _1xx, "Lunar Lake-V (Core Ultra 9)" },
+	{  6, 13, -1, -1, 189, -1,    -1,    -1, NC, CORE_|_ULTRA_|_7|_V, _1xx, "Lunar Lake-V (Core Ultra 7)" },
+	{  6, 13, -1, -1, 189, -1,    -1,    -1, NC, CORE_|_ULTRA_|_5|_V, _1xx, "Lunar Lake-V (Core Ultra 5)" },
 	/* F   M   S  EF   EM #cores L2$    L3$  BC       ModelBits ModelCode                                  Name */
 
 
@@ -825,6 +829,7 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 				//case 'S': bits |= _S; break;
 				case 'U': bits |= _U; break;
 				//case 'X': bits |= _X; break;
+				case 'V': bits |= _V; break;
 			}
 		}
 	}
