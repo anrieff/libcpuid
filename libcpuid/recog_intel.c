@@ -74,6 +74,7 @@ enum _intel_model_t {
 	_x5xx,  /* Xeon Bronze/Silver/Gold/Platinum x5xx */
 	_1xx,   /* Core Ultra [3579] 1xx */
 	_2xx,   /* Core Ultra [3579] 2xx */
+	_x5x,   /* Intel Processor/Core 3 x5x (Twin lake-N) */
 };
 typedef enum _intel_model_t intel_model_t;
 
@@ -498,9 +499,12 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_7|_H  ,  _12xxx, "Alder Lake-H (Core i7)"  },
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, NC, CORE_|_I_|_5|_H  ,  _12xxx, "Alder Lake-H (Core i5)"  },
 	{  6, 14, -1, -1, 190, -1,    -1,    -1, NC, CORE_|_I_|_3|_N  ,       0, "Alder Lake-N (Core i3)"  },
-	{  6, 14, -1, -1, 190, -1,    -1,    -1, NC, ATOM_            ,       0, "Alder Lake-N (Atom)"     },
-	{  6, 14, -1, -1, 190,  4,    -1,    -1, NC, _N               ,       0, "Alder Lake-N"            },
-	{  6, 14, -1, -1, 190,  2,    -1,    -1, NC, _N               ,       0, "Alder Lake-N"            },
+	{  6, 14, -1, -1, 190,  4,    -1,    -1, NC, _N_              ,       0, "Alder Lake-N (Intel Processor)" },
+	{  6, 14, -1, -1, 190,  2,    -1,    -1, NC, _N_              ,       0, "Alder Lake-N (Intel Processor)" },
+	{  6, 14, -1, -1, 190, -1,    -1,    -1, NC, ATOM_            ,       0, "Alder Lake-N (Atom)"            },
+	/* Twin Lake CPUs (2025, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/twin_lake */
+	{  6, 14, -1, -1, 190,  8,    -1,    -1, NC, CORE_|_3|_N_     ,    _x5x, "Twin Lake-N (Core 3)"          },
+	{  6, 14, -1, -1, 190,  4,    -1,    -1, NC, _N               ,    _x5x, "Twin Lake-N (Intel Processor)" },
 
 	/* Raptor Lake CPUs (2022, 13th Core i gen, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/raptor_lake */
 	{  6, 15, -1, -1, 191, -1,    -1,    -1, NC, CORE_|_I_|_5      , _13xxx, "Raptor Lake-S (Core i5)"  }, // "Golden Cove" cores
@@ -811,25 +815,49 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 			}
 		}
 	}
-	if ((i = match_pattern(bs, "Core(TM) Ultra [579]")) != 0) {
+	/* https://www.intel.com/content/www/us/en/ark/products/series/236798/intel-core-processors-series-1.html
+	   https://www.intel.com/content/www/us/en/ark/products/series/238783/intel-core-processors-series-2.html */
+	else if ((i = match_pattern(bs, "Core(TM) [3579]")) != 0) {
+		bits |= CORE_;
+		i--;
+		switch (bs[i + 9]) {
+			case '3': bits |= _3; break;
+			case '5': bits |= _5; break;
+			case '7': bits |= _7; break;
+			case '9': bits |= _9; break;
+		}
+		for(i = i + 10; i < n; i++) {
+			switch (bs[i]) {
+				case 'E': bits |= _E; break;
+				case 'F': bits |= _F; break;
+				case 'H': bits |= _H; break;
+				case 'L': bits |= _L; break;
+				case 'T': bits |= _T; break;
+				case 'U': bits |= _U; break;
+			}
+		}
+	}
+	/* https://www.intel.com/content/www/us/en/ark/products/series/236803/intel-core-ultra-processors-series-1.html
+	   https://www.intel.com/content/www/us/en/ark/products/series/241071/intel-core-ultra-processors-series-2.html */
+	else if ((i = match_pattern(bs, "Core(TM) Ultra [3579]")) != 0) {
 		bits |= CORE_ | _ULTRA_;
 		i--;
 		switch (bs[i + 15]) {
-			//case '3': bits |= _3; break;
+			case '3': bits |= _3; break;
 			case '5': bits |= _5; break;
 			case '7': bits |= _7; break;
 			case '9': bits |= _9; break;
 		}
 		for(i = i + 16; i < n; i++) {
 			switch (bs[i]) {
+				case 'F': bits |= _F; break;
 				case 'H': bits |= _H; break;
-				//case 'K': bits |= _K; break;
-				//case 'N': bits |= _N; break;
-				//case 'P': bits |= _P; break;
-				//case 'S': bits |= _S; break;
+				case 'K': bits |= _K; break;
+				case 'L': bits |= _L; break;
+				case 'T': bits |= _T; break;
 				case 'U': bits |= _U; break;
-				//case 'X': bits |= _X; break;
 				case 'V': bits |= _V; break;
+				case 'X': bits |= _X; break;
 			}
 		}
 	}
@@ -939,7 +967,7 @@ static intel_model_t get_model_code(struct cpu_id_t* data)
 	/* If the CPU is a Core ix, then just return the model number generation: */
 	if ((i = match_pattern(bs, "Core(TM) i[3579]")) != 0) {
 		i += 11;
-		if (i + 4 >= l) return UNKNOWN;
+		if (i + 3 >= l) return UNKNOWN;
 		if (bs[i] == '2') return _2xxx;
 		if (bs[i] == '3') return _3xxx;
 		if (bs[i] == '4') return _4xxx;
@@ -948,6 +976,7 @@ static intel_model_t get_model_code(struct cpu_id_t* data)
 		if (bs[i] == '7') return _7xxx;
 		if (bs[i] == '8') return _8xxx;
 		if (bs[i] == '9') return _9xxx;
+		if (i + 4 >= l) return UNKNOWN;
 		if ((bs[i] == '1') && (bs[i+1] == '0')) return _10xxx;
 		if ((bs[i] == '1') && (bs[i+1] == '1')) return _11xxx;
 		if ((bs[i] == '1') && (bs[i+1] == '2')) return _12xxx;
@@ -955,9 +984,17 @@ static intel_model_t get_model_code(struct cpu_id_t* data)
 		if ((bs[i] == '1') && (bs[i+1] == '4')) return _14xxx;
 		return UNKNOWN;
 	}
+	else if ((i = match_pattern(bs, "Core(TM) [3579]")) != 0) {
+		i += 11;
+		if (i + 2 >= l) return UNKNOWN;
+		if ((bs[i] == '1') && (bs[i+1] == '5')) return _x5x;
+		if ((bs[i] == '2') && (bs[i+1] == '5')) return _x5x;
+		if ((bs[i] == '3') && (bs[i+1] == '5')) return _x5x;
+		return UNKNOWN;
+	}
 	else if ((i = match_pattern(bs, "Core(TM) Ultra [3579]")) != 0) {
 		i += 16;
-		if (i + 3 >= l) return UNKNOWN;
+		if (i + 2 >= l) return UNKNOWN;
 		if (bs[i] == '1') return _1xx;
 		if (bs[i] == '2') return _2xx;
 		return UNKNOWN;
