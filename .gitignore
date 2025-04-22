@@ -37,8 +37,9 @@ ipch
 libcpuid/x32
 libcpuid/x64
 cpuid_tool/x32
-cpuid_tool/
+cpuid_tool/x64
 utils/decode_cpuid_revision
+utils/embed_windows_drivers
 *.vcxproj.user
 build
 /docs
