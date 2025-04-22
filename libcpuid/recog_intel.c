@@ -581,6 +581,8 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  6, -1, -1, 198, -1,    -1,    -1, NC, CORE_|_ULTRA_|_7|_S, _2xx, "Arrow Lake-S (Core Ultra 7)" },
 	{  6,  6, -1, -1, 198, -1,    -1,    -1, NC, CORE_|_ULTRA_|_5|_S, _2xx, "Arrow Lake-S (Core Ultra 5)" },
 	{  6,  6, -1, -1, 198, -1,    -1,    -1, NC, CORE_|_ULTRA_|_3|_S, _2xx, "Arrow Lake-S (Core Ultra 3)" },
+	{  6,  6, -1, -1, 181, -1,    -1,    -1, NC, CORE_|_ULTRA_|_7|_U, _2xx, "Arrow Lake-U (Core Ultra 7)" }, /* Core Ultra 7 255U + Core Ultra 7 265U */
+	{  6,  6, -1, -1, 181, -1,    -1,    -1, NC, CORE_|_ULTRA_|_5|_U, _2xx, "Arrow Lake-U (Core Ultra 5)" }, /* Core Ultra 5 225U + Core Ultra 7 235U */
 	/* Lunar Lake CPUs (2024, Core Ultra Series 2 processors, TSMC N3B) => https://en.wikichip.org/wiki/intel/microarchitectures/lunar_lake */
 	{  6, 13, -1, -1, 189, -1,    -1,    -1, NC, CORE_|_ULTRA_|_9|_V, _1xx, "Lunar Lake-V (Core Ultra 9)" },
 	{  6, 13, -1, -1, 189, -1,    -1,    -1, NC, CORE_|_ULTRA_|_7|_V, _1xx, "Lunar Lake-V (Core Ultra 7)" },
