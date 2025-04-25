@@ -783,8 +783,7 @@ static intel_code_and_bits_t get_brand_code_and_bits(struct cpu_id_t* data)
 	const size_t n = strlen(bs);
 	const struct { intel_code_t c; const char *search; } matchtable[] = {
 		{ PENTIUM_M, "Pentium(R) M" },
-		{ CORE_SOLO, "Pentium(R) Dual  CPU" },
-		{ CORE_SOLO, "Pentium(R) Dual-Core" },
+		{ CORE_SOLO, "Pentium(R) Dual" },
 		{ PENTIUM_D, "Pentium(R) D" },
 		{ CORE_SOLO, "Genuine Intel(R) CPU" },
 		{ CORE_SOLO, "Intel(R) Core(TM)" },

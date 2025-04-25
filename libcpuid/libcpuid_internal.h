@@ -122,7 +122,7 @@ struct internal_type_info_array_t {
 	struct internal_type_info_t* data;
 };
 
-#define LBIT(x) (((uint64_t) 1) << x)
+#define LBIT(x) ((1ULL) << x)
 
 // common detection bits for CPUs:
 #define _M_                     LBIT(  0 )
@@ -204,7 +204,7 @@ struct internal_type_info_array_t {
 #define _KH_               LBIT( (LAST_COMMON_BIT +  3) )
 #define _KX_               LBIT( (LAST_COMMON_BIT +  4) )
 #define _ZX_               LBIT( (LAST_COMMON_BIT +  5) )
-#define _C                 LBIT( (LAST_COMMON_BIT +  6) )
+#define __C                LBIT( (LAST_COMMON_BIT +  6) )
 #define _D                 LBIT( (LAST_COMMON_BIT +  7) )
 
 
