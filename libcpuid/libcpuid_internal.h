@@ -124,98 +124,88 @@ struct internal_type_info_array_t {
 
 #define LBIT(x) (((uint64_t) 1) << x)
 
-enum _common_bits_t {
-	_M_                     = LBIT(  0 ),
-	MOBILE_                 = LBIT(  1 ),
-	_MP_                    = LBIT(  2 ),
-	_3                      = LBIT(  3 ),
-	_5                      = LBIT(  4 ),
-	_7                      = LBIT(  5 ),
-	_9                      = LBIT(  6 ),
-	_H                      = LBIT(  7 ), // powerful mobile processors for laptop
-	_S                      = LBIT(  8 ),
-	_U                      = LBIT(  9 ), // ultra-low power
-	_X                      = LBIT( 10 ), // CPU with great amount of power
-	_F                      = LBIT( 11 ), // CPU that doesn’t have integrated graphics
-	_G                      = LBIT( 12 ), // CPU with additional built-in integrated graphics
-	_E                      = LBIT( 13 ), // Embedded (Intel)
-};
-#define LAST_COMMON_BIT             13
+// common detection bits for CPUs:
+#define _M_                     LBIT(  0 )
+#define MOBILE_                 LBIT(  1 )
+#define _MP_                    LBIT(  2 )
+#define _3                      LBIT(  3 )
+#define _5                      LBIT(  4 )
+#define _7                      LBIT(  5 )
+#define _9                      LBIT(  6 )
+#define _H                      LBIT(  7 ) // powerful mobile processors for laptop
+#define _S                      LBIT(  8 )
+#define _U                      LBIT(  9 ) // ultra-low power
+#define _X                      LBIT( 10 ) // CPU with great amount of power
+#define _F                      LBIT( 11 ) // CPU that doesn’t have integrated graphics
+#define _G                      LBIT( 12 ) // CPU with additional built-in integrated graphics
+#define _E                      LBIT( 13 ) // Embedded (Intel)
+#define LAST_COMMON_BIT               13
 
 // additional detection bits for Intel CPUs:
-enum _intel_bits_t {
-	PENTIUM_                = LBIT( (LAST_COMMON_BIT +  1) ),
-	CELERON_                = LBIT( (LAST_COMMON_BIT +  2) ),
-	CORE_                   = LBIT( (LAST_COMMON_BIT +  3) ),
-	_I_                     = LBIT( (LAST_COMMON_BIT +  4) ),
-	XEON_                   = LBIT( (LAST_COMMON_BIT +  5) ),
-	ATOM_                   = LBIT( (LAST_COMMON_BIT +  6) ),
-	_K                      = LBIT( (LAST_COMMON_BIT +  7) ), // an unlocked desktop processor that allows for overclocking
-	_P                      = LBIT( (LAST_COMMON_BIT +  8) ),
-	_N                      = LBIT( (LAST_COMMON_BIT +  9) ),
-	_W_                     = LBIT( (LAST_COMMON_BIT + 10) ),
-	_D_                     = LBIT( (LAST_COMMON_BIT + 11) ),
-	_BRONZE_                = LBIT( (LAST_COMMON_BIT + 12) ),
-	_SILVER_                = LBIT( (LAST_COMMON_BIT + 13) ),
-	_GOLD_                  = LBIT( (LAST_COMMON_BIT + 14) ),
-	_PLATINIUM_             = LBIT( (LAST_COMMON_BIT + 15) ),
-	_MAX_                   = LBIT( (LAST_COMMON_BIT + 16) ),
-	_J_                     = LBIT( (LAST_COMMON_BIT + 17) ),
-	_N_                     = LBIT( (LAST_COMMON_BIT + 18) ),
-	_ULTRA_                 = LBIT( (LAST_COMMON_BIT + 19) ),
-	_V                      = LBIT( (LAST_COMMON_BIT + 20) ), // Lunar Lake
-	_L                      = LBIT( (LAST_COMMON_BIT + 21) ), // LGA package (UL = Power efficient, in LGA package / HL = Highest performance, in LGA package)
-	_T                      = LBIT( (LAST_COMMON_BIT + 22) ), // Power-optimized lifestyle
-	_U_                     = LBIT( (LAST_COMMON_BIT + 23) ),
-};
-typedef enum _intel_bits_t intel_bits_t;
+#define PENTIUM_                LBIT( (LAST_COMMON_BIT +  1) )
+#define CELERON_                LBIT( (LAST_COMMON_BIT +  2) )
+#define CORE_                   LBIT( (LAST_COMMON_BIT +  3) )
+#define _I_                     LBIT( (LAST_COMMON_BIT +  4) )
+#define XEON_                   LBIT( (LAST_COMMON_BIT +  5) )
+#define ATOM_                   LBIT( (LAST_COMMON_BIT +  6) )
+#define _K                      LBIT( (LAST_COMMON_BIT +  7) ) // an unlocked desktop processor that allows for overclocking
+#define _P                      LBIT( (LAST_COMMON_BIT +  8) )
+#define _N                      LBIT( (LAST_COMMON_BIT +  9) )
+#define _W_                     LBIT( (LAST_COMMON_BIT + 10) )
+#define _D_                     LBIT( (LAST_COMMON_BIT + 11) )
+#define _BRONZE_                LBIT( (LAST_COMMON_BIT + 12) )
+#define _SILVER_                LBIT( (LAST_COMMON_BIT + 13) )
+#define _GOLD_                  LBIT( (LAST_COMMON_BIT + 14) )
+#define _PLATINIUM_             LBIT( (LAST_COMMON_BIT + 15) )
+#define _MAX_                   LBIT( (LAST_COMMON_BIT + 16) )
+#define _J_                     LBIT( (LAST_COMMON_BIT + 17) )
+#define _N_                     LBIT( (LAST_COMMON_BIT + 18) )
+#define _ULTRA_                 LBIT( (LAST_COMMON_BIT + 19) )
+#define _V                      LBIT( (LAST_COMMON_BIT + 20) ) // Lunar Lake
+#define _L                      LBIT( (LAST_COMMON_BIT + 21) ) // LGA package (UL = Power efficient, in LGA package / HL = Highest performance, in LGA package)
+#define _T                      LBIT( (LAST_COMMON_BIT + 22) ) // Power-optimized lifestyle
+#define _U_                     LBIT( (LAST_COMMON_BIT + 23) )
 
-enum _amd_bits_t {
-	ATHLON_      = LBIT( (LAST_COMMON_BIT +  1) ),
-	_XP_         = LBIT( (LAST_COMMON_BIT +  2) ),
-	DURON_       = LBIT( (LAST_COMMON_BIT +  3) ),
-	SEMPRON_     = LBIT( (LAST_COMMON_BIT +  4) ),
-	OPTERON_     = LBIT( (LAST_COMMON_BIT +  5) ),
-	TURION_      = LBIT( (LAST_COMMON_BIT +  6) ),
-	RYZEN_       = LBIT( (LAST_COMMON_BIT +  7) ),
-	RYZEN_TR_    = LBIT( (LAST_COMMON_BIT +  8) ),
-	EPYC_        = LBIT( (LAST_COMMON_BIT +  9) ),
-	_LV_         = LBIT( (LAST_COMMON_BIT + 10) ),
-	_64_         = LBIT( (LAST_COMMON_BIT + 11) ),
-	_X2          = LBIT( (LAST_COMMON_BIT + 12) ),
-	_X3          = LBIT( (LAST_COMMON_BIT + 13) ),
-	_X4          = LBIT( (LAST_COMMON_BIT + 14) ),
-	_X6          = LBIT( (LAST_COMMON_BIT + 15) ),
-	_FX          = LBIT( (LAST_COMMON_BIT + 16) ),
-	_APU_        = LBIT( (LAST_COMMON_BIT + 17) ),
-	C86_	     = LBIT( (LAST_COMMON_BIT + 18) ),
-	_Z           = LBIT( (LAST_COMMON_BIT + 19) ),
-	_AI_         = LBIT( (LAST_COMMON_BIT + 20) ),
-};
-typedef enum _amd_bits_t amd_bits_t;
+// additional detection bits for AMD CPUs:
+#define ATHLON_      LBIT( (LAST_COMMON_BIT +  1) )
+#define _XP_         LBIT( (LAST_COMMON_BIT +  2) )
+#define DURON_       LBIT( (LAST_COMMON_BIT +  3) )
+#define SEMPRON_     LBIT( (LAST_COMMON_BIT +  4) )
+#define OPTERON_     LBIT( (LAST_COMMON_BIT +  5) )
+#define TURION_      LBIT( (LAST_COMMON_BIT +  6) )
+#define RYZEN_       LBIT( (LAST_COMMON_BIT +  7) )
+#define RYZEN_TR_    LBIT( (LAST_COMMON_BIT +  8) )
+#define EPYC_        LBIT( (LAST_COMMON_BIT +  9) )
+#define _LV_         LBIT( (LAST_COMMON_BIT + 10) )
+#define _64_         LBIT( (LAST_COMMON_BIT + 11) )
+#define _X2          LBIT( (LAST_COMMON_BIT + 12) )
+#define _X3          LBIT( (LAST_COMMON_BIT + 13) )
+#define _X4          LBIT( (LAST_COMMON_BIT + 14) )
+#define _X6          LBIT( (LAST_COMMON_BIT + 15) )
+#define _FX          LBIT( (LAST_COMMON_BIT + 16) )
+#define _APU_        LBIT( (LAST_COMMON_BIT + 17) )
+#define C86_	     LBIT( (LAST_COMMON_BIT + 18) )
+#define _Z           LBIT( (LAST_COMMON_BIT + 19) )
+#define _AI_         LBIT( (LAST_COMMON_BIT + 20) )
 
-enum _via_bits_t {
-	SAMUEL_            = LBIT( (LAST_COMMON_BIT +  1) ),
-	EZRA_              = LBIT( (LAST_COMMON_BIT +  2) ),
-	NEHEMIAH_          = LBIT( (LAST_COMMON_BIT +  3) ),
-	ESTHER_            = LBIT( (LAST_COMMON_BIT +  4) ),
-	EDEN_              = LBIT( (LAST_COMMON_BIT +  5) ),
-	CNA_               = LBIT( (LAST_COMMON_BIT +  6) ),
-	NANO_              = LBIT( (LAST_COMMON_BIT +  7) ),
-	QUADCORE_          = LBIT( (LAST_COMMON_BIT +  8) ),
-};
-typedef enum _via_bits_t via_bits_t;
+// additional detection bits for Via CPUs:
+#define SAMUEL_            LBIT( (LAST_COMMON_BIT +  1) )
+#define EZRA_              LBIT( (LAST_COMMON_BIT +  2) )
+#define NEHEMIAH_          LBIT( (LAST_COMMON_BIT +  3) )
+#define ESTHER_            LBIT( (LAST_COMMON_BIT +  4) )
+#define EDEN_              LBIT( (LAST_COMMON_BIT +  5) )
+#define CNA_               LBIT( (LAST_COMMON_BIT +  6) )
+#define NANO_              LBIT( (LAST_COMMON_BIT +  7) )
+#define QUADCORE_          LBIT( (LAST_COMMON_BIT +  8) )
 
-enum _zhaoxin_bits_t {
-	KAISHENG_          = LBIT( (LAST_COMMON_BIT +  1) ),
-	KAIXIAN_           = LBIT( (LAST_COMMON_BIT +  2) ),
-	_KH_               = LBIT( (LAST_COMMON_BIT +  3) ),
-	_KX_               = LBIT( (LAST_COMMON_BIT +  4) ),
-	_ZX_               = LBIT( (LAST_COMMON_BIT +  5) ),
-	_C                 = LBIT( (LAST_COMMON_BIT +  6) ),
-	_D                 = LBIT( (LAST_COMMON_BIT +  7) ),
-};
-typedef enum _zhaoxin_bits_t zhaoxin_bits_t;
+// additional detection bits for Zhaoxin CPUs:
+#define KAISHENG_          LBIT( (LAST_COMMON_BIT +  1) )
+#define KAIXIAN_           LBIT( (LAST_COMMON_BIT +  2) )
+#define _KH_               LBIT( (LAST_COMMON_BIT +  3) )
+#define _KX_               LBIT( (LAST_COMMON_BIT +  4) )
+#define _ZX_               LBIT( (LAST_COMMON_BIT +  5) )
+#define _C                 LBIT( (LAST_COMMON_BIT +  6) )
+#define _D                 LBIT( (LAST_COMMON_BIT +  7) )
 
 
 int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data,
