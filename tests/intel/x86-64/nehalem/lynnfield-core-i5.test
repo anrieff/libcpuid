@@ -354,5 +354,5 @@ general
 1
 0
 128 (non-authoritative)
-Lynnfield (Core i5)
+Core i5 (Lynnfield)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 syscall xd popcnt rdtscp lm lahf_lm constant_tsc

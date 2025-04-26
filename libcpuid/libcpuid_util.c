@@ -28,11 +28,11 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <ctype.h>
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 #include "libcpuid.h"
-#include "libcpuid_ctype.h"
 #include "libcpuid_util.h"
 #include "libcpuid_internal.h"
 
@@ -80,24 +80,10 @@ void debugf(int verboselevel, const char* format, ...)
 	_warn_fun(buff);
 }
 
-#ifndef HAVE_POPCOUNT64
-static unsigned int popcount64(uint64_t mask)
+static int score(const struct match_entry_t* entry, const struct cpu_id_t* data)
 {
-	unsigned int num_set_bits = 0;
-
-	while (mask) {
-		mask &= mask - 1;
-		num_set_bits++;
-	}
-
-	return num_set_bits;
-}
-#endif
-
-static int score(const struct match_entry_t* entry, const struct cpu_id_t* data,
-                 int brand_code, uint64_t bits, int model_code)
-{
-	int i, tmp, res = 0;
+	int i, res = 0;
+	char brand_str[BRAND_STR_MAX];
 	const struct { const char *field; int entry; int data; int score; } array[] = {
 		{ "family",     entry->family,     data->x86.family,     2 },
 		{ "model",      entry->model,      data->x86.model,      2 },
@@ -107,36 +93,42 @@ static int score(const struct match_entry_t* entry, const struct cpu_id_t* data,
 		{ "ncores",     entry->ncores,     data->num_cores,      2 },
 		{ "l2cache",    entry->l2cache,    data->l2_cache,       1 },
 		{ "l3cache",    entry->l3cache,    data->l3_cache,       1 },
-		{ "brand_code", entry->brand_code, brand_code,           2 },
-		{ "model_code", entry->model_code, model_code,           2 },
 	};
 	for (i = 0; i < sizeof(array) / sizeof(array[0]); i++) {
-		if(array[i].entry == array[i].data) {
+		if ((array[i].entry >= 0) && (array[i].entry == array[i].data)) {
 			res += array[i].score;
 			debugf(4, "Score: %-12s matches, adding %2i (current score for this entry: %2i)\n", array[i].field, array[i].score, res);
 		}
 	}
 
-	tmp = popcount64(entry->model_bits & bits) * 2;
-	res += tmp;
-	debugf(4, "Score: %-12s matches, adding %2i (current score for this entry: %2i)\n", "model_bits", tmp, res);
+	if ((entry->brand.score > 0) && (strlen(entry->brand.pattern) > 0)) {
+		/* Remove useless substrings in brand_str */
+		strncpy(brand_str, data->brand_str, BRAND_STR_MAX);
+		remove_substring(brand_str, "CPU");
+		collapse_spaces(brand_str);
+		/* Test pattern */
+		debugf(5, "Test if '%s' brand pattern matches '%s'...\n", entry->brand.pattern, brand_str);
+		if (match_pattern(brand_str, entry->brand.pattern)) {
+			res += entry->brand.score;
+			debugf(4, "Score: %-12s matches, adding %2i (current score for this entry: %2i)\n", "brand", entry->brand.score, res);
+		}
+	}
+
 	return res;
 }
 
-int match_cpu_codename(const struct match_entry_t* matchtable, int count,
-                       struct cpu_id_t* data, int brand_code, uint64_t bits,
-                       int model_code)
+int match_cpu_codename(const struct match_entry_t* matchtable, int count, struct cpu_id_t* data)
 {
 	int bestscore = -1;
 	int bestindex = 0;
 	int i, t;
 
-	debugf(3, "Matching cpu f:%d, m:%d, s:%d, xf:%d, xm:%d, ncore:%d, l2:%d, bcode:%d, bits:%llu, code:%d\n",
+	debugf(3, "Matching cpu f:%d, m:%d, s:%d, xf:%d, xm:%d, ncore:%d, l2:%d, l3:%d\n",
 		data->x86.family, data->x86.model, data->x86.stepping, data->x86.ext_family,
-		data->x86.ext_model, data->num_cores, data->l2_cache, brand_code, (unsigned long long) bits, model_code);
+		data->x86.ext_model, data->num_cores, data->l2_cache, data->l3_cache);
 
 	for (i = 0; i < count; i++) {
-		t = score(&matchtable[i], data, brand_code, bits, model_code);
+		t = score(&matchtable[i], data);
 		debugf(3, "Entry %d, `%s', score %d\n", i, matchtable[i].name, t);
 		if (t > bestscore) {
 			debugf(2, "Entry `%s' selected - best score so far (%d)\n", matchtable[i].name, t);
@@ -192,7 +184,7 @@ static int xmatch_entry(char c, const char* p)
 {
 	int i, j;
 	if (c == 0) return -1;
-	if (c == p[0]) return 1;
+	if (tolower(c) == tolower(p[0])) return 1;
 	if (p[0] == '.') return 1;
 	if (p[0] == '#' && isdigit(c)) return 1;
 	if (p[0] == '[') {
@@ -200,7 +192,7 @@ static int xmatch_entry(char c, const char* p)
 		while (p[j] && p[j] != ']') j++;
 		if (!p[j]) return -1;
 		for (i = 1; i < j; i++)
-			if (p[i] == c) return j + 1;
+			if (tolower(p[i]) == tolower(c)) return j + 1;
 	}
 	return -1;
 }
@@ -222,6 +214,39 @@ int match_pattern(const char* s, const char* p)
 		}
 	}
 	return 0;
+}
+
+void remove_substring(char* string, const char* substring)
+{
+	size_t len;
+	char *pos = strstr(string, substring);
+
+	if (pos != NULL) {
+		len = strlen(substring);
+		memmove(pos, pos + len, strlen(pos + len) + 1);
+	}
+}
+
+void collapse_spaces(char* string)
+{
+	size_t i, j = 0;
+	bool in_space = false;
+	const size_t len = strlen(string);
+
+	for (i = 0; i < len; i++) {
+		if (isspace(string[i])) {
+			if (!in_space) {
+				string[j++] = ' ';
+				in_space = true;
+			}
+		}
+		else {
+			string[j++] = string[i];
+			in_space = false;
+		}
+	}
+
+	string[j] = '\0';
 }
 
 struct cpu_id_t* get_cached_cpuid(void)

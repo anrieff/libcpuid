@@ -98,5 +98,5 @@ general
 -1
 -1
 128 (non-authoritative)
-Wolfdale (Core 2 Duo) 2M
+Pentium (Wolfdale-3M)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni dts64 monitor ds_cpl est tm2 ssse3 cx16 xtpr pdcm xd lm lahf_lm

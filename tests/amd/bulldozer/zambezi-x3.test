@@ -324,5 +324,5 @@ general
 -1
 -1
 128 (authoritative)
-Zambezi X3
+FX (Zambezi)
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni pclmul monitor ssse3 cx16 sse4_1 sse4_2 syscall popcnt aes xsave osxsave avx mmxext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch osvw ibs skinit wdt ts ttp tm_amd 100mhzsteps hwpstate constant_tsc xop fma4 cpb

@@ -149,10 +149,6 @@ SOURCE=.\libcpuid_constants.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\libcpuid_ctype.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\libcpuid_internal.h
 # End Source File
 # Begin Source File

@@ -62,9 +62,6 @@
     <ClInclude Include="libcpuid_constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="libcpuid_ctype.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="libcpuid_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>

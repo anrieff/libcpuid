@@ -39,18 +39,20 @@ struct feature_map_t {
 void match_features(const struct feature_map_t* matchtable, int count,
                     uint32_t reg, struct cpu_id_t* data);
 
+
 struct match_entry_t {
 	int family, model, stepping, ext_family, ext_model;
-	int ncores, l2cache, l3cache, brand_code;
-	uint64_t model_bits;
-	int model_code;
+	int ncores, l2cache, l3cache;
+	struct {
+		char pattern[BRAND_STR_MAX];
+		int score;
+	} brand;
 	char name[CODENAME_STR_MAX];
 };
 
 // returns the match score:
-int match_cpu_codename(const struct match_entry_t* matchtable, int count,
-                       struct cpu_id_t* data, int brand_code, uint64_t bits,
-                       int model_code);
+
+int match_cpu_codename(const struct match_entry_t* matchtable, int count, struct cpu_id_t* data);
 
 void warnf(const char* format, ...)
 #ifdef __GNUC__
@@ -76,6 +78,16 @@ void generic_get_cpu_list(const struct match_entry_t* matchtable, int count,
  *             x + 1 where x is the index where the match is found).
  */
 int match_pattern(const char* haystack, const char* pattern);
+
+/*
+ * Remove a substring from a string
+*/
+void remove_substring(char* string, const char* substring);
+
+/*
+ * Remove useless spaces from a string
+ */
+void collapse_spaces(char* string);
 
 /*
  * Gets an initialized cpu_id_t. It is cached, so that internal libcpuid

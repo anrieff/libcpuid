@@ -31,12 +31,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "DragonFly" OR ${CMAKE_SYSTEM_NAME} STREQUAL "N
   find_package(Threads REQUIRED)
 endif()
 
-# check if popcount64 is available
 include(CheckSymbolExists)
-check_symbol_exists(popcount64 "string.h" HAVE_POPCOUNT64)
-if(HAVE_POPCOUNT64)
-  add_definitions(-DHAVE_POPCOUNT64)
-endif(HAVE_POPCOUNT64)
 
 # check if auxiliary vector is available
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")

@@ -160,7 +160,7 @@ cache_exp = re.compile(r".*([\(/ ][0-9]+K).*")
 #   - Codenames should not exceed 31 characters
 #   - Check for common typos
 definitions = 0
-match_entry_fields = 12 # this number needs to change if the definition of match_entry_t ever changes
+match_entry_fields = 11 # this number needs to change if the definition of match_entry_t ever changes
 codename_str_max = 64-1 # this number needs to change if the value of CODENAME_STR_MAX ever changes
 common_cache_sizes = ["8", "16", "32", "64", "128", "256", "512", "1024", "2048", "3072", "4096", "6144", "8192", "12288", "16384"]
 for fn in glob.glob("%s/*.c" % sys.argv[1]):
@@ -177,7 +177,7 @@ for fn in glob.glob("%s/*.c" % sys.argv[1]):
 		if not has_matchtable:
 			continue
 		i = line.find("{")
-		j = line.find("}")
+		j = line.rfind("}")
 		if i == -1 or j == -1 or i > j:
 			continue
 		inner = line[i+1:j]
