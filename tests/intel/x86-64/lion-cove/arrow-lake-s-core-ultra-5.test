@@ -1,6 +1,3 @@
-CPUID Manufacturer: GenuineIntel
-CPUID CPU Name    : Intel(R) Core(TM) Ultra 5 245K
-CPUID Revision    : 000C0662h
 ------[ CPUID Registers / Logical CPU #0 ]------
 CPUID 00000000: 00000023-756E6547-6C65746E-49656E69 [GenuineIntel]
 CPUID 00000001: 000C0662-00800800-7FFAFBFF-BFEBFBFF
