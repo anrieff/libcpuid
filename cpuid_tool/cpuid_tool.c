@@ -54,8 +54,10 @@
 #include "libcpuid.h"
 
 /* Globals: */
-char raw_data_file[256] = "";
-char out_file[256] = "";
+#define RAW_DATA_FILE_MAX 256
+#define OUT_FILE_MAX 256
+char raw_data_file[RAW_DATA_FILE_MAX] = "";
+char out_file[OUT_FILE_MAX] = "";
 typedef enum {
 	NEED_CPUID_PRESENT,
 	NEED_ARCHITECTURE,
@@ -237,8 +239,8 @@ static int parse_cmdline(int argc, char** argv)
 	if (argc == 1) {
 		/* Default command line options */
 		need_output = 1;
-		strcpy(raw_data_file, "raw.txt");
-		strcpy(out_file, "report.txt");
+		strncpy(raw_data_file, "raw.txt", RAW_DATA_FILE_MAX);
+		strncpy(out_file, "report.txt", OUT_FILE_MAX);
 		need_report = 1;
 		verbose_level = 1;
 		return 1;
@@ -261,7 +263,7 @@ static int parse_cmdline(int argc, char** argv)
 				xerror("--load: bad file specification!");
 			}
 			need_input = 1;
-			strcpy(raw_data_file, arg + 7);
+			strncpy(raw_data_file, arg + 7, RAW_DATA_FILE_MAX);
 			recog = 1;
 		}
 		if (!strncmp(arg, "--save=", 7)) {
@@ -275,14 +277,14 @@ static int parse_cmdline(int argc, char** argv)
 				xerror("--save: bad file specification!");
 			}
 			need_output = 1;
-			strcpy(raw_data_file, arg + 7);
+			strncpy(raw_data_file, arg + 7, RAW_DATA_FILE_MAX);
 			recog = 1;
 		}
 		if (!strncmp(arg, "--outfile=", 10)) {
 			if (strlen(arg) <= 10) {
 				xerror("--output: bad file specification!");
 			}
-			strcpy(out_file, arg + 10);
+			strncpy(out_file, arg + 10, RAW_DATA_FILE_MAX);
 			recog = 1;
 		}
 		if (!strcmp(arg, "--report") || !strcmp(arg, "--all")) {
