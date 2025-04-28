@@ -1,17 +1,14 @@
 #!/usr/bin/env python3
 
-import os, sys, re
+import argparse, sys, re
 
-args = sys.argv
 
-if len(args) != 3:
-	print("Usage: create_test.py <rawdata file> <report file>")
-	print("The .test file is written to stdout.")
-	sys.exit(1)
+### Constants:
+delimiter = "-" * 80
 
 def readRawFile():
 	rawdata = []
-	for line in open(args[1], "rt").readlines():
+	for line in args.raw_file.readlines():
 		lookfor = [
 			"Logical CPU", "CPUID", "CPU#", # common
 			"basic_cpuid", "ext_cpuid", "intel_fn4", "intel_fn11", "amd_fn8000001dh", # x86
@@ -36,7 +33,7 @@ def readRawFile():
 def readResultFile():
 	repdata = []
 	rexp = re.compile('(-?[0-9]+).*')
-	for line in open(args[2], "rt").readlines():
+	for line in args.report_file.readlines():
 		s = line.strip()
 		if s.find(":") == -1:
 			continue
@@ -80,6 +77,25 @@ def readResultFile():
 			repdata.append(value)
 	return repdata
 
-delimiter = "-" * 80
+# Parse arguments
+parser = argparse.ArgumentParser(description="Create a new test file by using cpuid_tool raw and report files.")
+parser.add_argument("raw_file",
+	nargs='?',
+	type=argparse.FileType('r'),
+	default="raw.txt",
+	help="an existing raw data file")
+parser.add_argument("report_file",
+	nargs='?',
+	type=argparse.FileType('r'),
+	default="report.txt",
+	help="an existing report file")
+parser.add_argument("test_file",
+	nargs='?',
+	type=argparse.FileType('w'),
+	default=sys.stdout,
+	help="test file to create (default is standard output)")
+args = parser.parse_args()
+
+# Create test file
 lines = readRawFile() + readResultFile()
-sys.stdout.writelines([s + "\n" for s in lines])
+args.test_file.writelines([s + "\n" for s in lines])

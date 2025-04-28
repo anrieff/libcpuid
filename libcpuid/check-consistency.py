@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
-import os, sys, re, glob
+import argparse, os, sys, re, glob
+from pathlib import Path
 
-if len(sys.argv) != 2:
-	print("Usage: check-consistency <path>")
-	sys.exit(0)
+
+### Constants:
+git_root_dir = os.popen("git rev-parse --show-toplevel").read().splitlines()
 
 err = 0
 def getEnumElements(enumName):
-	f = open("%s/libcpuid.h" % sys.argv[1], "r")
+	f = open("%s/libcpuid.h" % args.root_dir, "r")
 	l = []
 	on = False
 	rexp = re.compile(r'^\s*([A-Z0-9_]+)(\s*=\s*[A-Z0-9_]+)?\s*,.*$')
@@ -27,7 +28,7 @@ def getEnumElements(enumName):
 	return []
 
 def getConstant(constantName):
-	f = open("%s/libcpuid_constants.h" % sys.argv[1], "r")
+	f = open("%s/libcpuid_constants.h" % args.root_dir, "r")
 	value = 0
 	for line in f:
 		items = line.strip().split()
@@ -49,13 +50,27 @@ def checkEnumSize(enumName, constantName):
 	else:
 		print("OK")
 
+def check_type_directory(directory):
+	if not Path(directory).is_dir():
+		raise argparse.ArgumentTypeError(f"{directory} is not a directory")
+	return directory
+
+# Parse arguments
+parser = argparse.ArgumentParser(description="Check library consistency.")
+parser.add_argument("root_dir",
+	nargs='?',
+	type=check_type_directory,
+	default=f"{git_root_dir[-1]}/libcpuid" if len(git_root_dir) > 0 else "",
+	help="path to the libcpuid sub-directory")
+args = parser.parse_args()
+
 checkEnumSize("cpu_feature_t", "CPU_FLAGS_MAX")
 checkEnumSize("cpu_hint_t", "CPU_HINTS_MAX")
 checkEnumSize("cpu_sgx_feature_t", "SGX_FLAGS_MAX")
 
 rexp = re.compile('.*{ CPU_FEATURE_([^,]+), "([^"]+)".*}.*')
 print("Finding features:")
-for fn in glob.glob("%s/*.c" % sys.argv[1]):
+for fn in glob.glob("%s/*.c" % args.root_dir):
 	f = open(fn, "rt")
 	line = 1
 	nfeat = 0
@@ -75,7 +90,7 @@ for fn in glob.glob("%s/*.c" % sys.argv[1]):
 # Check whether all features are converted by cpu_feature_str():
 
 allf = []
-f = open("%s/libcpuid.h" % sys.argv[1], "rt")
+f = open("%s/libcpuid.h" % args.root_dir, "rt")
 rexp = re.compile('\t(CPU_FEATURE_[^, ]+).*')
 for s in f.readlines():
 	if rexp.match(s):
@@ -85,7 +100,7 @@ f.close()
 
 impf = []
 rexp = re.compile('\t+{ (CPU_FEATURE_[^,]+).*')
-f = open("%s/cpuid_main.c" % sys.argv[1], "rt")
+f = open("%s/cpuid_main.c" % args.root_dir, "rt")
 for s in f.readlines():
 	if rexp.match(s):
 		entry = rexp.findall(s)[0]
@@ -112,7 +127,7 @@ rexp1 = re.compile(r'.*\[(CPU_FEATURE_[^ \]]+)\]\s*=\s*{.*') # e.g. "[CPU_FEATUR
 rexp2 = re.compile(r'.*(CPU_FEATURE_[^ ,]+),\s*FEATURE_LEVEL_ARM_.*') # e.g. "set_feature_status(data, ext_status, (mte_frac == 0b0000), CPU_FEATURE_MTE_ASYNC,           FEATURE_LEVEL_ARM_V8_5_A, -1);"
 rexp3 = re.compile(r'.*(CPU_FEATURE_[^ }]+).*') # e.g. "{ 28, CPU_FEATURE_HT },"
 
-for fn in glob.glob("%s/*.c" % sys.argv[1]):
+for fn in glob.glob("%s/*.c" % args.root_dir):
 	f = open(fn, "rt")
 	files_code[fn] = []
 	for s in f.readlines():
@@ -163,7 +178,7 @@ definitions = 0
 match_entry_fields = 11 # this number needs to change if the definition of match_entry_t ever changes
 codename_str_max = 64-1 # this number needs to change if the value of CODENAME_STR_MAX ever changes
 common_cache_sizes = ["8", "16", "32", "64", "128", "256", "512", "1024", "2048", "3072", "4096", "6144", "8192", "12288", "16384"]
-for fn in glob.glob("%s/*.c" % sys.argv[1]):
+for fn in glob.glob("%s/*.c" % args.root_dir):
 	bfn = os.path.basename(fn)
 	nline = 0
 	f = open(fn, "rt")

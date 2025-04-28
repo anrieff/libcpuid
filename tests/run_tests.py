@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 
-import os, sys, re, random, lzma
-from pathlib import Path
+import argparse, textwrap, os, sys, re, random, lzma
+from pathlib import Path, PurePath
 
 
 ### Constants:
@@ -19,42 +19,6 @@ fields_arm = [ "architecture", "feature-level", "purpose",
 	   "implementer", "variant", "part-num", "revision",
 	   "cores", "logical",
 	   "codename", "flags" ]
-
-args = sys.argv
-fix = False
-show_test_fast_warning = False
-
-if len(args) < 3:
-	print("""
-Usage: run_tests.py <cpuid_tool binary> <test file/dir> [test file/dir ...] [OPTIONS]
-
-If a test file is given, it is tested by itself.
-If a directory is given, process all *.test files there, subdirectories included.
-
-If the --fix option is given, the behaviour of the cpuid_tool binary is deemed correct
-and any failing tests are updated.
-""")
-	sys.exit(1)
-
-filelist = []
-cpuid_tool = args[1]
-for arg in args[2:]:
-	if arg == "--fix":
-		fix = True
-		continue
-	if arg == "--show-test-fast-warning":
-		show_test_fast_warning = True
-		continue
-	if os.path.isdir(arg):
-		# gather all *.test files from subdirs amd and intel:
-		for dirpath, dirnames, filenames in os.walk(arg):
-			filelist += [os.path.join(dirpath, fn) for fn in filenames if Path(fn).suffixes[0] == ".test"]
-	else:
-		filelist.append(arg)
-
-#f = open(args[1], "rt")
-#lines = f.readlines()
-#f.close()
 
 # One would usually use os.tempnam, but libc gives off hell a lot of
 # warnings when you attempt to use that :(
@@ -109,7 +73,7 @@ def do_test(inp, expected_out, binary, test_file_name, num_cpu_type):
 	except IOError:
 		return "Exception"
 	if len(real_out) != len(expected_out) or len(real_out) != len(fields) * num_cpu_type:
-		if fix:
+		if args.fix:
 			fixFile(test_file_name, inp, real_out_delim)
 			return "Number of records, fixed."
 		else:
@@ -121,12 +85,69 @@ def do_test(inp, expected_out, binary, test_file_name, num_cpu_type):
 	if not err_fields:
 		return "OK"
 	else:
-		if fix:
+		if args.fix:
 			fixFile(test_file_name, inp, real_out_delim)
 			return "Mismatch, fixed."
 		else:
 			return "Mismatch in fields:\n%s" % "\n".join([fmt_error(err) for err in err_fields])
 
+def is_regular_file(filename):
+	try:
+		with open(filename, 'r') as fd:
+			fd.read()
+			return True
+	except:
+		return False
+
+def check_type_binary_file(filename):
+	if not Path(filename).is_file():
+		raise argparse.ArgumentTypeError(f"{filename} is not a file")
+	if is_regular_file(filename):
+		raise argparse.ArgumentTypeError(f"{filename} is not a binary file")
+	return filename
+
+# Parse arguments
+parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+	description=textwrap.dedent("""
+
+Run test files.
+
+If a test file is given, it is tested by itself.
+If a directory is given, process all *.test files there, subdirectories included.
+
+If the --fix option is given, the behaviour of the cpuid_tool binary is deemed correct and any failing tests are updated.
+"""))
+parser.add_argument("cpuid_tool",
+	nargs='?',
+	type=check_type_binary_file,
+	default="./build/cpuid_tool/cpuid_tool",
+	help="path to the cpuid_tool binary")
+parser.add_argument("input_test_files",
+	nargs='+',
+	default=["./tests"],
+	help="test file or directory containing test files")
+parser.add_argument("--fix",
+	action=argparse.BooleanOptionalAction,
+	default=False,
+	help="update failing tests (default is false)")
+parser.add_argument("--show-test-fast-warning",
+	dest="show_test_fast_warning",
+	action=argparse.BooleanOptionalAction,
+	default=False,
+	help="show a warning on errors (default if false)")
+args = parser.parse_args()
+
+# Create test files list
+filelist = []
+for input_test_file in args.input_test_files:
+	if Path(input_test_file).is_dir():
+		# gather all *.test files from subdirs amd, intel and cie:
+		for dirpath, dirnames, filenames in Path(input_test_file).walk():
+			filelist += [PurePath(dirpath).joinpath(fn) for fn in filenames if Path(fn).suffixes[0] == ".test"]
+	else:
+		filelist.append(input_test_file)
+
+# Run tests
 errors = False
 print("Testing...")
 for test_file_name_raw in filelist:
@@ -158,14 +179,14 @@ for test_file_name_raw in filelist:
 				current_input.append(line)
 	f.close()
 	#codename = current_output[len(current_output) - 2]
-	result = do_test(current_input, current_output, cpuid_tool, test_file_name, num_cpu_type)
+	result = do_test(current_input, current_output, args.cpuid_tool, test_file_name, num_cpu_type)
 	print("Test [%s]: %s" % (test_file_name.name, result))
 	if result != "OK":
 		errors = True
 	build_output = False
 
 if errors:
-	if show_test_fast_warning:
+	if args.show_test_fast_warning:
 		print("""
 You're running tests in fast mode; before taking any action on the errors
 above, please confirm that the slow mode ('make test-old') also fails.""")
