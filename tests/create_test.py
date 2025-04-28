@@ -49,7 +49,7 @@ def readResultFile():
 		if field in numeric:
 			value = s[s.find(":")+1:].strip()
 			if not rexp.match(value):
-				raise "Bad format of value: [%s]" % s
+				raise f"Bad format of value: [{s}]"
 			repdata.append(rexp.findall(value)[0])
 		if "CPU Info for type" in field:
 			repdata.append(delimiter)

@@ -34,8 +34,8 @@ def make_tempname(prefix):
 	return prefix
 
 def fmt_error(err):
-	pfix = "  %s: " % err[0]
-	return "%sexpected `%s'\n%sgot      `%s'" % (pfix, err[1], " "*len(pfix), err[2])
+	pfix = f"  {err[0]}: "
+	return "{} expected `{}'\n{} got      `{}'".format(pfix, err[1], ' '*len(pfix), err[2])
 
 def fixFile(filename, input_lines, output_lines):
 	f = open(filename, "wt")
@@ -50,14 +50,14 @@ def do_test(inp, expected_out, binary, test_file_name, num_cpu_type):
 	f = open(fninp, "wt")
 	f.writelines([s + "\n" for s in inp])
 	f.close()
-	architecture = os.popen("%s --load=%s --architecture" % (binary, fninp)).read().splitlines()[-1]
+	architecture = os.popen(f"{binary} --load={fninp} --architecture").read().splitlines()[-1]
 	if architecture == "x86":
 		fields = fields_x86
 	elif architecture == "ARM":
 		fields = fields_arm
 	else:
 		fields = []
-	cmd = "%s --load=%s --outfile=%s %s" % (binary, fninp, fnoutp, " ".join(["--" + s for s in fields]))
+	cmd = f"{binary} --load={fninp} --outfile={fnoutp} {' '.join(['--' + s for s in fields])}"
 	os.system(cmd)
 	os.unlink(fninp)
 	real_out = []
@@ -77,7 +77,7 @@ def do_test(inp, expected_out, binary, test_file_name, num_cpu_type):
 			fixFile(test_file_name, inp, real_out_delim)
 			return "Number of records, fixed."
 		else:
-			return "Unexpected number of records returned\n - expected length %d\n - real length %d\n - %d fields" % (len(expected_out), len(real_out), len(fields) * num_cpu_type)
+			return "Unexpected number of records returned\n - expected length {}\n - real length {}\n - {} fields".format(len(expected_out), len(real_out), len(fields) * num_cpu_type)
 	err_fields = []
 	for i in range(len(real_out)):
 		if real_out[i] != expected_out[i]:
@@ -89,7 +89,7 @@ def do_test(inp, expected_out, binary, test_file_name, num_cpu_type):
 			fixFile(test_file_name, inp, real_out_delim)
 			return "Mismatch, fixed."
 		else:
-			return "Mismatch in fields:\n%s" % "\n".join([fmt_error(err) for err in err_fields])
+			return "Mismatch in fields:\n{}".format('\n'.join([fmt_error(err) for err in err_fields]))
 
 def is_regular_file(filename):
 	try:
@@ -142,7 +142,7 @@ filelist = []
 for input_test_file in args.input_test_files:
 	if Path(input_test_file).is_dir():
 		# gather all *.test files from subdirs amd, intel and cie:
-		for dirpath, dirnames, filenames in Path(input_test_file).walk():
+		for dirpath, dirnames, filenames in os.walk(input_test_file):
 			filelist += [PurePath(dirpath).joinpath(fn) for fn in filenames if Path(fn).suffixes[0] == ".test"]
 	else:
 		filelist.append(input_test_file)
@@ -161,7 +161,7 @@ for test_file_name_raw in filelist:
 		if test_file_name.suffixes[1] == ".xz":
 			f = lzma.open(test_file_name, "rt")
 		else:
-			print("Test [%s]: skipped because %s is not supported" % (test_file_name.name, "".join(test_file_name.suffixes[1:])))
+			print(f"Test [{test_file_name.name}]: skipped because {''.join(test_file_name.suffixes[1:])} is not supported")
 			continue
 	else:
 		# Plain text file
@@ -180,7 +180,7 @@ for test_file_name_raw in filelist:
 	f.close()
 	#codename = current_output[len(current_output) - 2]
 	result = do_test(current_input, current_output, args.cpuid_tool, test_file_name, num_cpu_type)
-	print("Test [%s]: %s" % (test_file_name.name, result))
+	print(f"Test [{test_file_name.name}]: {result}")
 	if result != "OK":
 		errors = True
 	build_output = False
