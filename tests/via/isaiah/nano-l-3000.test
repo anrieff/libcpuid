@@ -56,4 +56,5 @@ general
 -1
 -1 (non-authoritative)
 VIA Nano (Isaiah)
+65 nm
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat clflush mmx fxsr sse sse2 pni monitor ssse3 cx16 sse4_1 syscall popcnt lm lahf_lm

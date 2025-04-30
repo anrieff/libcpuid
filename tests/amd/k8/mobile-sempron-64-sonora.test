@@ -99,4 +99,5 @@ general
 -1
 64 (non-authoritative)
 Mobile Sempron 64 (Sonora/128K)
+90 nm
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 syscall mmxext 3dnow 3dnowext nx fxsr_opt lahf_lm ts fid vid ttp

@@ -160,6 +160,7 @@ arm_id_aa64smfr0=0000000000000000
 arm_id_aa64zfr0=0000000000000000
 --------------------------------------------------------------------------------
 ARM
+ARMv7-A
 general
 65
 0
@@ -168,4 +169,5 @@ general
 4
 4
 Kingfisher
+40-28 nm
 advmultu advmults jazelle thumb2 debugv7p1 thumbee divide lpae

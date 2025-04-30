@@ -48,6 +48,7 @@ struct match_entry_t {
 		int score;
 	} brand;
 	char name[CODENAME_STR_MAX];
+	char technology[TECHNOLOGY_STR_MAX];
 };
 
 // returns the match score:

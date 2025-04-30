@@ -100,6 +100,7 @@ typedef enum {
 	NEED_L3_INSTANCES,
 	NEED_L4_INSTANCES,
 	NEED_CODENAME,
+	NEED_TECHNOLOGY,
 	NEED_FEATURES,
 	NEED_CLOCK,
 	NEED_CLOCK_OS,
@@ -174,6 +175,7 @@ matchtable[] = {
 	{ NEED_L3_INSTANCES , "--l3-instances" , 1},
 	{ NEED_L4_INSTANCES , "--l4-instances" , 1},
 	{ NEED_CODENAME     , "--codename"     , 1},
+	{ NEED_TECHNOLOGY   , "--technology"   , 1},
 	{ NEED_FEATURES     , "--flags"        , 1},
 	{ NEED_CLOCK        , "--clock"        , 0},
 	{ NEED_CLOCK_OS     , "--clock-os"     , 0},
@@ -507,6 +509,9 @@ static void print_info(output_data_switch query, struct cpu_id_t* data)
 		case NEED_CODENAME:
 			fprintf(fout, "%s\n", data->cpu_codename);
 			break;
+			case NEED_TECHNOLOGY:
+			fprintf(fout, "%s\n", data->technology_node);
+			break;
 		case NEED_FEATURES:
 		{
 			for (i = 0; i < NUM_CPU_FEATURES; i++)
@@ -828,6 +833,7 @@ int main(int argc, char** argv)
 					fprintf(fout, "  SSE units  : %d bits (%s)\n", data.cpu_types[cpu_type_index].x86.sse_size, data.cpu_types[cpu_type_index].detection_hints[CPU_HINT_SSE_SIZE_AUTH] ? "authoritative" : "non-authoritative");
 				}
 				fprintf(fout, "  code name  : `%s'\n", data.cpu_types[cpu_type_index].cpu_codename);
+				fprintf(fout, "  technology : `%s'\n", data.cpu_types[cpu_type_index].technology_node);
 				fprintf(fout, "  features   :");
 				/*
 				* Here we enumerate all CPU feature bits, and when a feature

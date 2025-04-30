@@ -1399,6 +1399,7 @@ performance
 0
 128 (non-authoritative)
 Core i9 (Raptor Lake-H)
+Intel 7
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni pclmul dts64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 xd movbe popcnt aes xsave osxsave avx rdtscp lm lahf_lm abm constant_tsc fma3 f16c rdrand x2apic avx2 bmi1 bmi2 sha_ni rdseed adx
 --------------------------------------------------------------------------------
 x86
@@ -1433,4 +1434,5 @@ efficiency
 0
 128 (non-authoritative)
 Core i9 (Raptor Lake-H)
+Intel 7
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni pclmul dts64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 xd movbe popcnt aes xsave osxsave avx rdtscp lm lahf_lm abm constant_tsc fma3 f16c rdrand x2apic avx2 bmi1 bmi2 sha_ni rdseed adx

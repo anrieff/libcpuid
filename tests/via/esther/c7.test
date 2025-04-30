@@ -44,4 +44,5 @@ general
 -1
 -1 (non-authoritative)
 VIA C7 (Esther)
+90 nm
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge cmov pat clflush mmx fxsr sse sse2 pni

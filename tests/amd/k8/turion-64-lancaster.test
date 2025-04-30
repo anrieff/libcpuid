@@ -99,4 +99,5 @@ general
 -1
 64 (non-authoritative)
 Turion 64 (Lancaster/1024K)
+90 nm
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 pni syscall mmxext 3dnow 3dnowext nx fxsr_opt lm lahf_lm ts fid vid ttp tm_amd stc

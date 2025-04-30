@@ -99,4 +99,5 @@ general
 -1
 64 (non-authoritative)
 Core Duo (Yonah)
+65 nm
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni monitor vmx est tm2 xtpr pdcm xd

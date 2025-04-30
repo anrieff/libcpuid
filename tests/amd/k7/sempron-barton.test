@@ -99,4 +99,5 @@ general
 -1
 64 (non-authoritative)
 Sempron (Barton)
+130 nm
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 mmx fxsr sse syscall mmxext 3dnow 3dnowext ts fid vid

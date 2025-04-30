@@ -99,4 +99,5 @@ general
 -1
 64 (non-authoritative)
 Athlon 64 X2 (Brisbane/512K)
+65 nm
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni cx16 syscall mmxext 3dnow 3dnowext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm 3dnowprefetch ts fid vid ttp tm_amd stc 100mhzsteps

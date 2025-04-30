@@ -755,6 +755,9 @@ struct cpu_id_t {
 
 	/** processor type purpose, relevant in case of hybrid CPU (e.g. PURPOSE_PERFORMANCE) */
 	cpu_purpose_t purpose;
+
+	/** contains the technology node string, e.g. "32 nm" */
+	char technology_node[TECHNOLOGY_STR_MAX];
 };
 
 /**

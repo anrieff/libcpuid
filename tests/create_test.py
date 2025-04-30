@@ -65,6 +65,9 @@ def readResultFile():
 		if field == "code name":
 			value = s[s.find("`") + 1: s.find("'")]
 			repdata.append(value)
+		if field == "technology":
+			value = s[s.find("`") + 1: s.find("'")]
+			repdata.append(value)
 		if field == "features":
 			value = s[s.find(":") + 2:]
 			repdata.append(value)

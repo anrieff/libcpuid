@@ -14,11 +14,11 @@ fields_x86 = [ "architecture", "feature-level", "purpose", "family", "model", "s
 	   "l1d-assoc",     "l1i-assoc",     "l2-assoc",     "l3-assoc",     "l4-assoc",
 	   "l1d-cacheline", "l1i-cacheline", "l2-cacheline", "l3-cacheline", "l4-cacheline",
 	   "l1d-instances", "l1i-instances", "l2-instances", "l3-instances", "l4-instances",
-	   "sse-size", "codename", "flags" ]
+	   "sse-size", "codename", "technology", "flags" ]
 fields_arm = [ "architecture", "feature-level", "purpose",
 	   "implementer", "variant", "part-num", "revision",
 	   "cores", "logical",
-	   "codename", "flags" ]
+	   "codename", "technology", "flags" ]
 
 # One would usually use os.tempnam, but libc gives off hell a lot of
 # warnings when you attempt to use that :(

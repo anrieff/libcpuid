@@ -160,6 +160,7 @@ arm_id_aa64smfr0=0000000000000000
 arm_id_aa64zfr0=0000000000000000
 --------------------------------------------------------------------------------
 ARM
+ARMv7-A
 general
 65
 4
@@ -168,4 +169,5 @@ general
 4
 4
 Eagle
+32-20 nm
 advmultu advmults jazelle thumb2 debugv7p1 thumbee divide lpae
