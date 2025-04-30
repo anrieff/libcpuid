@@ -148,20 +148,20 @@ struct arm_hw_impl {
 	{ 0xd82, "Cortex-X4",    "Hunter ELP",     UNKN_STR   },
 	{ 0xd84, "Neoverse-V3",  "Poseidon",       UNKN_STR   },
 	{ 0xd8e, "Neoverse-N3",  "Hermes",         UNKN_STR   },
-	{ -1,    "unknown",      "",               UNKN_STR   },
+	{ -1,    UNKN_STR,       "",               UNKN_STR   },
 };
 
 static const struct arm_id_part brcm_part[] = {
 	{ 0x0f,  "Brahma-B15", "", UNKN_STR },
 	{ 0x100, "Brahma-B53", "", UNKN_STR },
 	{ 0x516, "ThunderX2",  "", UNKN_STR },
-	{ -1,    "unknown",    "", UNKN_STR },
+	{ -1,    UNKN_STR,     "", UNKN_STR },
 };
 
 static const struct arm_id_part dec_part[] = {
 	{ 0xa10, "SA110",   "", UNKN_STR },
 	{ 0xa11, "SA1100",  "", UNKN_STR },
-	{ -1,    "unknown", "", UNKN_STR },
+	{ -1,    UNKN_STR,  "", UNKN_STR },
 };
 
 static const struct arm_id_part cavium_part[] = {
@@ -178,12 +178,12 @@ static const struct arm_id_part cavium_part[] = {
 	{ 0x0b5, "OcteonTX2-95XXMM", "", UNKN_STR },
 	{ 0x0b6, "OcteonTX2-95XXO",  "", UNKN_STR },
 	{ 0x0b8, "ThunderX3-T110",   "", UNKN_STR },
-	{ -1,    "unknown",          "", UNKN_STR },
+	{ -1,    UNKN_STR,           "", UNKN_STR },
 };
 
 static const struct arm_id_part apm_part[] = {
 	{ 0x000, "X-Gene",  "", UNKN_STR },
-	{ -1,    "unknown", "", UNKN_STR },
+	{ -1,    UNKN_STR,  "", UNKN_STR },
 };
 
 static const struct arm_id_part qcom_part[] = {
@@ -203,7 +203,7 @@ static const struct arm_id_part qcom_part[] = {
 	{ 0x805, "Kryo-4XX-Silver", "", "8-7 nm"   },
 	{ 0xc00, "Falkor",          "", "10 nm"    },
 	{ 0xc01, "Saphira",         "", "8-7 nm"   },
-	{ -1,    "unknown",         "", UNKN_STR   },
+	{ -1,    UNKN_STR,          "", UNKN_STR   },
 };
 
 static const struct arm_id_part samsung_part[] = {
@@ -211,21 +211,21 @@ static const struct arm_id_part samsung_part[] = {
 	{ 0x002, "Exynos M3", "", "10 nm"  },
 	{ 0x003, "Exynos M4", "", "8 nm"   },
 	{ 0x004, "Exynos M5", "", "7 nm"   },
-	{ -1,    "unknown",   "", UNKN_STR },
+	{ -1,    UNKN_STR,    "", UNKN_STR },
 };
 
 static const struct arm_id_part nvidia_part[] = {
 	{ 0x000, "Denver",   "", "28 nm"  },
 	{ 0x003, "Denver 2", "", "16 nm"  },
 	{ 0x004, "Carmel",   "", "12 nm"  },
-	{ -1,    "unknown",  "", UNKN_STR },
+	{ -1,    UNKN_STR,   "", UNKN_STR },
 };
 
 static const struct arm_id_part marvell_part[] = {
 	{ 0x131, "Feroceon-88FR131", "", UNKN_STR },
 	{ 0x581, "PJ4/PJ4b",         "", UNKN_STR },
 	{ 0x584, "PJ4B-MP",          "", UNKN_STR },
-	{ -1,    "unknown",          "", UNKN_STR },
+	{ -1,    UNKN_STR,           "", UNKN_STR },
 };
 
 static const struct arm_id_part apple_part[] = {
@@ -265,13 +265,13 @@ static const struct arm_id_part apple_part[] = {
 	{ 0x037, "A16",         "Everest",   "TSMC N4P" },
 	{ 0x038, "M2 Max",      "Blizzard",  "TSMC N5P" },
 	{ 0x039, "M2 Max",      "Avalanche", "TSMC N5P" },
-	{ -1,    "unknown",     "",          UNKN_STR },
+	{ -1,    UNKN_STR,      "",          UNKN_STR },
 };
 
 static const struct arm_id_part faraday_part[] = {
 	{ 0x526, "FA526",   "", UNKN_STR },
 	{ 0x626, "FA626",   "", UNKN_STR },
-	{ -1,    "unknown", "", UNKN_STR },
+	{ -1,    UNKN_STR,  "", UNKN_STR },
 };
 
 static const struct arm_id_part intel_part[] = {
@@ -296,12 +296,12 @@ static const struct arm_id_part intel_part[] = {
 	{ 0x689, "PXA31x",                "", UNKN_STR },
 	{ 0xb11, "SA1110",                "", UNKN_STR },
 	{ 0xc12, "IPX1200",               "", UNKN_STR },
-	{ -1,    "unknown",               "", UNKN_STR },
+	{ -1,    UNKN_STR,                "", UNKN_STR },
 };
 
 static const struct arm_id_part fujitsu_part[] = {
 	{ 0x001, "A64FX",   "", "7 nm" },
-	{ -1,    "unknown", "", UNKN_STR },
+	{ -1,    UNKN_STR,  "", UNKN_STR },
 };
 
 static const struct arm_id_part hisi_part[] = {
@@ -309,13 +309,13 @@ static const struct arm_id_part hisi_part[] = {
 	{ 0xd02, "TaiShan-v120", "", UNKN_STR }, /* used in Kirin 990A and 9000S SoCs */
 	{ 0xd40, "Cortex-A76",   "", UNKN_STR }, /* HiSilicon uses this ID though advertises A76 */
 	{ 0xd41, "Cortex-A77",   "", UNKN_STR }, /* HiSilicon uses this ID though advertises A77 */
-	{ -1,    "unknown",      "", UNKN_STR },
+	{ -1,    UNKN_STR,       "", UNKN_STR },
 };
 
 static const struct arm_id_part ampere_part[] = {
 	{ 0xac3, "Ampere-1",  "", UNKN_STR },
 	{ 0xac4, "Ampere-1a", "", UNKN_STR },
-	{ -1,    "unknown",   "", UNKN_STR },
+	{ -1,    UNKN_STR,    "", UNKN_STR },
 };
 
 static const struct arm_id_part ft_part[] = {
@@ -326,16 +326,16 @@ static const struct arm_id_part ft_part[] = {
 	{ 0x663, "FTC663",  "", UNKN_STR },
 	{ 0x664, "FTC664",  "", UNKN_STR },
 	{ 0x862, "FTC862",  "", UNKN_STR },
-	{ -1,    "unknown", "", UNKN_STR },
+	{ -1,    UNKN_STR,  "", UNKN_STR },
 };
 
 static const struct arm_id_part ms_part[] = {
 	{ 0xd49, "Azure-Cobalt-100", "", UNKN_STR },
-	{ -1,    "unknown",          "", UNKN_STR },
+	{ -1,    UNKN_STR,           "", UNKN_STR },
 };
 
 static const struct arm_id_part unknown_part[] = {
-	{ -1, "unknown", "", UNKN_STR },
+	{ -1, UNKN_STR,  "", UNKN_STR },
 };
 
 /* Implementers list */
@@ -359,7 +359,7 @@ static const struct arm_hw_impl hw_implementer[] = {
 	{ 0x6d, VENDOR_MICROSOFT, ms_part,      "Microsoft"          },
 	{ 0x70, VENDOR_PHYTIUM,   ft_part,      "Phytium"            },
 	{ 0xc0, VENDOR_AMPERE,    ampere_part,  "Ampere"             },
-	{   -1, VENDOR_UNKNOWN,   unknown_part, "unknown"            },
+	{   -1, VENDOR_UNKNOWN,   unknown_part, UNKN_STR             },
 };
 
 static const struct arm_hw_impl* get_cpu_implementer_from_code(uint8_t implementer)

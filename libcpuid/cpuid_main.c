@@ -1814,7 +1814,7 @@ const char* cpu_architecture_str(cpu_architecture_t architecture)
 {
 	const struct { cpu_architecture_t architecture; const char* name; }
 	matchtable[] = {
-		{ ARCHITECTURE_UNKNOWN, "unknown" },
+		{ ARCHITECTURE_UNKNOWN, UNKN_STR  },
 		{ ARCHITECTURE_X86,     "x86"     },
 		{ ARCHITECTURE_ARM,     "ARM"     },
 	};
@@ -1832,7 +1832,7 @@ const char* cpu_feature_level_str(cpu_feature_level_t level)
 {
 	const struct { cpu_feature_level_t level; const char* name; }
 	matchtable[] = {
-		{ FEATURE_LEVEL_UNKNOWN,   "unknown"   },
+		{ FEATURE_LEVEL_UNKNOWN,   UNKN_STR    },
 		/* x86 */
 		{ FEATURE_LEVEL_I386,      "i386"      },
 		{ FEATURE_LEVEL_I486,      "i486"      },
