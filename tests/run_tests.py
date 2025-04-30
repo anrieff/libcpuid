@@ -38,7 +38,17 @@ def fmt_error(err):
 	return "{} expected `{}'\n{} got      `{}'".format(pfix, err[1], ' '*len(pfix), err[2])
 
 def fixFile(filename, input_lines, output_lines):
-	f = open(filename, "wt")
+	pfilename = Path(filename)
+	if len(pfilename.suffixes) >= 2:
+		# Compressed file
+		if pfilename.suffixes[1] == ".xz":
+			f = lzma.open(pfilename, "wt")
+		else:
+			print(f"Cannot fix {pfilename.name} because {''.join(pfilename.suffixes[1:])} is not supported")
+			return
+	else:
+		# Plain text file
+		f = open(pfilename, "wt")
 	f.writelines([s + "\n" for s in input_lines])
 	f.write(delimiter + "\n")
 	f.writelines([s + "\n" for s in output_lines])
