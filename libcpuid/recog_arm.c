@@ -76,20 +76,20 @@ struct arm_hw_impl {
 /* Part numbers: https://en.wikichip.org/wiki/arm_holdings/cortex#Part_numbers
    Codenames: https://en.wikichip.org/wiki/arm_holdings */
    static const struct arm_id_part arm_part[] = {
-	{ 0x810, "ARM810",       "",               UNKN_STR   },
-	{ 0x920, "ARM920",       "",               UNKN_STR   },
-	{ 0x922, "ARM922",       "",               UNKN_STR   },
-	{ 0x926, "ARM926",       "",               UNKN_STR   },
-	{ 0x940, "ARM940",       "",               UNKN_STR   },
-	{ 0x946, "ARM946",       "",               UNKN_STR   },
-	{ 0x966, "ARM966",       "",               UNKN_STR   },
-	{ 0xa20, "ARM1020",      "",               UNKN_STR   },
-	{ 0xa22, "ARM1022",      "",               UNKN_STR   },
-	{ 0xa26, "ARM1026",      "",               UNKN_STR   },
-	{ 0xb02, "ARM11 MPCore", "",               UNKN_STR   },
-	{ 0xb36, "ARM1136",      "",               UNKN_STR   },
-	{ 0xb56, "ARM1156",      "",               UNKN_STR   },
-	{ 0xb76, "ARM1176",      "",               UNKN_STR   },
+	{ 0x810, "ARM810",       UNKN_STR,         UNKN_STR   },
+	{ 0x920, "ARM920",       UNKN_STR,         UNKN_STR   },
+	{ 0x922, "ARM922",       UNKN_STR,         UNKN_STR   },
+	{ 0x926, "ARM926",       UNKN_STR,         UNKN_STR   },
+	{ 0x940, "ARM940",       UNKN_STR,         UNKN_STR   },
+	{ 0x946, "ARM946",       UNKN_STR,         UNKN_STR   },
+	{ 0x966, "ARM966",       UNKN_STR,         UNKN_STR   },
+	{ 0xa20, "ARM1020",      UNKN_STR,         UNKN_STR   },
+	{ 0xa22, "ARM1022",      UNKN_STR,         UNKN_STR   },
+	{ 0xa26, "ARM1026",      UNKN_STR,         UNKN_STR   },
+	{ 0xb02, "ARM11 MPCore", UNKN_STR,         UNKN_STR   },
+	{ 0xb36, "ARM1136",      UNKN_STR,         UNKN_STR   },
+	{ 0xb56, "ARM1156",      UNKN_STR,         UNKN_STR   },
+	{ 0xb76, "ARM1176",      UNKN_STR,         UNKN_STR   },
 	{ 0xc05, "Cortex-A5",    "Sparrow",        "40-28 nm" },
 	{ 0xc07, "Cortex-A7",    "Kingfisher",     "40-28 nm" },
 	{ 0xc08, "Cortex-A8",    "Tiger",          "65-45 nm" },
@@ -97,10 +97,10 @@ struct arm_hw_impl {
 	{ 0xc0d, "Cortex-A17",   "Owl",            "28 nm"    }, /* Originally A12 */
 	{ 0xc0f, "Cortex-A15",   "Eagle",          "32-20 nm" },
 	{ 0xc0e, "Cortex-A17",   "Owl",            "28 nm"    },
-	{ 0xc14, "Cortex-R4",    "",               UNKN_STR   },
-	{ 0xc15, "Cortex-R5",    "",               UNKN_STR   },
-	{ 0xc17, "Cortex-R7",    "",               UNKN_STR   },
-	{ 0xc18, "Cortex-R8",    "",               UNKN_STR   },
+	{ 0xc14, "Cortex-R4",    UNKN_STR,         UNKN_STR   },
+	{ 0xc15, "Cortex-R5",    UNKN_STR,         UNKN_STR   },
+	{ 0xc17, "Cortex-R7",    UNKN_STR,         UNKN_STR   },
+	{ 0xc18, "Cortex-R8",    UNKN_STR,         UNKN_STR   },
 	{ 0xc20, "Cortex-M0",    "Swift",          UNKN_STR   },
 	{ 0xc21, "Cortex-M1",    "Proteus",        UNKN_STR   },
 	{ 0xc23, "Cortex-M3",    "Sandcat",        UNKN_STR   },
@@ -121,13 +121,13 @@ struct arm_hw_impl {
 	{ 0xd0c, "Neoverse-N1",  "Ares",           "7 nm"     },
 	{ 0xd0d, "Cortex-A77",   "Deimos",         "7 nm"     },
 	{ 0xd0e, "Cortex-A76AE", "Enyo-AE",        UNKN_STR   },
-	{ 0xd13, "Cortex-R52",   "",               UNKN_STR   },
-	{ 0xd15, "Cortex-R82",   "",               UNKN_STR   },
-	{ 0xd16, "Cortex-R52+",  "",               UNKN_STR   },
+	{ 0xd13, "Cortex-R52",   UNKN_STR,         UNKN_STR   },
+	{ 0xd15, "Cortex-R82",   UNKN_STR,         UNKN_STR   },
+	{ 0xd16, "Cortex-R52+",  UNKN_STR,         UNKN_STR   },
 	{ 0xd20, "Cortex-M23",   "Grebe",          UNKN_STR   },
 	{ 0xd21, "Cortex-M33",   "Teal",           UNKN_STR   },
 	{ 0xd22, "Cortex-M55",   "Yamin",          UNKN_STR   },
-	{ 0xd23, "Cortex-M85",   "",               UNKN_STR   },
+	{ 0xd23, "Cortex-M85",   UNKN_STR,         UNKN_STR   },
 	{ 0xd40, "Neoverse-V1",  "Zeus",           "7 nm"     },
 	{ 0xd41, "Cortex-A78",   "Hercules",       "5 nm"     },
 	{ 0xd42, "Cortex-A78AE", "Hercules-AE",    UNKN_STR   },
@@ -148,84 +148,84 @@ struct arm_hw_impl {
 	{ 0xd82, "Cortex-X4",    "Hunter ELP",     UNKN_STR   },
 	{ 0xd84, "Neoverse-V3",  "Poseidon",       UNKN_STR   },
 	{ 0xd8e, "Neoverse-N3",  "Hermes",         UNKN_STR   },
-	{ -1,    UNKN_STR,       "",               UNKN_STR   },
+	{ -1,    UNKN_STR,       UNKN_STR,         UNKN_STR   },
 };
 
 static const struct arm_id_part brcm_part[] = {
-	{ 0x0f,  "Brahma-B15", "", UNKN_STR },
-	{ 0x100, "Brahma-B53", "", UNKN_STR },
-	{ 0x516, "ThunderX2",  "", UNKN_STR },
-	{ -1,    UNKN_STR,     "", UNKN_STR },
+	{ 0x0f,  "Brahma-B15", UNKN_STR, UNKN_STR },
+	{ 0x100, "Brahma-B53", UNKN_STR, UNKN_STR },
+	{ 0x516, "ThunderX2",  UNKN_STR, UNKN_STR },
+	{ -1,    UNKN_STR,     UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part dec_part[] = {
-	{ 0xa10, "SA110",   "", UNKN_STR },
-	{ 0xa11, "SA1100",  "", UNKN_STR },
-	{ -1,    UNKN_STR,  "", UNKN_STR },
+	{ 0xa10, "SA110",  UNKN_STR, UNKN_STR },
+	{ 0xa11, "SA1100", UNKN_STR, UNKN_STR },
+	{ -1,    UNKN_STR, UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part cavium_part[] = {
-	{ 0x0a0, "ThunderX",         "", UNKN_STR },
-	{ 0x0a1, "ThunderX-88XX",    "", UNKN_STR },
-	{ 0x0a2, "ThunderX-81XX",    "", UNKN_STR },
-	{ 0x0a3, "ThunderX-83XX",    "", UNKN_STR },
-	{ 0x0af, "ThunderX2-99xx",   "", UNKN_STR },
-	{ 0x0b0, "OcteonTX2",        "", UNKN_STR },
-	{ 0x0b1, "OcteonTX2-98XX",   "", UNKN_STR },
-	{ 0x0b2, "OcteonTX2-96XX",   "", UNKN_STR },
-	{ 0x0b3, "OcteonTX2-95XX",   "", UNKN_STR },
-	{ 0x0b4, "OcteonTX2-95XXN",  "", UNKN_STR },
-	{ 0x0b5, "OcteonTX2-95XXMM", "", UNKN_STR },
-	{ 0x0b6, "OcteonTX2-95XXO",  "", UNKN_STR },
-	{ 0x0b8, "ThunderX3-T110",   "", UNKN_STR },
-	{ -1,    UNKN_STR,           "", UNKN_STR },
+	{ 0x0a0, "ThunderX",         UNKN_STR, UNKN_STR },
+	{ 0x0a1, "ThunderX-88XX",    UNKN_STR, UNKN_STR },
+	{ 0x0a2, "ThunderX-81XX",    UNKN_STR, UNKN_STR },
+	{ 0x0a3, "ThunderX-83XX",    UNKN_STR, UNKN_STR },
+	{ 0x0af, "ThunderX2-99xx",   UNKN_STR, UNKN_STR },
+	{ 0x0b0, "OcteonTX2",        UNKN_STR, UNKN_STR },
+	{ 0x0b1, "OcteonTX2-98XX",   UNKN_STR, UNKN_STR },
+	{ 0x0b2, "OcteonTX2-96XX",   UNKN_STR, UNKN_STR },
+	{ 0x0b3, "OcteonTX2-95XX",   UNKN_STR, UNKN_STR },
+	{ 0x0b4, "OcteonTX2-95XXN",  UNKN_STR, UNKN_STR },
+	{ 0x0b5, "OcteonTX2-95XXMM", UNKN_STR, UNKN_STR },
+	{ 0x0b6, "OcteonTX2-95XXO",  UNKN_STR, UNKN_STR },
+	{ 0x0b8, "ThunderX3-T110",   UNKN_STR, UNKN_STR },
+	{ -1,    UNKN_STR,           UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part apm_part[] = {
-	{ 0x000, "X-Gene",  "", UNKN_STR },
-	{ -1,    UNKN_STR,  "", UNKN_STR },
+	{ 0x000, "X-Gene", UNKN_STR, UNKN_STR },
+	{ -1,    UNKN_STR, UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part qcom_part[] = {
-	{ 0x001, "Oryon",           "", UNKN_STR   },
-	{ 0x00f, "Scorpion",        "", "65-45 nm" },
-	{ 0x02d, "Scorpion",        "", "65-45 nm" },
-	{ 0x04d, "Krait",           "", "28 nm"    },
-	{ 0x06f, "Krait",           "", "28 nm"    },
-	{ 0x201, "Kryo",            "", "14 nm"    },
-	{ 0x205, "Kryo",            "", "14 nm"    },
-	{ 0x211, "Kryo",            "", "14 nm"    },
-	{ 0x800, "Falkor-V1/Kryo",  "", UNKN_STR   },
-	{ 0x801, "Kryo-V2",         "", "14-6 nm"  },
-	{ 0x802, "Kryo-3XX-Gold",   "", "10 nm"    },
-	{ 0x803, "Kryo-3XX-Silver", "", "10 nm"    },
-	{ 0x804, "Kryo-4XX-Gold",   "", "11-7 nm"  },
-	{ 0x805, "Kryo-4XX-Silver", "", "8-7 nm"   },
-	{ 0xc00, "Falkor",          "", "10 nm"    },
-	{ 0xc01, "Saphira",         "", "8-7 nm"   },
-	{ -1,    UNKN_STR,          "", UNKN_STR   },
+	{ 0x001, "Oryon",           UNKN_STR, UNKN_STR   },
+	{ 0x00f, "Scorpion",        UNKN_STR, "65-45 nm" },
+	{ 0x02d, "Scorpion",        UNKN_STR, "65-45 nm" },
+	{ 0x04d, "Krait",           UNKN_STR, "28 nm"    },
+	{ 0x06f, "Krait",           UNKN_STR, "28 nm"    },
+	{ 0x201, "Kryo",            UNKN_STR, "14 nm"    },
+	{ 0x205, "Kryo",            UNKN_STR, "14 nm"    },
+	{ 0x211, "Kryo",            UNKN_STR, "14 nm"    },
+	{ 0x800, "Falkor-V1/Kryo",  UNKN_STR, UNKN_STR   },
+	{ 0x801, "Kryo-V2",         UNKN_STR, "14-6 nm"  },
+	{ 0x802, "Kryo-3XX-Gold",   UNKN_STR, "10 nm"    },
+	{ 0x803, "Kryo-3XX-Silver", UNKN_STR, "10 nm"    },
+	{ 0x804, "Kryo-4XX-Gold",   UNKN_STR, "11-7 nm"  },
+	{ 0x805, "Kryo-4XX-Silver", UNKN_STR, "8-7 nm"   },
+	{ 0xc00, "Falkor",          UNKN_STR, "10 nm"    },
+	{ 0xc01, "Saphira",         UNKN_STR, "8-7 nm"   },
+	{ -1,    UNKN_STR,          UNKN_STR, UNKN_STR   },
 };
 
 static const struct arm_id_part samsung_part[] = {
-	{ 0x001, "Exynos M1", "", "14 nm"  },
-	{ 0x002, "Exynos M3", "", "10 nm"  },
-	{ 0x003, "Exynos M4", "", "8 nm"   },
-	{ 0x004, "Exynos M5", "", "7 nm"   },
-	{ -1,    UNKN_STR,    "", UNKN_STR },
+	{ 0x001, "Exynos M1", UNKN_STR, "14 nm"  },
+	{ 0x002, "Exynos M3", UNKN_STR, "10 nm"  },
+	{ 0x003, "Exynos M4", UNKN_STR, "8 nm"   },
+	{ 0x004, "Exynos M5", UNKN_STR, "7 nm"   },
+	{ -1,    UNKN_STR,    UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part nvidia_part[] = {
-	{ 0x000, "Denver",   "", "28 nm"  },
-	{ 0x003, "Denver 2", "", "16 nm"  },
-	{ 0x004, "Carmel",   "", "12 nm"  },
-	{ -1,    UNKN_STR,   "", UNKN_STR },
+	{ 0x000, "Denver",   UNKN_STR, "28 nm"  },
+	{ 0x003, "Denver 2", UNKN_STR, "16 nm"  },
+	{ 0x004, "Carmel",   UNKN_STR, "12 nm"  },
+	{ -1,    UNKN_STR,   UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part marvell_part[] = {
-	{ 0x131, "Feroceon-88FR131", "", UNKN_STR },
-	{ 0x581, "PJ4/PJ4b",         "", UNKN_STR },
-	{ 0x584, "PJ4B-MP",          "", UNKN_STR },
-	{ -1,    UNKN_STR,           "", UNKN_STR },
+	{ 0x131, "Feroceon-88FR131", UNKN_STR, UNKN_STR },
+	{ 0x581, "PJ4/PJ4b",         UNKN_STR, UNKN_STR },
+	{ 0x584, "PJ4B-MP",          UNKN_STR, UNKN_STR },
+	{ -1,    UNKN_STR,           UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part apple_part[] = {
@@ -265,77 +265,77 @@ static const struct arm_id_part apple_part[] = {
 	{ 0x037, "A16",         "Everest",   "TSMC N4P" },
 	{ 0x038, "M2 Max",      "Blizzard",  "TSMC N5P" },
 	{ 0x039, "M2 Max",      "Avalanche", "TSMC N5P" },
-	{ -1,    UNKN_STR,      "",          UNKN_STR },
+	{ -1,    UNKN_STR,      UNKN_STR,    UNKN_STR   },
 };
 
 static const struct arm_id_part faraday_part[] = {
-	{ 0x526, "FA526",   "", UNKN_STR },
-	{ 0x626, "FA626",   "", UNKN_STR },
-	{ -1,    UNKN_STR,  "", UNKN_STR },
+	{ 0x526, "FA526",  UNKN_STR, UNKN_STR },
+	{ 0x626, "FA626",  UNKN_STR, UNKN_STR },
+	{ -1,    UNKN_STR, UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part intel_part[] = {
-	{ 0x200, "i80200",                "", UNKN_STR },
-	{ 0x210, "PXA250A",               "", UNKN_STR },
-	{ 0x212, "PXA210A",               "", UNKN_STR },
-	{ 0x242, "i80321-400",            "", UNKN_STR },
-	{ 0x243, "i80321-600",            "", UNKN_STR },
-	{ 0x290, "PXA250B/PXA26x",        "", UNKN_STR },
-	{ 0x292, "PXA210B",               "", UNKN_STR },
-	{ 0x2c2, "i80321-400-B0",         "", UNKN_STR },
-	{ 0x2c3, "i80321-600-B0",         "", UNKN_STR },
-	{ 0x2d0, "PXA250C/PXA255/PXA26x", "", UNKN_STR },
-	{ 0x2d2, "PXA210C",               "", UNKN_STR },
-	{ 0x411, "PXA27x",                "", UNKN_STR },
-	{ 0x41c, "IPX425-533",            "", UNKN_STR },
-	{ 0x41d, "IPX425-400",            "", UNKN_STR },
-	{ 0x41f, "IPX425-266",            "", UNKN_STR },
-	{ 0x682, "PXA32x",                "", UNKN_STR },
-	{ 0x683, "PXA930/PXA935",         "", UNKN_STR },
-	{ 0x688, "PXA30x",                "", UNKN_STR },
-	{ 0x689, "PXA31x",                "", UNKN_STR },
-	{ 0xb11, "SA1110",                "", UNKN_STR },
-	{ 0xc12, "IPX1200",               "", UNKN_STR },
-	{ -1,    UNKN_STR,                "", UNKN_STR },
+	{ 0x200, "i80200",                UNKN_STR, UNKN_STR },
+	{ 0x210, "PXA250A",               UNKN_STR, UNKN_STR },
+	{ 0x212, "PXA210A",               UNKN_STR, UNKN_STR },
+	{ 0x242, "i80321-400",            UNKN_STR, UNKN_STR },
+	{ 0x243, "i80321-600",            UNKN_STR, UNKN_STR },
+	{ 0x290, "PXA250B/PXA26x",        UNKN_STR, UNKN_STR },
+	{ 0x292, "PXA210B",               UNKN_STR, UNKN_STR },
+	{ 0x2c2, "i80321-400-B0",         UNKN_STR, UNKN_STR },
+	{ 0x2c3, "i80321-600-B0",         UNKN_STR, UNKN_STR },
+	{ 0x2d0, "PXA250C/PXA255/PXA26x", UNKN_STR, UNKN_STR },
+	{ 0x2d2, "PXA210C",               UNKN_STR, UNKN_STR },
+	{ 0x411, "PXA27x",                UNKN_STR, UNKN_STR },
+	{ 0x41c, "IPX425-533",            UNKN_STR, UNKN_STR },
+	{ 0x41d, "IPX425-400",            UNKN_STR, UNKN_STR },
+	{ 0x41f, "IPX425-266",            UNKN_STR, UNKN_STR },
+	{ 0x682, "PXA32x",                UNKN_STR, UNKN_STR },
+	{ 0x683, "PXA930/PXA935",         UNKN_STR, UNKN_STR },
+	{ 0x688, "PXA30x",                UNKN_STR, UNKN_STR },
+	{ 0x689, "PXA31x",                UNKN_STR, UNKN_STR },
+	{ 0xb11, "SA1110",                UNKN_STR, UNKN_STR },
+	{ 0xc12, "IPX1200",               UNKN_STR, UNKN_STR },
+	{ -1,    UNKN_STR,                UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part fujitsu_part[] = {
-	{ 0x001, "A64FX",   "", "7 nm" },
-	{ -1,    UNKN_STR,  "", UNKN_STR },
+	{ 0x001, "A64FX",  UNKN_STR, "7 nm"   },
+	{ -1,    UNKN_STR, UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part hisi_part[] = {
-	{ 0xd01, "TaiShan-v110", "", UNKN_STR }, /* used in Kunpeng-920 SoC */
-	{ 0xd02, "TaiShan-v120", "", UNKN_STR }, /* used in Kirin 990A and 9000S SoCs */
-	{ 0xd40, "Cortex-A76",   "", UNKN_STR }, /* HiSilicon uses this ID though advertises A76 */
-	{ 0xd41, "Cortex-A77",   "", UNKN_STR }, /* HiSilicon uses this ID though advertises A77 */
-	{ -1,    UNKN_STR,       "", UNKN_STR },
+	{ 0xd01, "TaiShan-v110", UNKN_STR, UNKN_STR }, /* used in Kunpeng-920 SoC */
+	{ 0xd02, "TaiShan-v120", UNKN_STR, UNKN_STR }, /* used in Kirin 990A and 9000S SoCs */
+	{ 0xd40, "Cortex-A76",   UNKN_STR, UNKN_STR }, /* HiSilicon uses this ID though advertises A76 */
+	{ 0xd41, "Cortex-A77",   UNKN_STR, UNKN_STR }, /* HiSilicon uses this ID though advertises A77 */
+	{ -1,    UNKN_STR,       UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part ampere_part[] = {
-	{ 0xac3, "Ampere-1",  "", UNKN_STR },
-	{ 0xac4, "Ampere-1a", "", UNKN_STR },
-	{ -1,    UNKN_STR,    "", UNKN_STR },
+	{ 0xac3, "Ampere-1",  UNKN_STR, UNKN_STR },
+	{ 0xac4, "Ampere-1a", UNKN_STR, UNKN_STR },
+	{ -1,    UNKN_STR,    UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part ft_part[] = {
-	{ 0x303, "FTC310",  "", UNKN_STR },
-	{ 0x660, "FTC660",  "", UNKN_STR },
-	{ 0x661, "FTC661",  "", UNKN_STR },
-	{ 0x662, "FTC662",  "", UNKN_STR },
-	{ 0x663, "FTC663",  "", UNKN_STR },
-	{ 0x664, "FTC664",  "", UNKN_STR },
-	{ 0x862, "FTC862",  "", UNKN_STR },
-	{ -1,    UNKN_STR,  "", UNKN_STR },
+	{ 0x303, "FTC310", UNKN_STR, UNKN_STR },
+	{ 0x660, "FTC660", UNKN_STR, UNKN_STR },
+	{ 0x661, "FTC661", UNKN_STR, UNKN_STR },
+	{ 0x662, "FTC662", UNKN_STR, UNKN_STR },
+	{ 0x663, "FTC663", UNKN_STR, UNKN_STR },
+	{ 0x664, "FTC664", UNKN_STR, UNKN_STR },
+	{ 0x862, "FTC862", UNKN_STR, UNKN_STR },
+	{ -1,    UNKN_STR, UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part ms_part[] = {
-	{ 0xd49, "Azure-Cobalt-100", "", UNKN_STR },
-	{ -1,    UNKN_STR,           "", UNKN_STR },
+	{ 0xd49, "Azure-Cobalt-100", UNKN_STR, UNKN_STR },
+	{ -1,    UNKN_STR,           UNKN_STR, UNKN_STR },
 };
 
 static const struct arm_id_part unknown_part[] = {
-	{ -1, UNKN_STR,  "", UNKN_STR },
+	{ -1, UNKN_STR, UNKN_STR, UNKN_STR },
 };
 
 /* Implementers list */
@@ -359,7 +359,7 @@ static const struct arm_hw_impl hw_implementer[] = {
 	{ 0x6d, VENDOR_MICROSOFT, ms_part,      "Microsoft"          },
 	{ 0x70, VENDOR_PHYTIUM,   ft_part,      "Phytium"            },
 	{ 0xc0, VENDOR_AMPERE,    ampere_part,  "Ampere"             },
-	{   -1, VENDOR_UNKNOWN,   unknown_part, UNKN_STR             },
+	{ -1,   VENDOR_UNKNOWN,   unknown_part, UNKN_STR             },
 };
 
 static const struct arm_hw_impl* get_cpu_implementer_from_code(uint8_t implementer)
