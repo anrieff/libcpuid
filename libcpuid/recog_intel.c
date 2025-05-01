@@ -297,52 +297,71 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Xeon(R) Bronze #1##",    6 }, "Xeon Bronze (Skylake-SP)",   "14 nm" },
 
 	/* Kaby Lake CPUs (7th gen, 14+ nm): */
-	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i7-7###",          8 }, "Core i7 (Kaby Lake)",        "14+ nm" },
-	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i5-7###",          8 }, "Core i5 (Kaby Lake)",        "14+ nm" },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Core(TM) i3-7###",          8 }, "Core i3 (Kaby Lake)",        "14+ nm" },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Pentium(R) G4###",          4 }, "Pentium (Kaby Lake)",        "14+ nm" },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Celeron(R) G3###",          4 }, "Celeron (Kaby Lake)",        "14+ nm" },
-	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Core(TM) i7-7.##",          8 }, "Core i7 (Kaby Lake-U)",      "14+ nm" },
-	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Core(TM) i5-7.##",          8 }, "Core i5 (Kaby Lake-U)",      "14+ nm" },
-	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Core(TM) i3-7.##",          8 }, "Core i3 (Kaby Lake-U)",      "14+ nm" },
-	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Core(TM) m3-7.##",          8 }, "Core m3 (Kaby Lake-U)",      "14+ nm" },
-	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Pentium(R) Gold 4###[UY]",  8 }, "Pentium Gold (Kaby Lake-U)", "14+ nm" },
-	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Celeron(R) 3###[UY]",       6 }, "Celeron (Kaby Lake-U)",      "14+ nm" },
-	{  6, 14,  9, -1, 158,  4,    -1,    -1, { "Core(TM) i7-8###G",        10 }, "Core i7 (Kaby Lake-G)",      "14+ nm" },
-	{  6, 14,  9, -1, 158,  4,    -1,    -1, { "Core(TM) i5-8###G",        10 }, "Core i5 (Kaby Lake-G)",      "14+ nm" },
-	{  6, 14, 10, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8###U",        10 }, "Core i7 (Kaby Lake-R)",      "14+ nm" }, /* i7-8550U + i7-8650U */
-	{  6, 14, 10, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8###U",        10 }, "Core i5 (Kaby Lake-R)",      "14+ nm" }, /* i5-8250U + i5-8350U */
-	{  6, 14, 10, -1, 142,  2,    -1,    -1, { "Pentium(R) Gold 4###U",     8 }, "Pentium Gold (Kaby Lake-U)", "14+ nm" },
-	{  6, 14, 10, -1, 142,  2,    -1,    -1, { "Celeron(R) 3###U",          6 }, "Celeron (Kaby Lake-U)",      "14+ nm" },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i7-7###",          8 }, "Core i7 (Kaby Lake)",         "14+ nm" },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i5-7###",          8 }, "Core i5 (Kaby Lake)",         "14+ nm" },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Core(TM) i3-7###",          8 }, "Core i3 (Kaby Lake)",         "14+ nm" },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Pentium(R) G4###",          4 }, "Pentium (Kaby Lake)",         "14+ nm" },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Celeron(R) G3###",          4 }, "Celeron (Kaby Lake)",         "14+ nm" },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i7-7###X",        10 }, "Core i7 (Kaby Lake-X)",       "14+ nm" },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i5-7###X",        10 }, "Core i5 (Kaby Lake-X)",       "14+ nm" },
+	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Core(TM) i7-7.##",          8 }, "Core i7 (Kaby Lake-U)",       "14+ nm" },
+	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Core(TM) i5-7.##",          8 }, "Core i5 (Kaby Lake-U)",       "14+ nm" },
+	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Core(TM) i3-7.##",          8 }, "Core i3 (Kaby Lake-U)",       "14+ nm" },
+	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Core(TM) m3-7.##",          8 }, "Core m3 (Kaby Lake-U)",       "14+ nm" },
+	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Pentium(R) 441#[UY]",       8 }, "Pentium Gold (Kaby Lake-U)",  "14+ nm" },
+	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Celeron(R) 3###[UY]",       6 }, "Celeron (Kaby Lake-U)",       "14+ nm" },
+	{  6, 14,  9, -1, 158,  4,    -1,    -1, { "Core(TM) i7-8###G",        10 }, "Core i7 (Kaby Lake-G)",       "14+ nm" },
+	{  6, 14,  9, -1, 158,  4,    -1,    -1, { "Core(TM) i5-8###G",        10 }, "Core i5 (Kaby Lake-G)",       "14+ nm" },
+	{  6, 14, 11, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8###U",        10 }, "Core i7 (Kaby Lake-R)",       "14+ nm" }, /* i7-8550U + i7-8650U */
+	{  6, 14, 11, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8###U",        10 }, "Core i5 (Kaby Lake-R)",       "14+ nm" }, /* i5-8250U + i5-8350U */
+	{  6, 14, 11, -1, 142,  2,    -1,    -1, { "Core(TM) i3-8###U",        10 }, "Core i3 (Kaby Lake-R)",       "14+ nm" }, /* i3-8130U */
+	{  6, 14, 11, -1, 142,  2,    -1,    -1, { "Pentium(R) 4###U",          8 }, "Pentium Gold (Kaby Lake-R)",  "14+ nm" }, /* Pentium 4417U */
+	{  6, 14, 11, -1, 142,  2,    -1,    -1, { "Celeron(R) 3###U",          6 }, "Celeron (Kaby Lake-R)",       "14+ nm" }, /* Celeron 3867U */
+	{  6, 14, 11, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8###Y",        10 }, "Core i7 (Amber Lake-Y)",      "14+ nm" }, /* i7-8500Y */
+	{  6, 14, 11, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8###Y",        10 }, "Core i5 (Amber Lake-Y)",      "14+ nm" }, /* i5-8200Y + i5-82010Y + i5-8310Y */
+	{  6, 14, 11, -1, 142,  2,    -1,    -1, { "Core(TM) m3-8###Y",        10 }, "Core m3 (Amber Lake-Y)",      "14+ nm" }, /* m3-8100Y */
+	{  6, 14, 11, -1, 142,  2,    -1,    -1, { "Pentium(R) 442#Y",          8 }, "Pentium Gold (Amber Lake-Y)", "14+ nm" }, /* Pentium 4425Y */
+	{  6, 14, 12, -1, 142,  4,    -1,    -1, { "Core(TM) i7-10###Y",       10 }, "Core i7 (Amber Lake-Y)",      "14+ nm" }, /* i7-10510Y */
+	{  6, 14, 12, -1, 142,  4,    -1,    -1, { "Core(TM) i5-10###Y",       10 }, "Core i5 (Amber Lake-Y)",      "14+ nm" }, /* i5-10210Y + i5-10310Y + i5-8310Y */
+	{  6, 14, 12, -1, 142,  2,    -1,    -1, { "Core(TM) i3-10###Y",       10 }, "Core i3 (Amber Lake-Y)",      "14+ nm" }, /* i3-10100Y + i3-10110Y */
+	{  6, 14, 12, -1, 142,  2,    -1,    -1, { "Pentium(R) 65##Y",          8 }, "Pentium Gold (Amber Lake-Y)", "14+ nm" }, /* Pentium 6500Y */
 
 	/* Coffee Lake CPUs (8th gen, 14++ nm): */
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i7-8###",       8 }, "Core i7 (Coffee Lake-S)",       "14++ nm" },
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i5-8###",       8 }, "Core i5 (Coffee Lake-S)",       "14++ nm" },
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i3-8###",       8 }, "Core i3 (Coffee Lake-S)",       "14++ nm" },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Pentium(R) Gold G5###",  6 }, "Pentium Gold (Coffee Lake-S)",  "14++ nm" },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Pentium(R) G5###",       6 }, "Pentium Gold (Coffee Lake-S)",  "14++ nm" },
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Celeron(R) G4###",       4 }, "Celeron (Coffee Lake-S)",       "14++ nm" },
-	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i9-8###[HB]",  10 }, "Core i9 (Coffee Lake-H)",       "14++ nm" },
-	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8###[HB]",  10 }, "Core i7 (Coffee Lake-H)",       "14++ nm" },
-	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8###[HB]",  10 }, "Core i5 (Coffee Lake-H)",       "14++ nm" },
-	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i3-8###[HB]",  10 }, "Core i3 (Coffee Lake-H)",       "14++ nm" },
-	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8###U",     10 }, "Core i7 (Coffee Lake-U)",       "14++ nm" },
-	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8###U",     10 }, "Core i5 (Coffee Lake-U)",       "14++ nm" },
-	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i3-8###U",     10 }, "Core i3 (Coffee Lake-U)",       "14++ nm" },
+	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Xeon(R) E-21##M",        8 }, "Xeon E (Coffee Lake-H)",        "14++ nm" },
+	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i9-8###[HB]",  10 }, "Core i9 (Coffee Lake-H)",       "14++ nm" },
+	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i7-8###[HB]",  10 }, "Core i7 (Coffee Lake-H)",       "14++ nm" },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i5-8###[HB]",  10 }, "Core i5 (Coffee Lake-H)",       "14++ nm" },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i5-8###[HB]",  10 }, "Core i5 (Coffee Lake-H)",       "14++ nm" },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i3-8###[HB]",  10 }, "Core i3 (Coffee Lake-H)",       "14++ nm" },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i7-8###U",     10 }, "Core i7 (Coffee Lake-U)",       "14++ nm" },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i5-8###U",     10 }, "Core i5 (Coffee Lake-U)",       "14++ nm" },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Core(TM) i3-8###U",     10 }, "Core i3 (Coffee Lake-U)",       "14++ nm" },
 	{  6,  6, -1, -1, 102,  2,    -1,    -1, { "Core(TM) i3-8###U",     10 }, "Core i3 (Cannon Lake-U)",       "14++ nm" }, /* Core i3 8121U */
 	{  6,  6, -1, -1, 102,  2,    -1,    -1, { "Core(TM) m3-8###Y",     10 }, "Core m3 (Cannon Lake-Y)",       "14++ nm" }, /* Core m3 8114Y */
 	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8###U",     12 }, "Core i7 (Whiskey Lake-U)",      "14++ nm" },
 	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8###U",     12 }, "Core i5 (Whiskey Lake-U)",      "14++ nm" },
 	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i3-8###U",     12 }, "Core i3 (Whiskey Lake-U)",      "14++ nm" },
-	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) Gold 5###U",  8 }, "Pentium Gold (Whiskey Lake-U)", "14++ nm" },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 5###U",       8 }, "Pentium Gold (Whiskey Lake-U)", "14++ nm" },
 	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Celeron(R) 4###U",       6 }, "Celeron (Whiskey Lake-U)",      "14++ nm" },
 
 	/* Coffee Lake Refresh CPUs (9th gen, 14++ nm): */
-	{  6, 14, -1, -1, 158,  8,    -1,    -1, { "Core(TM) i9-9###",       8 }, "Core i9 (Coffee Lake-S)",      "14++ nm" },
-	{  6, 14, -1, -1, 158,  8,    -1,    -1, { "Core(TM) i7-9###",       8 }, "Core i7 (Coffee Lake-S)",      "14++ nm" },
-	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i5-9###",       8 }, "Core i5 (Coffee Lake-S)",      "14++ nm" },
-	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i3-9###",       8 }, "Core i3 (Coffee Lake-S)",      "14++ nm" },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Pentium(R) Gold G5###",  6 }, "Pentium Gold (Coffee Lake-S)", "14++ nm" },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Celeron(R) G4###",       4 }, "Celeron (Coffee Lake-S)",      "14++ nm" },
+	{  6, 14, -1, -1, 158,  8,    -1,    -1, { "Xeon(R) E-2###",         6 }, "Xeon E (Coffee Lake-S WS)",       "14++ nm" },
+	{  6, 14, -1, -1, 158,  8,    -1,    -1, { "CC###",                  4 }, "CC (Coffee Lake)",                "14++ nm" }, /* CC150 */
+	{  6, 14, -1, -1, 158,  8,    -1,    -1, { "Core(TM) i9-9###",       8 }, "Core i9 (Coffee Lake-S)",         "14++ nm" },
+	{  6, 14, -1, -1, 158,  8,    -1,    -1, { "Core(TM) i7-9###",       8 }, "Core i7 (Coffee Lake-S)",         "14++ nm" },
+	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i5-9###",       8 }, "Core i5 (Coffee Lake-S)",         "14++ nm" },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i3-9###",       8 }, "Core i3 (Coffee Lake-S)",         "14++ nm" },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Pentium(R) Gold G5###",  6 }, "Pentium Gold (Coffee Lake-S)",    "14++ nm" },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Celeron(R) G4###",       4 }, "Celeron (Coffee Lake-S)",         "14++ nm" },
+	{  6, 14, -1, -1, 158, -1,    -1,    -1, { "Xeon(R) E-22##M",        8 }, "Xeon E (Coffee Lake-H Refresh)",  "14++ nm" },
+	{  6, 14, -1, -1, 158,  8,    -1,    -1, { "Core(TM) i9-9###H",     10 }, "Core i9 (Coffee Lake-H Refresh)", "14++ nm" },
+	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i7-9###H",     10 }, "Core i7 (Coffee Lake-H Refresh)", "14++ nm" },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i5-9###H",     10 }, "Core i5 (Coffee Lake-H Refresh)", "14++ nm" },
 
 	/* Cascade Lake CPUs (2019, 2nd Xeon Scalable gen, 14++ nm) => https://en.wikichip.org/wiki/intel/microarchitectures/cascade_lake */
 	{  6,  5,  7, -1, 85,  -1,    -1,    -1, { "Core(TM) i9-10###X",    10 }, "Core i9 (Cascade Lake-X)",        "14++ nm" },
@@ -353,23 +372,33 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Xeon(R) Bronze #2##",    6 }, "Xeon Bronze (Cascade Lake-SP)",   "14++ nm" },
 
 	/* Comet Lake CPUs (10th gen, 14++ nm): */
+	{  6,  5, -1, -1, 165, -1,    -1,    -1, { "Xeon(R) W-12##",         6 }, "Xeon W (Comet Lake-S)",       "14++ nm" },
 	{  6,  5, -1, -1, 165, 10,    -1,    -1, { "Core(TM) i9-10###",      8 }, "Core i9 (Comet Lake-S)",      "14++ nm" },
 	{  6,  5, -1, -1, 165,  8,    -1,    -1, { "Core(TM) i7-10###",      8 }, "Core i7 (Comet Lake-S)",      "14++ nm" },
 	{  6,  5, -1, -1, 165,  6,    -1,    -1, { "Core(TM) i5-10###",      8 }, "Core i5 (Comet Lake-S)",      "14++ nm" },
 	{  6,  5, -1, -1, 165,  4,    -1,    -1, { "Core(TM) i3-10###",      8 }, "Core i3 (Comet Lake-S)",      "14++ nm" },
 	{  6,  5, -1, -1, 165,  2,    -1,    -1, { "Pentium(R) Gold G6###",  6 }, "Pentium Gold (Comet Lake-S)", "14++ nm" },
 	{  6,  5, -1, -1, 165,  2,    -1,    -1, { "Celeron(R) G5###",       4 }, "Celeron (Comet Lake-S)",      "14++ nm" },
+	{  6,  6, -1, -1, 166,  6,    -1,    -1, { "Core(TM) i7-10###U",    10 }, "Core i7 (Comet Lake-U)",      "14++ nm" },
 	{  6, 14, 12, -1, 142,  6,    -1,    -1, { "Core(TM) i7-10###U",    10 }, "Core i7 (Comet Lake-U)",      "14++ nm" },
 	{  6, 14, 12, -1, 142,  4,    -1,    -1, { "Core(TM) i7-10###U",    10 }, "Core i7 (Comet Lake-U)",      "14++ nm" },
 	{  6, 14, 12, -1, 142,  4,    -1,    -1, { "Core(TM) i5-10###U",    10 }, "Core i5 (Comet Lake-U)",      "14++ nm" },
+	{  6, 14, 12, -1, 142,  4,    -1,    -1, { "Core(TM) i3-10###U",    10 }, "Core i3 (Comet Lake-U)",      "14++ nm" },
 	{  6, 14, 12, -1, 142,  2,    -1,    -1, { "Pentium(R) Gold 6###U",  6 }, "Pentium Gold (Comet Lake-U)", "14++ nm" },
 	{  6, 14, 12, -1, 142,  2,    -1,    -1, { "Celeron(R) 5###U",       4 }, "Celeron (Comet Lake-U)",      "14++ nm" },
+	{  6,  5, -1, -1, 165, -1,    -1,    -1, { "Xeon(R) W-10###M",      10 }, "Xeon W (Comet Lake-H)",       "14++ nm" },
+	{  6,  5, -1, -1, 165, -1,    -1,    -1, { "Core(TM) i9-10###H",    10 }, "Core i9 (Comet Lake-H)",      "14++ nm" },
+	{  6,  5, -1, -1, 165, -1,    -1,    -1, { "Core(TM) i7-10###H",    10 }, "Core i7 (Comet Lake-H)",      "14++ nm" },
+	{  6,  5, -1, -1, 165, -1,    -1,    -1, { "Core(TM) i5-10###H",    10 }, "Core i5 (Comet Lake-H)",      "14++ nm" },
 
 	/* Ice Lake (client) CPUs (2019, 10th Core i gen, 10 nm) => https://en.wikichip.org/wiki/intel/microarchitectures/ice_lake_(client) */
-	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i7-10##",  8 }, "Core i7 (Ice Lake)", "10 nm" },
-	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i5-10##",  8 }, "Core i5 (Ice Lake)", "10 nm" },
-	{  6, 14, -1, -1, 126,  2,    -1,    -1, { "Core(TM) i3-10##",  8 }, "Core i3 (Ice Lake)", "10 nm" },
-	{  6, 14, -1, -1, 126,  2,    -1,    -1, { "Pentium(R) 68##",   4 }, "Pentium (Ice Lake)", "10 nm" },
+	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i7-10##NG7",    10 }, "Core i7 (Ice Lake)", "10 nm" },
+	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i7-10##G7",     10 }, "Core i7 (Ice Lake)", "10 nm" },
+	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i5-10##NG7",    10 }, "Core i5 (Ice Lake)", "10 nm" },
+	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i5-10##G[741]", 10 }, "Core i5 (Ice Lake)", "10 nm" },
+	{  6, 14, -1, -1, 126,  2,    -1,    -1, { "Core(TM) i3-10##G[14]",  10 }, "Core i3 (Ice Lake)", "10 nm" },
+	{  6, 14, -1, -1, 126,  2,    -1,    -1, { "Core(TM) i3-10##NG4",    10 }, "Core i3 (Ice Lake)", "10 nm" },
+	{  6, 14, -1, -1, 126,  2,    -1,    -1, { "Pentium(R) 68##",         4 }, "Pentium (Ice Lake)", "10 nm" }, /* Pentium 6805 */
 	/* Ice Lake (server) CPUs (2021, 3rd Xeon Scalable gen, 10 nm) => https://en.wikichip.org/wiki/intel/microarchitectures/ice_lake_(server) */
 	{  6, 12, -1, -1, 108,  4,    -1,    -1, { "Xeon(R) D-[12]7##",      6 }, "Xeon D (Ice Lake-D)",         "10 nm" },
 	{  6, 10, -1, -1, 106,  -1,   -1,    -1, { "Xeon(R) W-#3##",         6 }, "Xeon W (Ice Lake-W)",         "10 nm" },
@@ -385,9 +414,9 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 7, -1, -1, 167,  -1,    -1,    -1, { "Xeon(R) E-23##",     6 }, "Xeon E (Rocket Lake)"   , "14++ nm" },
 
 	/* Goldmont Plus CPUs (2017, 14 nm, low-power) */
-	{  6, 10, -1, -1, 122, -1,    -1,    -1, { "Pentium(R) Silver [JN]5###",  8 }, "Pentium (Gemini Lake)", "14 nm" },
-	{  6, 10, -1, -1, 122, -1,    -1,    -1, { "Celeron(R) [JN]4###",         6 }, "Celeron (Gemini Lake)", "14 nm" },
-	{  6, 12, -1, -1,  92, -1,    -1,    -1, { "Atom(TM)",                    2 }, "Atom (Apollo Lake)"   , "14 nm" },
+	{  6, 10, -1, -1, 122, -1,    -1,    -1, { "Pentium(R) Silver [JN]5###",  8 }, "Pentium Silver (Gemini Lake)", "14 nm" },
+	{  6, 10, -1, -1, 122, -1,    -1,    -1, { "Celeron(R) [JN]4###",         6 }, "Celeron (Gemini Lake)",        "14 nm" },
+	{  6, 12, -1, -1,  92, -1,    -1,    -1, { "Atom(TM)",                    2 }, "Atom (Apollo Lake)"   ,        "14 nm" },
 
 	/* Tremont CPUs (2020, Intel 10 nm, low-power) */
 	{  6,  6, -1, -1, 150, -1,    -1,    -1, { "Pentium(R) [JN]6###",      6 }, "Pentium (Elkhart Lake)",       "10 nm" },
@@ -399,11 +428,24 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 12, -1, -1, 156, -1,    -1,    -1, { "Celeron(R) N[45]###",      6 }, "Celeron (Jasper Lake)",        "10 nm" },
 
 	/* Tiger Lake CPUs (2020, 11th gen, Intel 10 nm SuperFin, mobile processors): */
-	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i7-11##G7",   12 }, "Core i7 (Tiger Lake-UP3)",      "10SF" },
-	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i5-11##G7",   12 }, "Core i5 (Tiger Lake-UP3)",      "10SF" },
-	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i3-11##G7",   12 }, "Core i3 (Tiger Lake-UP3)",      "10SF" },
-	{  6, 12, -1, -1, 140,  2,    -1,    -1, { "Pentium(R) Gold 7###",  6 }, "Pentium Gold (Tiger Lake-UP3)", "10SF" },
-	{  6, 12, -1, -1, 140,  2,    -1,    -1, { "Celeron(R) 6###",       4 }, "Celeron (Tiger Lake-UP3)",      "10SF" },
+	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i7-11#5G7",   12 }, "Core i7 (Tiger Lake-UP3)",      "10SF" },
+	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i5-11#5G7",   12 }, "Core i5 (Tiger Lake-UP3)",      "10SF" },
+	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i3-11#5G4",   12 }, "Core i3 (Tiger Lake-UP3)",      "10SF" },
+	{  6, 12, -1, -1, 140,  2,    -1,    -1, { "Pentium(R) Gold 7##5",  6 }, "Pentium Gold (Tiger Lake-UP3)", "10SF" },
+	{  6, 12, -1, -1, 140,  2,    -1,    -1, { "Celeron(R) 6##5",       4 }, "Celeron (Tiger Lake-UP3)",      "10SF" },
+	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i7-11#0G7",   12 }, "Core i7 (Tiger Lake-UP4)",      "10SF" },
+	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i5-11#0G7",   12 }, "Core i5 (Tiger Lake-UP4)",      "10SF" },
+	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i3-11#0G4",   12 }, "Core i3 (Tiger Lake-UP4)",      "10SF" },
+	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i7-11###H",   10 }, "Core i7 (Tiger Lake-H35)",      "10SF" },
+	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i5-11###H",   10 }, "Core i5 (Tiger Lake-H35)",      "10SF" },
+	{  6, 13, -1, -1, 141, -1,    -1,    -1, { "Xeon(R) W-11###M",     10 }, "Xeon W (Tiger Lake-H)",         "10SF" },
+	{  6, 13, -1, -1, 141, -1,    -1,    -1, { "Core(TM) i9-11###H",   10 }, "Core i9 (Tiger Lake-H)",        "10SF" },
+	{  6, 13, -1, -1, 141, -1,    -1,    -1, { "Core(TM) i7-11###H",   10 }, "Core i7 (Tiger Lake-H)",        "10SF" },
+	{  6, 13, -1, -1, 141, -1,    -1,    -1, { "Core(TM) i5-11###H",   10 }, "Core i5 (Tiger Lake-H)",        "10SF" },
+	{  6, 13, -1, -1, 141, -1,    -1,    -1, { "Core(TM) i9-11###KB",  12 }, "Core i9 (Tiger Lake-B)",        "10SF" }, /* i9-11900KB */
+	{  6, 13, -1, -1, 141, -1,    -1,    -1, { "Core(TM) i7-11###B",   10 }, "Core i7 (Tiger Lake-B)",        "10SF" }, /* i7-11700B */
+	{  6, 13, -1, -1, 141, -1,    -1,    -1, { "Core(TM) i5-11###B",   10 }, "Core i5 (Tiger Lake-B)",        "10SF" }, /* i5-11500B */
+	{  6, 13, -1, -1, 141, -1,    -1,    -1, { "Core(TM) i5-11###B",   10 }, "Core i5 (Tiger Lake-B)",        "10SF" }, /* i3-11100B */
 
 	/* Alder Lake CPUs (2021, 12th gen, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/alder_lake */
 	{  6,  7, -1, -1, 151, -1,    -1,    -1, { "Core(TM) i9-12###",      8 }, "Core i9 (Alder Lake-S)",         "Intel 7" },
