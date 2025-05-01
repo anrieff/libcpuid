@@ -876,7 +876,7 @@ static int get_amd_multipliers(struct msr_info_t *info, uint32_t pstate, double 
 
 	/* Constant values for common families */
 	const int magic_constant = (info->id->x86.ext_family == 0x11) ? 0x8 : 0x10;
-	const int is_apu = (strstr(info->id->brand_str, "APU") != NULL) || (strstr(info->id->brand_str, "with AMD Radeon ") != NULL);
+	const int is_apu = (strstr(info->id->brand_str, "APU") != NULL) || (strstr(info->id->brand_str, "Radeon ") != NULL);
 	const double divisor = is_apu ? 1.0 : 2.0;
 
 	/* Check if P-state is valid */
