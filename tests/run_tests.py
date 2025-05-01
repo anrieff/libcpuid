@@ -39,13 +39,9 @@ def fmt_error(err):
 
 def fixFile(filename, input_lines, output_lines):
 	pfilename = Path(filename)
-	if len(pfilename.suffixes) >= 2:
-		# Compressed file
-		if pfilename.suffixes[1] == ".xz":
-			f = lzma.open(pfilename, "wt")
-		else:
-			print(f"Cannot fix {pfilename.name} because {''.join(pfilename.suffixes[1:])} is not supported")
-			return
+	if pfilename.suffixes[-1] == ".xz":
+		# XZ compressed file
+		f = lzma.open(pfilename, "wt")
 	else:
 		# Plain text file
 		f = open(pfilename, "wt")
@@ -153,7 +149,7 @@ for input_test_file in args.input_test_files:
 	if Path(input_test_file).is_dir():
 		# gather all *.test files from subdirs amd, intel and cie:
 		for dirpath, dirnames, filenames in os.walk(input_test_file):
-			filelist += [PurePath(dirpath).joinpath(fn) for fn in filenames if Path(fn).suffixes[0] == ".test"]
+			filelist += [PurePath(dirpath).joinpath(fn) for fn in filenames if ".test" in Path(fn).suffixes]
 	else:
 		filelist.append(input_test_file)
 
@@ -166,13 +162,9 @@ for test_file_name_raw in filelist:
 	current_input = []
 	current_output = []
 	build_output = False
-	if len(test_file_name.suffixes) >= 2:
-		# Compressed file
-		if test_file_name.suffixes[1] == ".xz":
-			f = lzma.open(test_file_name, "rt")
-		else:
-			print(f"Test [{test_file_name.name}]: skipped because {''.join(test_file_name.suffixes[1:])} is not supported")
-			continue
+	if test_file_name.suffixes[-1] == ".xz":
+		# XZ compressed file
+		f = lzma.open(test_file_name, "rt")
 	else:
 		# Plain text file
 		f = open(test_file_name, "rt")
