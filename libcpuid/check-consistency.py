@@ -175,8 +175,9 @@ cache_exp = re.compile(r".*([\(/ ][0-9]+K).*")
 #   - Codenames should not exceed 31 characters
 #   - Check for common typos
 definitions = 0
-match_entry_fields = 11 # this number needs to change if the definition of match_entry_t ever changes
+match_entry_fields = 12 # this number needs to change if the definition of match_entry_t ever changes
 codename_str_max = 64-1 # this number needs to change if the value of CODENAME_STR_MAX ever changes
+technology_str_max = 16-1 # this number needs to change if the value of TECHNOLOGY_STR_MAX ever changes
 common_cache_sizes = ["8", "16", "32", "64", "128", "256", "512", "1024", "2048", "3072", "4096", "6144", "8192", "12288", "16384"]
 for fn in glob.glob(f"{args.root_dir}/*.c"):
 	bfn = os.path.basename(fn)
@@ -199,23 +200,36 @@ for fn in glob.glob(f"{args.root_dir}/*.c"):
 		parts = inner.split(",")
 		if len(parts) == match_entry_fields:
 			cdefs += 1
-			s = parts[match_entry_fields-1].strip()
-			if s[0] != '"' or s[-1] != '"':
+			# Check CPU codename string
+			codename = parts[10].strip()
+			if codename[0] != '"' or codename[-1] != '"':
 				err += 1
-				print(f"..Warning, {bfn}:{nline} - cannot correctly handle the cpu codename")
+				print(f"..Warning, {bfn}:{nline} - cannot correctly handle the cpu codename ({codename})")
 				allok = False
 				continue
-			s = s[1:-1]
-			if len(s) > codename_str_max:
+			codename = codename[1:-1]
+			if len(codename) > codename_str_max:
 				err += 1
-				print(f"..{bfn}:{nline} - codename ({s}) is longer than {codename_str_max} characters!")
+				print(f"..{bfn}:{nline} - codename ({codename}) is longer than {codename_str_max} characters!")
 				allok = False
-			if cache_exp.match(s):
-				cache_size = cache_exp.findall(s)[0][1:-1]
+			if cache_exp.match(codename):
+				cache_size = cache_exp.findall(codename)[0][1:-1]
 				if not cache_size in common_cache_sizes:
 					err += 1
-					print(f"..Warning, {bfn}:{nline} - suspicious cache size in codename [{s}] ({cache_size})")
+					print(f"..Warning, {bfn}:{nline} - suspicious cache size in codename [{codename}] ({cache_size})")
 					allok = False
+			# Check CPU technology string
+			technology = parts[11].strip()
+			if (technology[0] != '"' or technology[-1] != '"') and technology != "UNKN_STR":
+				err += 1
+				print(f"..Warning, {bfn}:{nline} - cannot correctly handle the cpu technology ({technology})")
+				allok = False
+				continue
+			technology = technology[1:-1]
+			if len(technology) > technology_str_max:
+				err += 1
+				print(f"..{bfn}:{nline} - technology ({technology}) is longer than {technology_str_max} characters!")
+				allok = False
 	if cdefs:
 		definitions += 1
 		print(f"  {bfn}: {cdefs} processor definitions,", end=' ')
