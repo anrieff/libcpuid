@@ -240,6 +240,7 @@ typedef enum {
 	FEATURE_LEVEL_ARM_V9_2_A, /*!< ARMv9.2-A */
 	FEATURE_LEVEL_ARM_V9_3_A, /*!< ARMv9.3-A */
 	FEATURE_LEVEL_ARM_V9_4_A, /*!< ARMv9.4-A */
+	FEATURE_LEVEL_ARM_V9_5_A, /*!< ARMv9.5-A */
 
 	NUM_FEATURE_LEVELS, /*!< Valid feature level ids: 0..NUM_FEATURE_LEVELS - 1 */
 	FEATURE_LEVEL_UNKNOWN = -1,
@@ -364,6 +365,10 @@ struct cpu_raw_data_t {
 	/** when then CPU is ARM-based and supports ID_AA64DFR*
 	 * (AArch64 Debug Feature Register) */
 	uint64_t arm_id_aa64dfr[MAX_ARM_ID_AA64DFR_REGS];
+
+	/** when then CPU is ARM-based and supports ID_AA64FPFR*
+	 * (Floating-point Feature Register) */
+	uint64_t arm_id_aa64fpfr[MAX_ARM_ID_AA64FPFR_REGS];
 
 	/** when then CPU is ARM-based and supports D_AA64ISAR*
 	 * (AArch64 Instruction Set Attribute Register) */
@@ -921,14 +926,17 @@ typedef enum {
 	CPU_FEATURE_AVX512VBMI, /*!< AVX-512 Vector Bit ManipulationInstructions (version 1) */
 	CPU_FEATURE_AVX512VBMI2, /*!< AVX-512 Vector Bit ManipulationInstructions (version 2) */
 	CPU_FEATURE_HYPERVISOR, /*!< Hypervisor present (always zero on physical CPUs) */
+	/* Arm */
 	CPU_FEATURE_SWAP, /*!< ARM: Swap instructions in the ARM instruction set */
 	CPU_FEATURE_THUMB, /*!< ARM: Thumb instruction set support */
 	CPU_FEATURE_ADVMULTU, /*!< ARM: Advanced unsigned Multiply instructions */
 	CPU_FEATURE_ADVMULTS, /*!< ARM: Advanced signed Multiply instructions */
 	CPU_FEATURE_JAZELLE, /*!< ARM: Jazelle extension support */
+	/* Armv6.0 */
 	CPU_FEATURE_DEBUGV6, /*!< ARM: Support for v6 Debug architecture */
 	CPU_FEATURE_DEBUGV6P1, /*!< ARM: Support for v6.1 Debug architecture */
 	CPU_FEATURE_THUMB2, /*!< ARM: Thumb-2, instruction set support */
+	/* Armv7.0 */
 	CPU_FEATURE_DEBUGV7, /*!< ARM: Support for v7 Debug architecture */
 	CPU_FEATURE_DEBUGV7P1, /*!< ARM: Support for v7.1 Debug architecture */
 	CPU_FEATURE_THUMBEE, /*!< ARM: ThumbEE instruction set support */
@@ -936,6 +944,7 @@ typedef enum {
 	CPU_FEATURE_LPAE, /*!< ARM: Large Physical Address Extension */
 	CPU_FEATURE_PMUV1, /*!< ARM: PMU extension version 1 */
 	CPU_FEATURE_PMUV2, /*!< ARM: PMU extension version 2 */
+	/* A2.2.1 The Armv8.0 architecture extension */
 	CPU_FEATURE_ASID16, /*!< ARM: 16 bit ASID */
 	CPU_FEATURE_ADVSIMD, /*!< ARM: Advanced SIMD Extension */
 	CPU_FEATURE_CRC32, /*!< ARM: CRC32 instructions */
@@ -953,6 +962,7 @@ typedef enum {
 	CPU_FEATURE_SHA1, /*!< ARM: Advanced SIMD SHA1 instructions */
 	CPU_FEATURE_SHA256, /*!< ARM: Advanced SIMD SHA256 instructions */
 	CPU_FEATURE_NTLBPA, /*!< ARM: Intermediate caching of translation table walks */
+	/* A2.2.2 The Armv8.1 architecture extension */
 	CPU_FEATURE_HAFDBS, /*!< ARM: Hardware management of the Access flag and dirty state */
 	CPU_FEATURE_HPDS, /*!< ARM: Hierarchical permission disables in translations tables */
 	CPU_FEATURE_LOR, /*!< ARM: Limited ordering regions */
@@ -962,6 +972,7 @@ typedef enum {
 	CPU_FEATURE_RDM, /*!< ARM: Advanced SIMD rounding double multiply accumulate instructions */
 	CPU_FEATURE_VHE, /*!< ARM: Virtualization Host Extensions */
 	CPU_FEATURE_VMID16, /*!< ARM: 16-bit VMID */
+	/* A2.2.3 The Armv8.2 architecture extension */
 	CPU_FEATURE_AA32HPD, /*!< ARM: AArch32 Hierarchical permission disables */
 	CPU_FEATURE_AA32I8MM, /*!< ARM: AArch32 Int8 matrix multiplication instructions */
 	CPU_FEATURE_DPB, /*!< ARM: DC CVAP instruction */
@@ -977,8 +988,8 @@ typedef enum {
 	CPU_FEATURE_LVA, /*!< ARM: Large VA support */
 	CPU_FEATURE_PAN2, /*!< ARM: AT S1E1R and AT S1E1W instruction variants affected by PSTATE.PAN */
 	CPU_FEATURE_RAS, /*!< ARM: Reliability, Availability and Serviceability (RAS) Extension */
-	CPU_FEATURE_SHA3, /*!< ARM: Advanced SIMD SHA3 instructions (ARMv8.2 architecture extension) */
-	CPU_FEATURE_SHA512, /*!< ARM: Advanced SIMD SHA512 instructions (ARMv8.1 architecture extension) */
+	CPU_FEATURE_SHA3, /*!< ARM: Advanced SIMD SHA3 instructions */
+	CPU_FEATURE_SHA512, /*!< ARM: Advanced SIMD SHA512 instructions */
 	CPU_FEATURE_SM3, /*!< ARM: Advanced SIMD SM3 instructions */
 	CPU_FEATURE_SM4, /*!< ARM: Advanced SIMD SM4 instructions */
 	CPU_FEATURE_SPE, /*!< ARM: Statistical Profiling Extension */
@@ -986,6 +997,7 @@ typedef enum {
 	CPU_FEATURE_TTCNP, /*!< ARM: Translation table Common not private translations */
 	CPU_FEATURE_UAO, /*!< ARM: Unprivileged Access Override control */
 	CPU_FEATURE_XNX, /*!< ARM: Translation table stage 2 Unprivileged Execute-never */
+	/* A2.2.4 The Armv8.3 architecture extension */
 	CPU_FEATURE_CCIDX, /*!< ARM: Extended cache index */
 	CPU_FEATURE_CONSTPACFIELD, /*!< ARM: PAC algorithm enhancement */
 	CPU_FEATURE_EPAC, /*!< ARM: Enhanced pointer authentication */
@@ -999,6 +1011,7 @@ typedef enum {
 	CPU_FEATURE_PACQARMA5, /*!< ARM: Pointer authentication - QARMA5 algorithm */
 	CPU_FEATURE_PAUTH, /*!< ARM: Pointer authentication */
 	CPU_FEATURE_SPEV1P1, /*!< ARM: Statistical Profiling Extension version 1 */
+	/* A2.2.5 The Armv8.4 architecture extension */
 	CPU_FEATURE_AMUV1, /*!< ARM: Activity Monitors Extension version 1 */
 	CPU_FEATURE_BBM, /*!< ARM: Translation table break-before-make levels */
 	CPU_FEATURE_DIT, /*!< ARM: Data Independent Timing instructions */
@@ -1020,6 +1033,7 @@ typedef enum {
 	CPU_FEATURE_TRF, /*!< ARM: Self-hosted Trace extensions */
 	CPU_FEATURE_TTL, /*!< ARM: Translation Table Level */
 	CPU_FEATURE_TTST, /*!< ARM: Small translation tables */
+	/* A2.2.6 The Armv8.5 architecture extension */
 	CPU_FEATURE_BTI, /*!< ARM: Branch Target Identification */
 	CPU_FEATURE_CSV2, /*!< ARM: Cache Speculation Variant 2 */
 	CPU_FEATURE_CSV3, /*!< ARM: Cache Speculation Variant 3 */
@@ -1038,6 +1052,7 @@ typedef enum {
 	CPU_FEATURE_SPECRES, /*!< ARM: Speculation restriction instructions */
 	CPU_FEATURE_SSBS, /*!< ARM: Speculative Store Bypass Safe */
 	CPU_FEATURE_SSBS2, /*!< ARM: MRS and MSR instructions for SSBS version 2 */
+	/* A2.2.7 The Armv8.6 architecture extension */
 	CPU_FEATURE_AA32BF16, /*!< ARM: AArch32 BFloat16 instructions */
 	CPU_FEATURE_AMUV1P1, /*!< ARM: Activity Monitors Extension version 1.1 */
 	CPU_FEATURE_BF16, /*!< ARM: AArch64 BFloat16 instructions */
@@ -1045,13 +1060,14 @@ typedef enum {
 	CPU_FEATURE_ECV, /*!< ARM: Enhanced Counter Virtualization */
 	CPU_FEATURE_FGT, /*!< ARM: Fine Grain Traps */
 	CPU_FEATURE_HPMN0, /*!< ARM: Setting of MDCR_EL2.HPMN to zero */
-	CPU_FEATURE_MPAMV0P1, /*!< ARM: Memory Partitioning and Monitoring version 0.1 */
-	CPU_FEATURE_MPAMV1P1, /*!< ARM: Memory Partitioning and Monitoring version 1.1 */
+	CPU_FEATURE_MPAMV0P1, /*!< ARM: Memory Partitioning and Monitoring extension version 0.1 */
+	CPU_FEATURE_MPAMV1P1, /*!< ARM: Memory Partitioning and Monitoring extension version 1.1 */
 	CPU_FEATURE_MTPMU, /*!< ARM: Multi-threaded PMU extensions */
 	CPU_FEATURE_PAUTH2, /*!< ARM: Enhancements to pointer authentication */
 	CPU_FEATURE_TWED, /*!< ARM: Delayed Trapping of WFE */
+	/* A2.2.8 The Armv8.7 architecture extension */
 	CPU_FEATURE_AFP, /*!< ARM: Alternate floating-point behavior */
-	CPU_FEATURE_EBF16, /*!< ARM: AArch64 Extended BFloat16 instructions */
+	CPU_FEATURE_EBF16, /*!< ARM: AArch64 Extended BFloat16 behaviors */
 	CPU_FEATURE_HCX, /*!< ARM: Support for the HCRX_EL2 register */
 	CPU_FEATURE_LPA2, /*!< ARM: Larger physical address for 4KB and 16KB translation granules */
 	CPU_FEATURE_LS64, /*!< ARM: Support for 64-byte loads and stores without status */
@@ -1065,6 +1081,7 @@ typedef enum {
 	CPU_FEATURE_SPEV1P2, /*!< ARM: Statistical Profiling Extensions version 1.2 */
 	CPU_FEATURE_WFXT, /*!< ARM: WFE and WFI instructions with timeout */
 	CPU_FEATURE_XS, /*!< ARM: XS attribute */
+	/* A2.2.9 The Armv8.8 architecture extension */
 	CPU_FEATURE_CMOW, /*!< ARM: Control for cache maintenance permission */
 	CPU_FEATURE_DEBUGV8P8, /*!< ARM: Debug v8.8 */
 	CPU_FEATURE_HBC, /*!< ARM: Hinted conditional branches */
@@ -1075,6 +1092,7 @@ typedef enum {
 	CPU_FEATURE_SPEV1P3, /*!< ARM: Statistical Profiling Extensions version 1.3 */
 	CPU_FEATURE_TCR2, /*!< ARM: Support for TCR2_ELx */
 	CPU_FEATURE_TIDCP1, /*!< ARM: EL0 use of IMPLEMENTATION DEFINED functionality */
+	/* A2.2.10 The Armv8.9 architecture extension */
 	CPU_FEATURE_ADERR, /*!< ARM: Asynchronous Device Error Exceptions */
 	CPU_FEATURE_AIE, /*!< ARM: Memory Attribute Index Enhancement */
 	CPU_FEATURE_ANERR, /*!< ARM: Asynchronous Normal Error Exceptions */
@@ -1104,29 +1122,33 @@ typedef enum {
 	CPU_FEATURE_S1PIE, /*!< ARM: Stage 1 permission indirections */
 	CPU_FEATURE_S1POE, /*!< ARM: Stage 1 permission overlays */
 	CPU_FEATURE_S2PIE, /*!< ARM: Stage 2 permission indirections */
-	CPU_FEATURE_S2POE, /*!< ARM: Stage 1 permission overlays */
+	CPU_FEATURE_S2POE, /*!< ARM: Stage 2 permission overlays */
 	CPU_FEATURE_SPECRES2, /*!< ARM: Enhanced speculation restriction instructions */
 	CPU_FEATURE_SPE_DPFZS, /*!< ARM: Disable Cycle Counter on SPE Freeze */
 	CPU_FEATURE_SPEV1P4, /*!< ARM: Statistical Profiling Extension version 1.4 */
 	CPU_FEATURE_SPMU, /*!< ARM: System Performance Monitors Extension */
 	CPU_FEATURE_THE, /*!< ARM: Translation Hardening Extension */
+	/* A2.3.1 The Armv9.0 architecture extension */
 	CPU_FEATURE_SVE2, /*!< ARM: Scalable Vector Extension version 2 */
 	CPU_FEATURE_SVE_AES, /*!< ARM: Scalable Vector AES instructions */
 	CPU_FEATURE_SVE_BITPERM, /*!< ARM: Scalable Vector Bit Permutes instructions */
-	CPU_FEATURE_SVE_PMULL128, /*!< ARM: Scalable Vector PMULL instructions */
+	CPU_FEATURE_SVE_PMULL128, /*!< ARM: SVE single-vector Advanced Encryption Standard and 128-bit polynomial multiply long instructions */
 	CPU_FEATURE_SVE_SHA3, /*!< ARM: Scalable Vector SHA3 instructions */
 	CPU_FEATURE_SVE_SM4, /*!< ARM: Scalable Vector SM4 instructions */
 	CPU_FEATURE_TME, /*!< ARM: Transactional Memory Extension */
 	CPU_FEATURE_TRBE, /*!< ARM: Trace Buffer Extension */
+	/* A2.3.3 The Armv9.2 architecture extension */
 	CPU_FEATURE_BRBE, /*!< ARM: Branch Record Buffer Extension */
 	CPU_FEATURE_RME, /*!< ARM: Realm Management Extension */
 	CPU_FEATURE_SME, /*!< ARM: Scalable Matrix Extension */
 	CPU_FEATURE_SME_F64F64, /*!< ARM: Double-precision floating-point outer product instructions */
 	CPU_FEATURE_SME_FA64, /*!< ARM: Full A64 instruction set support in Streaming SVE mode */
 	CPU_FEATURE_SME_I16I64, /*!< ARM: 16-bit to 64-bit integer widening outer product instructions */
+	/* A2.3.4 The Armv9.3 architecture extension */
 	CPU_FEATURE_BRBEV1P1, /*!< ARM: Branch Record Buffer Extension version 1.1 */
 	CPU_FEATURE_MEC, /*!< ARM: Memory Encryption Contexts */
 	CPU_FEATURE_SME2, /*!< ARM: Scalable Matrix Extensions version 2 */
+	/* A2.3.5 The Armv9.4 architecture extension */
 	CPU_FEATURE_ABLE, /*!< ARM: Address Breakpoint Linking Extension */
 	CPU_FEATURE_BWE, /*!< ARM: Breakpoint and watchpoint enhancements */
 	CPU_FEATURE_D128, /*!< ARM: 128-bit Translation Tables, 56 bit PA */
@@ -1137,12 +1159,41 @@ typedef enum {
 	CPU_FEATURE_LVA3, /*!< ARM: 56-bit VA */
 	CPU_FEATURE_SEBEP, /*!< ARM: Synchronous Exception-based Event Profiling */
 	CPU_FEATURE_SME2P1, /*!< ARM: Scalable Matrix Extension version 2.1 */
-	CPU_FEATURE_SME_F16F16, /*!< ARM: Non-widening half-precision FP16 to FP16 arithmetic for SME2. */
+	CPU_FEATURE_SME_F16F16, /*!< ARM: Non-widening half-precision FP16 to FP16 arithmetic for SME2 */
 	CPU_FEATURE_SVE2P1, /*!< ARM: Scalable Vector Extensions version 2.1 */
-	CPU_FEATURE_SVE_B16B16, /*!< ARM: Non-widening BFloat16 to BFloat16 arithmetic for SVE2 and SME2. */
+	CPU_FEATURE_SVE_B16B16, /*!< ARM: Non-widening BFloat16 to BFloat16 arithmetic for SVE2 and SME2 */
 	CPU_FEATURE_SYSINSTR128, /*!< ARM: 128-bit System instructions */
 	CPU_FEATURE_SYSREG128, /*!< ARM: 128-bit System registers */
 	CPU_FEATURE_TRBE_EXT, /*!< ARM: Trace Buffer external mode */
+	/* A2.3.6 The Armv9.5 architecture extension */
+	CPU_FEATURE_ASID2, /*!< ARM: Support for concurrent use of two ASIDs */
+	CPU_FEATURE_BWE2, /*!< ARM: Breakpoint and watchpoint enhancements 2 */
+	CPU_FEATURE_CPA, /*!< ARM: Instruction-only Checked Pointer Arithmetic */
+	CPU_FEATURE_CPA2, /*!< ARM: Checked Pointer Arithmetic */
+	CPU_FEATURE_E2H0, /*!< ARM: Programming of HCR_EL2.E2H. */
+	CPU_FEATURE_E3DSE, /*!< ARM: Delegated SError exception injection */
+	CPU_FEATURE_ETS3, /*!< ARM: Enhanced Translation Synchronization */
+	CPU_FEATURE_FAMINMAX, /*!< ARM: Floating-point maximum and minimum absolute value instructions */
+	CPU_FEATURE_FGWTE3, /*!< ARM: Fine-Grained Write Trap EL3 */
+	CPU_FEATURE_FP8, /*!< ARM: FP8 convert instructions */
+	CPU_FEATURE_FP8DOT2, /*!< ARM: FP8 2-way dot product to half-precision instructions */
+	CPU_FEATURE_FP8DOT4, /*!< ARM: FP8 4-way dot product to single-precision instructions */
+	CPU_FEATURE_FP8FMA, /*!< ARM: FP8 multiply-accumulate to half-precision and single-precision instructions */
+	CPU_FEATURE_FPMR, /*!< ARM: Floating-point Mode Register */
+	CPU_FEATURE_HACDBS, /*!< ARM: Hardware accelerator for cleaning Dirty state */
+	CPU_FEATURE_HDBSS, /*!< ARM: Hardware Dirty state tracking structure */
+	CPU_FEATURE_LUT, /*!< ARM: Lookup table instructions with 2-bit and 4-bit indices */
+	CPU_FEATURE_PAUTH_LR, /*!< ARM: Pointer authentication instructions that allow signing of LR using SP and PC as diversifiers */
+	CPU_FEATURE_RME_GPC2, /*!< ARM: RME Granule Protection Check 2 Extension */
+	CPU_FEATURE_SME_F8F16, /*!< ARM: SME2 ZA-targeting FP8 multiply-accumulate, dot product, and outer product to half-precision instructions */
+	CPU_FEATURE_SME_F8F32, /*!< ARM: SME2 ZA-targeting FP8 multiply-accumulate, dot product, and outer product to single-precision instructions */
+	CPU_FEATURE_SME_LUTV2, /*!< ARM: Lookup table instructions with 4-bit indices and 8-bit elements */
+	CPU_FEATURE_SPMU2, /*!< ARM: System Performance Monitors Extension version 2 */
+	CPU_FEATURE_SSVE_FP8DOT2, /*!< ARM: SVE FP8 2-way dot product to half-precision instructions in Streaming SVE mode */
+	CPU_FEATURE_SSVE_FP8DOT4, /*!< ARM: SVE2 FP8 4-way dot product to single-precision instructions in Streaming SVE mode */
+	CPU_FEATURE_SSVE_FP8FMA, /*!< ARM: SVE2 FP8 multiply-accumulate to half-precision and single-precision instructions in Streaming SVE mode */
+	CPU_FEATURE_STEP2, /*!< ARM: Enhanced Software Step Extension */
+	CPU_FEATURE_TLBIW, /*!< ARM: TLBI VMALL for Dirty state */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

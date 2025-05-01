@@ -86,4 +86,4 @@ efficiency
 4
 Apollo
 28-10 nm
-advsimd crc32 doublelock fp bbm
+advsimd crc32 doublelock fp bbm e2h0

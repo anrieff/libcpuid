@@ -2523,6 +2523,235 @@ static void load_arm_features(struct cpu_raw_data_t* raw, struct cpu_id_t* data,
 				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
 			}
 		},
+		[CPU_FEATURE_ASID2] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = FEATURE_LEVEL_ARM_V9_5_A,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64mmfr[4], .highbit = 11, .lowbit =  8, .value = 0b0001 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_BWE2] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64dfr[2],  .highbit =  7, .lowbit =  4, .value = 0b0010 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_CPA] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = FEATURE_LEVEL_ARM_V9_5_A,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64isar[3], .highbit =  3, .lowbit =  0, .value = 0b0001 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_CPA2] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64isar[3],     .highbit =  3, .lowbit =  0, .value = 0b0001 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_E2H0] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V8_0_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64mmfr[4], .highbit = 27, .lowbit = 24, .value = 0b0000 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_E3DSE] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64mmfr[4], .highbit = 39, .lowbit = 36, .value = 0b0001 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_ETS3] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = FEATURE_LEVEL_ARM_V9_5_A,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64mmfr[1], .highbit = 39, .lowbit = 36, .value = 0b0011 },
+				{ .aarch32_reg = &raw->arm_id_mmfr[5], .aarch64_reg = NULL,                     .highbit =  3, .lowbit =  0, .value = 0b0011 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_FAMINMAX] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_2_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64isar[3], .highbit =  7, .lowbit =  4, .value = 0b0001 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_FGWTE3] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64mmfr[4], .highbit = 19, .lowbit = 16, .value = 0b0001 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_FP8] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_2_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64fpfr[0], .highbit = 31, .lowbit = 31, .value = 0b1    },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64fpfr[0], .highbit =  1, .lowbit =  1, .value = 0b1    },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64fpfr[0], .highbit =  0, .lowbit =  0, .value = 0b1    },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_FP8DOT2] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_2_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64fpfr[0], .highbit = 28, .lowbit = 28, .value = 0b1    },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_FP8DOT4] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_2_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64fpfr[0], .highbit = 29, .lowbit = 29, .value = 0b1    },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_FP8FMA] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_2_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64fpfr[0], .highbit = 30, .lowbit = 30, .value = 0b1    },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_FPMR] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_2_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64pfr[2],  .highbit = 35, .lowbit = 32, .value = 0b0001 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_HACDBS] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64mmfr[4], .highbit = 15, .lowbit = 12, .value = 0b0001 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_HDBSS] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64mmfr[1], .highbit =  3, .lowbit =  0, .value = 0b0100 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_LUT] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_2_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64isar[2], .highbit = 59, .lowbit = 56, .value = 0b0001 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_PAUTH_LR] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64isar[1], .highbit =  7, .lowbit =  3, .value = 0b0110 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64isar[1], .highbit = 11, .lowbit =  8, .value = 0b0110 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64isar[2], .highbit = 15, .lowbit = 12, .value = 0b0110 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_RME_GPC2] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64pfr[0],  .highbit = 55, .lowbit = 52, .value = 0b0010 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_SME_F8F16] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_2_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64smfr[0], .highbit = 41, .lowbit = 41, .value = 0b1    },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_SME_F8F32] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_2_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64smfr[0], .highbit = 40, .lowbit = 40, .value = 0b1    },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_SME_LUTV2] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_2_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64smfr[0], .highbit = 60, .lowbit = 60, .value = 0b1    },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_SPMU2] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64dfr[1],  .highbit = 35, .lowbit = 32, .value = 0b0010 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_SSVE_FP8DOT2] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_2_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64smfr[0], .highbit = 28, .lowbit = 28, .value = 0b1    },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_SSVE_FP8DOT4] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_2_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64smfr[0], .highbit = 29, .lowbit = 29, .value = 0b1    },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_SSVE_FP8FMA] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_2_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64smfr[0], .highbit = 30, .lowbit = 30, .value = 0b1    },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_STEP2] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = FEATURE_LEVEL_ARM_V9_5_A,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64dfr[2],  .highbit =  3, .lowbit =  0, .value = 0b0001 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
+		[CPU_FEATURE_TLBIW] = {
+			.ver_optional  = FEATURE_LEVEL_ARM_V9_4_A,
+			.ver_mandatory = -1,
+			.fields        = {
+				{ .aarch32_reg = NULL,                 .aarch64_reg = &raw->arm_id_aa64isar[3], .highbit = 11, .lowbit =  8, .value = 0b0001 },
+				{ .aarch32_reg = NULL,                 .aarch64_reg = NULL,                     .highbit =  0, .lowbit =  0, .value = 0      }
+			}
+		},
 	};
 
 	for (feature = 0; feature < NUM_CPU_FEATURES; feature++)

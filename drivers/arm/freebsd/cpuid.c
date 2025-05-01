@@ -154,9 +154,12 @@ __read_reg_on_cpu(int cpu, struct read_reg_t *read_reg, u_long cmd, struct threa
 		case REQ_ID_AA64AFR1:  cpuid_read_sysreg(NULL, AARCH64_REG_ID_AA64AFR1_EL1,  read_reg->value_64b); break;
 		case REQ_ID_AA64DFR0:  cpuid_read_sysreg(NULL, AARCH64_REG_ID_AA64DFR0_EL1,  read_reg->value_64b); break;
 		case REQ_ID_AA64DFR1:  cpuid_read_sysreg(NULL, AARCH64_REG_ID_AA64DFR1_EL1,  read_reg->value_64b); break;
+		case REQ_ID_AA64DFR2:  cpuid_read_sysreg(NULL, AARCH64_REG_ID_AA64DFR2_EL1,  read_reg->value_64b); break;
+		case REQ_ID_AA64FPFR0: cpuid_read_sysreg(NULL, AARCH64_REG_ID_AA64FPFR0_EL1, read_reg->value_64b); break;
 		case REQ_ID_AA64ISAR0: cpuid_read_sysreg(NULL, AARCH64_REG_ID_AA64ISAR0_EL1, read_reg->value_64b); break;
 		case REQ_ID_AA64ISAR1: cpuid_read_sysreg(NULL, AARCH64_REG_ID_AA64ISAR1_EL1, read_reg->value_64b); break;
 		case REQ_ID_AA64ISAR2: cpuid_read_sysreg(NULL, AARCH64_REG_ID_AA64ISAR2_EL1, read_reg->value_64b); break;
+		case REQ_ID_AA64ISAR3: cpuid_read_sysreg(NULL, AARCH64_REG_ID_AA64ISAR3_EL1, read_reg->value_64b); break;
 		case REQ_ID_AA64MMFR0: cpuid_read_sysreg(NULL, AARCH64_REG_ID_AA64MMFR0_EL1, read_reg->value_64b); break;
 		case REQ_ID_AA64MMFR1: cpuid_read_sysreg(NULL, AARCH64_REG_ID_AA64MMFR1_EL1, read_reg->value_64b); break;
 		case REQ_ID_AA64MMFR2: cpuid_read_sysreg(NULL, AARCH64_REG_ID_AA64MMFR2_EL1, read_reg->value_64b); break;

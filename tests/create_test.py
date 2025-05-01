@@ -14,7 +14,7 @@ def readRawFile():
 			"basic_cpuid", "ext_cpuid", "intel_fn4", "intel_fn11", "amd_fn8000001dh", # x86
 			"arm_midr", "arm_mpidr", "arm_revidr", # ARM common
 			"arm_id_afr", "arm_id_dfr", "arm_id_isar", "arm_id_mmfr", "arm_id_pfr", # ARM (AArch32)
-			"arm_id_aa64afr", "arm_id_aa64dfr", "arm_id_aa64isar", "arm_id_aa64mmfr", "arm_id_aa64pfr", "arm_id_aa64smfr", "arm_id_aa64zfr" # ARM (AArch64)
+			"arm_id_aa64afr", "arm_id_aa64dfr", "arm_id_aa64fpfr", "arm_id_aa64isar", "arm_id_aa64mmfr", "arm_id_aa64pfr", "arm_id_aa64smfr", "arm_id_aa64zfr" # ARM (AArch64)
 		]
 		ignore  = ["MSR Register"]
 		good = False

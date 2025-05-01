@@ -717,6 +717,8 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 					fprintf(f, "arm_id_aa64afr%d=%016" PRIx64 "\n", i, raw_ptr->arm_id_aa64afr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64DFR_REGS; i++)
 					fprintf(f, "arm_id_aa64dfr%d=%016" PRIx64 "\n", i, raw_ptr->arm_id_aa64dfr[i]);
+				for (i = 0; i < MAX_ARM_ID_AA64FPFR_REGS; i++)
+					fprintf(f, "arm_id_aa64fpfr%d=%016" PRIx64 "\n", i, raw_ptr->arm_id_aa64fpfr[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64ISAR_REGS; i++)
 					fprintf(f, "arm_id_aa64isar%d=%016" PRIx64 "\n", i, raw_ptr->arm_id_aa64isar[i]);
 				for (i = 0; i < MAX_ARM_ID_AA64MMFR_REGS; i++)
@@ -871,6 +873,9 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 			}
 			else if ((sscanf(line, "arm_id_aa64dfr%d=%" SCNx64, &i, &aarch64_reg) >= 2)) {
 				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_id_aa64dfr[i]);
+			}
+			else if ((sscanf(line, "arm_id_aa64fpfr%d=%" SCNx64, &i, &aarch64_reg) >= 2)) {
+				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_id_aa64fpfr[i]);
 			}
 			else if ((sscanf(line, "arm_id_aa64isar%d=%" SCNx64, &i, &aarch64_reg) >= 2)) {
 				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_id_aa64isar[i]);
@@ -1418,6 +1423,8 @@ int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_c
 			cpu_read_arm_register_64b(handle, REQ_ID_AA64AFR0 + i, &data->arm_id_aa64afr[i]);
 		for (i = 0; i < MAX_ARM_ID_AA64DFR_REGS; i++)
 			cpu_read_arm_register_64b(handle, REQ_ID_AA64DFR0 + i, &data->arm_id_aa64dfr[i]);
+		for (i = 0; i < MAX_ARM_ID_AA64FPFR_REGS; i++)
+			cpu_read_arm_register_64b(handle, REQ_ID_AA64FPFR0 + i, &data->arm_id_aa64fpfr[i]);
 		for (i = 0; i < MAX_ARM_ID_AA64ISAR_REGS; i++)
 			cpu_read_arm_register_64b(handle, REQ_ID_AA64ISAR0 + i, &data->arm_id_aa64isar[i]);
 		for (i = 0; i < MAX_ARM_ID_AA64MMFR_REGS; i++)
@@ -1444,9 +1451,12 @@ int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_c
 		cpu_exec_mrs(AARCH64_REG_ID_AA64AFR1_EL1, data->arm_id_aa64afr[1]);
 		cpu_exec_mrs(AARCH64_REG_ID_AA64DFR0_EL1, data->arm_id_aa64dfr[0]);
 		cpu_exec_mrs(AARCH64_REG_ID_AA64DFR1_EL1, data->arm_id_aa64dfr[1]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64DFR2_EL1, data->arm_id_aa64dfr[2]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64FPFR0_EL1, data->arm_id_aa64fpfr[0]);
 		cpu_exec_mrs(AARCH64_REG_ID_AA64ISAR0_EL1, data->arm_id_aa64isar[0]);
 		cpu_exec_mrs(AARCH64_REG_ID_AA64ISAR1_EL1, data->arm_id_aa64isar[1]);
 		cpu_exec_mrs(AARCH64_REG_ID_AA64ISAR2_EL1, data->arm_id_aa64isar[2]);
+		cpu_exec_mrs(AARCH64_REG_ID_AA64ISAR3_EL1, data->arm_id_aa64isar[3]);
 		cpu_exec_mrs(AARCH64_REG_ID_AA64MMFR0_EL1, data->arm_id_aa64mmfr[0]);
 		cpu_exec_mrs(AARCH64_REG_ID_AA64MMFR1_EL1, data->arm_id_aa64mmfr[1]);
 		cpu_exec_mrs(AARCH64_REG_ID_AA64MMFR2_EL1, data->arm_id_aa64mmfr[2]);
@@ -1876,6 +1886,7 @@ const char* cpu_feature_level_str(cpu_feature_level_t level)
 		{ FEATURE_LEVEL_ARM_V9_2_A, "ARMv9.2-A" },
 		{ FEATURE_LEVEL_ARM_V9_3_A, "ARMv9.3-A" },
 		{ FEATURE_LEVEL_ARM_V9_4_A, "ARMv9.4-A" },
+		{ FEATURE_LEVEL_ARM_V9_5_A, "ARMv9.5-A" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != (NUM_FEATURE_LEVELS - FEATURE_LEVEL_ARM_V1) + (FEATURE_LEVEL_X86_64_V4 - FEATURE_LEVEL_I386) + 2) {
@@ -2053,14 +2064,17 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_AVX512VBMI, "avx512vbmi" },
 		{ CPU_FEATURE_AVX512VBMI2, "avx512vbmi2" },
 		{ CPU_FEATURE_HYPERVISOR, "hypervisor" },
+		/* Arm */
 		{ CPU_FEATURE_SWAP, "swap" },
 		{ CPU_FEATURE_THUMB, "thumb" },
 		{ CPU_FEATURE_ADVMULTU, "advmultu" },
 		{ CPU_FEATURE_ADVMULTS, "advmults" },
 		{ CPU_FEATURE_JAZELLE, "jazelle" },
+		/* Armv6.0 */
 		{ CPU_FEATURE_DEBUGV6, "debugv6" },
 		{ CPU_FEATURE_DEBUGV6P1, "debugv6p1" },
 		{ CPU_FEATURE_THUMB2, "thumb2" },
+		/* Armv7.0 */
 		{ CPU_FEATURE_DEBUGV7, "debugv7" },
 		{ CPU_FEATURE_DEBUGV7P1, "debugv7p1" },
 		{ CPU_FEATURE_THUMBEE, "thumbee" },
@@ -2068,6 +2082,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_LPAE, "lpae" },
 		{ CPU_FEATURE_PMUV1, "pmuv1" },
 		{ CPU_FEATURE_PMUV2, "pmuv2" },
+		/* A2.2.1 The Armv8.0 architecture extension */
 		{ CPU_FEATURE_ASID16, "asid16" },
 		{ CPU_FEATURE_ADVSIMD, "advsimd" },
 		{ CPU_FEATURE_CRC32, "crc32" },
@@ -2085,6 +2100,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SHA1, "sha1" },
 		{ CPU_FEATURE_SHA256, "sha256" },
 		{ CPU_FEATURE_NTLBPA, "ntlbpa" },
+		/* A2.2.2 The Armv8.1 architecture extension */
 		{ CPU_FEATURE_HAFDBS, "hafdbs" },
 		{ CPU_FEATURE_HPDS, "hpds" },
 		{ CPU_FEATURE_LOR, "lor" },
@@ -2094,6 +2110,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_RDM, "rdm" },
 		{ CPU_FEATURE_VHE, "vhe" },
 		{ CPU_FEATURE_VMID16, "vmid16" },
+		/* A2.2.3 The Armv8.2 architecture extension */
 		{ CPU_FEATURE_AA32HPD, "aa32hpd" },
 		{ CPU_FEATURE_AA32I8MM, "aa32i8mm" },
 		{ CPU_FEATURE_DPB, "dpb" },
@@ -2118,6 +2135,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_TTCNP, "ttcnp" },
 		{ CPU_FEATURE_UAO, "uao" },
 		{ CPU_FEATURE_XNX, "xnx" },
+		/* A2.2.4 The Armv8.3 architecture extension */
 		{ CPU_FEATURE_CCIDX, "ccidx" },
 		{ CPU_FEATURE_CONSTPACFIELD, "constpacfield" },
 		{ CPU_FEATURE_EPAC, "epac" },
@@ -2131,6 +2149,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_PACQARMA5, "pacqarma5" },
 		{ CPU_FEATURE_PAUTH, "pauth" },
 		{ CPU_FEATURE_SPEV1P1, "spev1p1" },
+		/* A2.2.5 The Armv8.4 architecture extension */
 		{ CPU_FEATURE_AMUV1, "amuv1" },
 		{ CPU_FEATURE_BBM, "bbm" },
 		{ CPU_FEATURE_DIT, "dit" },
@@ -2152,6 +2171,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_TRF, "trf" },
 		{ CPU_FEATURE_TTL, "ttl" },
 		{ CPU_FEATURE_TTST, "ttst" },
+		/* A2.2.6 The Armv8.5 architecture extension */
 		{ CPU_FEATURE_BTI, "bti" },
 		{ CPU_FEATURE_CSV2, "csv2" },
 		{ CPU_FEATURE_CSV3, "csv3" },
@@ -2170,6 +2190,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SPECRES, "specres" },
 		{ CPU_FEATURE_SSBS, "ssbs" },
 		{ CPU_FEATURE_SSBS2, "ssbs2" },
+		/* A2.2.7 The Armv8.6 architecture extension */
 		{ CPU_FEATURE_AA32BF16, "aa32bf16" },
 		{ CPU_FEATURE_AMUV1P1, "amuv1p1" },
 		{ CPU_FEATURE_BF16, "bf16" },
@@ -2182,6 +2203,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_MTPMU, "mtpmu" },
 		{ CPU_FEATURE_PAUTH2, "pauth2" },
 		{ CPU_FEATURE_TWED, "twed" },
+		/* A2.2.8 The Armv8.7 architecture extension */
 		{ CPU_FEATURE_AFP, "afp" },
 		{ CPU_FEATURE_EBF16, "ebf16" },
 		{ CPU_FEATURE_HCX, "hcx" },
@@ -2197,6 +2219,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SPEV1P2, "spev1p2" },
 		{ CPU_FEATURE_WFXT, "wfxt" },
 		{ CPU_FEATURE_XS, "xs" },
+		/* A2.2.9 The Armv8.8 architecture extension */
 		{ CPU_FEATURE_CMOW, "cmow" },
 		{ CPU_FEATURE_DEBUGV8P8, "debugv8p8" },
 		{ CPU_FEATURE_HBC, "hbc" },
@@ -2207,6 +2230,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SPEV1P3, "spev1p3" },
 		{ CPU_FEATURE_TCR2, "tcr2" },
 		{ CPU_FEATURE_TIDCP1, "tidcp1" },
+		/* A2.2.10 The Armv8.9 architecture extension */
 		{ CPU_FEATURE_ADERR, "aderr" },
 		{ CPU_FEATURE_AIE, "aie" },
 		{ CPU_FEATURE_ANERR, "anerr" },
@@ -2242,6 +2266,7 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SPEV1P4, "spev1p4" },
 		{ CPU_FEATURE_SPMU, "spmu" },
 		{ CPU_FEATURE_THE, "the" },
+		/* A2.3.1 The Armv9.0 architecture extension */
 		{ CPU_FEATURE_SVE2, "sve2" },
 		{ CPU_FEATURE_SVE_AES, "sve_aes" },
 		{ CPU_FEATURE_SVE_BITPERM, "sve_bitperm" },
@@ -2250,15 +2275,18 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SVE_SM4, "sve_sm4" },
 		{ CPU_FEATURE_TME, "tme" },
 		{ CPU_FEATURE_TRBE, "trbe" },
+		/* A2.3.3 The Armv9.2 architecture extension */
 		{ CPU_FEATURE_BRBE, "brbe" },
 		{ CPU_FEATURE_RME, "rme" },
 		{ CPU_FEATURE_SME, "sme" },
 		{ CPU_FEATURE_SME_F64F64, "sme_f64f64" },
 		{ CPU_FEATURE_SME_FA64, "sme_fa64" },
 		{ CPU_FEATURE_SME_I16I64, "sme_i16i64" },
+		/* A2.3.4 The Armv9.3 architecture extension */
 		{ CPU_FEATURE_BRBEV1P1, "brbev1p1" },
 		{ CPU_FEATURE_MEC, "mec" },
 		{ CPU_FEATURE_SME2, "sme2" },
+		/* A2.3.5 The Armv9.4 architecture extension */
 		{ CPU_FEATURE_ABLE, "able" },
 		{ CPU_FEATURE_BWE, "bwe" },
 		{ CPU_FEATURE_D128, "d128" },
@@ -2275,6 +2303,35 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SYSINSTR128, "sysinstr128" },
 		{ CPU_FEATURE_SYSREG128, "sysreg128" },
 		{ CPU_FEATURE_TRBE_EXT, "trbe_ext" },
+		/* A2.3.6 The Armv9.5 architecture extension */
+		{ CPU_FEATURE_ASID2, "asid2" },
+		{ CPU_FEATURE_BWE2, "bwe2" },
+		{ CPU_FEATURE_CPA, "cpa" },
+		{ CPU_FEATURE_CPA2, "cpa2" },
+		{ CPU_FEATURE_E2H0, "e2h0" },
+		{ CPU_FEATURE_E3DSE, "e3dse" },
+		{ CPU_FEATURE_ETS3, "ets3" },
+		{ CPU_FEATURE_FAMINMAX, "faminmax" },
+		{ CPU_FEATURE_FGWTE3, "fgwte3" },
+		{ CPU_FEATURE_FP8, "fp8" },
+		{ CPU_FEATURE_FP8DOT2, "fp8dot2" },
+		{ CPU_FEATURE_FP8DOT4, "fp8dot4" },
+		{ CPU_FEATURE_FP8FMA, "fp8fma" },
+		{ CPU_FEATURE_FPMR, "fpmr" },
+		{ CPU_FEATURE_HACDBS, "hacdbs" },
+		{ CPU_FEATURE_HDBSS, "hdbss" },
+		{ CPU_FEATURE_LUT, "lut" },
+		{ CPU_FEATURE_PAUTH_LR, "pauth_lr" },
+		{ CPU_FEATURE_RME_GPC2, "rme_gpc2" },
+		{ CPU_FEATURE_SME_F8F16, "sme_f8f16" },
+		{ CPU_FEATURE_SME_F8F32, "sme_f8f32" },
+		{ CPU_FEATURE_SME_LUTV2, "sme_lutv2" },
+		{ CPU_FEATURE_SPMU2, "spmu2" },
+		{ CPU_FEATURE_SSVE_FP8DOT2, "ssve_fp8dot2" },
+		{ CPU_FEATURE_SSVE_FP8DOT4, "ssve_fp8dot4" },
+		{ CPU_FEATURE_SSVE_FP8FMA, "ssve_fp8fma" },
+		{ CPU_FEATURE_STEP2, "step2" },
+		{ CPU_FEATURE_TLBIW, "tlbiw" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {

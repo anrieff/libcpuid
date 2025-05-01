@@ -86,4 +86,4 @@ performance
 4
 Atlas
 28-14 nm
-advsimd crc32 doublelock fp pmull sha1 sha256 bbm
+advsimd crc32 doublelock fp pmull sha1 sha256 bbm e2h0
