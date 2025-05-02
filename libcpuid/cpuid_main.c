@@ -937,7 +937,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 	/* Close file descriptor */
 	if (strcmp(filename, ""))
 		fclose(f);
-	return cpuid_set_error(ERR_OK);
+	return cpuid_set_error((use_raw_array && (raw_array->num_raw == 0)) ? ERR_BADFMT : ERR_OK);
 }
 #undef RAW_ASSIGN_LINE_X86
 #undef RAW_ASSIGN_LINE_ARM
