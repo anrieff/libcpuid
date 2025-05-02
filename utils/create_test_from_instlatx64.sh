@@ -16,7 +16,7 @@ echo -e "\033[1mCreating '$REPORT_FILE' report file...\033[0m"
 "$CPUID_TOOL" --load="$RAW_FILE" --outfile="$REPORT_FILE" --report
 
 if [[ -d "$OUTPUT_DIR" ]]; then
-	test_file="$("$CPUID_TOOL" --load="$RAW_FILE" --brandstr | head -n1 | xargs | sed 's/([^)]*)//g' | sed -r 's/\s+/-/g' | tr '[:upper:]' '[:lower:]')"
+	test_file="$("$CPUID_TOOL" --load="$RAW_FILE" --brandstr | head -n1 | sed -e 's/([^)]*)//g' -e 's/,//g' | cut -d'@' -f1 | xargs | sed -r 's/\s+/-/g' | tr '[:upper:]' '[:lower:]')"
 	output_file="${OUTPUT_DIR}/${test_file}.test"
 	echo -e "\033[1mCreating '$output_file' test file...\033[0m"
 else
