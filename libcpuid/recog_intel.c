@@ -86,17 +86,17 @@ const struct match_entry_t cpudb_intel[] = {
 	/* Willamette (180 nm): */
 	{ 15,  0, -1, 15, -1,   1,    -1,    -1, { "Pentium(R)",        2 }, "Pentium 4 (Willamette)",   "0.18 µm" },
 	{ 15,  1, -1, 15, -1,   1,    -1,    -1, { "Pentium(R)",        2 }, "Pentium 4 (Willamette)",   "0.18 µm" },
-	{ 15,  0, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  4 }, "Mobile P-4 (Willamette)",  "0.18 µm" },
-	{ 15,  1, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  4 }, "Mobile P-4 (Willamette)",  "0.18 µm" },
+	{ 15,  0, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  6 }, "Mobile P-4 (Willamette)",  "0.18 µm" },
+	{ 15,  1, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  6 }, "Mobile P-4 (Willamette)",  "0.18 µm" },
 	{ 15,  1, -1, 15, -1,   1,    -1,    -1, { "Celeron(R)",        2 }, "P-4 Celeron (Willamette)", "0.18 µm" },
 	{ 15,  0, -1, 15, -1,   1,    -1,    -1, { "Xeon(TM)",          2 }, "Xeon (Foster)",            "0.18 µm" },
 	{ 15,  1, -1, 15, -1,   1,    -1,    -1, { "Xeon(TM)",          2 }, "Xeon (Foster)",            "0.18 µm" },
 	/* Northwood / Mobile Pentium 4 / Banias (130 nm): */
 	{ 15,  2, -1, 15, -1,   1,    -1,    -1, { "Pentium(R)",        2 }, "Pentium 4 (Northwood)",   "0.13 µm" },
-	{ 15,  2, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  4 }, "Mobile P-4 (Northwood)",  "0.13 µm" },
+	{ 15,  2, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  6 }, "Mobile P-4 (Northwood)",  "0.13 µm" },
 	{ 15,  2, -1, 15, -1,   1,    -1,    -1, { "Celeron(R)",        2 }, "P-4 Celeron (Northwood)", "0.13 µm" },
 	{  6,  9, -1, -1, -1,   1,    -1,    -1, { "Pentium(R)",        2 }, "Pentium M (Banias)",      "0.13 µm" },
-	{  6,  9, -1, -1, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  4 }, "Pentium M (Banias)",      "0.13 µm" },
+	{  6,  9, -1, -1, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  6 }, "Pentium M (Banias)",      "0.13 µm" },
 	{  6,  9, -1, -1, -1,   1,    -1,    -1, { "Celeron(R)",        2 }, "Celeron M (Banias)",      "0.13 µm" },
 	{  6,  9, -1, -1, -1,   1,    -1,    -1, { "Celeron(R) M",      4 }, "Celeron M (Banias)",      "0.13 µm" },
 	{ 15,  2, -1, 15, -1,   1,    -1,    -1, { "Xeon(TM)",          2 }, "Xeon (Prestonia)",        "0.13 µm" },
@@ -104,13 +104,13 @@ const struct match_entry_t cpudb_intel[] = {
 	/* Prescott / Dothan (90 nm): */
 	{ 15,  3, -1, 15, -1,   1,    -1,    -1, { "Pentium(R)",        2 }, "Pentium 4 (Prescott)",     "90 nm" },
 	{ 15,  4, -1, 15, -1,   1,    -1,    -1, { "Pentium(R)",        2 }, "Pentium 4 (Prescott)",     "90 nm" },
-	{ 15,  3, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  4 }, "Mobile P-4 (Prescott)",    "90 nm" },
-	{ 15,  4, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  4 }, "Mobile P-4 (Prescott)",    "90 nm" },
+	{ 15,  3, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  6 }, "Mobile P-4 (Prescott)",    "90 nm" },
+	{ 15,  4, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  6 }, "Mobile P-4 (Prescott)",    "90 nm" },
 	{ 15,  3, -1, 15, -1,   1,    -1,    -1, { "Celeron(R)",        2 }, "P-4 Celeron D (Prescott)", "90 nm" },
 	{ 15,  4, -1, 15, -1,   1,    -1,    -1, { "Celeron(R)",        2 }, "P-4 Celeron D (Prescott)", "90 nm" },
 	{ 15,  4, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) D",      4 }, "Pentium D (SmithField)",   "90 nm" },
 	{  6, 13, -1, -1, -1,   1,    -1,    -1, { "Pentium(R) M",      4 }, "Pentium M (Dothan)",       "90 nm" },
-	{  6, 13, -1, -1, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  4 }, "Pentium M (Dothan)",       "90 nm" },
+	{  6, 13, -1, -1, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  6 }, "Pentium M (Dothan)",       "90 nm" },
 	{  6, 13, -1, -1, -1,   1,    -1,    -1, { "Celeron(R)",        2 }, "Celeron M (Dothan)",       "90 nm" },
 	{  6, 13, -1, -1, -1,   1,    -1,    -1, { "Celeron(R) M",      4 }, "Celeron M (Dothan)",       "90 nm" },
 	{ 15,  3, -1, 15, -1,   1,    -1,    -1, { "Xeon(TM)",          2 }, "Xeon (Nocona)",            "90 nm" },
@@ -121,7 +121,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{ 15,  4, -1, 15, -1,   1,    -1,    -1, { "Xeon(TM)",          2 }, "Xeon (Potomac)",           "90 nm" },
 	/* Cedar Mill / Yonah / Presler (65 nm): */
 	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Pentium(R)",              2 }, "Pentium 4 (Cedar Mill)",     "65 nm" },
-	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",        4 }, "Mobile P-4 (Cedar Mill)",    "65 nm" },
+	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",        6 }, "Mobile P-4 (Cedar Mill)",    "65 nm" },
 	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Celeron(R)",              2 }, "P-4 Celeron D (Cedar Mill)", "65 nm" },
 	{  6, 14, -1, -1, -1,   1,    -1,    -1, { "Core(TM) [UT]1###",       6 }, "Core Solo (Yonah)",          "65 nm" },
 	{  6, 14, -1, -1, -1,   2,    -1,    -1, { "Core(TM) Duo [UTL]2###",  6 }, "Core Duo (Yonah)",           "65 nm" },
@@ -277,14 +277,14 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 94,   4,    -1,    -1, { "Core(TM) i7-6###",         8 }, "Core i7 (Skylake)",   "14 nm" },
 	{  6, 14, -1, -1, 94,   4,    -1,    -1, { "Core(TM) i5-6###",         8 }, "Core i5 (Skylake)",   "14 nm" },
 	{  6, 14, -1, -1, 94,   2,    -1,    -1, { "Core(TM) i3-6###",         8 }, "Core i3 (Skylake)",   "14 nm" },
-	{  6, 14, -1, -1, 94,   2,    -1,    -1, { "Pentium(R) G4###",         4 }, "Pentium (Skylake)",   "14 nm" },
-	{  6, 14, -1, -1, 94,   2,    -1,    -1, { "Celeron(R) G3###",         4 }, "Celeron (Skylake)",   "14 nm" },
+	{  6, 14, -1, -1, 94,   2,    -1,    -1, { "Pentium(R) G4###",         6 }, "Pentium (Skylake)",   "14 nm" },
+	{  6, 14, -1, -1, 94,   2,    -1,    -1, { "Celeron(R) G3###",         6 }, "Celeron (Skylake)",   "14 nm" },
 	{  6, 14, -1, -1, 78,   2,    -1,    -1, { "Core(TM) m7-6Y##",         8 }, "Core m7 (Skylake)",   "14 nm" },
 	{  6, 14, -1, -1, 78,   2,    -1,    -1, { "Core(TM) m5-6Y##",         8 }, "Core m5 (Skylake)",   "14 nm" },
 	{  6, 14, -1, -1, 78,   2,    -1,    -1, { "Core(TM) m3-6Y##",         8 }, "Core m3 (Skylake)",   "14 nm" },
-	{  6, 14, -1, -1, 78,   2,    -1,    -1, { "Pentium(R) 4###[UY]",      4 }, "Pentium (Skylake)",   "14 nm" },
-	{  6, 14, -1, -1, 78,   2,    -1,    -1, { "Celeron(R) 3###U",         4 }, "Celeron (Skylake)",   "14 nm" },
-	{  6, 14, -1, -1, 78,   2,    -1,    -1, { "Celeron(R) G3###E",        6 }, "Celeron (Skylake)",   "14 nm" },
+	{  6, 14, -1, -1, 78,   2,    -1,    -1, { "Pentium(R) 4###[UY]",      6 }, "Pentium (Skylake)",   "14 nm" },
+	{  6, 14, -1, -1, 78,   2,    -1,    -1, { "Celeron(R) 3###U",         6 }, "Celeron (Skylake)",   "14 nm" },
+	{  6, 14, -1, -1, 78,   2,    -1,    -1, { "Celeron(R) G3###E",        8 }, "Celeron (Skylake)",   "14 nm" },
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Core(TM) i9-7###X",       10 }, "Core i9 (Skylake-X)", "14 nm" }, /* 10 to 18 cores */
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Core(TM) i7-7###X",       10 }, "Core i7 (Skylake-X)", "14 nm" }, /* 6 to 8 cores */
 	{  6, 14, -1, -1, 94,  -1,    -1,    -1, { "Xeon(R) W-#1##X",          8 }, "Xeon (Skylake-X)",    "14 nm" },
@@ -300,38 +300,38 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i7-7###",          8 }, "Core i7 (Kaby Lake)",         "14+ nm" },
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i5-7###",          8 }, "Core i5 (Kaby Lake)",         "14+ nm" },
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Core(TM) i3-7###",          8 }, "Core i3 (Kaby Lake)",         "14+ nm" },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Pentium(R) G4###",          4 }, "Pentium (Kaby Lake)",         "14+ nm" },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Celeron(R) G3###",          4 }, "Celeron (Kaby Lake)",         "14+ nm" },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Pentium(R) G4###",          6 }, "Pentium (Kaby Lake)",         "14+ nm" },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Celeron(R) G3###",          6 }, "Celeron (Kaby Lake)",         "14+ nm" },
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i7-7###X",        10 }, "Core i7 (Kaby Lake-X)",       "14+ nm" },
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i5-7###X",        10 }, "Core i5 (Kaby Lake-X)",       "14+ nm" },
-	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Core(TM) i7-7.##",          8 }, "Core i7 (Kaby Lake-U)",       "14+ nm" },
-	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Core(TM) i5-7.##",          8 }, "Core i5 (Kaby Lake-U)",       "14+ nm" },
-	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Core(TM) i3-7.##",          8 }, "Core i3 (Kaby Lake-U)",       "14+ nm" },
-	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Core(TM) m3-7.##",          8 }, "Core m3 (Kaby Lake-U)",       "14+ nm" },
-	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Pentium(R) 441#[UY]",       8 }, "Pentium Gold (Kaby Lake-U)",  "14+ nm" },
-	{  6, 14,  9, -1, 142,  2,    -1,    -1, { "Celeron(R) 3###[UY]",       6 }, "Celeron (Kaby Lake-U)",       "14+ nm" },
-	{  6, 14,  9, -1, 158,  4,    -1,    -1, { "Core(TM) i7-8###G",        10 }, "Core i7 (Kaby Lake-G)",       "14+ nm" },
-	{  6, 14,  9, -1, 158,  4,    -1,    -1, { "Core(TM) i5-8###G",        10 }, "Core i5 (Kaby Lake-G)",       "14+ nm" },
-	{  6, 14, 11, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8###U",        10 }, "Core i7 (Kaby Lake-R)",       "14+ nm" }, /* i7-8550U + i7-8650U */
-	{  6, 14, 11, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8###U",        10 }, "Core i5 (Kaby Lake-R)",       "14+ nm" }, /* i5-8250U + i5-8350U */
-	{  6, 14, 11, -1, 142,  2,    -1,    -1, { "Core(TM) i3-8###U",        10 }, "Core i3 (Kaby Lake-R)",       "14+ nm" }, /* i3-8130U */
-	{  6, 14, 11, -1, 142,  2,    -1,    -1, { "Pentium(R) 4###U",          8 }, "Pentium Gold (Kaby Lake-R)",  "14+ nm" }, /* Pentium 4417U */
-	{  6, 14, 11, -1, 142,  2,    -1,    -1, { "Celeron(R) 3###U",          6 }, "Celeron (Kaby Lake-R)",       "14+ nm" }, /* Celeron 3867U */
-	{  6, 14, 11, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8###Y",        10 }, "Core i7 (Amber Lake-Y)",      "14+ nm" }, /* i7-8500Y */
-	{  6, 14, 11, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8###Y",        10 }, "Core i5 (Amber Lake-Y)",      "14+ nm" }, /* i5-8200Y + i5-82010Y + i5-8310Y */
-	{  6, 14, 11, -1, 142,  2,    -1,    -1, { "Core(TM) m3-8###Y",        10 }, "Core m3 (Amber Lake-Y)",      "14+ nm" }, /* m3-8100Y */
-	{  6, 14, 11, -1, 142,  2,    -1,    -1, { "Pentium(R) 442#Y",          8 }, "Pentium Gold (Amber Lake-Y)", "14+ nm" }, /* Pentium 4425Y */
-	{  6, 14, 12, -1, 142,  4,    -1,    -1, { "Core(TM) i7-10###Y",       10 }, "Core i7 (Amber Lake-Y)",      "14+ nm" }, /* i7-10510Y */
-	{  6, 14, 12, -1, 142,  4,    -1,    -1, { "Core(TM) i5-10###Y",       10 }, "Core i5 (Amber Lake-Y)",      "14+ nm" }, /* i5-10210Y + i5-10310Y + i5-8310Y */
-	{  6, 14, 12, -1, 142,  2,    -1,    -1, { "Core(TM) i3-10###Y",       10 }, "Core i3 (Amber Lake-Y)",      "14+ nm" }, /* i3-10100Y + i3-10110Y */
-	{  6, 14, 12, -1, 142,  2,    -1,    -1, { "Pentium(R) 65##Y",          8 }, "Pentium Gold (Amber Lake-Y)", "14+ nm" }, /* Pentium 6500Y */
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i7-7.##",          8 }, "Core i7 (Kaby Lake-U)",       "14+ nm" },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i5-7.##",          8 }, "Core i5 (Kaby Lake-U)",       "14+ nm" },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i3-7.##",          8 }, "Core i3 (Kaby Lake-U)",       "14+ nm" },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) m3-7.##",          8 }, "Core m3 (Kaby Lake-U)",       "14+ nm" },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 441#[UY]",       8 }, "Pentium Gold (Kaby Lake-U)",  "14+ nm" },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Celeron(R) 3###[UY]",       6 }, "Celeron (Kaby Lake-U)",       "14+ nm" },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i7-8###G",        10 }, "Core i7 (Kaby Lake-G)",       "14+ nm" },
+	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i5-8###G",        10 }, "Core i5 (Kaby Lake-G)",       "14+ nm" },
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8##0U",        10 }, "Core i7 (Kaby Lake-R)",       "14+ nm" }, /* i7-8550U + i7-8650U */
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8##0U",        10 }, "Core i5 (Kaby Lake-R)",       "14+ nm" }, /* i5-8250U + i5-8350U */
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i3-8##0U",        10 }, "Core i3 (Kaby Lake-R)",       "14+ nm" }, /* i3-8130U */
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 4###U",          6 }, "Pentium Gold (Kaby Lake-R)",  "14+ nm" }, /* Pentium 4417U */
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Celeron(R) 3###U",          6 }, "Celeron (Kaby Lake-R)",       "14+ nm" }, /* Celeron 3867U */
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8###Y",        10 }, "Core i7 (Amber Lake-Y)",      "14+ nm" }, /* i7-8500Y */
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8###Y",        10 }, "Core i5 (Amber Lake-Y)",      "14+ nm" }, /* i5-8200Y + i5-82010Y + i5-8310Y */
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) m3-8###Y",        10 }, "Core m3 (Amber Lake-Y)",      "14+ nm" }, /* m3-8100Y */
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 442#Y",          8 }, "Pentium Gold (Amber Lake-Y)", "14+ nm" }, /* Pentium 4425Y */
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-10###Y",       10 }, "Core i7 (Amber Lake-Y)",      "14+ nm" }, /* i7-10510Y */
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-10###Y",       10 }, "Core i5 (Amber Lake-Y)",      "14+ nm" }, /* i5-10210Y + i5-10310Y + i5-8310Y */
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i3-10###Y",       10 }, "Core i3 (Amber Lake-Y)",      "14+ nm" }, /* i3-10100Y + i3-10110Y */
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 65##Y",          6 }, "Pentium Gold (Amber Lake-Y)", "14+ nm" }, /* Pentium 6500Y */
 
 	/* Coffee Lake CPUs (8th gen, 14++ nm): */
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i7-8###",       8 }, "Core i7 (Coffee Lake-S)",       "14++ nm" },
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i5-8###",       8 }, "Core i5 (Coffee Lake-S)",       "14++ nm" },
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i3-8###",       8 }, "Core i3 (Coffee Lake-S)",       "14++ nm" },
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Pentium(R) G5###",       6 }, "Pentium Gold (Coffee Lake-S)",  "14++ nm" },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Celeron(R) G4###",       4 }, "Celeron (Coffee Lake-S)",       "14++ nm" },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Celeron(R) G4###",       6 }, "Celeron (Coffee Lake-S)",       "14++ nm" },
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Xeon(R) E-21##M",        8 }, "Xeon E (Coffee Lake-H)",        "14++ nm" },
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i9-8###[HB]",  10 }, "Core i9 (Coffee Lake-H)",       "14++ nm" },
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i7-8###[HB]",  10 }, "Core i7 (Coffee Lake-H)",       "14++ nm" },
@@ -343,10 +343,10 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Core(TM) i3-8###U",     10 }, "Core i3 (Coffee Lake-U)",       "14++ nm" },
 	{  6,  6, -1, -1, 102,  2,    -1,    -1, { "Core(TM) i3-8###U",     10 }, "Core i3 (Cannon Lake-U)",       "14++ nm" }, /* Core i3 8121U */
 	{  6,  6, -1, -1, 102,  2,    -1,    -1, { "Core(TM) m3-8###Y",     10 }, "Core m3 (Cannon Lake-Y)",       "14++ nm" }, /* Core m3 8114Y */
-	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8###U",     12 }, "Core i7 (Whiskey Lake-U)",      "14++ nm" },
-	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8###U",     12 }, "Core i5 (Whiskey Lake-U)",      "14++ nm" },
-	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i3-8###U",     12 }, "Core i3 (Whiskey Lake-U)",      "14++ nm" },
-	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 5###U",       8 }, "Pentium Gold (Whiskey Lake-U)", "14++ nm" },
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8##5U",     10 }, "Core i7 (Whiskey Lake-U)",      "14++ nm" },
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8##5U",     10 }, "Core i5 (Whiskey Lake-U)",      "14++ nm" },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i3-8##5U",     10 }, "Core i3 (Whiskey Lake-U)",      "14++ nm" },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 5###U",       6 }, "Pentium Gold (Whiskey Lake-U)", "14++ nm" },
 	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Celeron(R) 4###U",       6 }, "Celeron (Whiskey Lake-U)",      "14++ nm" },
 
 	/* Coffee Lake Refresh CPUs (9th gen, 14++ nm): */
@@ -356,8 +356,8 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 158,  8,    -1,    -1, { "Core(TM) i7-9###",       8 }, "Core i7 (Coffee Lake-S)",         "14++ nm" },
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i5-9###",       8 }, "Core i5 (Coffee Lake-S)",         "14++ nm" },
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i3-9###",       8 }, "Core i3 (Coffee Lake-S)",         "14++ nm" },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Pentium(R) Gold G5###",  6 }, "Pentium Gold (Coffee Lake-S)",    "14++ nm" },
-	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Celeron(R) G4###",       4 }, "Celeron (Coffee Lake-S)",         "14++ nm" },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Pentium(R) Gold G5###",  8 }, "Pentium Gold (Coffee Lake-S)",    "14++ nm" },
+	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Celeron(R) G4###",       6 }, "Celeron (Coffee Lake-S)",         "14++ nm" },
 	{  6, 14, -1, -1, 158, -1,    -1,    -1, { "Xeon(R) E-22##M",        8 }, "Xeon E (Coffee Lake-H Refresh)",  "14++ nm" },
 	{  6, 14, -1, -1, 158,  8,    -1,    -1, { "Core(TM) i9-9###H",     10 }, "Core i9 (Coffee Lake-H Refresh)", "14++ nm" },
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i7-9###H",     10 }, "Core i7 (Coffee Lake-H Refresh)", "14++ nm" },
@@ -377,15 +377,15 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  5, -1, -1, 165,  8,    -1,    -1, { "Core(TM) i7-10###",      8 }, "Core i7 (Comet Lake-S)",      "14++ nm" },
 	{  6,  5, -1, -1, 165,  6,    -1,    -1, { "Core(TM) i5-10###",      8 }, "Core i5 (Comet Lake-S)",      "14++ nm" },
 	{  6,  5, -1, -1, 165,  4,    -1,    -1, { "Core(TM) i3-10###",      8 }, "Core i3 (Comet Lake-S)",      "14++ nm" },
-	{  6,  5, -1, -1, 165,  2,    -1,    -1, { "Pentium(R) Gold G6###",  6 }, "Pentium Gold (Comet Lake-S)", "14++ nm" },
-	{  6,  5, -1, -1, 165,  2,    -1,    -1, { "Celeron(R) G5###",       4 }, "Celeron (Comet Lake-S)",      "14++ nm" },
+	{  6,  5, -1, -1, 165,  2,    -1,    -1, { "Pentium(R) Gold G6###",  8 }, "Pentium Gold (Comet Lake-S)", "14++ nm" },
+	{  6,  5, -1, -1, 165,  2,    -1,    -1, { "Celeron(R) G5###",       6 }, "Celeron (Comet Lake-S)",      "14++ nm" },
 	{  6,  6, -1, -1, 166,  6,    -1,    -1, { "Core(TM) i7-10###U",    10 }, "Core i7 (Comet Lake-U)",      "14++ nm" },
 	{  6, 14, 12, -1, 142,  6,    -1,    -1, { "Core(TM) i7-10###U",    10 }, "Core i7 (Comet Lake-U)",      "14++ nm" },
 	{  6, 14, 12, -1, 142,  4,    -1,    -1, { "Core(TM) i7-10###U",    10 }, "Core i7 (Comet Lake-U)",      "14++ nm" },
 	{  6, 14, 12, -1, 142,  4,    -1,    -1, { "Core(TM) i5-10###U",    10 }, "Core i5 (Comet Lake-U)",      "14++ nm" },
 	{  6, 14, 12, -1, 142,  4,    -1,    -1, { "Core(TM) i3-10###U",    10 }, "Core i3 (Comet Lake-U)",      "14++ nm" },
-	{  6, 14, 12, -1, 142,  2,    -1,    -1, { "Pentium(R) Gold 6###U",  6 }, "Pentium Gold (Comet Lake-U)", "14++ nm" },
-	{  6, 14, 12, -1, 142,  2,    -1,    -1, { "Celeron(R) 5###U",       4 }, "Celeron (Comet Lake-U)",      "14++ nm" },
+	{  6, 14, 12, -1, 142,  2,    -1,    -1, { "Pentium(R) Gold 6###U",  8 }, "Pentium Gold (Comet Lake-U)", "14++ nm" },
+	{  6, 14, 12, -1, 142,  2,    -1,    -1, { "Celeron(R) 5###U",       6 }, "Celeron (Comet Lake-U)",      "14++ nm" },
 	{  6,  5, -1, -1, 165, -1,    -1,    -1, { "Xeon(R) W-10###M",      10 }, "Xeon W (Comet Lake-H)",       "14++ nm" },
 	{  6,  5, -1, -1, 165, -1,    -1,    -1, { "Core(TM) i9-10###H",    10 }, "Core i9 (Comet Lake-H)",      "14++ nm" },
 	{  6,  5, -1, -1, 165, -1,    -1,    -1, { "Core(TM) i7-10###H",    10 }, "Core i7 (Comet Lake-H)",      "14++ nm" },
