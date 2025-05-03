@@ -318,7 +318,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 13, -1, -1, 61,   2,    -1,    -1, { "Core(TM) i3-5###U",          10 }, "Core i3 (Broadwell-U)", "14 nm" },
 	{  6, 13, -1, -1, 61,   2,    -1,    -1, { "Pentium(R) 3###U",            6 }, "Pentium (Broadwell-U)", "14 nm" },
 	{  6, 13, -1, -1, 61,   2,    -1,    -1, { "Celeron(R) 3###U",            6 }, "Celeron (Broadwell-U)", "14 nm" },
-	{  6, 13, -1, -1, 61,   2,    -1,    -1, { "Processor 5Y##",              6 }, "Core M (Broadwell-Y)",  "14 nm" },
+	{  6, 13, -1, -1, 61,   2,    -1,    -1, { "5Y##",                        4 }, "Core M (Broadwell-Y)",  "14 nm" },
 	{  6, 15, -1, -1, 79,  -1,    -1,    -1, { "Xeon(R) E7-#### v4",          6 }, "Xeon E7 (Broadwell)",   "14 nm" },
 	{  6, 15, -1, -1, 79,  -1,    -1,    -1, { "Xeon(R) E5-####[ACLPRW] v4",  8 }, "Xeon E5 (Broadwell)",   "14 nm" },
 	{  6, 15, -1, -1, 79,  -1,    -1,    -1, { "Xeon(R) E5-#### v4",          6 }, "Xeon E5 (Broadwell)",   "14 nm" },
@@ -481,8 +481,8 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 12, -1, -1,  92, -1,    -1,    -1, { "Celeron(R) J3###",  6 }, "Celeron (Apollo Lake)", "14 nm" },
 	{  6, 12, -1, -1,  92, -1,    -1,    -1, { "Pentium(R) N4###",  6 }, "Pentium (Apollo Lake)", "14 nm" },
 	{  6, 12, -1, -1,  92, -1,    -1,    -1, { "Celeron(R) N3###",  6 }, "Celeron (Apollo Lake)", "14 nm" },
-	{  6, 12, -1, -1,  92, -1,    -1,    -1, { "Atom(TM)",          2 }, "Atom (Apollo Lake)",    "14 nm" },
-	{  6, 15, -1, -1,  95, -1,    -1,    -1, { "Atom(TM)",          2 }, "Atom (Denverton)" ,     "14 nm" },
+	{  6, 12, -1, -1,  92, -1,    -1,    -1, { "Atom(TM) E39##",    6 }, "Atom (Apollo Lake)",    "14 nm" },
+	{  6, 15, -1, -1,  95, -1,    -1,    -1, { "Atom(TM) C39##",    6 }, "Atom (Denverton)" ,     "14 nm" },
 
 	/* Goldmont Plus CPUs (2017, 14 nm, low-power) */
 	{  6, 10, -1, -1, 122, -1,    -1,    -1, { "Pentium(R) Silver [JN]5###",  8 }, "Pentium Silver (Gemini Lake)", "14 nm" },
