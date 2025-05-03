@@ -757,7 +757,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 	bool is_libcpuid_dump = true;
 	bool is_aida64_dump = false;
 	const bool use_raw_array = (raw_array != NULL);
-	logical_cpu_t logical_cpu = 0;
+	logical_cpu_t logical_cpu = 0, logical_cpu_offset = 0;
 	uint32_t addr, eax, ebx, ecx, edx, aarch32_reg;
 	uint64_t aarch64_reg;
 	char version[8] = "";
@@ -900,8 +900,12 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 		else if (is_aida64_dump) {
 			if (use_raw_array && ((sscanf(line, "------[ Logical CPU #%" SCNu16 " ]------", &logical_cpu) >= 1) ||
 			                      (sscanf(line, "------[ CPUID Registers / Logical CPU #%" SCNu16 " ]------", &logical_cpu) >= 1) ||
-			                      (sscanf(line, "CPUID Registers (CPU #%" SCNu16 "):", &logical_cpu) >= 1) ||
+			                      (sscanf(line, "CPUID Registers (CPU #%" SCNu16, &logical_cpu) >= 1) ||
 			                      (sscanf(line, "CPU#%" SCNu16 " AffMask: 0x%*x", &logical_cpu) >= 1))) {
+				/* Some raw dumps start core count from 1, we need to start from 0 */
+				if ((raw_array->num_raw == 0) && (logical_cpu >= 1))
+					logical_cpu_offset = logical_cpu;
+				logical_cpu -= logical_cpu_offset;
 				debugf(2, "Parsing AIDA64 raw dump for logical CPU %i\n", logical_cpu);
 				cpuid_grow_raw_data_array(raw_array, logical_cpu + 1);
 				raw_ptr = &raw_array->raw[logical_cpu];
@@ -910,6 +914,8 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 			}
 			subleaf = 0;
 			assigned = sscanf(line, "CPUID %" SCNx32 ": %" SCNx32 "-%" SCNx32 "-%" SCNx32 "-%" SCNx32 " [SL %02i]", &addr, &eax, &ebx, &ecx, &edx, &subleaf);
+			if (assigned == 1)
+				assigned = sscanf(line, "CPUID %" SCNx32 "  	 %" SCNx32 "-%" SCNx32 "-%" SCNx32 "-%" SCNx32 " [SL %02i]", &addr, &eax, &ebx, &ecx, &edx, &subleaf);
 			debugf(3, "raw line %d: %i items assigned for string '%s'\n", cur_line, assigned, line);
 			if ((assigned >= 5) && (subleaf == 0)) {
 				if (addr < MAX_CPUID_LEVEL) {
