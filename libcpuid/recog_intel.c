@@ -31,6 +31,14 @@
 #include "recog_intel.h"
 
 
+/*
+ * Useful links:
+ * - List of Intel CPU microarchitectures: https://en.wikipedia.org/wiki/List_of_Intel_CPU_microarchitectures
+ * - List of Intel Pentium processors: https://en.wikipedia.org/wiki/List_of_Intel_Pentium_processors
+ * - List of Intel Celeron processors: https://en.wikipedia.org/wiki/List_of_Intel_Celeron_processors
+ * - List of Intel Core processors: https://en.wikipedia.org/wiki/List_of_Intel_Core_processors
+ * - List of Intel Xeon processors: https://en.wikipedia.org/wiki/List_of_Intel_Xeon_processors
+*/
 const struct match_entry_t cpudb_intel[] = {
 //     F   M   S  EF    EM #cores L2$    L3$ Pattern                 Codename                   Technology
 	{ -1, -1, -1, -1, -1,   1,    -1,    -1, { "",              0 }, "Unknown Intel CPU",       UNKN_STR },
