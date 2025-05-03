@@ -105,6 +105,7 @@ static int score(const struct match_entry_t* entry, const struct cpu_id_t* data)
 		/* Remove useless substrings in brand_str */
 		strncpy(brand_str, data->brand_str, BRAND_STR_MAX);
 		remove_substring(brand_str, "CPU");
+		remove_substring(brand_str, "Processor");
 		collapse_spaces(brand_str);
 		/* Test pattern */
 		debugf(5, "Test if '%s' brand pattern matches '%s'...\n", entry->brand.pattern, brand_str);
