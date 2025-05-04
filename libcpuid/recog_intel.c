@@ -91,7 +91,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 11, -1, -1, -1,   1,   256,    -1, { "Celeron(R)",    2 }, "P-III Celeron (Tualatin)",   "0.13 µm" },
 
 	/* NetBurst CPUs */
-	/* Willamette (180 nm): */
+	/* Willamette (2000, 180 nm): */
 	{ 15,  0, -1, 15, -1,   1,    -1,    -1, { "Pentium(R)",        2 }, "Pentium 4 (Willamette)",   "0.18 µm" },
 	{ 15,  1, -1, 15, -1,   1,    -1,    -1, { "Pentium(R)",        2 }, "Pentium 4 (Willamette)",   "0.18 µm" },
 	{ 15,  0, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  6 }, "Mobile P-4 (Willamette)",  "0.18 µm" },
@@ -99,7 +99,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{ 15,  1, -1, 15, -1,   1,    -1,    -1, { "Celeron(R)",        2 }, "P-4 Celeron (Willamette)", "0.18 µm" },
 	{ 15,  0, -1, 15, -1,   1,    -1,    -1, { "Xeon(TM)",          2 }, "Xeon (Foster)",            "0.18 µm" },
 	{ 15,  1, -1, 15, -1,   1,    -1,    -1, { "Xeon(TM)",          2 }, "Xeon (Foster)",            "0.18 µm" },
-	/* Northwood / Mobile Pentium 4 / Banias (130 nm): */
+	/* Northwood / Mobile Pentium 4 / Banias (2002, 130 nm): */
 	{ 15,  2, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4",      2 }, "Pentium 4 (Northwood)",   "0.13 µm" },
 	{ 15,  2, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  6 }, "Mobile P-4 (Northwood)",  "0.13 µm" },
 	{ 15,  2, -1, 15, -1,   1,    -1,    -1, { "Celeron(R)",        2 }, "P-4 Celeron (Northwood)", "0.13 µm" },
@@ -110,7 +110,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  9, -1, -1, -1,   1,     0,    -1, { "Celeron(R)",        2 }, "Celeron M (Shelton)",     "0.13 µm" },
 	{ 15,  2, -1, 15, -1,   1,    -1,    -1, { "Xeon(TM)",          2 }, "Xeon (Prestonia)",        "0.13 µm" },
 	{ 15,  2, -1, 15, -1,   1,    -1,    -1, { "Xeon(TM) MP",       4 }, "Xeon (Gallatin)",         "0.13 µm" },
-	/* Prescott / Dothan (90 nm): */
+	/* Prescott / Dothan (2004, 90 nm): */
 	{ 15,  3, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4",      4 }, "Pentium 4 (Prescott)",     "90 nm" },
 	{ 15,  4, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4",      4 }, "Pentium 4 (Prescott)",     "90 nm" },
 	{ 15,  3, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",  6 }, "Mobile P-4 (Prescott)",    "90 nm" },
@@ -129,7 +129,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{ 15,  4,  1, 15, -1,   1,    -1,    -1, { "Xeon(TM)",          2 }, "Xeon (Cranford)",          "90 nm" },
 	{ 15,  4, -1, 15, -1,   1,    -1,    -1, { "Xeon(TM)",          2 }, "Xeon (Potomac)",           "90 nm" },
 	{ 15,  4,  8, 15, -1,   1,    -1,    -1, { "Xeon(TM)",          2 }, "Xeon (Paxville)",          "90 nm" },
-	/* Cedar Mill / Yonah / Presler (65 nm): */
+	/* Cedar Mill / Yonah / Presler (2006, 65 nm): */
 	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Pentium(R)",              2 }, "Pentium 4 (Cedar Mill)",            "65 nm" },
 	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",        6 }, "Mobile P-4 (Cedar Mill)",           "65 nm" },
 	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Celeron(R) D",            4 }, "P-4 Celeron D (Cedar Mill)",        "65 nm" },
@@ -143,19 +143,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{ 15,  6,  6, 15, -1,   1,    -1,    -1, { "Xeon(TM)",                2 }, "Xeon (Tulsa)",                      "65 nm" },
 	{ 15,  6,  8, 15, -1,   1,    -1,    -1, { "Xeon(TM)",                2 }, "Xeon (Tulsa)",                      "65 nm" },
 
-	/* Bonnell CPUs (first generation cores, 45 nm): */
-	{  6,  6, -1, -1, 38,  -1,    -1,    -1, { "Atom(TM) E6##T",       8 }, "Atom (Tunnel Creek)", "45 nm" },
-	{  6,  6, -1, -1, 38,  -1,    -1,    -1, { "Atom(TM) E6##",        6 }, "Atom (Tunnel Creek)", "45 nm" },
-	{  6,  6, -1, -1, 38,  -1,    -1,    -1, { "Atom(TM) E6##C",       8 }, "Atom (Stellarton)",   "45 nm" },
-	{  6, 12, -1, -1, 28,  -1,    -1,    -1, { "Atom(TM) Z5##",        6 }, "Atom (Silverthorne)", "45 nm" },
-	{  6, 12, -1, -1, 28,  -1,    -1,    -1, { "Atom(TM) N2##",        6 }, "Atom (Diamondville)", "45 nm" },
-	{  6, 12, -1, -1, 28,  -1,    -1,    -1, { "Atom(TM) [23]##",      6 }, "Atom (Diamondville)", "45 nm" },
-	/* Bonnell CPUs (second generation cores, 45 nm): */
-	{  6,  6, -1, -1, 38,  -1,    -1,    -1, { "Atom(TM) Z6##",        6 }, "Atom (Lincroft)",     "45 nm" },
-	{  6, 12, -1, -1, 28,  -1,    -1,    -1, { "Atom(TM) Z6##",        6 }, "Atom (Lincroft)",     "45 nm" },
-	{  6, 12, -1, -1, 28,  -1,    -1,    -1, { "Atom(TM) [ND][45]##",  6 }, "Atom (Pineview)",     "45 nm" },
-
-	/* Conroe CPUs (65 nm): https://en.wikipedia.org/wiki/Conroe_(microprocessor) */
+	/* Core CPUs (2006, 65 nm): https://en.wikipedia.org/wiki/Intel_Core_(microarchitecture)*/
 	{  6, 15, -1, -1, -1,   2,  2048,    -1, { "Core(TM)2 Duo E6###",    8 }, "Core 2 Duo (Conroe-2M)",        "65 nm" },
 	{  6, 15, -1, -1, -1,   2,  4096,    -1, { "Core(TM)2 Duo E6###",    8 }, "Core 2 Duo (Conroe)",           "65 nm" },
 	{  6, 15, -1, -1, -1,   2,  4096,    -1, { "Core(TM)2 6###",         4 }, "Core 2 Duo (Conroe)",           "65 nm" },
@@ -170,8 +158,13 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, 15,   2,    -1,    -1, { "Pentium(R) Dual E2###",  8 }, "Pentium Dual-Core (Allendale)", "65 nm" },
 	{  6, 15, -1, -1, 15,   2,    -1,    -1, { "Celeron(R) E1###",       6 }, "Celeron (Allendale)",           "65 nm" },
 	{  6,  6, -1, -1, 22,   1,    -1,    -1, { "Celeron(R) [24]##",      4 }, "Celeron (Conroe-L)",            "65 nm" },
+	{  6, 14, -1, -1, 14,   1,    -1,    -1, { "Xeon(R) 51##",           4 }, "Xeon LV (Woodcrest)",           "65 nm" },
+	{  6, 15, -1, -1, 15,   2,    -1,    -1, { "Xeon(R) 51##",           4 }, "Xeon (Woodcrest)",              "65 nm" },
+	{  6, 15, -1, -1, 15,   2,    -1,    -1, { "Xeon(R) 30##",           4 }, "Xeon (Conroe)",                 "65 nm" },
+	{  6, 15, -1, -1, 15,   4,    -1,    -1, { "Xeon(R) X32##",          6 }, "Xeon (Kentsfield)",             "65 nm" },
+	{  6, 15, -1, -1, 15,   4,    -1,    -1, { "Xeon(R) [EXL]53##",      6 }, "Xeon (Clovertown)",             "65 nm" },
 
-	/* Penryn CPUs (45 nm): https://en.wikipedia.org/wiki/Penryn_(microarchitecture)#CPU_List */
+	/* Penryn CPUs (2007, 45 nm): https://en.wikipedia.org/wiki/Penryn_(microarchitecture) */
 	{  6,  7, -1, -1, 23,   2,  1024,    -1, { "Celeron(R) E3###",            6 }, "Celeron (Wolfdale-3M)",        "45 nm" },
 	{  6,  7, -1, -1, 23,   2,  1024,    -1, { "Pentium(R) E2###",            6 }, "Celeron (Wolfdale-3M)",        "45 nm" },
 	{  6,  7, -1, -1, 23,   2,  2048,    -1, { "Pentium(R) E[56]###",         6 }, "Pentium (Wolfdale-3M)",        "45 nm" },
@@ -189,20 +182,13 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 23,   4,  2048,    -1, { "Core(TM)2 Quad Q8###",        8 }, "Core 2 Quad (Yorkfield-6M)",   "45 nm" }, /* 2×2 MB L2$ */
 	{  6,  7, -1, -1, 23,   4,  3072,    -1, { "Core(TM)2 Quad Q9#0#",        8 }, "Core 2 Quad (Yorkfield-6M)",   "45 nm" }, /* 2×3 MB L2$ */
 	{  6,  7, -1, -1, 23,   4,  6144,    -1, { "Core(TM)2 Quad Q9#5#",        8 }, "Core 2 Quad (Yorkfield)",      "45 nm" }, /* 2×6 MB L2$ */
+	{  6,  7, -1, -1, 23,   2,    -1,    -1, { "Xeon(R) [EL]31##",            6 }, "Xeon (Wolfdale)",              "45 nm" },
+	{  6,  7, -1, -1, 23,   2,    -1,    -1, { "Xeon(R) [EXL]52##",           6 }, "Xeon (Wolfdale DP)",           "45 nm" },
+	{  6,  7, -1, -1, 23,   4,    -1,    -1, { "Xeon(R) [EXL]54##",           6 }, "Xeon (Harpertown)",            "45 nm" },
+	{  6,  7, -1, -1, 23,   4,    -1,    -1, { "Xeon(R) [XL]33##",            6 }, "Xeon (Yorkfield)" ,            "45 nm" },
+	{  6, 13, -1, -1, 29,  -1,    -1,    -1, { "Xeon(R) [EXL]74##",           6 }, "Xeon (Dunnington)",            "45 nm" },
 
-	/* Core microarchitecture-based Xeons: */
-	{  6, 14, -1, -1, 14,   1,    -1,    -1, { "Xeon(R) 51##",       4 }, "Xeon LV (Woodcrest)", "65 nm" },
-	{  6, 15, -1, -1, 15,   2,    -1,    -1, { "Xeon(R) 51##",       4 }, "Xeon (Woodcrest)",    "65 nm" },
-	{  6, 15, -1, -1, 15,   2,    -1,    -1, { "Xeon(R) 30##",       4 }, "Xeon (Conroe)",       "65 nm" },
-	{  6, 15, -1, -1, 15,   4,    -1,    -1, { "Xeon(R) X32##",      6 }, "Xeon (Kentsfield)",   "65 nm" },
-	{  6, 15, -1, -1, 15,   4,    -1,    -1, { "Xeon(R) [EXL]53##",  6 }, "Xeon (Clovertown)",   "65 nm" },
-	{  6,  7, -1, -1, 23,   2,    -1,    -1, { "Xeon(R) [EL]31##",   6 }, "Xeon (Wolfdale)",     "45 nm" },
-	{  6,  7, -1, -1, 23,   2,    -1,    -1, { "Xeon(R) [EXL]52##",  6 }, "Xeon (Wolfdale DP)",  "45 nm" },
-	{  6,  7, -1, -1, 23,   4,    -1,    -1, { "Xeon(R) [EXL]54##",  6 }, "Xeon (Harpertown)",   "45 nm" },
-	{  6,  7, -1, -1, 23,   4,    -1,    -1, { "Xeon(R) [XL]33##",   6 }, "Xeon (Yorkfield)"   , "45 nm" },
-	{  6, 13, -1, -1, 29,  -1,    -1,    -1, { "Xeon(R) [EXL]74##",  6 }, "Xeon (Dunnington)",   "45 nm" },
-
-	/* Nehalem CPUs (45 nm): */
+	/* Nehalem CPUs (2008, 1st Core i gen, 45 nm): https://en.wikipedia.org/wiki/Nehalem_(microarchitecture) */
 	{  6, 10, -1, -1, 26,  -1,    -1,    -1, { "Xeon(R) [WELX]5###",        6 }, "Xeon (Gainestown)",            "45 nm" },
 	{  6, 10, -1, -1, 26,  -1,    -1,    -1, { "Xeon(R) [WELX]3###",        6 }, "Xeon (Bloomfield)",            "45 nm" },
 	{  6, 10, -1, -1, 26,  -1,    -1,    -1, { "Core(TM) i7 9#5",           8 }, "Core i7 Extreme (Bloomfield)", "45 nm" },
@@ -212,7 +198,18 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 30,  -1,    -1,    -1, { "Core(TM) i7 [QX] [789]##", 10 }, "Core i7 (Clarksfield)",        "45 nm" },
 	{  6, 14, -1, -1, 30,  -1,    -1,    -1, { "Core(TM) [QX] [789]##",     8 }, "Core i7 (Clarksfield)",        "45 nm" },
 
-	/* Westmere CPUs (32 nm): */
+	/* Bonnell CPUs (2008, Atom, 45 nm): https://en.wikipedia.org/wiki/Bonnell_(microarchitecture) */
+	{  6,  6, -1, -1, 38,  -1,    -1,    -1, { "Atom(TM) E6##T",       8 }, "Atom (Tunnel Creek)", "45 nm" },
+	{  6,  6, -1, -1, 38,  -1,    -1,    -1, { "Atom(TM) E6##",        6 }, "Atom (Tunnel Creek)", "45 nm" },
+	{  6,  6, -1, -1, 38,  -1,    -1,    -1, { "Atom(TM) E6##C",       8 }, "Atom (Stellarton)",   "45 nm" },
+	{  6, 12, -1, -1, 28,  -1,    -1,    -1, { "Atom(TM) Z5##",        6 }, "Atom (Silverthorne)", "45 nm" },
+	{  6, 12, -1, -1, 28,  -1,    -1,    -1, { "Atom(TM) N2##",        6 }, "Atom (Diamondville)", "45 nm" },
+	{  6, 12, -1, -1, 28,  -1,    -1,    -1, { "Atom(TM) [23]##",      6 }, "Atom (Diamondville)", "45 nm" },
+	{  6,  6, -1, -1, 38,  -1,    -1,    -1, { "Atom(TM) Z6##",        6 }, "Atom (Lincroft)",     "45 nm" },
+	{  6, 12, -1, -1, 28,  -1,    -1,    -1, { "Atom(TM) Z6##",        6 }, "Atom (Lincroft)",     "45 nm" },
+	{  6, 12, -1, -1, 28,  -1,    -1,    -1, { "Atom(TM) [ND][45]##",  6 }, "Atom (Pineview)",     "45 nm" },
+
+	/* Westmere CPUs (2010, 1st Core i gen, 32 nm): https://en.wikipedia.org/wiki/Westmere_(microarchitecture) */
 	{  6, 14, -1, -1, 46,  -1,    -1,    -1, { "Xeon(R) [EXL]75##",        6 }, "Xeon 7000 (Beckton)",         "32 nm" },
 	{  6, 14, -1, -1, 46,  -1,    -1,    -1, { "Xeon(R) E65##",            6 }, "Xeon 6000 (Beckton)",         "32 nm" },
 	{  6, 14, -1, -1, 46,  -1,    -1,    -1, { "Xeon(R) [XELW]5[56]##",    6 }, "Xeon 5000 (Beckton)",         "32 nm" },
@@ -235,12 +232,12 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  5, -1, -1, 37,  -1,    -1,    -1, { "Celeron(R) P4###",         6 }, "Celeron (Arrandale)",         "32 nm" },
 	{  6,  5, -1, -1, 37,  -1,    -1,    -1, { "Celeron(R) U3###",         6 }, "Celeron (Arrandale)",         "32 nm" },
 
-	/* Saltwell CPUs (2011, 32 nm, low-power) */
+	/* Saltwell CPUs (2011, Atom, 32 nm): https://en.wikipedia.org/wiki/Bonnell_(microarchitecture)#Third_generation_cores */
 	{  6, 12, -1, -1, -1,  -1,    -1,    -1, { "Atom(TM) [ND]2###",    6 }, "Atom (Cedarview)",    "32 nm" },
 	{  6,  6, -1, -1, 54,  -1,    -1,    -1, { "Atom(TM) [ND]2###",    6 }, "Atom (Cedarview)",    "32 nm" },
 	{  6,  7, -1, -1, 39,  -1,    -1,    -1, { "Atom(TM) Z2###",       6 }, "Atom (Penwell)",      "32 nm" },
 
-	/* Sandy Bridge CPUs (2nd gen, 32 nm): */
+	/* Sandy Bridge CPUs (2011, 2nd Core i gen, 32 nm): https://en.wikipedia.org/wiki/Sandy_Bridge */
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, { "Xeon(R) E5####[LW]",    8 }, "Xeon E5 (Sandy Bridge)",           "32 nm" },
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, { "Xeon(R) E5####",        6 }, "Xeon E5 (Sandy Bridge)",           "32 nm" },
 	{  6, 10, -1, -1, 42,  -1,    -1,    -1, { "Xeon(R) E3####[CL]",    8 }, "Xeon E3 (Sandy Bridge)",           "32 nm" },
@@ -254,7 +251,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 13, -1, -1, 45,  -1,    -1,    -1, { "Xeon(R) E5-####",       4 }, "Xeon E5 (Sandy Bridge-E)",         "32 nm" },
 	{  6, 13, -1, -1, 45,  -1,    -1,    -1, { "Xeon(R) E3-####",       4 }, "Xeon E3 (Sandy Bridge-E)",         "32 nm" },
 
-	/* Ivy Bridge CPUs (3rd gen, 22 nm): */
+	/* Ivy Bridge CPUs (2012, 3rd Core i gen, 22 nm): https://en.wikipedia.org/wiki/Ivy_Bridge_(microarchitecture) */
 	{  6, 10, -1, -1, 58,  -1,    -1,    -1, { "Xeon(R) E7-####L v2",     8 }, "Xeon E7 (Ivy Bridge)",           "22 nm" },
 	{  6, 10, -1, -1, 58,  -1,    -1,    -1, { "Xeon(R) E7-#### v2",      6 }, "Xeon E7 (Ivy Bridge)",           "22 nm" },
 	{  6, 10, -1, -1, 58,  -1,    -1,    -1, { "Xeon(R) E5-####[LW] v2",  8 }, "Xeon E5 (Ivy Bridge)",           "22 nm" },
@@ -272,7 +269,17 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 62,  -1,    -1,    -1, { "Core(TM) i7-4###X",      10 }, "Core i7 Extreme (Ivy Bridge-E)", "22 nm" },
 	{  6, 14, -1, -1, 62,  -1,    -1,    -1, { "Core(TM) i7-4###K",       8 }, "Core i7 (Ivy Bridge-E)",         "22 nm" },
 
-	/* Haswell CPUs (4th gen, 22 nm): */
+	/* Silvermont CPUs (2013, Atom, 22 nm): https://en.wikipedia.org/wiki/Silvermont */
+	{  6,  7, -1, -1,  55,  -1,    -1,    -1, { "Pentium(R) J2###",  6 }, "Pentium (Bay Trail-D)", "22 nm" },
+	{  6,  7, -1, -1,  55,  -1,    -1,    -1, { "Celeron(R) J1###",  6 }, "Celeron (Bay Trail-D)", "22 nm" },
+	{  6,  7, -1, -1,  55,  -1,    -1,    -1, { "Pentium(R) N3###",  6 }, "Pentium (Bay Trail-M)", "22 nm" },
+	{  6,  7, -1, -1,  55,  -1,    -1,    -1, { "Celeron(R) N2###",  6 }, "Celeron (Bay Trail-M)", "22 nm" },
+	{  6,  7, -1, -1,  55,  -1,    -1,    -1, { "Atom(TM) Z3###",    6 }, "Atom (Bay Trail-T)",    "22 nm" },
+	{  6,  7, -1, -1,  55,  -1,    -1,    -1, { "Atom(TM) E3###",    6 }, "Atom (Bay Trail-I)",    "22 nm" },
+	{  6, 13, -1, -1,  77,  -1,    -1,    -1, { "Atom(TM) C2##0",    8 }, "Atom (Avoton)",         "22 nm" },
+	{  6, 13, -1, -1,  77,  -1,    -1,    -1, { "Atom(TM) C2##[68]", 8 }, "Atom (Rangeley)",       "22 nm" },
+
+	/* Haswell CPUs (2013, 4th Core i gen, 22 nm): https://en.wikipedia.org/wiki/Haswell_(microarchitecture) */
 	{  6, 12, -1, -1, 60,  -1,    -1,    -1, { "Xeon(R) E7-####L v3",       8 }, "Xeon E7 (Haswell)",         "22 nm" },
 	{  6, 12, -1, -1, 60,  -1,    -1,    -1, { "Xeon(R) E7-#### v3",        6 }, "Xeon E7 (Haswell)",         "22 nm" },
 	{  6, 12, -1, -1, 60,  -1,    -1,    -1, { "Xeon(R) E5-####[ABLW] v3",  8 }, "Xeon E5 (Haswell)",         "22 nm" },
@@ -297,17 +304,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  5, -1, -1, 69,  -1,    -1,    -1, { "Core(TM) i5-4###Y",        10 }, "Core i5 (Haswell-ULX)",     "22 nm" },
 	{  6,  5, -1, -1, 69,  -1,    -1,    -1, { "Core(TM) i3-4###Y",        10 }, "Core i3 (Haswell-ULX)",     "22 nm" },
 
-	/* Silvermont CPUs (2013, 22 nm, low-power) */
-	{  6,  7, -1, -1,  55,  -1,    -1,    -1, { "Pentium(R) J2###",  6 }, "Pentium (Bay Trail-D)", "22 nm" },
-	{  6,  7, -1, -1,  55,  -1,    -1,    -1, { "Celeron(R) J1###",  6 }, "Celeron (Bay Trail-D)", "22 nm" },
-	{  6,  7, -1, -1,  55,  -1,    -1,    -1, { "Pentium(R) N3###",  6 }, "Pentium (Bay Trail-M)", "22 nm" },
-	{  6,  7, -1, -1,  55,  -1,    -1,    -1, { "Celeron(R) N2###",  6 }, "Celeron (Bay Trail-M)", "22 nm" },
-	{  6,  7, -1, -1,  55,  -1,    -1,    -1, { "Atom(TM) Z3###",    6 }, "Atom (Bay Trail-T)",    "22 nm" },
-	{  6,  7, -1, -1,  55,  -1,    -1,    -1, { "Atom(TM) E3###",    6 }, "Atom (Bay Trail-I)",    "22 nm" },
-	{  6, 13, -1, -1,  77,  -1,    -1,    -1, { "Atom(TM) C2##0",    8 }, "Atom (Avoton)",         "22 nm" },
-	{  6, 13, -1, -1,  77,  -1,    -1,    -1, { "Atom(TM) C2##[68]", 8 }, "Atom (Rangeley)",       "22 nm" },
-
-	/* Broadwell CPUs (2014, 5th gen, 14 nm): */
+	/* Broadwell CPUs (2014, 5th Core i gen, 14 nm): https://en.wikipedia.org/wiki/Broadwell_(microarchitecture) */
 	{  6,  6, -1, -1, 86,  -1,    -1,    -1, { "Xeon(R) D-15##",              6 }, "Xeon D (Broadwell)",    "14 nm" },
 	{  6,  6, -1, -1, 86,  -1,    -1,    -1, { "Pentium(R) D15##",            6 }, "Pentium D (Broadwell)", "14 nm" },
 	{  6,  7, -1, -1, 71,   4,    -1,    -1, { "Core(TM) i7-5###[CR]",       10 }, "Core i7 (Broadwell-H)", "14 nm" },
@@ -326,14 +323,14 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 15, -1, -1, 79,  -1,    -1,    -1, { "Xeon(R) E3-#### v4",          6 }, "Xeon E3 (Broadwell)",   "14 nm" },
 	{  6, 15, -1, -1, 79,   4,    -1,    -1, { "Core(TM) i7-6###[KX]",       10 }, "Core i7 (Broadwell-E)", "14 nm" },
 
-	/* Airmont CPUs (2014, 14 nm, low-power) */
+	/* Airmont CPUs (2014, Atom, 14 nm): https://en.wikipedia.org/wiki/Silvermont#List_of_Airmont_processors */
 	{  6, 12, -1, -1,  76, -1,    -1,    -1, { "Pentium(R) [JN]3###",  6 }, "Pentium (Braswell)",     "14 nm" },
 	{  6, 12, -1, -1,  76, -1,    -1,    -1, { "Celeron(R) [JN]3###",  6 }, "Celeron (Braswell)",     "14 nm" },
 	{  6, 12, -1, -1,  76,  4,    -1,    -1, { "Atom(TM) x7-Z8###",    8 }, "Atom x7 (Cherry Trail)", "14 nm" },
 	{  6, 12, -1, -1,  76,  4,    -1,    -1, { "Atom(TM) x5-Z8###",    8 }, "Atom x5 (Cherry Trail)", "14 nm" },
 	{  6,  5, -1, -1, 117, -1,    -1,    -1, { "Spreadtrum",           2 }, "Spreadtrum (Airmont)",   "14 nm" }, /* Spreadtrum SC9853I-IA */
 
-	/* Skylake (client) CPUs (2015, 6th Core i gen, 14 nm) => https://en.wikichip.org/wiki/intel/microarchitectures/skylake_(client) */
+	/* Skylake (client) CPUs (2015, 6th Core i gen, 14 nm): https://en.wikichip.org/wiki/intel/microarchitectures/skylake_(client) */
 	{  6, 14, -1, -1, 94,   4,    -1,    -1, { "Core(TM) i7-6###",         8 }, "Core i7 (Skylake)",   "14 nm" },
 	{  6, 14, -1, -1, 94,   4,    -1,    -1, { "Core(TM) i5-6###",         8 }, "Core i5 (Skylake)",   "14 nm" },
 	{  6, 14, -1, -1, 94,   2,    -1,    -1, { "Core(TM) i3-6###",         8 }, "Core i3 (Skylake)",   "14 nm" },
@@ -348,7 +345,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Core(TM) i9-7###X",       10 }, "Core i9 (Skylake-X)", "14 nm" }, /* 10 to 18 cores */
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Core(TM) i7-7###X",       10 }, "Core i7 (Skylake-X)", "14 nm" }, /* 6 to 8 cores */
 	{  6, 14, -1, -1, 94,  -1,    -1,    -1, { "Xeon(R) W-#1##X",          8 }, "Xeon (Skylake-X)",    "14 nm" },
-	/* Skylake (server) CPUs (2017, 1st Xeon Scalable gen, 14 nm) => https://en.wikichip.org/wiki/intel/microarchitectures/skylake_(server) */
+	/* Skylake (server) CPUs (2017, 1st Xeon Scalable gen, 14 nm): https://en.wikichip.org/wiki/intel/microarchitectures/skylake_(server) */
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Xeon(R) D-#1##",          6 }, "Xeon D (Skylake-D)",         "14 nm" },
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Xeon(R) E3-####[ML] v5",  8 }, "Xeon E3 (Skylake-S)",        "14 nm" },
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Xeon(R) E3-#### v5",      6 }, "Xeon E3 (Skylake-S)",        "14 nm" },
@@ -358,8 +355,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Xeon(R) Silver #1##",     6 }, "Xeon Silver (Skylake-SP)",   "14 nm" },
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Xeon(R) Bronze #1##",     6 }, "Xeon Bronze (Skylake-SP)",   "14 nm" },
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Montage(R) Jintide(R)",   4 }, "Jintide (Skylake-SP)",       "14 nm" }, /* Montage(R) Jintide(R) C2460 */
-
-	/* Kaby Lake CPUs (7th gen, 14+ nm): */
+	/* Kaby Lake CPUs (2016, 7th Core i gen, 14+ nm): https://en.wikipedia.org/wiki/Kaby_Lake */
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i7-7###",          8 }, "Core i7 (Kaby Lake)",         "14+ nm" },
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i5-7###",          8 }, "Core i5 (Kaby Lake)",         "14+ nm" },
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Core(TM) i3-7###",          8 }, "Core i3 (Kaby Lake)",         "14+ nm" },
@@ -380,16 +376,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i3-8##0U",        10 }, "Core i3 (Kaby Lake-R)",       "14+ nm" }, /* i3-8130U */
 	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 4###U",          6 }, "Pentium Gold (Kaby Lake-R)",  "14+ nm" }, /* Pentium 4417U */
 	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Celeron(R) 3###U",          6 }, "Celeron (Kaby Lake-R)",       "14+ nm" }, /* Celeron 3867U */
-	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8###Y",        10 }, "Core i7 (Amber Lake-Y)",      "14+ nm" }, /* i7-8500Y */
-	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8###Y",        10 }, "Core i5 (Amber Lake-Y)",      "14+ nm" }, /* i5-8200Y + i5-82010Y + i5-8310Y */
-	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) m3-8###Y",        10 }, "Core m3 (Amber Lake-Y)",      "14+ nm" }, /* m3-8100Y */
-	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 442#Y",          8 }, "Pentium Gold (Amber Lake-Y)", "14+ nm" }, /* Pentium 4425Y */
-	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-10###Y",       10 }, "Core i7 (Amber Lake-Y)",      "14+ nm" }, /* i7-10510Y */
-	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-10###Y",       10 }, "Core i5 (Amber Lake-Y)",      "14+ nm" }, /* i5-10210Y + i5-10310Y + i5-8310Y */
-	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i3-10###Y",       10 }, "Core i3 (Amber Lake-Y)",      "14+ nm" }, /* i3-10100Y + i3-10110Y */
-	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 65##Y",          6 }, "Pentium Gold (Amber Lake-Y)", "14+ nm" }, /* Pentium 6500Y */
-
-	/* Coffee Lake CPUs (8th gen, 14++ nm): */
+	/* Coffee Lake CPUs (2017, 8th Core i gen, 14++ nm): https://en.wikipedia.org/wiki/Coffee_Lake */
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i7-8###",       8 }, "Core i7 (Coffee Lake-S)",       "14++ nm" },
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i5-8###",       8 }, "Core i5 (Coffee Lake-S)",       "14++ nm" },
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i3-8###",       8 }, "Core i3 (Coffee Lake-S)",       "14++ nm" },
@@ -404,15 +391,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i7-8###U",     10 }, "Core i7 (Coffee Lake-U)",       "14++ nm" },
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i5-8###U",     10 }, "Core i5 (Coffee Lake-U)",       "14++ nm" },
 	{  6, 14, -1, -1, 158,  2,    -1,    -1, { "Core(TM) i3-8###U",     10 }, "Core i3 (Coffee Lake-U)",       "14++ nm" },
-	{  6,  6, -1, -1, 102,  2,    -1,    -1, { "Core(TM) i3-8###U",     10 }, "Core i3 (Cannon Lake-U)",       "14++ nm" }, /* Core i3 8121U */
-	{  6,  6, -1, -1, 102,  2,    -1,    -1, { "Core(TM) m3-8###Y",     10 }, "Core m3 (Cannon Lake-Y)",       "14++ nm" }, /* Core m3 8114Y */
-	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8##5U",     10 }, "Core i7 (Whiskey Lake-U)",      "14++ nm" },
-	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8##5U",     10 }, "Core i5 (Whiskey Lake-U)",      "14++ nm" },
-	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i3-8##5U",     10 }, "Core i3 (Whiskey Lake-U)",      "14++ nm" },
-	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 5###U",       6 }, "Pentium Gold (Whiskey Lake-U)", "14++ nm" },
-	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Celeron(R) 4###U",       6 }, "Celeron (Whiskey Lake-U)",      "14++ nm" },
-
-	/* Coffee Lake Refresh CPUs (9th gen, 14++ nm): */
+	/* Coffee Lake Refresh CPUs (2018, 9th Core i gen, 14++ nm): https://en.wikipedia.org/wiki/Coffee_Lake#List_of_9th_generation_Coffee_Lake_processors_(Coffee_Lake_Refresh) */
 	{  6, 14, -1, -1, 158,  8,    -1,    -1, { "Xeon(R) E-2###",         6 }, "Xeon E (Coffee Lake-S WS)",       "14++ nm" },
 	{  6, 14, -1, -1, 158,  8,    -1,    -1, { "CC###",                  4 }, "CC (Coffee Lake)",                "14++ nm" }, /* CC150 */
 	{  6, 14, -1, -1, 158,  8,    -1,    -1, { "Core(TM) i9-9###",       8 }, "Core i9 (Coffee Lake-S)",         "14++ nm" },
@@ -425,16 +404,29 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 14, -1, -1, 158,  8,    -1,    -1, { "Core(TM) i9-9###H",     10 }, "Core i9 (Coffee Lake-H Refresh)", "14++ nm" },
 	{  6, 14, -1, -1, 158,  6,    -1,    -1, { "Core(TM) i7-9###H",     10 }, "Core i7 (Coffee Lake-H Refresh)", "14++ nm" },
 	{  6, 14, -1, -1, 158,  4,    -1,    -1, { "Core(TM) i5-9###H",     10 }, "Core i5 (Coffee Lake-H Refresh)", "14++ nm" },
-
-	/* Cascade Lake CPUs (2019, 2nd Xeon Scalable gen, 14++ nm) => https://en.wikichip.org/wiki/intel/microarchitectures/cascade_lake */
+	/* Whiskey Lake CPUs (2018, 8th Core i gen, 14++ nm): https://en.wikipedia.org/wiki/Whiskey_Lake */
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8##5U",     10 }, "Core i7 (Whiskey Lake-U)",      "14++ nm" },
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8##5U",     10 }, "Core i5 (Whiskey Lake-U)",      "14++ nm" },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i3-8##5U",     10 }, "Core i3 (Whiskey Lake-U)",      "14++ nm" },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 5###U",       6 }, "Pentium Gold (Whiskey Lake-U)", "14++ nm" },
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Celeron(R) 4###U",       6 }, "Celeron (Whiskey Lake-U)",      "14++ nm" },
+	/* Amber Lake CPUs (2018, 8th Core i gen, 14++ nm): https://en.wikipedia.org/wiki/Kaby_Lake#Amber_Lake */
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-8###Y",        10 }, "Core i7 (Amber Lake-Y)",      "14+ nm" }, /* i7-8500Y */
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-8###Y",        10 }, "Core i5 (Amber Lake-Y)",      "14+ nm" }, /* i5-8200Y + i5-82010Y + i5-8310Y */
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) m3-8###Y",        10 }, "Core m3 (Amber Lake-Y)",      "14+ nm" }, /* m3-8100Y */
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 442#Y",          8 }, "Pentium Gold (Amber Lake-Y)", "14+ nm" }, /* Pentium 4425Y */
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i7-10###Y",       10 }, "Core i7 (Amber Lake-Y)",      "14+ nm" }, /* i7-10510Y */
+	{  6, 14, -1, -1, 142,  4,    -1,    -1, { "Core(TM) i5-10###Y",       10 }, "Core i5 (Amber Lake-Y)",      "14+ nm" }, /* i5-10210Y + i5-10310Y + i5-8310Y */
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Core(TM) i3-10###Y",       10 }, "Core i3 (Amber Lake-Y)",      "14+ nm" }, /* i3-10100Y + i3-10110Y */
+	{  6, 14, -1, -1, 142,  2,    -1,    -1, { "Pentium(R) 65##Y",          6 }, "Pentium Gold (Amber Lake-Y)", "14+ nm" }, /* Pentium 6500Y */
+	/* Cascade Lake CPUs (2019, 2nd Xeon Scalable gen, 14++ nm): https://en.wikichip.org/wiki/intel/microarchitectures/cascade_lake */
 	{  6,  5,  7, -1, 85,  -1,    -1,    -1, { "Core(TM) i9-10###X",    10 }, "Core i9 (Cascade Lake-X)",        "14++ nm" },
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Xeon(R) W-#[23]##",      6 }, "Xeon W (Cascade Lake-W)",         "14++ nm" },
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Xeon(R) Platinum #2##",  6 }, "Xeon Platinum (Cascade Lake-SP)", "14++ nm" },
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Xeon(R) Gold #2##",      6 }, "Xeon Gold (Cascade Lake-SP)",     "14++ nm" },
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Xeon(R) Silver #2##",    6 }, "Xeon Silver (Cascade Lake-SP)",   "14++ nm" },
 	{  6,  5, -1, -1, 85,  -1,    -1,    -1, { "Xeon(R) Bronze #2##",    6 }, "Xeon Bronze (Cascade Lake-SP)",   "14++ nm" },
-
-	/* Comet Lake CPUs (10th gen, 14++ nm): */
+	/* Comet Lake CPUs (2019, 10th Core i gen, 14++ nm): https://en.wikipedia.org/wiki/Comet_Lake */
 	{  6,  5, -1, -1, 165, -1,    -1,    -1, { "Xeon(R) W-12##",         6 }, "Xeon W (Comet Lake-S)",       "14++ nm" },
 	{  6,  5, -1, -1, 165, 10,    -1,    -1, { "Core(TM) i9-10###",      8 }, "Core i9 (Comet Lake-S)",      "14++ nm" },
 	{  6,  5, -1, -1, 165,  8,    -1,    -1, { "Core(TM) i7-10###",      8 }, "Core i7 (Comet Lake-S)",      "14++ nm" },
@@ -454,29 +446,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  5, -1, -1, 165, -1,    -1,    -1, { "Core(TM) i7-10###H",    10 }, "Core i7 (Comet Lake-H)",      "14++ nm" },
 	{  6,  5, -1, -1, 165, -1,    -1,    -1, { "Core(TM) i5-10###H",    10 }, "Core i5 (Comet Lake-H)",      "14++ nm" },
 
-	/* Ice Lake (client) CPUs (2019, 10th Core i gen, 10 nm) => https://en.wikichip.org/wiki/intel/microarchitectures/ice_lake_(client) */
-	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i7-10##NG7",    10 }, "Core i7 (Ice Lake)", "10 nm" },
-	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i7-10##G7",     10 }, "Core i7 (Ice Lake)", "10 nm" },
-	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i5-10##NG7",    10 }, "Core i5 (Ice Lake)", "10 nm" },
-	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i5-10##G[741]", 10 }, "Core i5 (Ice Lake)", "10 nm" },
-	{  6, 14, -1, -1, 126,  2,    -1,    -1, { "Core(TM) i3-10##G[14]",  10 }, "Core i3 (Ice Lake)", "10 nm" },
-	{  6, 14, -1, -1, 126,  2,    -1,    -1, { "Core(TM) i3-10##NG4",    10 }, "Core i3 (Ice Lake)", "10 nm" },
-	{  6, 14, -1, -1, 126,  2,    -1,    -1, { "Pentium(R) 68##",         4 }, "Pentium (Ice Lake)", "10 nm" }, /* Pentium 6805 */
-	/* Ice Lake (server) CPUs (2021, 3rd Xeon Scalable gen, 10 nm) => https://en.wikichip.org/wiki/intel/microarchitectures/ice_lake_(server) */
-	{  6, 12, -1, -1, 108,  -1,   -1,    -1, { "Xeon(R) D-[12]7##",      6 }, "Xeon D (Ice Lake-D)",         "10 nm" },
-	{  6, 10, -1, -1, 106,  -1,   -1,    -1, { "Xeon(R) W-#3##",         6 }, "Xeon W (Ice Lake-W)",         "10 nm" },
-	{  6, 10, -1, -1, 106,  -1,   -1,    -1, { "Xeon(R) Platinum #3##",  6 }, "Xeon Platinum (Ice Lake-SP)", "10 nm" },
-	{  6, 10, -1, -1, 106,  -1,   -1,    -1, { "Xeon(R) Gold #3##",      6 }, "Xeon Gold (Ice Lake-SP)",     "10 nm" },
-	{  6, 10, -1, -1, 106,  -1,   -1,    -1, { "Xeon(R) Silver #3##",    6 }, "Xeon Silver (Ice Lake-SP)",   "10 nm" },
-	{  6, 10, -1, -1, 106,  -1,   -1,    -1, { "Xeon(R) Bronze #3##",    6 }, "Xeon Bronze (Ice Lake-SP)",   "10 nm" },
-
-	/* Rocket Lake CPUs (11th gen, 14++ nm): */
-	{  6, 7, -1, -1, 167,  -1,    -1,    -1, { "Core(TM) i9-11###",  8 }, "Core i9 (Rocket Lake-S)", "14++ nm" },
-	{  6, 7, -1, -1, 167,  -1,    -1,    -1, { "Core(TM) i7-11###",  8 }, "Core i7 (Rocket Lake-S)", "14++ nm" },
-	{  6, 7, -1, -1, 167,  -1,    -1,    -1, { "Core(TM) i5-11###",  8 }, "Core i5 (Rocket Lake-S)", "14++ nm" },
-	{  6, 7, -1, -1, 167,  -1,    -1,    -1, { "Xeon(R) E-23##",     6 }, "Xeon E (Rocket Lake)"   , "14++ nm" },
-
-	/* Goldmont CPUs (2016, 14 nm, low-power) */
+	/* Goldmont CPUs (2016, Atom, 14 nm): https://en.wikipedia.org/wiki/Goldmont */
 	{  6, 12, -1, -1,  92, -1,    -1,    -1, { "Pentium(R) J4###",  6 }, "Pentium (Apollo Lake)", "14 nm" },
 	{  6, 12, -1, -1,  92, -1,    -1,    -1, { "Celeron(R) J3###",  6 }, "Celeron (Apollo Lake)", "14 nm" },
 	{  6, 12, -1, -1,  92, -1,    -1,    -1, { "Pentium(R) N4###",  6 }, "Pentium (Apollo Lake)", "14 nm" },
@@ -484,11 +454,31 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 12, -1, -1,  92, -1,    -1,    -1, { "Atom(TM) E39##",    6 }, "Atom (Apollo Lake)",    "14 nm" },
 	{  6, 15, -1, -1,  95, -1,    -1,    -1, { "Atom(TM) C39##",    6 }, "Atom (Denverton)" ,     "14 nm" },
 
-	/* Goldmont Plus CPUs (2017, 14 nm, low-power) */
+	/* Goldmont Plus CPUs (2017, Atom, 14 nm): https://en.wikipedia.org/wiki/Goldmont_Plus */
 	{  6, 10, -1, -1, 122, -1,    -1,    -1, { "Pentium(R) Silver [JN]5###",  8 }, "Pentium Silver (Gemini Lake)", "14 nm" },
 	{  6, 10, -1, -1, 122, -1,    -1,    -1, { "Celeron(R) [JN]4###",         6 }, "Celeron (Gemini Lake)",        "14 nm" },
 
-	/* Tremont CPUs (2020, Intel 10 nm, low-power) */
+	/* Palm Cove CPUs (2018, 8th Core i gen, 14++ nm): https://en.wikipedia.org/wiki/Cannon_Lake_(microprocessor)*/
+	{  6,  6, -1, -1, 102,  2,    -1,    -1, { "Core(TM) i3-8###U",     10 }, "Core i3 (Cannon Lake-U)",       "14++ nm" }, /* Core i3 8121U */
+	{  6,  6, -1, -1, 102,  2,    -1,    -1, { "Core(TM) m3-8###Y",     10 }, "Core m3 (Cannon Lake-Y)",       "14++ nm" }, /* Core m3 8114Y */
+
+	/* Sunny Cove CPUs (2019, 10th Core i gen, 10 nm): https://en.wikipedia.org/wiki/Sunny_Cove_(microarchitecture) */
+	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i7-10##NG7",    10 }, "Core i7 (Ice Lake)", "10 nm" },
+	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i7-10##G7",     10 }, "Core i7 (Ice Lake)", "10 nm" },
+	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i5-10##NG7",    10 }, "Core i5 (Ice Lake)", "10 nm" },
+	{  6, 14, -1, -1, 126,  4,    -1,    -1, { "Core(TM) i5-10##G[741]", 10 }, "Core i5 (Ice Lake)", "10 nm" },
+	{  6, 14, -1, -1, 126,  2,    -1,    -1, { "Core(TM) i3-10##G[14]",  10 }, "Core i3 (Ice Lake)", "10 nm" },
+	{  6, 14, -1, -1, 126,  2,    -1,    -1, { "Core(TM) i3-10##NG4",    10 }, "Core i3 (Ice Lake)", "10 nm" },
+	{  6, 14, -1, -1, 126,  2,    -1,    -1, { "Pentium(R) 68##",         4 }, "Pentium (Ice Lake)", "10 nm" }, /* Pentium 6805 */
+	/* Ice Lake (server) CPUs (2021, 3rd Xeon Scalable gen, 10 nm): https://en.wikichip.org/wiki/intel/microarchitectures/ice_lake_(server) */
+	{  6, 12, -1, -1, 108,  -1,   -1,    -1, { "Xeon(R) D-[12]7##",      6 }, "Xeon D (Ice Lake-D)",         "10 nm" },
+	{  6, 10, -1, -1, 106,  -1,   -1,    -1, { "Xeon(R) W-#3##",         6 }, "Xeon W (Ice Lake-W)",         "10 nm" },
+	{  6, 10, -1, -1, 106,  -1,   -1,    -1, { "Xeon(R) Platinum #3##",  6 }, "Xeon Platinum (Ice Lake-SP)", "10 nm" },
+	{  6, 10, -1, -1, 106,  -1,   -1,    -1, { "Xeon(R) Gold #3##",      6 }, "Xeon Gold (Ice Lake-SP)",     "10 nm" },
+	{  6, 10, -1, -1, 106,  -1,   -1,    -1, { "Xeon(R) Silver #3##",    6 }, "Xeon Silver (Ice Lake-SP)",   "10 nm" },
+	{  6, 10, -1, -1, 106,  -1,   -1,    -1, { "Xeon(R) Bronze #3##",    6 }, "Xeon Bronze (Ice Lake-SP)",   "10 nm" },
+
+	/* Tremont CPUs (2020, Atom, 10 nm): https://en.wikipedia.org/wiki/Tremont_(microarchitecture) */
 	{  6,  6, -1, -1, 150, -1,    -1,    -1, { "Pentium(R) [JN]6###",      6 }, "Pentium (Elkhart Lake)",       "10 nm" },
 	{  6,  6, -1, -1, 150, -1,    -1,    -1, { "Celeron(R) [JN]6###",      6 }, "Celeron (Elkhart Lake)",       "10 nm" },
 	{  6,  6, -1, -1, 150, -1,    -1,    -1, { "Atom(TM) x6###",           6 }, "Atom (Elkhart Lake)",          "10 nm" },
@@ -497,7 +487,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 12, -1, -1, 156, -1,    -1,    -1, { "Pentium(R) Silver N6###",  8 }, "Pentium Silver (Jasper Lake)", "10 nm" },
 	{  6, 12, -1, -1, 156, -1,    -1,    -1, { "Celeron(R) N[45]###",      6 }, "Celeron (Jasper Lake)",        "10 nm" },
 
-	/* Tiger Lake CPUs (2020, 11th gen, Intel 10 nm SuperFin, mobile processors): */
+	/* Willow Cove CPUs (2020, 11th Core i gen, 10 nm SuperFin): https://en.wikipedia.org/wiki/Willow_Cove */
 	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i7-11#5G7",   12 }, "Core i7 (Tiger Lake-UP3)",      "10SF" },
 	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i5-11#5G7",   12 }, "Core i5 (Tiger Lake-UP3)",      "10SF" },
 	{  6, 12, -1, -1, 140, -1,    -1,    -1, { "Core(TM) i3-11#5G4",   12 }, "Core i3 (Tiger Lake-UP3)",      "10SF" },
@@ -517,7 +507,13 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 13, -1, -1, 141, -1,    -1,    -1, { "Core(TM) i5-11###B",   10 }, "Core i5 (Tiger Lake-B)",        "10SF" }, /* i5-11500B */
 	{  6, 13, -1, -1, 141, -1,    -1,    -1, { "Core(TM) i5-11###B",   10 }, "Core i5 (Tiger Lake-B)",        "10SF" }, /* i3-11100B */
 
-	/* Alder Lake CPUs (2021, 12th gen, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/alder_lake */
+	/* Cypress Cove CPUs (2021, 11th Core i gen, 14++ nm): https://en.wikipedia.org/wiki/Sunny_Cove_(microarchitecture)#Cypress_Cove */
+	{  6, 7, -1, -1, 167,  -1,    -1,    -1, { "Core(TM) i9-11###",  8 }, "Core i9 (Rocket Lake-S)", "14++ nm" },
+	{  6, 7, -1, -1, 167,  -1,    -1,    -1, { "Core(TM) i7-11###",  8 }, "Core i7 (Rocket Lake-S)", "14++ nm" },
+	{  6, 7, -1, -1, 167,  -1,    -1,    -1, { "Core(TM) i5-11###",  8 }, "Core i5 (Rocket Lake-S)", "14++ nm" },
+	{  6, 7, -1, -1, 167,  -1,    -1,    -1, { "Xeon(R) E-23##",     6 }, "Xeon E (Rocket Lake)"   , "14++ nm" },
+
+	/* Golden Cove (P-cores) / Gracemont (E-cores) CPUs (2021, 12th Core i gen, Intel 7): https://en.wikipedia.org/wiki/Golden_Cove */
 	{  6,  7, -1, -1, 151, -1,    -1,    -1, { "Core(TM) i9-12###",      8 }, "Core i9 (Alder Lake-S)",         "Intel 7" },
 	{  6,  7, -1, -1, 151, -1,    -1,    -1, { "Core(TM) i7-12###",      8 }, "Core i7 (Alder Lake-S)",         "Intel 7" },
 	{  6,  7, -1, -1, 151, -1,    -1,    -1, { "Core(TM) i5-12###",      8 }, "Core i5 (Alder Lake-S)",         "Intel 7" },
@@ -545,15 +541,27 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, { "Core(TM) i7-12###HL",   12 }, "Core i7 (Alder Lake-PS)",        "Intel 7" },
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, { "Core(TM) i5-12###HL",   12 }, "Core i5 (Alder Lake-PS)",        "Intel 7" },
 	{  6, 10, -1, -1, 154, -1,    -1,    -1, { "Core(TM) i3-12###HL",   12 }, "Core i3 (Alder Lake-PS)",        "Intel 7" },
+	/* Sapphire Rapids CPUs (2023, 4th Xeon Scalable gen, Intel 7): https://en.wikichip.org/wiki/intel/microarchitectures/sapphire_rapids */
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) w9-#4##",        6 }, "Xeon w9 (Sapphire Rapids-WS)",       "Intel 7" },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) w7-#4##",        6 }, "Xeon w7 (Sapphire Rapids-WS)",       "Intel 7" },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) w5-#4##",        6 }, "Xeon w5 (Sapphire Rapids-WS)",       "Intel 7" },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) w3-#4##",        6 }, "Xeon w3 (Sapphire Rapids-WS)",       "Intel 7" },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) Max #4##",       6 }, "Xeon Max (Sapphire Rapids-HBM)",     "Intel 7" },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) Platinum #4##",  6 }, "Xeon Platinum (Sapphire Rapids-SP)", "Intel 7" },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) Gold #4##",      6 }, "Xeon Gold (Sapphire Rapids-SP)",     "Intel 7" },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) Silver #4##",    6 }, "Xeon Silver (Sapphire Rapids-SP)"  , "Intel 7" },
+	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) Bronze #4##",    6 }, "Xeon Bronze (Sapphire Rapids-SP)"  , "Intel 7" },
+
+	/* Gracemont CPUs (2021, Atom, Intel 7): https://en.wikipedia.org/wiki/Gracemont_(microarchitecture) */
 	{  6, 14, -1, -1, 190, -1,    -1,    -1, { "Core(TM) i3-N3##",      10 }, "Core i3 (Alder Lake-N)",         "Intel 7" }, /* Core i3 N300 + Core i3 N305 */
 	{  6, 14, -1, -1, 190,  4,    -1,    -1, { "Processor N##",          4 }, "Intel Processor (Alder Lake-N)", "Intel 7" },
 	{  6, 14, -1, -1, 190,  2,    -1,    -1, { "Processor N##",          4 }, "Intel Processor (Alder Lake-N)", "Intel 7" }, /* Intel Processor N50 */
 	{  6, 14, -1, -1, 190, -1,    -1,    -1, { "Atom(TM) x7###E",        8 }, "Atom (Alder Lake-N)",            "Intel 7" },
-	/* Twin Lake CPUs (2025, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/twin_lake */
+	/* Twin Lake CPUs (2025, Atom, Intel 7): https://en.wikichip.org/wiki/intel/microarchitectures/twin_lake */
 	{  6, 14, -1, -1, 190,  8,    -1,    -1, { "Core(TM) 3 N#5#",        8 }, "Core 3 (Twin Lake-N)",            "Intel 7" }, /* Core 3 N350 + Core 3 N355 */
 	{  6, 14, -1, -1, 190,  4,    -1,    -1, { "Processor N#5#",         6 }, "Intel Processor (Twin Lake-N)",   "Intel 7" }, /* Intel Processor N150 + Intel Processor N150 */
 
-	/* Raptor Lake CPUs (2022, 13th Core i gen, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/raptor_lake */
+	/* Raptor Cove (P-cores) / Gracemont (E-cores) CPUs (2022, 13th Core i gen, Intel 7): https://en.wikipedia.org/wiki/Golden_Cove#Raptor_Cove */
 	{  6, 15, -1, -1, 191, -1,    -1,    -1, { "Core(TM) i5-13###",      8 }, "Core i5 (Raptor Lake-S)",         "Intel 7" }, /* "Golden Cove" cores */
 	{  6, 15, -1, -1, 191, -1,    -1,    -1, { "Core(TM) i3-13###",      8 }, "Core i3 (Raptor Lake-S)",         "Intel 7" }, /* "Golden Cove" cores */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) i9-13###",      8 }, "Core i9 (Raptor Lake-S)",         "Intel 7" },
@@ -572,7 +580,12 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, { "Core(TM) i9-13###H",    10 }, "Core i9 (Raptor Lake-H)",         "Intel 7" },
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, { "Core(TM) i7-13###H",    10 }, "Core i7 (Raptor Lake-H)",         "Intel 7" },
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, { "Core(TM) i5-13###H",    10 }, "Core i5 (Raptor Lake-H)",         "Intel 7" },
-	/* Raptor Lake Refresh CPUs (2023, 14th Core i gen, Intel 7) => https://en.wikipedia.org/wiki/Raptor_Lake#List_of_14th_generation_Raptor_Lake_processors */
+	/* Emerald Rapids CPUs (2023, 5th Xeon Scalable gen, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/emerald_rapids */
+	{  6, 15, -1, -1, 207, -1,    -1,    -1, { "Xeon(R) Platinum #5##",  6 }, "Xeon Platinum (Emerald Rapids-SP)", "Intel 7" }, /* Xeon Platinum (8500) */
+	{  6, 15, -1, -1, 207, -1,    -1,    -1, { "Xeon(R) Gold #5##",      6 }, "Xeon Gold (Emerald Rapids-SP)",     "Intel 7" }, /* Xeon Gold (5500 and 6500) */
+	{  6, 15, -1, -1, 207, -1,    -1,    -1, { "Xeon(R) Silver #5##",    6 }, "Xeon Silver (Emerald Rapids-SP)",   "Intel 7" }, /* Xeon Silver (4500) */
+	{  6, 15, -1, -1, 207, -1,    -1,    -1, { "Xeon(R) Bronze #5##",    6 }, "Xeon Bronze (Emerald Rapids-SP)",   "Intel 7" }, /* Xeon Bronze (3500) */
+	/* Raptor Lake Refresh CPUs (2023, 14th Core i gen, Intel 7): https://en.wikipedia.org/wiki/Raptor_Lake#List_of_14th_generation_Raptor_Lake_processors */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) i9-14###",      8 }, "Core i9 (Raptor Lake-S)" ,        "Intel 7" },
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) i7-14###",      8 }, "Core i7 (Raptor Lake-S)" ,        "Intel 7" },
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) i5-14###",      8 }, "Core i5 (Raptor Lake-S)" ,        "Intel 7" },
@@ -585,38 +598,21 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) 7 1##U",        8 }, "Core 7 (Raptor Lake-U)",          "Intel 7" }, /* Core 7 150U */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) 5 1##U",        8 }, "Core 5 (Raptor Lake-U)",          "Intel 7" }, /* Core 5 120U */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) 3 1##U",        8 }, "Core 3 (Raptor Lake-U)",          "Intel 7" }, /* Core 3 100U */
-	/* Raptor Lake Re-refresh CPUs (2025, Core Series 2 processors Intel 7) => https://en.wikipedia.org/wiki/Raptor_Lake#List_of_Core_Series_2_processors */
+	/* Raptor Lake Re-refresh CPUs (2025, Core Series 2, Intel 7): https://en.wikipedia.org/wiki/Raptor_Lake#List_of_Core_Series_2_processors */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) 7 2##U",        8 }, "Core 7 (Raptor Lake-U)",          "Intel 7" }, /* Core 7 250U */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) 5 2##U",        8 }, "Core 5 (Raptor Lake-U)",          "Intel 7" }, /* Core 5 220U */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) 9 2##H",        8 }, "Core 9 (Raptor Lake-H)",          "Intel 7" }, /* Core 9 270H */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) 7 2##H",        8 }, "Core 7 (Raptor Lake-H)",          "Intel 7" }, /* Core 7 240H + Core 7 250H */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) 5 2##H",        8 }, "Core 5 (Raptor Lake-H)",          "Intel 7" }, /* Core 5 210H + Core 5 220H */
 
-	/* Sapphire Rapids CPUs (2023, 4th Xeon Scalable gen, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/sapphire_rapids */
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) w9-#4##",        6 }, "Xeon w9 (Sapphire Rapids-WS)",       "Intel 7" },
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) w7-#4##",        6 }, "Xeon w7 (Sapphire Rapids-WS)",       "Intel 7" },
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) w5-#4##",        6 }, "Xeon w5 (Sapphire Rapids-WS)",       "Intel 7" },
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) w3-#4##",        6 }, "Xeon w3 (Sapphire Rapids-WS)",       "Intel 7" },
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) Max #4##",       6 }, "Xeon Max (Sapphire Rapids-HBM)",     "Intel 7" },
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) Platinum #4##",  6 }, "Xeon Platinum (Sapphire Rapids-SP)", "Intel 7" },
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) Gold #4##",      6 }, "Xeon Gold (Sapphire Rapids-SP)",     "Intel 7" },
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) Silver #4##",    6 }, "Xeon Silver (Sapphire Rapids-SP)"  , "Intel 7" },
-	{  6, 15, -1, -1, 143, -1,    -1,    -1, { "Xeon(R) Bronze #4##",    6 }, "Xeon Bronze (Sapphire Rapids-SP)"  , "Intel 7" },
-
-	/* Emerald Rapids CPUs (2023, 5th Xeon Scalable gen, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/emerald_rapids */
-	{  6, 15, -1, -1, 207, -1,    -1,    -1, { "Xeon(R) Platinum #5##",  6 }, "Xeon Platinum (Emerald Rapids-SP)" , "Intel 7" }, /* Xeon Platinum (8500) */
-	{  6, 15, -1, -1, 207, -1,    -1,    -1, { "Xeon(R) Gold #5##",      6 }, "Xeon Gold (Emerald Rapids-SP)",      "Intel 7" }, /* Xeon Gold (5500 and 6500) */
-	{  6, 15, -1, -1, 207, -1,    -1,    -1, { "Xeon(R) Silver #5##",    6 }, "Xeon Silver (Emerald Rapids-SP)"   , "Intel 7" }, /* Xeon Silver (4500) */
-	{  6, 15, -1, -1, 207, -1,    -1,    -1, { "Xeon(R) Bronze #5##",    6 }, "Xeon Bronze (Emerald Rapids-SP)"   , "Intel 7" }, /* Xeon Bronze (3500) */
-
-	/* Meteor Lake CPUs (2023, Core Ultra Series 1 processors, Intel 4) => https://en.wikichip.org/wiki/intel/microarchitectures/meteor_lake */
+	/* Redwood Cove (P-cores) / Crestmont (E-cores) CPUs (2023, Core Ultra Series 1, Intel 4): https://en.wikipedia.org/wiki/Meteor_Lake */
 	{  6, 10, -1, -1, 170, -1,    -1,    -1, { "Core(TM) Ultra 9 1##H", 10 }, "Core Ultra 9 (Meteor Lake-H)", "Intel 4" },
 	{  6, 10, -1, -1, 170, -1,    -1,    -1, { "Core(TM) Ultra 7 1##H", 10 }, "Core Ultra 7 (Meteor Lake-H)", "Intel 4" },
 	{  6, 10, -1, -1, 170, -1,    -1,    -1, { "Core(TM) Ultra 5 1##H", 10 }, "Core Ultra 5 (Meteor Lake-H)", "Intel 4" },
 	{  6, 10, -1, -1, 170, -1,    -1,    -1, { "Core(TM) Ultra 7 1##U", 10 }, "Core Ultra 7 (Meteor Lake-U)", "Intel 4" },
 	{  6, 10, -1, -1, 170, -1,    -1,    -1, { "Core(TM) Ultra 5 1##U", 10 }, "Core Ultra 5 (Meteor Lake-U)", "Intel 4" },
 
-	/* Arrow Lake CPUs (2024, Core Ultra Series 2 processors, TSMC N3B) => https://en.wikichip.org/wiki/intel/microarchitectures/arrow_lake */
+	/* Lion Cove (P-cores) / Skymont (E-cores) CPUs (2024, Core Ultra Series 2, TSMC N3B): https://en.wikipedia.org/wiki/Arrow_Lake_(microprocessor) */
 	{  6,  6, -1, -1, 198, -1,    -1,    -1, { "Core(TM) Ultra 9 2##",   8 }, "Core Ultra 9 (Arrow Lake-S)", "TSMC N3B" },
 	{  6,  6, -1, -1, 198, -1,    -1,    -1, { "Core(TM) Ultra 7 2##",   8 }, "Core Ultra 7 (Arrow Lake-S)", "TSMC N3B" },
 	{  6,  6, -1, -1, 198, -1,    -1,    -1, { "Core(TM) Ultra 5 2##",   8 }, "Core Ultra 5 (Arrow Lake-S)", "TSMC N3B" },
@@ -625,8 +621,6 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  6, -1, -1, 197, -1,    -1,    -1, { "Core(TM) Ultra 9 2##H", 10 }, "Core Ultra 9 (Arrow Lake-H)", "TSMC N3B" }, /* Core Ultra 9 285H */
 	{  6,  6, -1, -1, 197, -1,    -1,    -1, { "Core(TM) Ultra 7 2##H", 10 }, "Core Ultra 7 (Arrow Lake-H)", "TSMC N3B" }, /* Core Ultra 7 255H + Core Ultra 7 265H */
 	{  6,  6, -1, -1, 197, -1,    -1,    -1, { "Core(TM) Ultra 5 2##H", 10 }, "Core Ultra 5 (Arrow Lake-H)", "TSMC N3B" }, /* Core Ultra 5 225H + Core Ultra 7 235H */
-
-	/* Lunar Lake CPUs (2024, Core Ultra Series 2 processors, TSMC N3B) => https://en.wikichip.org/wiki/intel/microarchitectures/lunar_lake */
 	{  6, 13, -1, -1, 189, -1,    -1,    -1, { "Core(TM) Ultra 9 2##V", 10 }, "Core Ultra 9 (Lunar Lake-V)", "TSMC N3B" },
 	{  6, 13, -1, -1, 189, -1,    -1,    -1, { "Core(TM) Ultra 7 2##V", 10 }, "Core Ultra 7 (Lunar Lake-V)", "TSMC N3B" },
 	{  6, 13, -1, -1, 189, -1,    -1,    -1, { "Core(TM) Ultra 5 2##V", 10 }, "Core Ultra 5 (Lunar Lake-V)", "TSMC N3B" },
