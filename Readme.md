@@ -171,9 +171,9 @@ Query switches (generate 1 line of output per switch; in order of appearance):
   --l2-cache, --l3-cache, --l4-cache, --l1d-assoc, --l1i-assoc, --l2-assoc, 
   --l3-assoc, --l4-assoc, --l1d-cacheline, --l1i-cacheline, --l2-cacheline, 
   --l3-cacheline, --l4-cacheline, --l1d-instances, --l1i-instances, 
-  --l2-instances, --l3-instances, --l4-instances, --codename, --flags, 
-  --clock, --clock-os, --clock-rdtsc, --clock-ic, --rdmsr, --rdmsr-raw, 
-  --sse-size
+  --l2-instances, --l3-instances, --l4-instances, --codename, --technology, 
+  --flags, --clock, --clock-os, --clock-rdtsc, --clock-ic, --rdmsr, 
+  --rdmsr-raw, --sse-size
 
 If `-' is used for <file>, then stdin/stdout will be used instead of files.
 When no options are present, the program behaves as if it was invoked with
