@@ -580,7 +580,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, { "Core(TM) i9-13###H",    10 }, "Core i9 (Raptor Lake-H)",         "Intel 7" },
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, { "Core(TM) i7-13###H",    10 }, "Core i7 (Raptor Lake-H)",         "Intel 7" },
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, { "Core(TM) i5-13###H",    10 }, "Core i5 (Raptor Lake-H)",         "Intel 7" },
-	/* Emerald Rapids CPUs (2023, 5th Xeon Scalable gen, Intel 7) => https://en.wikichip.org/wiki/intel/microarchitectures/emerald_rapids */
+	/* Emerald Rapids CPUs (2023, 5th Xeon Scalable gen, Intel 7): https://en.wikichip.org/wiki/intel/microarchitectures/emerald_rapids */
 	{  6, 15, -1, -1, 207, -1,    -1,    -1, { "Xeon(R) Platinum #5##",  6 }, "Xeon Platinum (Emerald Rapids-SP)", "Intel 7" }, /* Xeon Platinum (8500) */
 	{  6, 15, -1, -1, 207, -1,    -1,    -1, { "Xeon(R) Gold #5##",      6 }, "Xeon Gold (Emerald Rapids-SP)",     "Intel 7" }, /* Xeon Gold (5500 and 6500) */
 	{  6, 15, -1, -1, 207, -1,    -1,    -1, { "Xeon(R) Silver #5##",    6 }, "Xeon Silver (Emerald Rapids-SP)",   "Intel 7" }, /* Xeon Silver (4500) */
@@ -611,6 +611,10 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10, -1, -1, 170, -1,    -1,    -1, { "Core(TM) Ultra 5 1##H", 10 }, "Core Ultra 5 (Meteor Lake-H)", "Intel 4" },
 	{  6, 10, -1, -1, 170, -1,    -1,    -1, { "Core(TM) Ultra 7 1##U", 10 }, "Core Ultra 7 (Meteor Lake-U)", "Intel 4" },
 	{  6, 10, -1, -1, 170, -1,    -1,    -1, { "Core(TM) Ultra 5 1##U", 10 }, "Core Ultra 5 (Meteor Lake-U)", "Intel 4" },
+	/* Granite Rapids CPUs (2024, 6th Xeon Scalable gen, Intel 7): https://en.wikipedia.org/wiki/Granite_Rapids */
+	{  6, 13, -1, -1, 173, -1,    -1,    -1, { "Xeon(R) 6[57]##P",  6 }, "Xeon 6 (Granite Rapids-SP)",  "Intel 3" },
+	//{  6, ??, -1, -1, ???, -1,    -1,    -1, { "Xeon(R) 6[57]##P",  6 }, "Xeon 6 (Granite Rapids-AP)",  "Intel 3" },
+	//{  6, 14, -1, -1, 174, -1,    -1,    -1, { "Xeon(R) ????",      4 }, "Xeon ??? (Granite Rapids-D)", "Intel 3" },
 
 	/* Lion Cove (P-cores) / Skymont (E-cores) CPUs (2024, Core Ultra Series 2, TSMC N3B): https://en.wikipedia.org/wiki/Arrow_Lake_(microprocessor) */
 	{  6,  6, -1, -1, 198, -1,    -1,    -1, { "Core(TM) Ultra 9 2##",   8 }, "Core Ultra 9 (Arrow Lake-S)", "TSMC N3B" },
@@ -624,6 +628,9 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 13, -1, -1, 189, -1,    -1,    -1, { "Core(TM) Ultra 9 2##V", 10 }, "Core Ultra 9 (Lunar Lake-V)", "TSMC N3B" },
 	{  6, 13, -1, -1, 189, -1,    -1,    -1, { "Core(TM) Ultra 7 2##V", 10 }, "Core Ultra 7 (Lunar Lake-V)", "TSMC N3B" },
 	{  6, 13, -1, -1, 189, -1,    -1,    -1, { "Core(TM) Ultra 5 2##V", 10 }, "Core Ultra 5 (Lunar Lake-V)", "TSMC N3B" },
+
+	/* Cougar Cove (P-cores) / Darkmont (E-cores and LP E-cores) CPUs (2025, Core Ultra Series 3, Intel 18A): https://en.wikipedia.org/wiki/Panther_Lake_(microprocessor) */
+	// TBA
 //     F   M   S  EF    EM #cores L2$    L3$ Pattern                          Codename                       Technology
 
 
