@@ -29,7 +29,7 @@
  * \file     libcpuid.h
  * \author   Veselin Georgiev
  * \date     Oct 2008
- * \version  0.7.1
+ * \version  0.8.0
  *
  * Version history:
  *
@@ -84,6 +84,10 @@
  *                       add more fields in cpu_raw_data_t (amd_fn80000026h, arm_*),
  *                       detect x2APIC and AVX512 features for AMD x86 CPUs.
  * * 0.7.1 (2024-11-30): A lot of DB updates, fix build on ARM platforms.
+ * * 0.8.0 (2025-05-04): A lot of major DB updates, fixes,
+ *                       add more fields cpu_id_t (technology_node),
+ *                       add more fields in cpu_raw_data_t (ID_AA64DFR2_EL1, ID_AA64FPFR0_EL1, ID_AA64ISAR3_EL1),
+ *                       support ARMv9.5-A (FEATURE_LEVEL_ARM_V9_5_A in cpu_feature_level_t and more CPU_FEATURE in cpu_feature_t).
  */
 
 /** @mainpage A simple libcpuid introduction

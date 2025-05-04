@@ -227,3 +227,28 @@ Version 0.7.1 (2024-11-30):
 	* Fix detection of Intel Meteor Lake
 	* Support for Intel Arrow Lake
 	* Support for AMD Turin
+
+Version 0.8.0 (2025-05-04):
+	* A backwards-incompatible change, since the sizeof cpu_raw_data_t and
+	  cpu_id_t are now different.
+	* Fix a typo in string (#208)
+	* Support for AMD Turin Dense
+	* Simplify exec_cpuid() to use constraints (#209)
+	* Use HW_NCPUONLINE in get_total_cpus() for OpenBSD/NetBSD (#210)
+	* Implement cpu_clock_by_os() for OpenBSD (#211)
+	* Support Intel Lunar Lake
+	* Support Intel Twin Lake
+	* Support Intel Alder Lake-PS
+	* Support more Intel Raptor Lake ("Intel Processor", "Xeon E")
+	* Support Intel Raptor Lake-U Refresh
+	* Support Intel Raptor Lake-U/H Re-refresh
+	* Support Intel Arrow Lake-U/H
+	* Fix warning during build on OpenBSD about strcpy()
+	* Refactored internal struct match_entry_t for x86 CPUs to fix truncation issues (#212)
+	* Add technology_node field to struct cpu_id_t
+	* Support more ARM CPUs
+	* Support ARMv9.5-A CPUs (new value FEATURE_LEVEL_ARM_V9_5_A for cpu_feature_level_t)
+	* Massive DB updates for almost all Intel and AMD CPUs along with more test data
+	* Return ERR_BADFMT during raw deserialization if cpu_raw_data_t is empty
+	* Support another type of header for raw deserialization
+	* Support Intel Granite Rapids-SP
