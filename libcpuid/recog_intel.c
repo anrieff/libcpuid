@@ -130,18 +130,20 @@ const struct match_entry_t cpudb_intel[] = {
 	{ 15,  4, -1, 15, -1,   1,    -1,    -1, { "Xeon(TM)",          2 }, "Xeon (Potomac)",           "90 nm" },
 	{ 15,  4,  8, 15, -1,   1,    -1,    -1, { "Xeon(TM)",          2 }, "Xeon (Paxville)",          "90 nm" },
 	/* Cedar Mill / Yonah / Presler (2006, 65 nm): */
-	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Pentium(R)",              2 }, "Pentium 4 (Cedar Mill)",            "65 nm" },
-	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",        6 }, "Mobile P-4 (Cedar Mill)",           "65 nm" },
-	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Celeron(R) D",            4 }, "P-4 Celeron D (Cedar Mill)",        "65 nm" },
-	{  6, 14, -1, -1, -1,   1,    -1,    -1, { "Core(TM) [UT]1###",       6 }, "Core Solo (Yonah)",                 "65 nm" },
-	{  6, 14, -1, -1, -1,   2,    -1,    -1, { "Core(TM) Duo [UTL]2###",  6 }, "Core Duo (Yonah)",                  "65 nm" },
-	{  6, 14, -1, -1, -1,  -1,    -1,    -1, { "Celeron(R) 215",          6 }, "Celeron (Yonah-512)",               "65 nm" },
-	{  6, 14, -1, -1, -1,  -1,    -1,    -1, { "Celeron(R) M",            4 }, "Celeron (Yonah-1024)",              "65 nm" },
-	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) D",            4 }, "Pentium D (Presler)",               "65 nm" },
-	{ 15,  6,  2, 15, -1,   1,    -1,    -1, { "Pentium(R)",              2 }, "Pentium Extreme Edition (Presler)", "65 nm" },
-	{ 15,  6,  4, 15, -1,   1,    -1,    -1, { "Xeon(TM)",                2 }, "Xeon (Dempsey)",                    "65 nm" },
-	{ 15,  6,  6, 15, -1,   1,    -1,    -1, { "Xeon(TM)",                2 }, "Xeon (Tulsa)",                      "65 nm" },
-	{ 15,  6,  8, 15, -1,   1,    -1,    -1, { "Xeon(TM)",                2 }, "Xeon (Tulsa)",                      "65 nm" },
+	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Pentium(R)",                 2 }, "Pentium 4 (Cedar Mill)",            "65 nm" },
+	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) 4 - M",           6 }, "Mobile P-4 (Cedar Mill)",           "65 nm" },
+	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Celeron(R) D",               4 }, "P-4 Celeron D (Cedar Mill)",        "65 nm" },
+	{  6, 14, -1, 14, -1,   1,    -1,    -1, { "Core(TM) [UT]1#[05]0",       6 }, "Core Solo (Yonah)",                 "65 nm" },
+	{  6, 14, -1, 14, -1,   1,    -1,    -1, { "Core(TM) 1#[05]0",           4 }, "Core Solo (Yonah)",                 "65 nm" },
+	{  6, 14, -1, 14, -1,   2,    -1,    -1, { "Core(TM) Duo [UTL]2#[05]#",  6 }, "Core Duo (Yonah)",                  "65 nm" },
+	{  6, 14, -1, 14, -1,   2,    -1,    -1, { "Core(TM) Duo 2#[05]#",       4 }, "Core Duo (Yonah)",                  "65 nm" },
+	{  6, 14, -1, 14, -1,  -1,    -1,    -1, { "Celeron(R) 215",             6 }, "Celeron (Yonah-512)",               "65 nm" },
+	{  6, 14, -1, 14, -1,  -1,    -1,    -1, { "Celeron(R) M",               4 }, "Celeron (Yonah-1024)",              "65 nm" },
+	{ 15,  6, -1, 15, -1,   1,    -1,    -1, { "Pentium(R) D",               4 }, "Pentium D (Presler)",               "65 nm" },
+	{ 15,  6,  2, 15, -1,   1,    -1,    -1, { "Pentium(R)",                 2 }, "Pentium Extreme Edition (Presler)", "65 nm" },
+	{ 15,  6,  4, 15, -1,   1,    -1,    -1, { "Xeon(TM)",                   2 }, "Xeon (Dempsey)",                    "65 nm" },
+	{ 15,  6,  6, 15, -1,   1,    -1,    -1, { "Xeon(TM)",                   2 }, "Xeon (Tulsa)",                      "65 nm" },
+	{ 15,  6,  8, 15, -1,   1,    -1,    -1, { "Xeon(TM)",                   2 }, "Xeon (Tulsa)",                      "65 nm" },
 
 	/* Core CPUs (2006, 65 nm): https://en.wikipedia.org/wiki/Intel_Core_(microarchitecture)*/
 	{  6, 15, -1, -1, -1,   2,  2048,    -1, { "Core(TM)2 Duo E6###",    8 }, "Core 2 Duo (Conroe-2M)",        "65 nm" },
@@ -554,12 +556,12 @@ const struct match_entry_t cpudb_intel[] = {
 
 	/* Gracemont CPUs (2021, Atom, Intel 7): https://en.wikipedia.org/wiki/Gracemont_(microarchitecture) */
 	{  6, 14, -1, -1, 190, -1,    -1,    -1, { "Core(TM) i3-N3##",      10 }, "Core i3 (Alder Lake-N)",         "Intel 7" }, /* Core i3 N300 + Core i3 N305 */
-	{  6, 14, -1, -1, 190,  4,    -1,    -1, { "Processor N##",          4 }, "Intel Processor (Alder Lake-N)", "Intel 7" },
-	{  6, 14, -1, -1, 190,  2,    -1,    -1, { "Processor N##",          4 }, "Intel Processor (Alder Lake-N)", "Intel 7" }, /* Intel Processor N50 */
+	{  6, 14, -1, -1, 190,  4,    -1,    -1, { "N##",                    2 }, "Intel Processor (Alder Lake-N)", "Intel 7" },
+	{  6, 14, -1, -1, 190,  2,    -1,    -1, { "N##",                    2 }, "Intel Processor (Alder Lake-N)", "Intel 7" }, /* Intel Processor N50 */
 	{  6, 14, -1, -1, 190, -1,    -1,    -1, { "Atom(TM) x7###E",        8 }, "Atom (Alder Lake-N)",            "Intel 7" },
 	/* Twin Lake CPUs (2025, Atom, Intel 7): https://en.wikichip.org/wiki/intel/microarchitectures/twin_lake */
 	{  6, 14, -1, -1, 190,  8,    -1,    -1, { "Core(TM) 3 N#5#",        8 }, "Core 3 (Twin Lake-N)",            "Intel 7" }, /* Core 3 N350 + Core 3 N355 */
-	{  6, 14, -1, -1, 190,  4,    -1,    -1, { "Processor N#5#",         6 }, "Intel Processor (Twin Lake-N)",   "Intel 7" }, /* Intel Processor N150 + Intel Processor N150 */
+	{  6, 14, -1, -1, 190,  4,    -1,    -1, { "N#5#",                   4 }, "Intel Processor (Twin Lake-N)",   "Intel 7" }, /* Intel Processor N150 + Intel Processor N150 */
 
 	/* Raptor Cove (P-cores) / Gracemont (E-cores) CPUs (2022, 13th Core i gen, Intel 7): https://en.wikipedia.org/wiki/Golden_Cove#Raptor_Cove */
 	{  6, 15, -1, -1, 191, -1,    -1,    -1, { "Core(TM) i5-13###",      8 }, "Core i5 (Raptor Lake-S)",         "Intel 7" }, /* "Golden Cove" cores */
@@ -576,7 +578,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6, 10,  3, -1, 186, -1,    -1,    -1, { "Core(TM) i7-13###U",    10 }, "Core i7 (Raptor Lake-U)",         "Intel 7" },
 	{  6, 10,  3, -1, 186, -1,    -1,    -1, { "Core(TM) i5-13###U",    10 }, "Core i5 (Raptor Lake-U)",         "Intel 7" },
 	{  6, 10,  3, -1, 186, -1,    -1,    -1, { "Core(TM) i3-13###U",    10 }, "Core i3 (Raptor Lake-U)",         "Intel 7" },
-	{  6, 10,  3, -1, 186, -1,    -1,    -1, { "Processor U300",         6 }, "Intel Processor (Raptor Lake-U)", "Intel 7" }, /* Intel Processor U300 */
+	{  6, 10,  3, -1, 186, -1,    -1,    -1, { "U300",                   4 }, "Intel Processor (Raptor Lake-U)", "Intel 7" }, /* Intel Processor U300 */
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, { "Core(TM) i9-13###H",    10 }, "Core i9 (Raptor Lake-H)",         "Intel 7" },
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, { "Core(TM) i7-13###H",    10 }, "Core i7 (Raptor Lake-H)",         "Intel 7" },
 	{  6, 10, -1, -1, 186, -1,    -1,    -1, { "Core(TM) i5-13###H",    10 }, "Core i5 (Raptor Lake-H)",         "Intel 7" },
@@ -590,7 +592,7 @@ const struct match_entry_t cpudb_intel[] = {
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) i7-14###",      8 }, "Core i7 (Raptor Lake-S)" ,        "Intel 7" },
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) i5-14###",      8 }, "Core i5 (Raptor Lake-S)" ,        "Intel 7" },
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) i3-14###",      8 }, "Core i3 (Raptor Lake-S)" ,        "Intel 7" },
-	{  6,  7, -1, -1, 183,  2,    -1,    -1, { "Processor 300",          4 }, "Intel Processor (Raptor Lake-S)", "Intel 7" }, /* Intel Processor 300 + Intel Processor 300T */
+	{  6,  7, -1, -1, 183,  2,    -1,    -1, { "300",                    2 }, "Intel Processor (Raptor Lake-S)", "Intel 7" }, /* Intel Processor 300 + Intel Processor 300T */
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) i9-14###HX",   12 }, "Core i9 (Raptor Lake-HX)",        "Intel 7" },
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) i7-14###HX",   12 }, "Core i7 (Raptor Lake-HX)",        "Intel 7" },
 	{  6,  7, -1, -1, 183, -1,    -1,    -1, { "Core(TM) i5-14###HX",   12 }, "Core i5 (Raptor Lake-HX)",        "Intel 7" },
