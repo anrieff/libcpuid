@@ -7,7 +7,7 @@ configure_file("${DRIVER_SOURCE}" "${CMAKE_CURRENT_BINARY_DIR}/${DRIVER_SOURCE}"
 configure_file(Makefile.in "${CMAKE_CURRENT_BINARY_DIR}/Makefile_kmod")
 
 add_custom_command(OUTPUT "${DRIVER_MODULE}"
-  COMMAND "${CMAKE_MAKE_PROGRAM}" -f Makefile_kmod
+  COMMAND make -f Makefile_kmod
   WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
   DEPENDS "${DRIVER_SOURCE}"
   COMMENT "Building CPUID kernel module for ARM..."
