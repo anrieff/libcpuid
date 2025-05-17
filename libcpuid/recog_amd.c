@@ -421,9 +421,11 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 26,   68,  -1,    -1,    -1, { "Ryzen 7 9###",           6 }, "Ryzen 7 (Granite Ridge)",        "TSMC N4"  },
 	{ 15, -1, -1, 26,   68,  -1,    -1,    -1, { "Ryzen 5 9###",           6 }, "Ryzen 5 (Granite Ridge)",        "TSMC N4"  },
 	{ 15, -1, -1, 26,   68,  -1,    -1,    -1, { "Ryzen 3 9###",           6 }, "Ryzen 3 (Granite Ridge)",        "TSMC N4"  },
-	/*  => Strix Point (Zen 5/RDNA3.5/XDNA2 based) */
+	/*  => Strix Point and Krackan Point (Zen 5/RDNA3.5/XDNA2 based) */
 	{ 15, -1, -1, 26,   36,  -1,    -1,    -1, { "Ryzen AI 9",             6 }, "Ryzen AI 9 (Strix Point)",       "TSMC N4P" },
-	{ 15, -1, -1, 26,   36,  -1,    -1,    -1, { "Ryzen AI 7",             6 }, "Ryzen AI 7 (Strix Point)",       "TSMC N4P" },
+	{ 15, -1, -1, 26,   36,  -1,    -1,    -1, { "Ryzen AI 7",             6 }, "Ryzen AI 7 (Strix Point)",       "TSMC N4P" }, /* Ryzen AI 7 PRO 360 */
+	{ 15, -1, -1, 26,   96,  -1,    -1,    -1, { "Ryzen AI 7",             6 }, "Ryzen AI 7 (Krackan Point)",     "TSMC N4P" }, /* Ryzen AI 7 (PRO) 350 */
+	{ 15, -1, -1, 26,   96,  -1,    -1,    -1, { "Ryzen AI 5",             6 }, "Ryzen AI 5 (Krackan Point)",     "TSMC N4P" }, /* Ryzen AI 5 (PRO) 340 */
 //     F   M   S  EF    EM #cores  L2$    L3$  Pattern                          Codename                          Technology
 };
 
