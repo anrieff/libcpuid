@@ -426,6 +426,9 @@ const struct match_entry_t cpudb_amd[] = {
 	{ 15, -1, -1, 26,   36,  -1,    -1,    -1, { "Ryzen AI 7",             6 }, "Ryzen AI 7 (Strix Point)",       "TSMC N4P" }, /* Ryzen AI 7 PRO 360 */
 	{ 15, -1, -1, 26,   96,  -1,    -1,    -1, { "Ryzen AI 7",             6 }, "Ryzen AI 7 (Krackan Point)",     "TSMC N4P" }, /* Ryzen AI 7 (PRO) 350 */
 	{ 15, -1, -1, 26,   96,  -1,    -1,    -1, { "Ryzen AI 5",             6 }, "Ryzen AI 5 (Krackan Point)",     "TSMC N4P" }, /* Ryzen AI 5 (PRO) 340 */
+	/* => Strix Halo (Zen 5/RDNA3.5/XDNA2 based) */
+	{ 15, -1, -1, 26,  112,  -1,    -1,    -1, { "Ryzen AI MAX+",          8 }, "Ryzen AI MAX+ (Strix Halo)",     "TSMC N4P" }, /* Ryzen AI MAX+ (PRO) 395 */
+	{ 15, -1, -1, 26,  112,  -1,    -1,    -1, { "Ryzen AI MAX",           6 }, "Ryzen AI MAX (Strix Halo)",      "TSMC N4P" },
 //     F   M   S  EF    EM #cores  L2$    L3$  Pattern                          Codename                          Technology
 };
 
