@@ -18,7 +18,7 @@ consistency:
 test: test-fast
 
 test-fast:
-	LD_PRELOAD=$(top_builddir)/libcpuid/.libs/libcpuid.so $(top_srcdir)/tests/run_tests.py $(top_builddir)/cpuid_tool/.libs/cpuid_tool --show-test-fast-warning $(top_srcdir)/tests
+	LD_PRELOAD=$(top_builddir)/libcpuid/.libs/libcpuid.so $(top_srcdir)/tests/run_tests.py --show-test-fast-warning $(top_builddir)/cpuid_tool/.libs/cpuid_tool $(top_srcdir)/tests
 
 test-old:
 	$(top_srcdir)/tests/run_tests.py $(top_builddir)/cpuid_tool/cpuid_tool $(top_srcdir)/tests
