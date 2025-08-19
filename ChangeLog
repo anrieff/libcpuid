@@ -252,3 +252,12 @@ Version 0.8.0 (2025-05-04):
 	* Return ERR_BADFMT during raw deserialization if cpu_raw_data_t is empty
 	* Support another type of header for raw deserialization
 	* Support Intel Granite Rapids-SP
+
+Version 0.8.1 (2025-08-19):
+	* Fix kernel module name for FreeBSD ARM
+	* Support AMD Krackan Point
+	* Support Intel Skylake-X Core 9th
+	* Support AMD Strix Halo
+	* Build Python bindings without requiring wheel for building (#219)
+	* Support Intel Arrow Lake-HX
+	* Fix warnings about stringop-truncation
