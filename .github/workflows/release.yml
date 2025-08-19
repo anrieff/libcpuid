@@ -82,7 +82,7 @@ jobs:
           As a convenience, the following binaries are provided:
           - A source tarball;
           - Build for x86_64 macOS (built under [macOS 13.X](https://github.com/actions/runner-images/blob/main/images/macos/macos-13-Readme.md));
-          - Build for AArch64 macOS (built under [macOS 14.X](https://github.com/actions/runner-images/blob/main/images/macos/macos-14-Readme.md));
-          - Build for ix86 Windows, using MSVC XX.XX, in Debug, Release and Release DLL configurations (built under [Windows Server 2022](https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md));
-          - Build for x86_64 Windows, using MSVC XX.XX, in Debug, Release and Release DLL configurations (built under [Windows Server 2022](https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md)).
+          - Build for AArch64 macOS (built under [macOS 15.X](https://github.com/actions/runner-images/blob/main/images/macos/macos-15-Readme.md));
+          - Build for ix86 Windows, using MSVC XX.XX, in Debug, Release and Release DLL configurations (built under [Windows Server 2022](https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md));
+          - Build for x86_64 Windows, using MSVC XX.XX, in Debug, Release and Release DLL configurations (built under [Windows Server 2025](https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md)).
         artifacts: "libcpuid-${{ env.VERSION }}.tar.gz,libcpuid-${{ env.VERSION }}-macos-x86_64.zip,libcpuid-${{ env.VERSION }}-macos-aarch64.zip,libcpuid-${{ env.VERSION }}-windows-ix86.zip,libcpuid-${{ env.VERSION }}-windows-x86_64.zip"

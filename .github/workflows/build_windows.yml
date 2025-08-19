@@ -15,7 +15,7 @@ concurrency:
 jobs:
   build_win:
     name: Build on Windows ${{ matrix.platform.bitness }} as ${{ matrix.config }}
-    runs-on: windows-latest
+    runs-on: windows-2025
     strategy:
       matrix:
         config: [Debug, Release, ReleaseDLL]
