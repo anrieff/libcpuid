@@ -29,7 +29,7 @@ jobs:
       PTS: v142
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
