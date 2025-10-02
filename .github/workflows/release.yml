@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
+      with:
+        lfs: true
 
     - name: Get Git tag
       run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
