@@ -1470,6 +1470,6 @@ general
 4
 0
 256 (authoritative)
-Ryzen 9 (Matisse)
+Ryzen 9 PRO (Matisse)
 TSMC N7FF
 fpu vme de pse tsc msr pae mce cx8 apic mtrr sep pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht pni pclmul monitor ssse3 cx16 sse4_1 sse4_2 syscall movbe popcnt aes xsave osxsave avx mmxext nx fxsr_opt rdtscp lm lahf_lm cmp_legacy svm abm misalignsse sse4a 3dnowprefetch osvw ibs skinit wdt ts ttp tm_amd hwpstate constant_tsc fma3 f16c rdrand cpb aperfmperf avx2 bmi1 bmi2 sha_ni rdseed adx
