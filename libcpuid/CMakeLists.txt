@@ -72,7 +72,7 @@ endif(LIBCPUID_ENABLE_DOCS)
 
 # Configuration
 set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
-set(config_install_dir "lib/cmake/${PROJECT_NAME}")
+set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
 set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
 set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
@@ -92,11 +92,11 @@ configure_package_config_file("${PROJECT_SOURCE_DIR}/cmake/Config.cmake.in" "${p
 install(
   TARGETS cpuid
   EXPORT "${TARGETS_EXPORT_NAME}"
-  LIBRARY DESTINATION "lib"
-  ARCHIVE DESTINATION "lib"
-  RUNTIME DESTINATION "bin"
-  INCLUDES DESTINATION "include/libcpuid"
-  PUBLIC_HEADER DESTINATION "include/libcpuid")
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/libcpuid"
+  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/libcpuid")
 
 install(
   EXPORT "${TARGETS_EXPORT_NAME}"
