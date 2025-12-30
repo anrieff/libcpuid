@@ -30,6 +30,8 @@ jobs:
         prepare: |
           pkg install developer/cmake developer/gcc13 runtime/python-312
         run: |
+          set -e
+          
           # Generate build system
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="" -DLIBCPUID_ENABLE_TESTS=ON
 
@@ -38,7 +40,7 @@ jobs:
 
           # Run cpuid_tool
           ./build/cpuid_tool/cpuid_tool --save=- --all
-          pfexec ./build/cpuid_tool/cpuid_tool --rdmsr-raw --rdmsr
+          ./build/cpuid_tool/cpuid_tool --rdmsr-raw --rdmsr
 
           # Run tests
           make -C build consistency
