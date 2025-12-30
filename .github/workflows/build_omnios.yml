@@ -1,0 +1,48 @@
+name: Build (OmniOS)
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_omnios:
+    name: Build on OmniOS
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        lfs: true
+
+    - name: Build and test on OmniOS
+      uses: vmactions/omnios-vm@v1
+      with:
+        release: r151050
+        usesh: true
+        prepare: |
+          pkg install developer/cmake developer/gcc13 runtime/python-312
+        run: |
+          # Generate build system
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="" -DLIBCPUID_ENABLE_TESTS=ON
+
+          # Build
+          cmake --build build
+
+          # Run cpuid_tool
+          ./build/cpuid_tool/cpuid_tool --save=- --all
+          pfexec ./build/cpuid_tool/cpuid_tool --rdmsr-raw --rdmsr
+
+          # Run tests
+          make -C build consistency
+          make -C build test-old
+
+          # Install
+          DESTDIR=$PWD/installdir cmake --install build
