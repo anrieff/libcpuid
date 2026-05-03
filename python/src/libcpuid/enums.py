@@ -14,7 +14,6 @@ from libcpuid._libcpuid_cffi import (  # pylint: disable=no-name-in-module, impo
     lib,
 )
 
-
 CPUArchitecture = IntEnum("CPUArchitecture", get_enum_options("ARCHITECTURE_"))
 CPUArchitecture.__str__ = lambda self: c_string_to_str(lib.cpu_architecture_str(self))
 CPUArchitecture.__doc__ = "CPU architectures."
