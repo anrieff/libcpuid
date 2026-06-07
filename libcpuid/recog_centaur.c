@@ -66,7 +66,7 @@ const struct match_entry_t cpudb_centaur[] = {
 
 	/* Zhaoxin */
 //     F   M   S  EF    EM #cores  L2$    L3$  Pattern                              Codename                         Technology
-	{  7, -1, -1, -1,   -1,  -1,    -1,    -1, {"ZHAOXIN",                     2 }, "Unknown Zhaoxin CPU"            ""       },
+	{  7, -1, -1, -1,   -1,  -1,    -1,    -1, {"ZHAOXIN",                     2 }, "Unknown Zhaoxin CPU",           ""       },
 
 	/* Zhangjiang (2015, 28 nm) */
 	{  7, -1, -1, -1,   15,  -1,    -1,    -1, { "ZHAOXIN KaisHeng KH-C",      8 }, "Zhaoxin KaisHeng (ZhangJiang)", "28 nm"  }, // C+ (4000)
