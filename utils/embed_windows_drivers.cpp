@@ -15,7 +15,7 @@ vector<string> source;
 bool read_image(const char* drivers_root, const char* filename, char*& image, int& isize)
 {
 	char fn[512];
-	sprintf(fn, "%s\\%s", drivers_root, filename);
+	snprintf(fn, sizeof(fn), "%s\\%s", drivers_root, filename);
 	FILE* f = fopen(fn, "rb");
 	if (!f) return false;
 	fseek(f, 0, SEEK_END);
