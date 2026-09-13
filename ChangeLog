@@ -261,3 +261,13 @@ Version 0.8.1 (2025-08-19):
 	* Build Python bindings without requiring wheel for building (#219)
 	* Support Intel Arrow Lake-HX
 	* Fix warnings about stringop-truncation
+
+Version 0.8.2 (2026-09-13):
+	* Support AMD Shimada Peak
+	* Fix detection of AMD Ryzen/Threadripper PRO
+	* Make greater use of GNUInstallDirs with CMake
+	* Add technology node information for several i486 processors
+	* Fix a missing comma in Zhaoxin CPU entry
+	* Fix detection for AMD Carrizo
+	* Fix stack buffer overflow in Windows driver
+	* Do not report core voltage for Zen 5 CPUs

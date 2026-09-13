@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.13)
 
-set(VERSION "0.8.1")
+set(VERSION "0.8.2")
 set(LIBCPUID_CURRENT 18)
 set(LIBCPUID_AGE 1)
-set(LIBCPUID_REVISION 1)
+set(LIBCPUID_REVISION 2)
 project(
   cpuid
   LANGUAGES C ASM_MASM
