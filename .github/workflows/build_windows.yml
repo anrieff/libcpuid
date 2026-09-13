@@ -29,7 +29,7 @@ jobs:
       PTS: v142
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v7
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
@@ -64,7 +64,7 @@ jobs:
         DESTDIR: ${{ github.workspace }}/installdir
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ matrix.platform.name }}-${{ matrix.config }}
         path: installdir/*
@@ -82,7 +82,7 @@ jobs:
 
     steps:
     - name: Merge artifacts for ${{ matrix.platform }}
-      uses: actions/upload-artifact/merge@v4
+      uses: actions/upload-artifact/merge@v7
       with:
         name: ${{ matrix.platform }}
         pattern: ${{ matrix.platform }}-*

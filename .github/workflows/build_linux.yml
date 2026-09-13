@@ -24,7 +24,7 @@ jobs:
           - ubuntu-26.04
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v7
       with:
         lfs: true
 
