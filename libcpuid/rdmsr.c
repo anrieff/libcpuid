@@ -725,6 +725,7 @@ static int msr_platform_info_supported(struct msr_info_t *info)
 		{ 6, 156 },
 		/* ==> Tiger Lake */
 		{ 6, 140 },
+		{ 6, 141 },
 		/* ==> Alder Lake */
 		{ 6, 151 },
 		{ 6, 154 },
@@ -819,6 +820,7 @@ static int msr_intel_core_supported(struct msr_info_t *info)
 		{ 6, 156 },
 		/* ==> Tiger Lake */
 		{ 6, 140 },
+		{ 6, 141 },
 		/* ==> Alder Lake */
 		{ 6, 151 },
 		{ 6, 154 },
