@@ -59,6 +59,10 @@
 #if !defined(PLATFORM_AARCH64)
 #	define PLATFORM_AARCH64
 #endif
+#elif defined(__riscv)
+#if !defined(PLATFORM_RISCV)
+#	define PLATFORM_RISCV
+#endif
 #endif
 
 /* Under Windows/AMD64 with MSVC, inline assembly isn't supported */
@@ -82,5 +86,8 @@
 int cpuid_exists_by_eflags(void);
 void exec_cpuid(uint32_t *regs);
 void busy_sse_loop(int cycles);
+#if defined(PLATFORM_RISCV)
+uint64_t exec_csrr_vlenb(void);
+#endif /* PLATFORM_RISCV */
 
 #endif /* __ASM_BITS_H__ */

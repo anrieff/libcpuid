@@ -1,0 +1,85 @@
+_________________ Logical CPU #0 _________________
+riscv_mvendorid=0000000000000710
+riscv_marchid=8000000058000002
+riscv_mimpid=0000000033d8a600
+riscv_base_behavior=0000000000000001
+riscv_ima_ext0=13ffbff9ffff00ff
+riscv_ima_ext1=000000000000003e
+riscv_vlenb=0000000000000020
+riscv_uarch=spacemit,x100
+_________________ Logical CPU #1 _________________
+riscv_mvendorid=0000000000000710
+riscv_marchid=8000000058000002
+riscv_mimpid=0000000033d8a600
+riscv_base_behavior=0000000000000001
+riscv_ima_ext0=13ffbff9ffff00ff
+riscv_ima_ext1=000000000000003e
+riscv_vlenb=0000000000000020
+riscv_uarch=spacemit,x100
+_________________ Logical CPU #2 _________________
+riscv_mvendorid=0000000000000710
+riscv_marchid=8000000058000002
+riscv_mimpid=0000000033d8a600
+riscv_base_behavior=0000000000000001
+riscv_ima_ext0=13ffbff9ffff00ff
+riscv_ima_ext1=000000000000003e
+riscv_vlenb=0000000000000020
+riscv_uarch=spacemit,x100
+_________________ Logical CPU #3 _________________
+riscv_mvendorid=0000000000000710
+riscv_marchid=8000000058000002
+riscv_mimpid=0000000033d8a600
+riscv_base_behavior=0000000000000001
+riscv_ima_ext0=13ffbff9ffff00ff
+riscv_ima_ext1=000000000000003e
+riscv_vlenb=0000000000000020
+riscv_uarch=spacemit,x100
+_________________ Logical CPU #4 _________________
+riscv_mvendorid=0000000000000710
+riscv_marchid=8000000058000002
+riscv_mimpid=0000000033d8a600
+riscv_base_behavior=0000000000000001
+riscv_ima_ext0=13ffbff9ffff00ff
+riscv_ima_ext1=000000000000003e
+riscv_vlenb=0000000000000020
+riscv_uarch=spacemit,x100
+_________________ Logical CPU #5 _________________
+riscv_mvendorid=0000000000000710
+riscv_marchid=8000000058000002
+riscv_mimpid=0000000033d8a600
+riscv_base_behavior=0000000000000001
+riscv_ima_ext0=13ffbff9ffff00ff
+riscv_ima_ext1=000000000000003e
+riscv_vlenb=0000000000000020
+riscv_uarch=spacemit,x100
+_________________ Logical CPU #6 _________________
+riscv_mvendorid=0000000000000710
+riscv_marchid=8000000058000002
+riscv_mimpid=0000000033d8a600
+riscv_base_behavior=0000000000000001
+riscv_ima_ext0=13ffbff9ffff00ff
+riscv_ima_ext1=000000000000003e
+riscv_vlenb=0000000000000020
+riscv_uarch=spacemit,x100
+_________________ Logical CPU #7 _________________
+riscv_mvendorid=0000000000000710
+riscv_marchid=8000000058000002
+riscv_mimpid=0000000033d8a600
+riscv_base_behavior=0000000000000001
+riscv_ima_ext0=13ffbff9ffff00ff
+riscv_ima_ext1=000000000000003e
+riscv_vlenb=0000000000000020
+riscv_uarch=spacemit,x100
+--------------------------------------------------------------------------------
+RISC-V
+RVA23U64
+performance
+0x710
+0x8000000058000002
+0x33d8a600
+256
+8
+8
+unknown
+unknown
+i m a f d c v zba zbb zbs zicboz zbc zkt zvbb zvbc zvkb zvkg zvkned zvknha zvknhb zvksed zvksh zvkt zfh zfhmin zihintntl zvfh zvfhmin zfa zicond zihintpause zve32x zve32f zve64x zve64f zve64d zimop zca zcb zcd zcmop zawrs supm zicntr zihpm zfbfmin zvfbfmin zvfbfwma zicbom zaamo zalrsc zicbop zicclsm ziccamoa ziccif ziccrse za64rs

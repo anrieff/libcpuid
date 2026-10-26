@@ -788,3 +788,16 @@ bsLoop:
 #endif /* COMPILER_GCC */
 }
 #endif /* INLINE_ASM_SUPPORTED */
+
+#if defined(PLATFORM_RISCV)
+uint64_t exec_csrr_vlenb(void)
+{
+	unsigned long vlenb = 0;
+#if defined(COMPILER_GCC) || defined(COMPILER_CLANG)
+	/* vlenb (0xC22) is readable from user mode when the V extension is enabled.
+	   The numeric CSR address does not require V support in the assembler. */
+	__asm__ __volatile__("csrr %0, 0xc22" : "=r" (vlenb));
+#endif
+	return (uint64_t) vlenb;
+}
+#endif /* PLATFORM_RISCV */

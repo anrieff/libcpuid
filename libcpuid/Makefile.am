@@ -12,6 +12,7 @@ libcpuid_la_SOURCES =		\
 	recog_arm.c		\
 	recog_centaur.c		\
 	recog_intel.c		\
+	recog_riscv.c		\
 	rdtsc.c			\
 	asm-bits.c		\
 	libcpuid_util.c		\
@@ -40,6 +41,7 @@ noinst_HEADERS = 		\
 	recog_arm.h		\
 	recog_centaur.h		\
 	recog_intel.h		\
+	recog_riscv.h		\
 	rdcpuid.h			\
 	rdtsc.h
 

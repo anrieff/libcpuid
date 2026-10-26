@@ -33,6 +33,8 @@ class CPUInfo:  # pylint: disable=too-many-public-methods
             return X86Info(c_cpu_id)
         if cpu_info.architecture == enums.CPUArchitecture.ARM:
             return ARMInfo(c_cpu_id)
+        if cpu_info.architecture == enums.CPUArchitecture.RISCV:
+            return RISCVInfo(c_cpu_id)
         return cpu_info
 
     @classmethod
@@ -343,6 +345,36 @@ class ARMInfo(CPUInfo):
     def revision(self) -> int:
         """The CPU revision number."""
         return self._c_cpu_id.revision
+
+
+class RISCVInfo(CPUInfo):
+    """
+    The :class:`CPUInfo` child class for RISC-V CPUs.
+    """
+
+    def __init__(self, c_cpu_id):
+        super().__init__(c_cpu_id)
+        self._c_cpu_id = c_cpu_id
+
+    @property
+    def mvendorid(self) -> int:
+        """The machine vendor ID."""
+        return self._c_cpu_id.mvendorid
+
+    @property
+    def marchid(self) -> int:
+        """The machine architecture ID."""
+        return self._c_cpu_id.marchid
+
+    @property
+    def mimpid(self) -> int:
+        """The machine implementation ID."""
+        return self._c_cpu_id.mimpid
+
+    @property
+    def vlen(self) -> Optional[int]:
+        """The vector register length in bits, :const:`None` if not available."""
+        return optional_int(self._c_cpu_id.vlen)
 
 
 class SystemInfo:

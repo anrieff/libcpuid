@@ -16,7 +16,8 @@ def readRawFile():
 			"basic_cpuid", "ext_cpuid", "intel_fn4", "intel_fn11", "amd_fn8000001dh", # x86
 			"arm_midr", "arm_mpidr", "arm_revidr", # ARM common
 			"arm_id_afr", "arm_id_dfr", "arm_id_isar", "arm_id_mmfr", "arm_id_pfr", # ARM (AArch32)
-			"arm_id_aa64afr", "arm_id_aa64dfr", "arm_id_aa64fpfr", "arm_id_aa64isar", "arm_id_aa64mmfr", "arm_id_aa64pfr", "arm_id_aa64smfr", "arm_id_aa64zfr" # ARM (AArch64)
+			"arm_id_aa64afr", "arm_id_aa64dfr", "arm_id_aa64fpfr", "arm_id_aa64isar", "arm_id_aa64mmfr", "arm_id_aa64pfr", "arm_id_aa64smfr", "arm_id_aa64zfr", # ARM (AArch64)
+			"riscv_" # RISC-V
 		]
 		ignore  = ["Manufacturer", "CPU Name", "Revision", "MSR Register"]
 		good = False
@@ -41,6 +42,7 @@ def readResultFile():
 			continue
 		numeric = ["family", "model", "stepping", "ext_family", "ext_model",
 				"implementer", "variant", "part_num", "revision",
+				"vlen",
 				"num_cores", "num_logical",
 				"L1 D cache",  "L1 I cache",  "L2 cache",   "L3 cache",   "L4 cache",
 				"L1D assoc.",  "L1I assoc.",  "L2 assoc.",  "L3 assoc.",  "L4 assoc.",
@@ -56,6 +58,9 @@ def readResultFile():
 		if "CPU Info for type" in field:
 			repdata.append(delimiter)
 		if field == "arch":
+			value = s[s.find(":") + 2:]
+			repdata.append(value)
+		if field in ["mvendorid", "marchid", "mimpid"]:
 			value = s[s.find(":") + 2:]
 			repdata.append(value)
 		if field == "feat_level":

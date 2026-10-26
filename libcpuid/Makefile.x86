@@ -13,7 +13,7 @@ all: libcpuid.lib
 CC = cl.exe /nologo /TC
 OPTFLAGS = /MT
 DEFINES = /D "VERSION=\"0.8.2\""
-OBJECTS = asm-bits.obj cpuid_main.obj libcpuid_util.obj recog_amd.obj recog_arm.obj recog_centaur.obj recog_intel.obj rdcpuid.obj rdtsc.obj
+OBJECTS = asm-bits.obj cpuid_main.obj libcpuid_util.obj recog_amd.obj recog_arm.obj recog_centaur.obj recog_intel.obj recog_riscv.obj rdcpuid.obj rdtsc.obj
 
 libcpuid.lib: $(OBJECTS)
 	lib /nologo /out:libcpuid.lib $(OBJECTS)
@@ -32,6 +32,9 @@ recog_amd.obj: recog_amd.c
 
 recog_arm.obj: recog_arm.c
 	$(CC) $(OPTFLAGS) $(DEFINES)  /c recog_arm.c
+
+recog_riscv.obj: recog_riscv.c
+	$(CC) $(OPTFLAGS) $(DEFINES)  /c recog_riscv.c
 
 recog_centaur.obj: recog_centaur.c
 	$(CC) $(OPTFLAGS) $(DEFINES) /c recog_centaur.c

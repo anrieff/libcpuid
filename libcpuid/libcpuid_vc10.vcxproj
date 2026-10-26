@@ -192,6 +192,7 @@
     <ClCompile Include="rdtsc.c" />
     <ClCompile Include="recog_amd.c" />
     <ClCompile Include="recog_arm.c" />
+    <ClCompile Include="recog_riscv.c" />
     <ClCompile Include="recog_centaur.c" />
     <ClCompile Include="recog_intel.c" />
   </ItemGroup>
@@ -205,6 +206,7 @@
     <ClInclude Include="libcpuid_util.h" />
     <ClInclude Include="recog_amd.h" />
     <ClInclude Include="recog_arm.h" />
+    <ClInclude Include="recog_riscv.h" />
     <ClInclude Include="recog_centaur.h" />
     <ClInclude Include="recog_intel.h" />
     <ClInclude Include="rdcpuid.h" />

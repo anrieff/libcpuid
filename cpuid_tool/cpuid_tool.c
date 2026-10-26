@@ -51,6 +51,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #include "libcpuid.h"
 
 /* Globals: */
@@ -75,6 +76,10 @@ typedef enum {
 	NEED_VARIANT,
 	NEED_PART_NUM,
 	NEED_REVISION,
+	NEED_MVENDORID,
+	NEED_MARCHID,
+	NEED_MIMPID,
+	NEED_VLEN,
 	NEED_NUM_CORES,
 	NEED_NUM_LOGICAL,
 	NEED_TOTAL_CPUS,
@@ -149,6 +154,10 @@ matchtable[] = {
 	{ NEED_VARIANT      , "--variant"      , 1},
 	{ NEED_PART_NUM     , "--part-num"     , 1},
 	{ NEED_REVISION     , "--revision"     , 1},
+	{ NEED_MVENDORID    , "--mvendorid"    , 1},
+	{ NEED_MARCHID      , "--marchid"      , 1},
+	{ NEED_MIMPID       , "--mimpid"       , 1},
+	{ NEED_VLEN         , "--vlen"         , 1},
 	{ NEED_NUM_CORES    , "--cores"        , 1},
 	{ NEED_NUM_LOGICAL  , "--logical"      , 1},
 	{ NEED_TOTAL_CPUS   , "--total-cpus"   , 1},
@@ -434,6 +443,18 @@ static void print_info(output_data_switch query, struct cpu_id_t* data)
 		case NEED_REVISION:
 			fprintf(fout, "%d\n", data->arm.revision);
 			break;
+		case NEED_MVENDORID:
+			fprintf(fout, "0x%" PRIx64 "\n", data->riscv.mvendorid);
+			break;
+		case NEED_MARCHID:
+			fprintf(fout, "0x%" PRIx64 "\n", data->riscv.marchid);
+			break;
+		case NEED_MIMPID:
+			fprintf(fout, "0x%" PRIx64 "\n", data->riscv.mimpid);
+			break;
+		case NEED_VLEN:
+			fprintf(fout, "%d\n", data->riscv.vlen);
+			break;
 		case NEED_NUM_CORES:
 			fprintf(fout, "%d\n", data->num_cores);
 			break;
@@ -614,6 +635,12 @@ static void print_cpulist(void)
 		{ "Microsoft" , VENDOR_MICROSOFT },
 		{ "Phytium", VENDOR_PHYTIUM },
 		{ "Ampere" , VENDOR_AMPERE },
+		{ "SiFive", VENDOR_SIFIVE },
+		{ "T-Head", VENDOR_THEAD },
+		{ "Andes", VENDOR_ANDES },
+		{ "SpacemiT", VENDOR_SPACEMIT },
+		{ "Microchip", VENDOR_MICROCHIP },
+		{ "MIPS", VENDOR_MIPS },
 	};
 	for (i = 0; i < sizeof(cpu_vendors)/sizeof(cpu_vendors[0]); i++) {
 		fprintf(fout, "-----%s-----\n", cpu_vendors[i].name);
@@ -804,6 +831,12 @@ int main(int argc, char** argv)
 					fprintf(fout, "  variant    : %d (%02Xh)\n", data.cpu_types[cpu_type_index].arm.variant, data.cpu_types[cpu_type_index].arm.variant);
 					fprintf(fout, "  part_num   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].arm.part_num, data.cpu_types[cpu_type_index].arm.part_num);
 					fprintf(fout, "  revision   : %d (%02Xh)\n", data.cpu_types[cpu_type_index].arm.revision, data.cpu_types[cpu_type_index].arm.revision);
+				}
+				else if (data.cpu_types[cpu_type_index].architecture == ARCHITECTURE_RISCV) {
+					fprintf(fout, "  mvendorid  : 0x%" PRIx64 "\n", data.cpu_types[cpu_type_index].riscv.mvendorid);
+					fprintf(fout, "  marchid    : 0x%" PRIx64 "\n", data.cpu_types[cpu_type_index].riscv.marchid);
+					fprintf(fout, "  mimpid     : 0x%" PRIx64 "\n", data.cpu_types[cpu_type_index].riscv.mimpid);
+					fprintf(fout, "  vlen       : %d\n", data.cpu_types[cpu_type_index].riscv.vlen);
 				}
 				fprintf(fout, "  num_cores  : %d\n", data.cpu_types[cpu_type_index].num_cores);
 				fprintf(fout, "  num_logical: %d\n", data.cpu_types[cpu_type_index].num_logical_cpus);

@@ -8,6 +8,7 @@ set(cpuid_sources
     recog_arm.c
     recog_centaur.c
     recog_intel.c
+    recog_riscv.c
     rdtsc.c
     libcpuid_util.c
     rdmsr.c

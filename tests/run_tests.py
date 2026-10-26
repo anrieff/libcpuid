@@ -19,6 +19,10 @@ fields_arm = [ "architecture", "feature-level", "purpose",
 	   "implementer", "variant", "part-num", "revision",
 	   "cores", "logical",
 	   "codename", "technology", "flags" ]
+fields_riscv = [ "architecture", "feature-level", "purpose",
+	   "mvendorid", "marchid", "mimpid", "vlen",
+	   "cores", "logical",
+	   "codename", "technology", "flags" ]
 
 # One would usually use os.tempnam, but libc gives off hell a lot of
 # warnings when you attempt to use that :(
@@ -61,6 +65,8 @@ def do_test(inp, expected_out, binary, test_file_name, num_cpu_type):
 		fields = fields_x86
 	elif architecture == "ARM":
 		fields = fields_arm
+	elif architecture == "RISC-V":
+		fields = fields_riscv
 	else:
 		fields = []
 	cmd = f"{binary} --load={fninp} --outfile={fnoutp} {' '.join(['--' + s for s in fields])}"

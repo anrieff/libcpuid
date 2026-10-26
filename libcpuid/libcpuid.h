@@ -90,6 +90,11 @@
  *                       support ARMv9.5-A (FEATURE_LEVEL_ARM_V9_5_A in cpu_feature_level_t and more CPU_FEATURE in cpu_feature_t).
  * * 0.8.1 (2025-08-19): A lot of DB updates, fixes.
  * * 0.8.2 (2026-09-13): A lot of DB updates, fixes.
+ * * 0.9.0 (unreleased): Add support for RISC-V CPUs (Linux only),
+ *                       add more fields in cpu_raw_data_t (riscv_*) and cpu_id_t (riscv),
+ *                       add RVA profiles to cpu_feature_level_t and RISC-V extensions to cpu_feature_t
+ *                       (a backwards-incompatible change since the sizeof
+ *                        cpu_raw_data_t and cpu_id_t is now different).
  */
 
 /** @mainpage A simple libcpuid introduction
@@ -180,6 +185,12 @@ typedef enum {
 	VENDOR_MICROSOFT,  /*!< Microsoft Corporation CPU */
 	VENDOR_PHYTIUM,    /*!< Phytium Technology Co., Ltd CPU */
 	VENDOR_AMPERE,     /*!< Ampere Computing CPU */
+	VENDOR_SIFIVE,     /*!< SiFive, Inc. RISC-V CPU */
+	VENDOR_THEAD,      /*!< T-Head Semiconductor (Alibaba) RISC-V CPU */
+	VENDOR_ANDES,      /*!< Andes Technology RISC-V CPU */
+	VENDOR_SPACEMIT,   /*!< SpacemiT RISC-V CPU */
+	VENDOR_MICROCHIP,  /*!< Microchip Technology RISC-V CPU */
+	VENDOR_MIPS,       /*!< MIPS RISC-V CPU */
 
 	NUM_CPU_VENDORS,   /*!< Valid CPU vendor ids: 0..NUM_CPU_VENDORS - 1 */
 	VENDOR_UNKNOWN = -1,
@@ -192,6 +203,7 @@ typedef enum {
 typedef enum {
 	ARCHITECTURE_X86 = 0,  /*!< x86 CPU */
 	ARCHITECTURE_ARM,      /*!< ARM CPU */
+	ARCHITECTURE_RISCV,    /*!< RISC-V CPU */
 
 	NUM_CPU_ARCHITECTURES, /*!< Valid CPU architecture ids: 0..NUM_CPU_ARCHITECTURES - 1 */
 	ARCHITECTURE_UNKNOWN = -1,
@@ -247,6 +259,11 @@ typedef enum {
 	FEATURE_LEVEL_ARM_V9_3_A, /*!< ARMv9.3-A */
 	FEATURE_LEVEL_ARM_V9_4_A, /*!< ARMv9.4-A */
 	FEATURE_LEVEL_ARM_V9_5_A, /*!< ARMv9.5-A */
+
+	/* RISC-V: https://github.com/riscv/riscv-profiles (user-mode part of the application profiles) */
+	FEATURE_LEVEL_RISCV_RVA20U64 = 200, /*!< RVA20U64 */
+	FEATURE_LEVEL_RISCV_RVA22U64, /*!< RVA22U64 */
+	FEATURE_LEVEL_RISCV_RVA23U64, /*!< RVA23U64 */
 
 	NUM_FEATURE_LEVELS, /*!< Valid feature level ids: 0..NUM_FEATURE_LEVELS - 1 */
 	FEATURE_LEVEL_UNKNOWN = -1,
@@ -395,6 +412,31 @@ struct cpu_raw_data_t {
 	/** when then CPU is ARM-based and supports ID_AA64ZFR*
 	 * (SVE Feature ID register) */
 	uint64_t arm_id_aa64zfr[MAX_ARM_ID_AA64ZFR_REGS];
+
+	/** when the CPU is RISC-V: Machine Vendor ID (mvendorid CSR) */
+	uint64_t riscv_mvendorid;
+
+	/** when the CPU is RISC-V: Machine Architecture ID (marchid CSR) */
+	uint64_t riscv_marchid;
+
+	/** when the CPU is RISC-V: Machine Implementation ID (mimpid CSR) */
+	uint64_t riscv_mimpid;
+
+	/** when the CPU is RISC-V: base user-visible behavior
+	 * (RISCV_HWPROBE_KEY_BASE_BEHAVIOR of the Linux hwprobe syscall) */
+	uint64_t riscv_base_behavior;
+
+	/** when the CPU is RISC-V: supported ISA extensions
+	 * (RISCV_HWPROBE_KEY_IMA_EXT_0, RISCV_HWPROBE_KEY_IMA_EXT_1, ... of the Linux hwprobe syscall) */
+	uint64_t riscv_ima_ext[MAX_RISCV_IMA_EXT_REGS];
+
+	/** when the CPU is RISC-V and supports the V extension: vector register length in bytes
+	 * (vlenb CSR), 0 if unknown */
+	uint64_t riscv_vlenb;
+
+	/** when the CPU is RISC-V: core name from the device tree
+	 * (the "uarch" field of /proc/cpuinfo on Linux, e.g. "sifive,u74-mc"), empty if unknown */
+	char riscv_uarch[RISCV_UARCH_STR_MAX];
 };
 
 /**
@@ -535,6 +577,25 @@ struct arm_id_t {
 };
 
 /**
+ * @brief Contains RISC-V specific info.
+ *
+ * @note This is part of \ref cpu_id_t.
+ */
+struct riscv_id_t {
+	/** Machine Vendor ID (JEDEC manufacturer ID, bank number in bits [31:7]) */
+	uint64_t mvendorid;
+
+	/** Machine Architecture ID (most significant bit set for commercial cores) */
+	uint64_t marchid;
+
+	/** Machine Implementation ID */
+	uint64_t mimpid;
+
+	/** Vector register length in bits (VLEN), -1 if not available */
+	int32_t vlen;
+};
+
+/**
  * @brief This contains the recognized CPU features/info
  */
 struct cpu_id_t {
@@ -543,8 +604,8 @@ struct cpu_id_t {
 
 	/**
 	 * contains the CPU feature level,
-	 * also know as microarchitecture levels (x86)
-	 * and architecture version (ARM)
+	 * also know as microarchitecture levels (x86),
+	 * architecture version (ARM) and profile (RISC-V)
 	 */
 	cpu_feature_level_t feature_level;
 
@@ -609,6 +670,7 @@ struct cpu_id_t {
 	union {
 		struct x86_id_t x86;
 		struct arm_id_t arm;
+		struct riscv_id_t riscv;
 	};
 
 	/** Number of CPU cores on the current processor */
@@ -1200,6 +1262,81 @@ typedef enum {
 	CPU_FEATURE_SSVE_FP8FMA, /*!< ARM: SVE2 FP8 multiply-accumulate to half-precision and single-precision instructions in Streaming SVE mode */
 	CPU_FEATURE_STEP2, /*!< ARM: Enhanced Software Step Extension */
 	CPU_FEATURE_TLBIW, /*!< ARM: TLBI VMALL for Dirty state */
+	/* RISC-V, as reported by the Linux hwprobe syscall. Single-letter extensions are prefixed with RV_ */
+	CPU_FEATURE_RV_I, /*!< RISC-V: Base integer instruction set */
+	CPU_FEATURE_RV_M, /*!< RISC-V: Integer multiplication and division */
+	CPU_FEATURE_RV_A, /*!< RISC-V: Atomic instructions */
+	CPU_FEATURE_RV_F, /*!< RISC-V: Single-precision floating-point */
+	CPU_FEATURE_RV_D, /*!< RISC-V: Double-precision floating-point */
+	CPU_FEATURE_RV_C, /*!< RISC-V: Compressed instructions */
+	CPU_FEATURE_RV_V, /*!< RISC-V: Vector operations */
+	CPU_FEATURE_ZBA, /*!< RISC-V: Address generation */
+	CPU_FEATURE_ZBB, /*!< RISC-V: Basic bit-manipulation */
+	CPU_FEATURE_ZBS, /*!< RISC-V: Single-bit instructions */
+	CPU_FEATURE_ZICBOZ, /*!< RISC-V: Cache-block zero instruction */
+	CPU_FEATURE_ZBC, /*!< RISC-V: Carry-less multiplication */
+	CPU_FEATURE_ZBKB, /*!< RISC-V: Bit-manipulation for cryptography */
+	CPU_FEATURE_ZBKC, /*!< RISC-V: Carry-less multiplication for cryptography */
+	CPU_FEATURE_ZBKX, /*!< RISC-V: Crossbar permutations */
+	CPU_FEATURE_ZKND, /*!< RISC-V: NIST suite: AES decryption */
+	CPU_FEATURE_ZKNE, /*!< RISC-V: NIST suite: AES encryption */
+	CPU_FEATURE_ZKNH, /*!< RISC-V: NIST suite: hash function instructions */
+	CPU_FEATURE_ZKSED, /*!< RISC-V: ShangMi suite: SM4 block cipher instructions */
+	CPU_FEATURE_ZKSH, /*!< RISC-V: ShangMi suite: SM3 hash function instructions */
+	CPU_FEATURE_ZKT, /*!< RISC-V: Data independent execution latency */
+	CPU_FEATURE_ZVBB, /*!< RISC-V: Vector basic bit-manipulation */
+	CPU_FEATURE_ZVBC, /*!< RISC-V: Vector carry-less multiplication */
+	CPU_FEATURE_ZVKB, /*!< RISC-V: Vector cryptography bit-manipulation */
+	CPU_FEATURE_ZVKG, /*!< RISC-V: Vector GCM/GMAC */
+	CPU_FEATURE_ZVKNED, /*!< RISC-V: NIST suite: vector AES block cipher */
+	CPU_FEATURE_ZVKNHA, /*!< RISC-V: NIST suite: vector SHA-2 secure hash (SHA-256) */
+	CPU_FEATURE_ZVKNHB, /*!< RISC-V: NIST suite: vector SHA-2 secure hash (SHA-256 and SHA-512) */
+	CPU_FEATURE_ZVKSED, /*!< RISC-V: ShangMi suite: vector SM4 block cipher */
+	CPU_FEATURE_ZVKSH, /*!< RISC-V: ShangMi suite: vector SM3 secure hash */
+	CPU_FEATURE_ZVKT, /*!< RISC-V: Vector data-independent execution latency */
+	CPU_FEATURE_ZFH, /*!< RISC-V: Half-precision floating-point */
+	CPU_FEATURE_ZFHMIN, /*!< RISC-V: Minimal half-precision floating-point */
+	CPU_FEATURE_ZIHINTNTL, /*!< RISC-V: Non-temporal locality hints */
+	CPU_FEATURE_ZVFH, /*!< RISC-V: Vector half-precision floating-point */
+	CPU_FEATURE_ZVFHMIN, /*!< RISC-V: Vector minimal half-precision floating-point */
+	CPU_FEATURE_ZFA, /*!< RISC-V: Additional floating-point instructions */
+	CPU_FEATURE_ZTSO, /*!< RISC-V: Total store ordering */
+	CPU_FEATURE_ZACAS, /*!< RISC-V: Atomic compare-and-swap instructions */
+	CPU_FEATURE_ZICOND, /*!< RISC-V: Integer conditional operations */
+	CPU_FEATURE_ZIHINTPAUSE, /*!< RISC-V: Pause hint */
+	CPU_FEATURE_ZVE32X, /*!< RISC-V: Vector extension for embedded processors (32-bit integer) */
+	CPU_FEATURE_ZVE32F, /*!< RISC-V: Vector extension for embedded processors (32-bit integer and single-precision) */
+	CPU_FEATURE_ZVE64X, /*!< RISC-V: Vector extension for embedded processors (64-bit integer) */
+	CPU_FEATURE_ZVE64F, /*!< RISC-V: Vector extension for embedded processors (64-bit integer and single-precision) */
+	CPU_FEATURE_ZVE64D, /*!< RISC-V: Vector extension for embedded processors (64-bit integer and double-precision) */
+	CPU_FEATURE_ZIMOP, /*!< RISC-V: May-be-operations */
+	CPU_FEATURE_ZCA, /*!< RISC-V: Compressed instructions (without floating-point) */
+	CPU_FEATURE_ZCB, /*!< RISC-V: Additional compressed instructions */
+	CPU_FEATURE_ZCD, /*!< RISC-V: Compressed double-precision floating-point loads and stores */
+	CPU_FEATURE_ZCF, /*!< RISC-V: Compressed single-precision floating-point loads and stores */
+	CPU_FEATURE_ZCMOP, /*!< RISC-V: Compressed may-be-operations */
+	CPU_FEATURE_ZAWRS, /*!< RISC-V: Wait-on-reservation-set instructions */
+	CPU_FEATURE_SUPM, /*!< RISC-V: Pointer masking in user mode */
+	CPU_FEATURE_ZICNTR, /*!< RISC-V: Base counters and timers */
+	CPU_FEATURE_ZIHPM, /*!< RISC-V: Hardware performance counters */
+	CPU_FEATURE_ZFBFMIN, /*!< RISC-V: Scalar BF16 converts */
+	CPU_FEATURE_ZVFBFMIN, /*!< RISC-V: Vector BF16 converts */
+	CPU_FEATURE_ZVFBFWMA, /*!< RISC-V: Vector BF16 widening multiply-accumulate */
+	CPU_FEATURE_ZICBOM, /*!< RISC-V: Cache-block management instructions */
+	CPU_FEATURE_ZAAMO, /*!< RISC-V: Atomic memory operations */
+	CPU_FEATURE_ZALRSC, /*!< RISC-V: Load-reserved/store-conditional instructions */
+	CPU_FEATURE_ZABHA, /*!< RISC-V: Byte and halfword atomic memory operations */
+	CPU_FEATURE_ZALASR, /*!< RISC-V: Load-acquire and store-release instructions */
+	CPU_FEATURE_ZICBOP, /*!< RISC-V: Cache-block prefetch instructions */
+	CPU_FEATURE_ZILSD, /*!< RISC-V: Load/store pair for RV32 */
+	CPU_FEATURE_ZCLSD, /*!< RISC-V: Compressed load/store pair for RV32 */
+	CPU_FEATURE_ZICFILP, /*!< RISC-V: Landing pad (control-flow integrity) */
+	CPU_FEATURE_ZICFISS, /*!< RISC-V: Shadow stack (control-flow integrity) */
+	CPU_FEATURE_ZICCLSM, /*!< RISC-V: Misaligned loads and stores to main memory regions are supported */
+	CPU_FEATURE_ZICCAMOA, /*!< RISC-V: Main memory regions support all atomics in A */
+	CPU_FEATURE_ZICCIF, /*!< RISC-V: Main memory regions support instruction fetch with atomicity requirement */
+	CPU_FEATURE_ZICCRSE, /*!< RISC-V: Main memory regions support forward progress on LR/SC sequences */
+	CPU_FEATURE_ZA64RS, /*!< RISC-V: Reservation set size of at most 64 bytes */
 	/* termination: */
 	NUM_CPU_FEATURES,
 } cpu_feature_t;

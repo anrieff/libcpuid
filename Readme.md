@@ -12,6 +12,7 @@ libcpuid provides CPU identification. Project website is on SourceForge (https:/
 - ARM (since v0.7.0):
   - 32-bit CPUs (ARM32, also known as AArch32)
   - 64-bit CPUs (ARM64, also known as AArch64)
+- RISC-V (since v0.9.0, Linux only, through the [`hwprobe`](https://docs.kernel.org/arch/riscv/hwprobe.html) syscall)
 
 ### Operating systems
 

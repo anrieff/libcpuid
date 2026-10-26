@@ -29,12 +29,20 @@
 #include "recog_arm.h"
 #include "recog_centaur.h"
 #include "recog_intel.h"
+#include "recog_riscv.h"
 #include "asm-bits.h"
 #include "libcpuid_util.h"
 #if defined(PLATFORM_ARM) || defined(PLATFORM_AARCH64)
 # include "libcpuid_arm_driver.h"
 # include "rdcpuid.h"
 #endif /* ARM */
+#if defined(PLATFORM_RISCV) && defined(__linux__)
+# include <sched.h>
+# include <unistd.h>
+# include <sys/syscall.h>
+# include <sys/prctl.h>
+# define RISCV_HWPROBE_LINUX
+#endif /* RISC-V Linux */
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
@@ -61,6 +69,111 @@
 #endif
 
 INTERNAL_SCOPE int _libcpuid_errno = ERR_OK;
+
+#ifdef RISCV_HWPROBE_LINUX
+/* Interface for probing hardware capabilities from userspace
+   https://docs.kernel.org/arch/riscv/hwprobe.html
+   Constants are from arch/riscv/include/uapi/asm/hwprobe.h, defined here to build with older kernel headers */
+struct riscv_hwprobe_t {
+	int64_t key;
+	uint64_t value;
+};
+#define RISCV_HWPROBE_KEY_MVENDORID	0
+#define RISCV_HWPROBE_KEY_MARCHID	1
+#define RISCV_HWPROBE_KEY_MIMPID	2
+#define RISCV_HWPROBE_KEY_BASE_BEHAVIOR	3
+#define RISCV_HWPROBE_KEY_IMA_EXT_0	4
+#define RISCV_HWPROBE_KEY_IMA_EXT_1	16
+#define RISCV_HWPROBE_IMA_V		(1ULL << 2)
+#ifndef __NR_riscv_hwprobe
+# define __NR_riscv_hwprobe 258
+#endif
+#ifndef PR_RISCV_V_GET_CONTROL
+# define PR_RISCV_V_GET_CONTROL 70
+# define PR_RISCV_V_VSTATE_CTRL_DEFAULT 0
+# define PR_RISCV_V_VSTATE_CTRL_ON 2
+# define PR_RISCV_V_VSTATE_CTRL_CUR_MASK 0x3
+#endif
+
+static int riscv_hwprobe(struct riscv_hwprobe_t* pairs, size_t pair_count, int cpu)
+{
+	cpu_set_t cpus;
+
+	if (cpu < 0)
+		return (int) syscall(__NR_riscv_hwprobe, pairs, pair_count, 0, NULL, 0);
+
+	CPU_ZERO(&cpus);
+	CPU_SET(cpu, &cpus);
+	return (int) syscall(__NR_riscv_hwprobe, pairs, pair_count, sizeof(cpus), &cpus, 0);
+}
+
+/* Read the "uarch" field of /proc/cpuinfo for a given logical CPU (the "compatible" string of the CPU device tree node) */
+static void riscv_read_uarch(int cpu, char* uarch, size_t uarch_len)
+{
+	int c, cur_cpu = -1;
+	char line[256];
+	char* value;
+	FILE* f;
+
+	uarch[0] = '\0';
+	if (cpu < 0)
+		return;
+	f = fopen("/proc/cpuinfo", "r");
+	if (!f)
+		return;
+
+	while (fgets(line, sizeof(line), f) != NULL) {
+		if (strchr(line, '\n') == NULL) {
+			/* Skip the remaining of a long line (e.g. "isa") */
+			while (((c = fgetc(f)) != EOF) && (c != '\n'));
+			continue;
+		}
+		if (sscanf(line, "processor : %d", &cur_cpu) == 1)
+			continue;
+		if ((cur_cpu == cpu) && !strncmp(line, "uarch", 5) && ((value = strchr(line, ':')) != NULL)) {
+			value++;
+			while ((*value == ' ') || (*value == '\t'))
+				value++;
+			value[strcspn(value, "\n")] = '\0';
+			snprintf(uarch, uarch_len, "%s", value);
+			break;
+		}
+	}
+
+	fclose(f);
+}
+
+/* Read the vlenb CSR, when the kernel allows the V extension in user mode
+   (otherwise the first vector instruction raises SIGILL) */
+static uint64_t riscv_read_vlenb(void)
+{
+	int ctrl;
+	char allow = '0';
+	FILE* f;
+
+	ctrl = prctl(PR_RISCV_V_GET_CONTROL);
+	if (ctrl < 0)
+		return 0;
+	switch (ctrl & PR_RISCV_V_VSTATE_CTRL_CUR_MASK) {
+		case PR_RISCV_V_VSTATE_CTRL_ON:
+			break;
+		case PR_RISCV_V_VSTATE_CTRL_DEFAULT:
+			f = fopen("/proc/sys/abi/riscv_v_default_allow", "r");
+			if (!f)
+				return 0;
+			if (fread(&allow, 1, 1, f) != 1)
+				allow = '0';
+			fclose(f);
+			if (allow != '1')
+				return 0;
+			break;
+		default:
+			return 0;
+	}
+
+	return exec_csrr_vlenb();
+}
+#endif /* RISCV_HWPROBE_LINUX */
 
 /* get_total_cpus() system specific code: uses OS routines to determine total number of CPUs */
 #ifdef __APPLE__
@@ -636,6 +749,8 @@ static cpu_architecture_t cpuid_architecture_identify(struct cpu_raw_data_t* raw
 		return ARCHITECTURE_X86;
 	else if (raw->arm_midr != 0x0)
 		return ARCHITECTURE_ARM;
+	else if (raw->riscv_mvendorid != 0x0 || raw->riscv_marchid != 0x0 || raw->riscv_mimpid != 0x0 || raw->riscv_base_behavior != 0x0 || raw->riscv_ima_ext[0] != 0x0)
+		return ARCHITECTURE_RISCV;
 
 	return ARCHITECTURE_UNKNOWN;
 }
@@ -730,6 +845,16 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 				for (i = 0; i < MAX_ARM_ID_AA64ZFR_REGS; i++)
 					fprintf(f, "arm_id_aa64zfr%d=%016" PRIx64 "\n", i, raw_ptr->arm_id_aa64zfr[i]);
 				break;
+			case ARCHITECTURE_RISCV:
+				fprintf(f, "riscv_mvendorid=%016" PRIx64 "\n", raw_ptr->riscv_mvendorid);
+				fprintf(f, "riscv_marchid=%016" PRIx64 "\n", raw_ptr->riscv_marchid);
+				fprintf(f, "riscv_mimpid=%016" PRIx64 "\n", raw_ptr->riscv_mimpid);
+				fprintf(f, "riscv_base_behavior=%016" PRIx64 "\n", raw_ptr->riscv_base_behavior);
+				for (i = 0; i < MAX_RISCV_IMA_EXT_REGS; i++)
+					fprintf(f, "riscv_ima_ext%d=%016" PRIx64 "\n", i, raw_ptr->riscv_ima_ext[i]);
+				fprintf(f, "riscv_vlenb=%016" PRIx64 "\n", raw_ptr->riscv_vlenb);
+				fprintf(f, "riscv_uarch=%s\n", raw_ptr->riscv_uarch);
+				break;
 			default:
 				break;
 		}
@@ -747,6 +872,7 @@ static int cpuid_serialize_raw_data_internal(struct cpu_raw_data_t* single_raw, 
 #define RAW_ASSIGN_LINE_X86(__line) __line[EAX] = eax ; __line[EBX] = ebx ; __line[ECX] = ecx ; __line[EDX] = edx
 #define RAW_ASSIGN_LINE_AARCH32(__line) __line = aarch32_reg
 #define RAW_ASSIGN_LINE_AARCH64(__line) __line = aarch64_reg
+#define RAW_ASSIGN_LINE_RISCV(__line) __line = riscv_reg
 static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw, struct cpu_raw_data_array_t* raw_array, const char* filename)
 {
 	int i;
@@ -759,7 +885,7 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 	const bool use_raw_array = (raw_array != NULL);
 	logical_cpu_t logical_cpu = 0, logical_cpu_offset = 0;
 	uint32_t addr, eax, ebx, ecx, edx, aarch32_reg;
-	uint64_t aarch64_reg;
+	uint64_t aarch64_reg, riscv_reg;
 	char version[8] = "";
 	char line[100];
 	struct cpu_raw_data_t* raw_ptr = single_raw;
@@ -893,6 +1019,27 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 			else if ((sscanf(line, "arm_id_aa64zfr%d=%" SCNx64, &i, &aarch64_reg) >= 2)) {
 				RAW_ASSIGN_LINE_AARCH64(raw_ptr->arm_id_aa64zfr[i]);
 			}
+			else if ((sscanf(line, "riscv_mvendorid=%" SCNx64, &riscv_reg) >= 1)) {
+				RAW_ASSIGN_LINE_RISCV(raw_ptr->riscv_mvendorid);
+			}
+			else if ((sscanf(line, "riscv_marchid=%" SCNx64, &riscv_reg) >= 1)) {
+				RAW_ASSIGN_LINE_RISCV(raw_ptr->riscv_marchid);
+			}
+			else if ((sscanf(line, "riscv_mimpid=%" SCNx64, &riscv_reg) >= 1)) {
+				RAW_ASSIGN_LINE_RISCV(raw_ptr->riscv_mimpid);
+			}
+			else if ((sscanf(line, "riscv_base_behavior=%" SCNx64, &riscv_reg) >= 1)) {
+				RAW_ASSIGN_LINE_RISCV(raw_ptr->riscv_base_behavior);
+			}
+			else if ((sscanf(line, "riscv_ima_ext%d=%" SCNx64, &i, &riscv_reg) >= 2) && (i >= 0) && (i < MAX_RISCV_IMA_EXT_REGS)) {
+				RAW_ASSIGN_LINE_RISCV(raw_ptr->riscv_ima_ext[i]);
+			}
+			else if ((sscanf(line, "riscv_vlenb=%" SCNx64, &riscv_reg) >= 1)) {
+				RAW_ASSIGN_LINE_RISCV(raw_ptr->riscv_vlenb);
+			}
+			else if (!strncmp(line, "riscv_uarch=", 12)) {
+				snprintf(raw_ptr->riscv_uarch, RISCV_UARCH_STR_MAX, "%.*s", RISCV_UARCH_STR_MAX - 1, line + 12);
+			}
 			else if (line[0] != '\0') {
 				warnf("Warning: file '%s', line %d: '%s' not understood!\n", filename, cur_line, line);
 			}
@@ -948,7 +1095,9 @@ static int cpuid_deserialize_raw_data_internal(struct cpu_raw_data_t* single_raw
 	return cpuid_set_error((use_raw_array && (raw_array->num_raw == 0)) ? ERR_BADFMT : ERR_OK);
 }
 #undef RAW_ASSIGN_LINE_X86
-#undef RAW_ASSIGN_LINE_ARM
+#undef RAW_ASSIGN_LINE_AARCH32
+#undef RAW_ASSIGN_LINE_AARCH64
+#undef RAW_ASSIGN_LINE_RISCV
 
 static void load_features_common(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 {
@@ -1324,6 +1473,9 @@ int cpuid_present(void)
 # endif /* HWCAP_CPUID */
 	/* On AArch64, return 0 by default */
 	return 0;
+#elif defined(RISCV_HWPROBE_LINUX)
+	struct riscv_hwprobe_t pair = { RISCV_HWPROBE_KEY_BASE_BEHAVIOR, 0 };
+	return (riscv_hwprobe(&pair, 1, -1) == 0);
 #else
 	return 0;
 #endif
@@ -1480,6 +1632,40 @@ int cpuid_get_raw_data_core(struct cpu_raw_data_t* data, logical_cpu_t logical_c
 		return cpuid_set_error(ERR_NO_CPUID);
 # endif /* PLATFORM_AARCH64 */
 	}
+#elif defined(RISCV_HWPROBE_LINUX)
+	unsigned i;
+	const int cpu = (logical_cpu == (logical_cpu_t) -1) ? sched_getcpu() : (int) logical_cpu;
+	struct riscv_hwprobe_t pairs[] = {
+		{ RISCV_HWPROBE_KEY_MVENDORID,     0 },
+		{ RISCV_HWPROBE_KEY_MARCHID,       0 },
+		{ RISCV_HWPROBE_KEY_MIMPID,        0 },
+		{ RISCV_HWPROBE_KEY_BASE_BEHAVIOR, 0 },
+		{ RISCV_HWPROBE_KEY_IMA_EXT_0,     0 },
+		{ RISCV_HWPROBE_KEY_IMA_EXT_1,     0 },
+	};
+
+	debugf(2, "Using hwprobe syscall to read registers on logical CPU %u\n", logical_cpu);
+	if (riscv_hwprobe(pairs, COUNT_OF(pairs), cpu) != 0) {
+		if (affinity_saved)
+			restore_cpu_affinity();
+		return cpuid_set_error(ERR_NO_CPUID);
+	}
+	/* The kernel sets key to -1 for the keys it does not support */
+	for (i = 0; i < COUNT_OF(pairs); i++) {
+		switch (pairs[i].key) {
+			case RISCV_HWPROBE_KEY_MVENDORID:     data->riscv_mvendorid     = pairs[i].value; break;
+			case RISCV_HWPROBE_KEY_MARCHID:       data->riscv_marchid       = pairs[i].value; break;
+			case RISCV_HWPROBE_KEY_MIMPID:        data->riscv_mimpid        = pairs[i].value; break;
+			case RISCV_HWPROBE_KEY_BASE_BEHAVIOR: data->riscv_base_behavior = pairs[i].value; break;
+			case RISCV_HWPROBE_KEY_IMA_EXT_0:     data->riscv_ima_ext[0]    = pairs[i].value; break;
+			case RISCV_HWPROBE_KEY_IMA_EXT_1:     data->riscv_ima_ext[1]    = pairs[i].value; break;
+			default: break;
+		}
+	}
+	riscv_read_uarch(cpu, data->riscv_uarch, RISCV_UARCH_STR_MAX);
+	/* This thread runs on the requested CPU when set_cpu_affinity() succeeded */
+	if (data->riscv_ima_ext[0] & RISCV_HWPROBE_IMA_V)
+		data->riscv_vlenb = riscv_read_vlenb();
 #else
     #if defined(_MSC_VER)
         #pragma message("Warning: This CPU architecture is not supported by libcpuid")
@@ -1576,6 +1762,9 @@ int cpu_ident_internal(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct
 		case ARCHITECTURE_ARM:
 			r = cpuid_identify_arm(raw, data);
 			break;
+		case ARCHITECTURE_RISCV:
+			r = cpuid_identify_riscv(raw, data);
+			break;
 		default:
 			r = ERR_CPU_UNKN;
 			break;
@@ -1627,6 +1816,9 @@ static cpu_purpose_t cpu_ident_purpose(struct cpu_raw_data_t* raw)
 			break;
 		case ARCHITECTURE_ARM:
 			purpose = cpuid_identify_purpose_arm(raw);
+			break;
+		case ARCHITECTURE_RISCV:
+			purpose = cpuid_identify_purpose_riscv(raw);
 			break;
 		default:
 			break;
@@ -1835,6 +2027,7 @@ const char* cpu_architecture_str(cpu_architecture_t architecture)
 		{ ARCHITECTURE_UNKNOWN, UNKN_STR  },
 		{ ARCHITECTURE_X86,     "x86"     },
 		{ ARCHITECTURE_ARM,     "ARM"     },
+		{ ARCHITECTURE_RISCV,   "RISC-V"  },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_ARCHITECTURES + 1) {
@@ -1895,9 +2088,13 @@ const char* cpu_feature_level_str(cpu_feature_level_t level)
 		{ FEATURE_LEVEL_ARM_V9_3_A, "ARMv9.3-A" },
 		{ FEATURE_LEVEL_ARM_V9_4_A, "ARMv9.4-A" },
 		{ FEATURE_LEVEL_ARM_V9_5_A, "ARMv9.5-A" },
+		/* RISC-V */
+		{ FEATURE_LEVEL_RISCV_RVA20U64, "RVA20U64" },
+		{ FEATURE_LEVEL_RISCV_RVA22U64, "RVA22U64" },
+		{ FEATURE_LEVEL_RISCV_RVA23U64, "RVA23U64" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
-	if (n != (NUM_FEATURE_LEVELS - FEATURE_LEVEL_ARM_V1) + (FEATURE_LEVEL_X86_64_V4 - FEATURE_LEVEL_I386) + 2) {
+	if (n != (FEATURE_LEVEL_X86_64_V4 - FEATURE_LEVEL_I386 + 1) + (FEATURE_LEVEL_ARM_V9_5_A - FEATURE_LEVEL_ARM_V1 + 1) + (NUM_FEATURE_LEVELS - FEATURE_LEVEL_RISCV_RVA20U64) + 1) {
 		warnf("Warning: incomplete library, feature level matchtable size differs from the actual number of levels.\n");
 	}
 	for (i = 0; i < n; i++)
@@ -2340,6 +2537,81 @@ const char* cpu_feature_str(cpu_feature_t feature)
 		{ CPU_FEATURE_SSVE_FP8FMA, "ssve_fp8fma" },
 		{ CPU_FEATURE_STEP2, "step2" },
 		{ CPU_FEATURE_TLBIW, "tlbiw" },
+		/* RISC-V */
+		{ CPU_FEATURE_RV_I, "i" },
+		{ CPU_FEATURE_RV_M, "m" },
+		{ CPU_FEATURE_RV_A, "a" },
+		{ CPU_FEATURE_RV_F, "f" },
+		{ CPU_FEATURE_RV_D, "d" },
+		{ CPU_FEATURE_RV_C, "c" },
+		{ CPU_FEATURE_RV_V, "v" },
+		{ CPU_FEATURE_ZBA, "zba" },
+		{ CPU_FEATURE_ZBB, "zbb" },
+		{ CPU_FEATURE_ZBS, "zbs" },
+		{ CPU_FEATURE_ZICBOZ, "zicboz" },
+		{ CPU_FEATURE_ZBC, "zbc" },
+		{ CPU_FEATURE_ZBKB, "zbkb" },
+		{ CPU_FEATURE_ZBKC, "zbkc" },
+		{ CPU_FEATURE_ZBKX, "zbkx" },
+		{ CPU_FEATURE_ZKND, "zknd" },
+		{ CPU_FEATURE_ZKNE, "zkne" },
+		{ CPU_FEATURE_ZKNH, "zknh" },
+		{ CPU_FEATURE_ZKSED, "zksed" },
+		{ CPU_FEATURE_ZKSH, "zksh" },
+		{ CPU_FEATURE_ZKT, "zkt" },
+		{ CPU_FEATURE_ZVBB, "zvbb" },
+		{ CPU_FEATURE_ZVBC, "zvbc" },
+		{ CPU_FEATURE_ZVKB, "zvkb" },
+		{ CPU_FEATURE_ZVKG, "zvkg" },
+		{ CPU_FEATURE_ZVKNED, "zvkned" },
+		{ CPU_FEATURE_ZVKNHA, "zvknha" },
+		{ CPU_FEATURE_ZVKNHB, "zvknhb" },
+		{ CPU_FEATURE_ZVKSED, "zvksed" },
+		{ CPU_FEATURE_ZVKSH, "zvksh" },
+		{ CPU_FEATURE_ZVKT, "zvkt" },
+		{ CPU_FEATURE_ZFH, "zfh" },
+		{ CPU_FEATURE_ZFHMIN, "zfhmin" },
+		{ CPU_FEATURE_ZIHINTNTL, "zihintntl" },
+		{ CPU_FEATURE_ZVFH, "zvfh" },
+		{ CPU_FEATURE_ZVFHMIN, "zvfhmin" },
+		{ CPU_FEATURE_ZFA, "zfa" },
+		{ CPU_FEATURE_ZTSO, "ztso" },
+		{ CPU_FEATURE_ZACAS, "zacas" },
+		{ CPU_FEATURE_ZICOND, "zicond" },
+		{ CPU_FEATURE_ZIHINTPAUSE, "zihintpause" },
+		{ CPU_FEATURE_ZVE32X, "zve32x" },
+		{ CPU_FEATURE_ZVE32F, "zve32f" },
+		{ CPU_FEATURE_ZVE64X, "zve64x" },
+		{ CPU_FEATURE_ZVE64F, "zve64f" },
+		{ CPU_FEATURE_ZVE64D, "zve64d" },
+		{ CPU_FEATURE_ZIMOP, "zimop" },
+		{ CPU_FEATURE_ZCA, "zca" },
+		{ CPU_FEATURE_ZCB, "zcb" },
+		{ CPU_FEATURE_ZCD, "zcd" },
+		{ CPU_FEATURE_ZCF, "zcf" },
+		{ CPU_FEATURE_ZCMOP, "zcmop" },
+		{ CPU_FEATURE_ZAWRS, "zawrs" },
+		{ CPU_FEATURE_SUPM, "supm" },
+		{ CPU_FEATURE_ZICNTR, "zicntr" },
+		{ CPU_FEATURE_ZIHPM, "zihpm" },
+		{ CPU_FEATURE_ZFBFMIN, "zfbfmin" },
+		{ CPU_FEATURE_ZVFBFMIN, "zvfbfmin" },
+		{ CPU_FEATURE_ZVFBFWMA, "zvfbfwma" },
+		{ CPU_FEATURE_ZICBOM, "zicbom" },
+		{ CPU_FEATURE_ZAAMO, "zaamo" },
+		{ CPU_FEATURE_ZALRSC, "zalrsc" },
+		{ CPU_FEATURE_ZABHA, "zabha" },
+		{ CPU_FEATURE_ZALASR, "zalasr" },
+		{ CPU_FEATURE_ZICBOP, "zicbop" },
+		{ CPU_FEATURE_ZILSD, "zilsd" },
+		{ CPU_FEATURE_ZCLSD, "zclsd" },
+		{ CPU_FEATURE_ZICFILP, "zicfilp" },
+		{ CPU_FEATURE_ZICFISS, "zicfiss" },
+		{ CPU_FEATURE_ZICCLSM, "zicclsm" },
+		{ CPU_FEATURE_ZICCAMOA, "ziccamoa" },
+		{ CPU_FEATURE_ZICCIF, "ziccif" },
+		{ CPU_FEATURE_ZICCRSE, "ziccrse" },
+		{ CPU_FEATURE_ZA64RS, "za64rs" },
 	};
 	unsigned i, n = COUNT_OF(matchtable);
 	if (n != NUM_CPU_FEATURES) {
@@ -2472,6 +2744,14 @@ void cpuid_get_cpu_list(cpu_vendor_t vendor, struct cpu_list_t* list)
 		case VENDOR_PHYTIUM:
 		case VENDOR_AMPERE:
 			cpuid_get_list_arm(vendor, list);
+			break;
+		case VENDOR_SIFIVE:
+		case VENDOR_THEAD:
+		case VENDOR_ANDES:
+		case VENDOR_SPACEMIT:
+		case VENDOR_MICROCHIP:
+		case VENDOR_MIPS:
+			cpuid_get_list_riscv(vendor, list);
 			break;
 		default:
 			warnf("Unknown vendor passed to cpuid_get_cpu_list()\n");
